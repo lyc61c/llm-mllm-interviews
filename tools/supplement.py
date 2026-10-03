@@ -3,11 +3,11 @@ import json
 from collections import defaultdict
 from common import ROOT, load_bank
 
-REQUEST = ROOT / 'research' / 'supplement-request-2026-10-02.json'
+REQUEST = ROOT / 'data' / 'user_requested_sources.json'
 
 
 def load_request():
-    return json.loads(REQUEST.read_text(encoding='utf-8'))
+    return json.loads(REQUEST.read_text(encoding='utf-8'))['requests']
 
 
 def mapped_questions(questions, field='user_supplement_keys'):

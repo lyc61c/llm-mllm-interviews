@@ -59,10 +59,13 @@ def validate(sources, questions, require_complete=True):
         check(q.get("level") in {"L1", "L2", "L3"}, f"{qid}: invalid level")
         check(bool(q.get("title", "").strip()), f"{qid}: empty title")
         a = q.get("answer", {})
-        check(len(a.get("quick", "")) >= 25, f"{qid}: short or missing quick answer")
-        for key in ("detail", "pitfalls", "followups"):
+        check(isinstance(a.get("body"), str) and len(a.get("body", "")) >= 80, f"{qid}: short or missing answer")
+        check("quick" not in a and "detail" not in a, f"{qid}: answer must be a single body")
+        check('$$' not in a.get('body', ''), f'{qid}: put block math in formula, not body')
+        for key in ("pitfalls", "followups"):
             check(isinstance(a.get(key), list) and bool(a[key]), f"{qid}: missing {key}")
-        check(len(a.get("detail", [])) >= 3, f"{qid}: fewer than 3 detail points")
+        check(isinstance(a.get("formula", ""), str), f"{qid}: formula must be LaTeX text")
+        check('$' not in a.get('formula', ''), f'{qid}: formula must not contain math delimiters')
         check(bool(q.get("reference_ids")), f"{qid}: no technical reference")
         for sid in q.get("reference_ids", []):
             check(sid in smap, f"{qid}: dangling reference {sid}")

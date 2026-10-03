@@ -10,7 +10,7 @@ def main():
     errors = validate(sources, questions)
     errors.extend(validate_supplement(questions, sources))
     for path in ROOT.rglob("*.md"):
-        if ".git" in path.parts:
+        if any(part in {'.git', '.cache', '__pycache__'} for part in path.relative_to(ROOT).parts):
             continue
         for target in re.findall(r"!?\[[^\]]*\]\(([^)]+)\)", path.read_text(encoding="utf-8-sig")):
             if target.startswith(("http://", "https://", "#", "mailto:")):

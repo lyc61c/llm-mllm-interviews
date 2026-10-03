@@ -11,14 +11,6 @@
 | [test_reference.py](test_reference.py) | 14 组边界、不变量和独立算法对照测试 | Python 标准库 |
 | [test_torch_primitives.py](test_torch_primitives.py) | 6 组前向、mask、梯度和冻结测试 | 无 PyTorch 时明确 skip |
 
-在 `interviews/` 下运行：
-
-```bash
-python -m unittest discover -s coding -p "test_*.py" -v
-```
-
-本次环境未安装 PyTorch：标准库测试实际执行通过；PyTorch 实现已做语法检查与人工审阅，运行测试未验证，会显示 6 个 skip。安装自己的兼容 PyTorch 环境后可执行同一命令验证，无需 GPU。
-
 重要约定：
 
 - 布尔 mask 中 `True` 表示允许访问；其他 PyTorch API 可能采用不同约定。

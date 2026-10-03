@@ -8,16 +8,14 @@ from common import ROOT
 
 
 def main():
-    target=ROOT/'review'/'validation.json'
-    # Ensure the linked report exists before the local-link validation.
-    if not target.exists():
-        target.write_text('{"status":"running"}\n',encoding='utf-8')
+    target=ROOT/'.cache'/'validation.json'
+    target.parent.mkdir(exist_ok=True)
     commands=[
         [sys.executable,'-X','utf8','tools/validate.py'],
         [sys.executable,'-X','utf8','-m','unittest','discover','-s','tools','-p','test_supplement.py','-v'],
         [sys.executable,'-X','utf8','-m','unittest','discover','-s','coding','-p','test_*.py','-v'],
         ['node','tools/test_explorer.cjs'],
-        [sys.executable,'-X','utf8','-m','py_compile','tools/common.py','tools/build.py','tools/search.py','tools/validate.py','tools/package.py','tools/supplement.py','coding/reference.py','coding/torch_primitives.py'],
+        [sys.executable,'-X','utf8','-m','py_compile','tools/common.py','tools/build.py','tools/presentation.py','tools/search.py','tools/validate.py','tools/package.py','tools/supplement.py','coding/reference.py','coding/torch_primitives.py'],
         [sys.executable,'-X','utf8','tools/search.py','--id','COD-003','--answers'],
         [sys.executable,'-X','utf8','tools/search.py','Z21','--answers'],
         [sys.executable,'-X','utf8','tools/search.py','--category','VLM','--level','L2','--mock','3','--seed','42'],
@@ -41,7 +39,7 @@ def main():
         'limits':[
             '14 standard-library test groups executed; 6 optional PyTorch test groups skipped because PyTorch is not installed.',
             '8 supplied-question coverage and provenance regression tests executed, including user-paste/webpage distinction and source-catalog consistency.',
-            'Offline HTML verified through Node VM / minimal DOM smoke tests; no live browser screenshot acceptance because Tabbit routing failed.',
+            'Offline HTML verified through Node VM / minimal DOM smoke tests; no live browser screenshot acceptance.',
             'External URLs were researched at collection time; there is no exhaustive automated current-availability check.',
             'Source evidence does not authenticate the employers or prove reported interviews occurred.',
         ],

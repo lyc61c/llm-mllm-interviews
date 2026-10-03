@@ -1,10 +1,8 @@
 # RLHF、DPO、PPO 与 GRPO
 
-[返回仓库首页](../README.md) · [来源目录](../SOURCES.md) · [阅读全部题目](../exports/questions.jsonl)
+[首页](../README.md) · [全部题目](../QUESTION-INDEX.md)
 
-L1 基础 · L2 进阶 · L3 深入。难度为编辑判断；社区线索不等于雇主确认真题。所有答案为独立整理。
-
-## 题目导航
+## 题目
 
 - [ALN-001 · SFT、RLHF 与 DPO 分别解决什么问题？](#aln-001)
 - [ALN-002 · 奖励模型如何用成对偏好训练？](#aln-002)
@@ -30,733 +28,418 @@ L1 基础 · L2 进阶 · L3 深入。难度为编辑判断；社区线索不等
 <a id="aln-001"></a>
 ## ALN-001 · SFT、RLHF 与 DPO 分别解决什么问题？
 
-**L1 · 社区题目线索** · 标签：SFT / RLHF / DPO
+**L1**
 
-**30 秒回答**
+### 答案
 
-SFT 用优质示范教模型按指令作答；典型 RLHF 用偏好训练奖励模型，再以 RL 优化策略；DPO 用偏好对直接更新策略。三者都依赖数据质量，不能仅凭是否出现某个 bad case 判断算法优劣。
+SFT 用优质示范教模型按指令完成任务，通常最小化目标回答的负对数似然；它主要提供行为和任务示范。典型 RLHF 在 SFT 后用偏好数据训练奖励模型，再通过强化学习优化策略，也可以迭代或混合不同阶段。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
-
-### 展开要点
-
-- SFT 通常最小化目标回答的负对数似然，重点是行为和任务示范。
-- 典型 RLHF 为 SFT→偏好/RM→策略优化；现实流水线可迭代或混合。
-- DPO 仍表达偏好奖励，只省去独立 RM 拟合与在线 RL 更新环节。
+DPO 直接用同一问题的偏好回答对更新策略，省去独立奖励模型拟合和在线 RL 更新，但仍通过目标函数表达偏好对应的奖励关系。三者都依赖数据质量；选型应结合任务、数据和评测，不能凭单个失败案例判断算法优劣。
 
 ### 易错点
 
 - 不要说 SFT 只学知识、RL 只学推理；数据与任务同样重要。
 
-### 面试官可能追问
+### 追问
 
 - 同一 bad case 何时补 SFT 示范，何时补偏好对？
-
-</details>
-
-**技术依据**
-
-- [APP-S101 · Training language models to follow instructions with human feedback](https://arxiv.org/html/2203.02155v1)
-- [APP-S104 · Direct Preference Optimization](https://arxiv.org/html/2305.18290v3)
-
-**题目出处线索**
-
-- [APP-S009 · 字节大模型算法实习生：电商业务（已 oc）](https://www.nowcoder.com/discuss/724319940982898688) · `reported_question`：正文问过 SFT/DPO 的选择及 SFT 无法解决的 bad case。
 
 <a id="aln-002"></a>
 ## ALN-002 · 奖励模型如何用成对偏好训练？
 
-**L2 · 编辑补充题** · 标签：Reward Model / Bradley-Terry
+**L2**
 
-**30 秒回答**
+### 答案
 
-常见奖励模型给完整回答输出标量，使用同一 prompt 下赢家与输家的分差拟合偏好概率。Bradley–Terry 是建模假设，不是所有人类偏好的真实规律；奖励绝对零点通常不能由成对比较唯一确定。
+奖励模型对完整回答输出一个标量。对同一问题 $x$ 的优选回答 $y_w$ 和非优选回答 $y_l$，用分数差的 sigmoid 拟合偏好概率，再最小化二元负对数似然。这里采用 Bradley–Terry 建模假设，不能把它当作所有真实偏好都必然遵循的规律。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
+成对比较只能约束相对分数：对同一问题的全部回答加上相同常数，偏好概率不变，因此绝对奖励零点无法由这些比较唯一确定，实际使用还需校准。数据与评测应按领域、回答长度和标注者分层，防止模型主要学到“越长越好”或套话风格。
 
-### 展开要点
-
-- 输入是 (x,y_w,y_l)，把 r_w−r_l 送入 sigmoid 后做二元负对数似然。
-- 对同一 x 给所有回答加相同常数不改变比较，所以 RM 分数需要校准。
-- 按领域、长度、标注者分层检查，防止奖励只学到长回答或固定套话。
-
-### 公式
-
-```text
-\mathcal L_{\rm RM}=-\mathbb E\log\sigma(r_\phi(x,y_w)-r_\phi(x,y_l))
-```
+$$
+\mathcal{L}_{\mathrm{RM}}=-\mathbb{E}_{(x,y_w,y_l)}\left[\log\sigma\left(r_\phi(x,y_w)-r_\phi(x,y_l)\right)\right]
+$$
 
 ### 易错点
 
 - RM 高准确率不代表策略优化后分布外仍可靠。
 
-### 面试官可能追问
+### 追问
 
 - 如何处理平局与偏好不传递？
-
-</details>
-
-**技术依据**
-
-- [APP-S160 · Reward Modeling — TRL](https://huggingface.co/docs/trl/reward_trainer)
-
-**题目出处线索**：为补全知识体系设计；未认定为某公司的实际提问。
 
 <a id="aln-003"></a>
 ## ALN-003 · PPO 的概率比、clip 和 min 分别起什么作用？
 
-**L2 · 社区题目线索** · 标签：PPO / importance ratio
+**L2**
 
-**30 秒回答**
+### 答案
 
-PPO 用新旧策略概率比修正同批旧策略样本，以 advantage 判断增减概率方向。clip 加 min 截断有利方向上的过度收益，减少大幅更新动机；它不是参数裁剪，也不保证更新后的所有概率比都在区间内。
+PPO 使用新旧策略的概率比 $\rho_t=\pi_\theta(a_t\mid s_t)/\pi_{\mathrm{old}}(a_t\mid s_t)$，对本轮旧策略采集的样本进行更新；优势为正时鼓励提高动作概率，为负时鼓励降低概率。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
+clip 与 min 共同截断有利方向上过度更新带来的目标收益：$A_t>0$ 时限制过度增大概率的收益，$A_t<0$ 时限制过度减小概率的收益。它削弱大幅更新的动机，并非裁剪模型参数，也不保证所有概率比都留在区间内。多轮 minibatch 更新应同时监测 KL、clip fraction、熵和 value loss。
 
-### 展开要点
-
-- 定义 ρ_t=π_θ(a_t|s_t)/π_old(a_t|s_t)，old 是本轮采样策略。
-- A>0 时限制继续增加概率的收益；A<0 时限制过度减少概率的收益。
-- 多轮小批更新仍需监测 KL、clip fraction、熵和 value loss。
-
-### 公式
-
-```text
-L^{\rm clip}=\mathbb E[\min(\rho_t A_t,\operatorname{clip}(\rho_t,1-\epsilon,1+\epsilon)A_t)]
-```
+$$
+L^{\mathrm{clip}}=\mathbb{E}\left[\min\left(\rho_t A_t,\operatorname{clip}(\rho_t,1-\epsilon,1+\epsilon)A_t\right)\right]
+$$
 
 ### 易错点
 
 - clip 不是严格信赖域约束，异常 KL 可触发早停。
 
-### 面试官可能追问
+### 追问
 
 - 去掉外面的 min 后，负 advantage 会有什么错误？
-
-</details>
-
-**技术依据**
-
-- [APP-S105 · PPO — Spinning Up](https://spinningup.openai.com/en/latest/algorithms/ppo.html)
-- [APP-S102 · Proximal Policy Optimization Algorithms](https://arxiv.org/abs/1707.06347)
-
-**题目出处线索**
-
-- [APP-S007 · 大模型算法岗面试题复盘：RAG、Agent、评测](https://nanhubrain.csdn.net/6a3ce7a8662f9a54cb841a94.html) · `reported_question`：正文问 PPO 为何比普通 policy gradient 稳定。
-- [APP-S008 · 字节面经：大模型算法岗面经 04](https://www.nowcoder.com/discuss/922308546966847488) · `secondary_report`：公开汇总问 clip 后为何再取 min；属于二手题目。
 
 <a id="aln-004"></a>
 ## ALN-004 · GAE 如何计算，λ 与 γ 如何影响优势估计？
 
-**L2 · 社区题目线索** · 标签：GAE / Critic
+**L2**
 
-**30 秒回答**
+### 答案
 
-GAE 将多个 TD 残差按 γλ 衰减求和，利用价值模型在偏差和方差间折中。λ 越小越依赖局部 bootstrap，λ 接近一越接近回报减 baseline；γ 决定折扣目标，不能把二者混为同一个超参数。
+GAE 把多个 TD 残差按 $(\gamma\lambda)^l$ 衰减求和，可在序列末尾向前递推计算。每步残差为 $\delta_t=r_t+\gamma V(s_{t+1})-V(s_t)$，其中 $\gamma$ 决定折扣目标，$\lambda$ 决定优势估计对多步信息与 bootstrap 的依赖，两者作用不同。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
+较小的 $\lambda$ 更依赖局部价值估计，价值模型不准时可能引入偏差；$\lambda$ 接近 1 时更接近回报减基线，通常也有更高方差。终止、超时、截断和 padding 对应的 bootstrap 与 mask 必须和任务定义一致，否则即使递推公式正确，优势也可能算错。
 
-### 展开要点
-
-- δ_t=r_t+γV(s_{t+1})−V(s_t)，从轨迹末尾递推优势。
-- λ<1 在价值估计不准时可引入偏差；λ=1 通常方差更高。
-- 终止、超时截断、padding 的 bootstrap/mask 必须与任务定义一致。
-
-### 公式
-
-```text
-\hat A_t^{\rm GAE}=\sum_{l\ge0}(\gamma\lambda)^l\delta_{t+l},\quad \delta_t=r_t+\gamma V(s_{t+1})-V(s_t)
-```
+$$
+\begin{aligned}\hat A_t^{\mathrm{GAE}}&=\sum_{l\geq 0}(\gamma\lambda)^l\delta_{t+l}\\\delta_t&=r_t+\gamma V(s_{t+1})-V(s_t)\end{aligned}
+$$
 
 ### 易错点
 
 - 标准 outcome GRPO 用组内相对奖励，通常没有 GAE/value critic。
 
-### 面试官可能追问
+### 追问
 
-- 生成被 max_tokens 截断时怎样处理末状态价值？
-
-</details>
-
-**技术依据**
-
-- [APP-S103 · Generalized Advantage Estimation](https://arxiv.org/pdf/1506.02438)
-
-**题目出处线索**
-
-- [APP-S008 · 字节面经：大模型算法岗面经 04](https://www.nowcoder.com/discuss/922308546966847488) · `secondary_report`：汇总出现 advantage 计算及“GRPO 的 GAE”措辞；答案明确纠正概念。
+- 生成被 `max_tokens` 截断时怎样处理末状态价值？
 
 <a id="aln-005"></a>
 ## ALN-005 · RLHF 的 KL 惩罚与 PPO 新旧策略约束有什么区别？
 
-**L2 · 社区题目线索** · 标签：KL / reference model
+**L2**
 
-**30 秒回答**
+### 答案
 
-RLHF 的参考 KL 约束策略偏离参考模型，通常参考 SFT 初始化；PPO 的 clip/KL 则控制当前更新相对采样旧策略的变化。一个约束整体行为漂移，一个稳定局部更新，两个模型的更新节奏也不同。
+RLHF 的参考策略 KL 惩罚用于约束模型相对行为锚点的漂移，目标可写为 $\mathbb{E}[r]-\beta D_{\mathrm{KL}}(\pi_\theta\Vert\pi_{\mathrm{ref}})$；参考策略通常是冻结的 SFT 模型。PPO 的 clip 或新旧策略 KL 则约束相对本轮采样策略的局部更新，旧策略随 rollout 轮次刷新。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
-
-### 展开要点
-
-- RLHF 目标常为 E[r]−βKL(π_θ||π_ref)，参考模型通常冻结。
-- PPO old policy 随 rollout 刷新，概率比用于同批样本的策略更新。
-- token 上 logπ_θ−logπ_ref 可用于采样估计，单个 token 值不必非负。
+两种约束的参照对象和作用范围不同，不能互相替代。实现中可用采样 token 的 $\log\pi_\theta-\log\pi_{\mathrm{ref}}$ 估计参考 KL，但单个采样项未必非负，不能把逐 token 出现负值直接视为实现错误。
 
 ### 易错点
 
 - KL 惩罚不能保证事实正确或彻底阻止 reward hacking。
 
-### 面试官可能追问
+### 追问
 
-- 为何增大 β 可能伤害偏好奖励提升？
-
-</details>
-
-**技术依据**
-
-- [APP-S161 · Secrets of RLHF in Large Language Models Part I: PPO](https://arxiv.org/pdf/2307.04964)
-
-**题目出处线索**
-
-- [APP-S007 · 大模型算法岗面试题复盘：RAG、Agent、评测](https://nanhubrain.csdn.net/6a3ce7a8662f9a54cb841a94.html) · `reported_question`：正文明确问 RLHF 为什么需要 KL penalty。
+- 为何增大 $\beta$ 可能伤害偏好奖励提升？
 
 <a id="aln-006"></a>
 ## ALN-006 · DPO 的损失如何从 KL 正则化 RLHF 目标推出？
 
-**L3 · 社区题目线索** · 标签：DPO / 推导
+**L3**
 
-**30 秒回答**
+### 答案
 
-先解带参考 KL 的奖励最大化，得到最优策略正比于参考策略乘 exp(r/β)；再把奖励改写为策略对数比。代入同一 prompt 的 Bradley–Terry 偏好模型后分区函数抵消，得到直接拟合偏好概率的 DPO 损失。
+从奖励最大化并惩罚参考策略 KL 的目标出发，最优策略满足 $\pi^*(y\mid x)\propto\pi_{\mathrm{ref}}(y\mid x)\exp(r(x,y)/\beta)$。将奖励改写为 $r(x,y)=\beta\log[\pi^*(y\mid x)/\pi_{\mathrm{ref}}(y\mid x)]+\beta\log Z(x)$，再代入 Bradley–Terry 偏好概率；同一问题的奖励差中，$Z(x)$ 项抵消，得到 DPO 损失。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
+该推导要求 $\beta>0$，参考策略的支持覆盖候选回答，并采用相应的偏好建模假设。训练时用参数化策略替代最优策略，有限数据、模型容量和优化误差仍然存在，因此推导不能保证实际模型一定达到原目标的最优解。
 
-### 展开要点
-
-- 需要 β>0、参考分布覆盖候选支持集，且使用相应偏好模型假设。
-- r=βlog(π*/π_ref)+βlogZ(x)，比较两个回答时相同 Z(x) 消失。
-- 有限数据、受限模型与优化误差意味着实训不能保证恢复理论最优策略。
-
-### 公式
-
-```text
-\mathcal L_{\rm DPO}=-\mathbb E\log\sigma\left(\beta\left[\log\frac{\pi_\theta(y_w|x)}{\pi_{\rm ref}(y_w|x)}-\log\frac{\pi_\theta(y_l|x)}{\pi_{\rm ref}(y_l|x)}\right]\right)
-```
+$$
+\mathcal{L}_{\mathrm{DPO}}=-\mathbb{E}_{(x,y_w,y_l)}\left[\log\sigma\left(\beta\left[\log\frac{\pi_\theta(y_w\mid x)}{\pi_{\mathrm{ref}}(y_w\mid x)}-\log\frac{\pi_\theta(y_l\mid x)}{\pi_{\mathrm{ref}}(y_l\mid x)}\right]\right)\right]
+$$
 
 ### 易错点
 
 - 目标推导对应不等于 DPO 和任意 PPO 实训过程完全等价。
 
-### 面试官可能追问
+### 追问
 
 - 当偏好出现循环时，BT 标量奖励假设有什么局限？
-
-</details>
-
-**技术依据**
-
-- [APP-S104 · Direct Preference Optimization](https://arxiv.org/html/2305.18290v3)
-
-**题目出处线索**
-
-- [APP-S001 · 字节多模态大模型面经一面](https://www.nowcoder.com/discuss/932594519835443200) · `search_snippet`：搜索结果明确出现 DPO loss 题。
 
 <a id="aln-007"></a>
 ## ALN-007 · DPO 的 β 和参考模型如何理解与调参？
 
-**L2 · 编辑补充题** · 标签：DPO / beta
+**L2**
 
-**30 秒回答**
+### 答案
 
-理论 KL 目标中 β 越大，最优策略对奖励的响应越受约束；DPO 损失中 β 同时缩放偏好 logit 与梯度，实训效果还受学习率、数据和训练时长影响。应观察 KL、偏好胜率与通用能力，而不是机械套用单调规律。
+参考模型提供偏好优化的行为锚点，通常选用适合任务的 SFT 模型。理论 KL 正则目标中，较大的 $\beta$ 意味着更强的参考策略约束，最优策略对奖励变化的响应较弱；在实际 DPO 损失中，$\beta$ 同时改变偏好 logit 与梯度尺度，其效果还受学习率、数据和训练时长影响，不能简单断言最终 KL 会单调变化。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
-
-### 展开要点
-
-- 参考模型定义行为锚点与对数概率比，常用对应任务的 SFT 模型。
-- 相同数据下用多组 β 做验证，观察 chosen/rejected 隐式奖励间距与 KL。
-- 参考模型与数据生成分布不匹配时，先检查格式、长度和支持覆盖。
+调参应比较多组 $\beta$，联合观察 chosen/rejected 的隐式奖励差、KL、胜率和通用能力。如果参考模型与偏好数据的生成模型不一致，先检查模板、长度及候选支持是否匹配，再判断超参数的影响。
 
 ### 易错点
 
 - 不要把 β 大简单解释成每步梯度必然更小。
 
-### 面试官可能追问
+### 追问
 
-- 同样 β，换参考模型为什么结果会变？
-
-</details>
-
-**技术依据**
-
-- [APP-S159 · DPO Trainer — TRL](https://huggingface.co/docs/trl/dpo_trainer)
-
-**题目出处线索**：为补全知识体系设计；未认定为某公司的实际提问。
+- 同样 $\beta$，换参考模型为什么结果会变？
 
 <a id="aln-008"></a>
 ## ALN-008 · PPO 与 DPO 在工程上如何选型？
 
-**L2 · 社区题目线索** · 标签：PPO / DPO / 选型
+**L2**
 
-**30 秒回答**
+### 答案
 
-DPO 适合已有可靠偏好对、希望以较低工程成本建立基线的场景；PPO 可在线采样并优化显式奖励，便于探索但流水线复杂。没有算法普遍胜出的结论，必须在同数据、预算、奖励和评测条件下比较。
+有可靠离线偏好对时，DPO 适合作为成本较低、易复现的基线；需要在线探索并能提供明确奖励时，PPO 更有发挥空间，但引入 rollout、价值模型、参考模型及更多调参成本。没有普遍更优的选择，应在一致的数据、预算、奖励和评测条件下比较。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
-
-### 展开要点
-
-- 比较 RM 质量、rollout 成本、value/参考模型显存与调参预算。
-- DPO 受离线偏好覆盖限制；PPO 也会利用奖励模型漏洞、产生分布偏移。
-- 先做 SFT/DPO 基线，再判断在线探索的收益是否足以覆盖复杂度。
+具体需评估奖励模型质量、rollout 成本以及模型与激活的显存占用。DPO 的瓶颈可能是离线候选覆盖不足，PPO 则可能遭遇奖励投机和分布偏移。通常先建立 SFT/DPO 基线，再验证在线学习带来的收益是否值得增加系统复杂度。
 
 ### 易错点
 
 - “PPO 一定更强”或“DPO 一定更稳定”都缺少条件。
 
-### 面试官可能追问
+### 追问
 
 - 奖励可执行验证且偏好很少时，你会优先试哪条路线？
-
-</details>
-
-**技术依据**
-
-- [APP-S108 · Is DPO Superior to PPO for LLM Alignment?](https://arxiv.org/abs/2404.10719)
-
-**题目出处线索**
-
-- [APP-S001 · 字节多模态大模型面经一面](https://www.nowcoder.com/discuss/932594519835443200) · `search_snippet`：搜索摘要报告 PPO/DPO trade-off 问题。
 
 <a id="aln-009"></a>
 ## ALN-009 · 如何把点赞、点踩和日志变成高质量偏好数据？
 
-**L2 · 社区题目线索** · 标签：偏好数据 / 反馈偏差
+**L2**
 
-**30 秒回答**
+### 答案
 
-用户反馈并不自动组成同 prompt 的可比偏好对。应先统一任务、上下文与评分准则，再为同问题生成或匹配候选，排除位置、长度和曝光偏差，抽样复核赢家是否真的更正确，保留不确定与平局记录。
+点赞、点踩和交互日志不能自动形成可靠偏好对。应先统一任务上下文与评价规则，再生成或匹配可比较候选；标注中排除展示位置、回答长度和曝光差异的影响，核验优选回答的正确性，并保留不确定、平局或不可比较样本。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
-
-### 展开要点
-
-- 点踩可能来自答案错误、体验延迟或立场差异，需分类后进入对应训练集。
-- 对比候选保持工具证据与用户需求可比，避免把缺证据回答当负例。
-- 训练/验证按用户、模板、文档或时间切分，避免近重复泄漏。
+点踩可能来自事实错误、延迟或立场差异，这些信号应分开处理。涉及工具、证据或用户需求时，候选必须拥有可比较条件，不能把缺少证据直接当作负例。训练和测试还应按用户、模板、文档或时间划分，并处理近重复，防止日志泄漏抬高结果。
 
 ### 易错点
 
 - 不能把不同用户不同问题的点赞答案与点踩答案直接配对。
 
-### 面试官可能追问
+### 追问
 
 - AI 评分生成偏好时怎样估计标注噪声？
-
-</details>
-
-**技术依据**
-
-- [APP-S109 · UltraFeedback](https://arxiv.org/html/2310.01377v1)
-
-**题目出处线索**
-
-- [APP-S003 · 面了一轮 Agent 岗，我把问过的问题整理成了文章](https://ac.nowcoder.com/discuss/1680599) · `search_snippet`：搜索可见“线上点赞点踩如何变成 DPO 数据”题。
 
 <a id="aln-010"></a>
 ## ALN-010 · GRPO 为什么不需要独立价值模型？
 
-**L2 · 社区题目线索** · 标签：GRPO / PPO
+**L2**
 
-**30 秒回答**
+### 答案
 
-原始 GRPO 对同一问题采样一组回答，用组内奖励均值作相对 baseline，再归一化形成优势，代替 PPO 中常见的价值模型估计。它节省 critic 的参数与训练开销，但仍需 rollout、奖励和可能的参考模型。
+GRPO 对同一问题采样一组回答，以组内平均奖励作为基线并标准化相对优势，从而替代 PPO 中独立价值模型的优势估计，节省 critic 参数和训练成本。它仍需要生成 rollout、计算奖励，具体实现还可能保留参考模型。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
-
-### 展开要点
-
-- outcome supervision 将同一回答的相对终局奖励用于其各 token 优势。
-- 策略更新仍使用新旧 token 概率比与 clipped surrogate。
-- 显存还受组大小、序列长度、优化器、激活与推理 KV cache 影响。
+采用结果奖励时，一条回答的最终优势通常分配给该回答的各个 token，再用新旧策略的 token 概率比构造裁剪目标。整体显存并非只由 critic 决定，还取决于组大小、回答长度、优化器状态、激活和生成 KV cache。
 
 ### 易错点
 
 - 去掉 critic 不等于没有 baseline，也不等于没有奖励模型。
 
-### 面试官可能追问
+### 追问
 
 - 如何分离 rollout 显存和训练显存预算？
-
-</details>
-
-**技术依据**
-
-- [APP-S106 · DeepSeekMath](https://arxiv.org/html/2402.03300v3)
-
-**题目出处线索**
-
-- [APP-S006 · Awesome-LLM-Interview-Questions-and-Answers](https://github.com/DolbyUUU/Awesome-LLM-Interview-Questions-and-Answers) · `reported_topic`：README 列 GRPO 与 RL 显存主题。
 
 <a id="aln-011"></a>
 ## ALN-011 · GRPO 组内标准差归一化带来哪些问题？
 
-**L3 · 编辑补充题** · 标签：GRPO / 归一化
+**L3**
 
-**30 秒回答**
+### 答案
 
-组内奖励减均值再除标准差能统一数值尺度，但会按每题的奖励方差重加权。二值奖励全对或全错时没有相对区分信号，低非零方差的组也可能放大少数样本；ε 只防数值异常，不能创造学习信号。
+原始 GRPO 的组内优势通常写为 $\hat A_i=(r_i-\bar r)/(\operatorname{std}(r)+\epsilon)$；标准差的具体定义需与实现一致。减均值提供相对基线，除以标准差则进一步按每个问题的奖励方差重加权：较小但非零的方差可能放大少数回答的信号。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
-
-### 展开要点
-
-- 原始 A_i=(r_i−mean(r))/(std(r)+ε)，属于特定 GRPO 定义。
-- 组大小改变 baseline/方差估计与出现混合对错样本的概率。
-- 可比较去 std、跨 batch 归一化、难度采样等方案，需同步控制总采样预算。
+二元奖励下，全对或全错的组没有相对学习信号；$\epsilon$ 只能改善数值稳定性，不能创造奖励差异。组大小影响方差估计及出现混合结果的概率。比较取消标准差归一化、跨 batch 归一化或难度采样时，应控制总采样量，避免把数据分布变化误认为目标函数改进。
 
 ### 易错点
 
 - 不要声称组内标准化天然无偏或对所有任务更优。
 
-### 面试官可能追问
+### 追问
 
 - 奖励为连续多维分数时，量纲怎样影响组优势？
-
-</details>
-
-**技术依据**
-
-- [APP-S162 · GRPO Trainer — TRL](https://huggingface.co/docs/trl/grpo_trainer)
-
-**题目出处线索**：为补全知识体系设计；未认定为某公司的实际提问。
 
 <a id="aln-012"></a>
 ## ALN-012 · GRPO 的长度偏差与 Dr. GRPO 有什么关系？
 
-**L3 · 编辑补充题** · 标签：GRPO / 长度偏差
+**L3**
 
-**30 秒回答**
+### 答案
 
-按每条响应长度取 token loss 均值会改变不同长度样本的权重：同样正优势下短答的单 token 激励更强，负优势下长错答的单 token 惩罚更弱。Dr. GRPO 移除响应长度和组标准差归一化，以常数缩放恢复其讨论的目标。
+GRPO 的长度偏差与损失归约方式有关。若每条回答先按自身 token 数取均值，短回答的单 token 权重更大；负优势下，较长错误回答的单 token 惩罚相对更小。因此不能把问题概括为“总是偏爱短回答”，它也可能相对偏好较长的错误回答。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
-
-### 展开要点
-
-- 问题在 loss reduction 的分母；response mean、batch token mean 和固定常数并不相同。
-- 该分析不能简单归纳为“GRPO 一定偏爱短回答”，错误长答也可能被相对优待。
-- 核对实际 mask、EOS、截断规则与采样长度，做长度/正确率联合消融。
+Dr. GRPO 讨论移除回答长度和组内标准差归一化，并采用常数尺度。实现中必须区分回答均值、batch token 均值与常数分母，它们给样本的权重不同。评估还需同时固定 mask、EOS、截断与采样长度设置，联合观察长度和正确率。
 
 ### 易错点
 
 - 某项修正有益不等于对所有训练目标无偏；需说明比较的目标函数。
 
-### 面试官可能追问
+### 追问
 
 - 全 batch token mean 会怎样改变样本之间的相对权重？
-
-</details>
-
-**技术依据**
-
-- [APP-S107 · Understanding R1-Zero-Like Training: A Critical Perspective](https://arxiv.org/html/2503.20783v2)
-
-**题目出处线索**：为补全知识体系设计；未认定为某公司的实际提问。
 
 <a id="aln-013"></a>
 ## ALN-013 · RLVR 的可验证奖励如何设计？
 
-**L2 · 编辑补充题** · 标签：RLVR / verifier
+**L2**
 
-**30 秒回答**
+### 答案
 
-RLVR 使用可执行或规则可核对的结果作奖励，例如数学答案检查、代码单测。先定义正确性和环境边界，隔离格式分与内容分，再验证评分器能否识别投机。可验证奖励减少主观标注，却不能保证覆盖所有推理质量。
+RLVR 用可执行规则提供奖励，例如数学答案校验或代码单元测试，以减少主观偏好标注。奖励设计仍要明确正确性与执行环境的边界，并将格式奖励和内容奖励分开；可验证结果并不等于所有推理过程都可靠。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
-
-### 展开要点
-
-- 数学要处理等价表达和解析失败；代码要用隔离执行、超时与隐藏测试。
-- 格式奖励权重过大可能诱导只满足格式；正确结果也未必说明过程可靠。
-- 用对抗样本、人工复核和未参与训练的任务监测评分器漏洞。
+数学任务需处理等价表达与解析失败，代码任务需隔离执行环境、超时及隐藏测试。格式权重过高可能使模型只优化格式，弱测试器也可能被利用。应通过对抗样本、人工复核和独立测试集检查验证器漏洞，防止把测试器投机当作能力提升。
 
 ### 易错点
 
 - 一个正则或少量公开测试不是完备的 correctness oracle。
 
-### 面试官可能追问
+### 追问
 
 - 工具调用成功但业务目标未完成，应怎样给奖励？
-
-</details>
-
-**技术依据**
-
-- [APP-S110 · DeepSeek-R1](https://arxiv.org/html/2501.12948v1)
-
-**题目出处线索**：为补全知识体系设计；未认定为某公司的实际提问。
 
 <a id="aln-014"></a>
 ## ALN-014 · ORM 与 PRM 的区别和信用分配难点是什么？
 
-**L2 · 社区题目线索** · 标签：ORM / PRM / 信用分配
+**L2**
 
-**30 秒回答**
+### 答案
 
-ORM 针对最终结果评分，PRM 在推理步骤提供反馈，能定位早期错误但需要昂贵且一致的步骤标注。过程分还涉及划分粒度与聚合方式；终局奖励回传给所有 token 并不意味着每个 token 对正确性贡献相同。
+ORM 对最终结果评分，PRM 对中间步骤评分，后者有机会更早发现错误，但需要一致的步骤标注与额外成本。信用分配的难点是确定哪些步骤真正贡献了结果；把同一结果奖励广播到所有 token，并不意味着每个 token 的因果贡献相同。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
-
-### 展开要点
-
-- 先明确一步的边界与可验证性；自然语言分步可被模型改变粒度投机。
-- PRM 能用于训练信号或推理时排序，两者用途与验证方案不同。
-- 论文中数学任务收益不应直接外推为所有开放领域任务都优于 ORM。
+PRM 的步骤边界、可验证性及分数聚合方式会影响结果，模型也可能利用评分粒度。用于训练的过程奖励与用于推理候选排序的过程奖励需要分别验证。数学任务中的实验收益不能直接外推到全部开放领域任务。
 
 ### 易错点
 
 - 步骤看似合理不代表整个推理或最终结果正确。
 
-### 面试官可能追问
+### 追问
 
 - Agent 的检索、工具、答复步骤如何构造过程评分？
-
-</details>
-
-**技术依据**
-
-- [APP-S111 · Let's Verify Step by Step](https://arxiv.org/abs/2305.20050)
-
-**题目出处线索**
-
-- [APP-S008 · 字节面经：大模型算法岗面经 04](https://www.nowcoder.com/discuss/922308546966847488) · `secondary_report`：公开汇总包含 Agentic RL 的过程评分与 token 分数问题。
 
 <a id="aln-015"></a>
 ## ALN-015 · 如何识别和缓解 reward hacking？
 
-**L2 · 编辑补充题** · 标签：奖励投机 / Goodhart
+**L2**
 
-**30 秒回答**
+### 答案
 
-奖励是业务目标的代理，优化过强时模型可能利用它的盲点，出现分数上涨而真实质量下降。要分开训练奖励和独立验证指标，追踪长度、套话、异常工具行为，使用人工抽检、对抗样本与更新评分器控制投机。
+Reward hacking 指模型过度优化奖励代理，却降低了真实任务质量。识别时应联合观察独立指标、回答长度、套话和异常工具行为，并对高分样本做人类或对抗复核；只看奖励上涨无法判断能力是否改善。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
-
-### 展开要点
-
-- 典型症状包括重复关键词、讨好裁判、输出空安全答案或绕过弱验证。
-- 参考 KL、提前停止、多样化反馈可减缓漂移，但不保证消除漏洞。
-- 保存 rollout 样本与奖励分项，检查高分 bad case 是否系统性聚集。
+常见表现包括重复关键词、迎合裁判、空泛安全回答或绕过弱验证器。参考 KL、提前停止和多样反馈可降低风险，但不能证明问题已经消除。工程上应保留 rollout 与分项奖励，聚类分析高分失败案例，再改进评分器和验证流程。
 
 ### 易错点
 
 - GRPO 的相对优势或换成 LLM judge 本身不是 reward hacking 的解药。
 
-### 面试官可能追问
+### 追问
 
 - 如果训练奖励上升、独立胜率下降，你先停哪一环？
-
-</details>
-
-**技术依据**
-
-- [APP-S112 · Scaling Laws for Reward Model Overoptimization](https://arxiv.org/abs/2210.10760)
-
-**题目出处线索**：为补全知识体系设计；未认定为某公司的实际提问。
 
 <a id="aln-016"></a>
 ## ALN-016 · 后训练为什么会出现对齐税或遗忘？
 
-**L2 · 社区题目线索** · 标签：alignment tax / 遗忘
+**L2**
 
-**30 秒回答**
+### 答案
 
-后训练把优化重点转向特定任务与偏好，可能让部分原有能力下降，称为对齐税或遗忘现象。要对比基座、SFT、偏好训练各阶段的同条件评测，使用任务数据混合、正则与预训练回放寻找能力和行为控制的平衡。
+后训练改变目标与数据分布，可能使部分原有能力下降，表现为对齐税或遗忘。评估应在相同设置下比较基础模型、SFT 和偏好优化模型，并分别报告数学、代码、多语言和安全表现，不能只用一个总分判断。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
-
-### 展开要点
-
-- 退化也可能来自回答格式、拒答或解码差异，先排除评测设置变化。
-- InstructGPT 的 PPO-ptx 混入预训练目标缓解部分基准退化，但并未解决全部。
-- 按数学、代码、多语、安全分别监测，避免只看偏好总分。
+格式、拒答行为或解码变化也可能造成表面退化，应先排除这些评测因素。混合数据、正则化和预训练数据回放可调节能力保留与新目标之间的权衡；InstructGPT 的 PPO-ptx 展示过混合预训练目标的部分收益，但不保证对所有能力都有效。
 
 ### 易错点
 
 - LoRA 或小学习率可降低变化幅度，但不能保证没有遗忘。
 
-### 面试官可能追问
+### 追问
 
 - 如何区分知识丢失和评测 parser 失配？
-
-</details>
-
-**技术依据**
-
-- [APP-S101 · Training language models to follow instructions with human feedback](https://arxiv.org/html/2203.02155v1)
-
-**题目出处线索**
-
-- [APP-S006 · Awesome-LLM-Interview-Questions-and-Answers](https://github.com/DolbyUUU/Awesome-LLM-Interview-Questions-and-Answers) · `reported_topic`：README 有模型微调通用能力与灾难性遗忘主题。
 
 <a id="aln-017"></a>
 ## ALN-017 · RLAIF 和 Constitutional AI 如何工作？
 
-**L2 · 编辑补充题** · 标签：RLAIF / Constitutional AI
+**L2**
 
-**30 秒回答**
+### 答案
 
-RLAIF 用模型生成偏好或反馈，降低逐条人工标注成本；Constitutional AI 按一组人类制定原则进行自我批评修订，再使用 AI 偏好训练奖励和策略。监督来源改变并不等于完全无人参与或自动消除偏见。
+RLAIF 用 AI 提供偏好或反馈，减少人工逐样本标注成本。Constitutional AI 由人定义原则，引导模型自我批评与修订，再利用 AI 偏好构造奖励模型和策略训练；其中自我修订可用于 SFT，AI 成对标签可用于偏好强化学习。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
-
-### 展开要点
-
-- 原则、提示、评分模型与训练数据共同决定偏好，需明确可审计版本。
-- 自我修订样本可用于监督训练，AI 比较标签可用于偏好/RL 阶段。
-- 保留专家标注验证集，对少数群体、领域事实和过度拒答独立检查。
+这仍需要人类制定原则和审计结果，并非无需人工，也不自动消除偏差。原则、提示词、裁判与训练数据应可追踪并版本化；用专家和独立留出样本检查少数群体、事实质量及过度拒答，避免反馈模型的偏差被反复放大。
 
 ### 易错点
 
 - 模型反馈可能传播同类错误，数据量增加不能替代质量核验。
 
-### 面试官可能追问
+### 追问
 
 - 同一个模型生成和打分会产生哪些相关误差？
-
-</details>
-
-**技术依据**
-
-- [APP-S113 · Constitutional AI](https://arxiv.org/abs/2212.08073)
-
-**题目出处线索**：为补全知识体系设计；未认定为某公司的实际提问。
 
 <a id="aln-018"></a>
 ## ALN-018 · IPO 等 DPO 变种主要试图解决什么问题？
 
-**L3 · 社区题目线索** · 标签：IPO / 偏好建模
+**L3**
 
-**30 秒回答**
+### 答案
 
-偏好学习方法会改变偏好概率映射、正则方式或数据利用方式。IPO 从更一般的成对偏好目标出发，讨论 DPO 对偏好转标量奖励等假设的依赖。面试应先讲要解决的假设与过拟合问题，再比较损失和实证条件。
+DPO 变种主要调整偏好概率映射、正则化或数据使用方式。IPO 从更一般的成对偏好目标出发，讨论将偏好映射为标量奖励等假设；人类偏好可能非传递，未必能由单一标量奖励精确表达，因此应先说明建模假设和待解决的过拟合问题，再解释损失。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
-
-### 展开要点
-
-- 人类成对偏好可能不传递，无法总由一个标量奖励精确表示。
-- 变种不能只凭名字判断更好，需要看噪声、样本覆盖、参考策略与预算。
-- 比较相同验证集的偏好胜率、KL、长度分布和任务正确率。
+算法名称不能证明效果更好。比较时应控制偏好噪声、候选覆盖、参考模型和训练预算，在相同评测中联合观察胜率、KL、回答长度与正确率，并核对改动是否适用于当前数据条件。
 
 ### 易错点
 
 - 不要把所有 DPO 变种说成只是“加一项 SFT loss”。
 
-### 面试官可能追问
+### 追问
 
 - 若所有标注都绝对偏好同一答案，怎样监测过拟合？
-
-</details>
-
-**技术依据**
-
-- [APP-S114 · A General Theoretical Paradigm to Understand Learning from Human Preferences](https://arxiv.org/abs/2310.12036)
-
-**题目出处线索**
-
-- [APP-S009 · 字节大模型算法实习生：电商业务（已 oc）](https://www.nowcoder.com/discuss/724319940982898688) · `reported_question`：正文明确问 DPO 缺点与相关变种。
 
 <a id="aln-019"></a>
 ## ALN-019 · 离线偏好优化和在线 RL 的分布差异是什么？
 
-**L2 · 社区题目线索** · 标签：offline / online / distribution shift
+**L2**
 
-**30 秒回答**
+### 答案
 
-离线方法主要在固定候选分布上学习，简单可复现，却可能缺少当前策略的困难负例；在线方法更新采样分布，能探索新回答，也让评分器面对分布外样本。选型需看反馈成本、任务奖励及可承担的 rollout 预算。
+离线偏好优化使用固定候选，便于复现，但数据可能缺少当前策略的困难负例，尤其当生成模型与学习模型差距较大时，长尾问题或罕见回答的覆盖会不足。在线 RL 随策略更新采样，能够探索新行为，也更容易进入奖励模型未见过的分布。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
-
-### 展开要点
-
-- 数据生成策略与训练策略差距增大会影响有效覆盖，尤其长回答和罕见任务。
-- 可迭代生成偏好数据补覆盖，但要保留独立测试与版本追踪。
-- 在线 rollout 与多 epoch 更新间有策略滞后，应监测新旧策略比值。
+选择时需综合反馈任务、奖励可靠性与 rollout 预算。迭代更新偏好数据应保留独立留出集与数据版本；在线训练还要关注采样策略与多轮更新策略之间的滞后，监测概率比，防止样本过旧影响优化。
 
 ### 易错点
 
 - 在线 DPO 等变体存在，不能把 DPO 永久等同于固定离线流程。
 
-### 面试官可能追问
+### 追问
 
 - 怎样发现离线数据覆盖不足，而非优化器没收敛？
-
-</details>
-
-**技术依据**
-
-- [APP-S108 · Is DPO Superior to PPO for LLM Alignment?](https://arxiv.org/abs/2404.10719)
-- [APP-S164 · Online DPO Trainer — TRL](https://huggingface.co/docs/trl/online_dpo_trainer)
-
-**题目出处线索**
-
-- [APP-S010 · 字节大模型实习算法面经 55min](https://www.nowcoder.com/feed/main/detail/59b472d7ec6645cc95ac0735885234e3) · `search_snippet`：搜索摘要列离线/在线强化学习与项目使用方式。
 
 <a id="aln-020"></a>
 ## ALN-020 · 多目标奖励发生冲突时如何处理？
 
-**L3 · 社区题目线索** · 标签：多目标 / 安全对齐
+**L3**
 
-**30 秒回答**
+### 答案
 
-正确性、简洁度、有用性与安全并不总能同时提高。应先区分必须满足的约束与可权衡指标，校准各奖励尺度，再用分层约束、加权或约束优化建立可解释权衡，报告各维结果而非一个掩盖冲突的总分。
+正确性、简洁性、有用性和安全性可能冲突，应先区分必须满足的约束与可以交换的质量目标，再采用约束优化、门控或加权奖励，并公开各维度的取舍。一般质量可以分析 Pareto 权衡，严重违规则可作为硬约束处理。
 
-<details>
-<summary>展开答案、易错点与追问</summary>
-
-### 展开要点
-
-- 权重前先看奖励量纲、方差和样本分布，防止大数值项支配训练。
-- 严重违规可定义约束或门禁；一般质量属性可探索 Pareto 前沿。
-- 保留各项奖励与失败案例，评估过度拒答及正确但冗长等边界。
+加权前需校准奖励的单位、方差和样本分布，避免数值较大的分项无意占主导。保留分项奖励及失败案例，单独检查过度拒答、正确但冗长等冲突情形；一个综合分数无法完整说明多目标表现。
 
 ### 易错点
 
 - 奖励简单相加不保证满足硬约束，也不保证各项单调改善。
 
-### 面试官可能追问
+### 追问
 
 - 如何确定安全阈值并防止模型输出空答案拿高分？
 
-</details>
+## 参考资料
 
-**技术依据**
-
-- [APP-S115 · Safe RLHF](https://arxiv.org/abs/2310.12773)
-
-**题目出处线索**
-
-- [APP-S010 · 字节大模型实习算法面经 55min](https://www.nowcoder.com/feed/main/detail/59b472d7ec6645cc95ac0735885234e3) · `search_snippet`：搜索摘要出现多目标奖励冲突题。
+- [Training language models to follow instructions with human feedback](https://arxiv.org/html/2203.02155v1)
+- [Direct Preference Optimization](https://arxiv.org/html/2305.18290v3)
+- [Reward Modeling — TRL](https://huggingface.co/docs/trl/reward_trainer)
+- [PPO — Spinning Up](https://spinningup.openai.com/en/latest/algorithms/ppo.html)
+- [Proximal Policy Optimization Algorithms](https://arxiv.org/abs/1707.06347)
+- [Generalized Advantage Estimation](https://arxiv.org/pdf/1506.02438)
+- [Secrets of RLHF in Large Language Models Part I: PPO](https://arxiv.org/pdf/2307.04964)
+- [DPO Trainer — TRL](https://huggingface.co/docs/trl/dpo_trainer)
+- [Is DPO Superior to PPO for LLM Alignment?](https://arxiv.org/abs/2404.10719)
+- [UltraFeedback](https://arxiv.org/html/2310.01377v1)
+- [DeepSeekMath](https://arxiv.org/html/2402.03300v3)
+- [GRPO Trainer — TRL](https://huggingface.co/docs/trl/grpo_trainer)
+- [Understanding R1-Zero-Like Training: A Critical Perspective](https://arxiv.org/html/2503.20783v2)
+- [DeepSeek-R1](https://arxiv.org/html/2501.12948v1)
+- [Let's Verify Step by Step](https://arxiv.org/abs/2305.20050)
+- [Scaling Laws for Reward Model Overoptimization](https://arxiv.org/abs/2210.10760)
+- [Constitutional AI](https://arxiv.org/abs/2212.08073)
+- [A General Theoretical Paradigm to Understand Learning from Human Preferences](https://arxiv.org/abs/2310.12036)
+- [Online DPO Trainer — TRL](https://huggingface.co/docs/trl/online_dpo_trainer)
+- [Safe RLHF](https://arxiv.org/abs/2310.12773)
