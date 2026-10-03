@@ -179,9 +179,9 @@ Prefix Cache 复用相同前缀的 KV，主要减少 prefill 计算，收益取�
 
 用有界队列施加背压，避免解析快而 OCR 慢时把内存堆满。限制进程内 BLAS/OCR 线程，避免进程数乘线程数过度争抢；控制 GPU 模型实例数量，批量推理与失败页隔离并行设计。优化目标是每秒成功处理页数及峰值资源，不是启动最多 worker。
 
-$$
-\operatorname{throughput}_{\mathrm{pipeline}}\lesssim\min_i\operatorname{capacity}_i
-$$
+```math
+\mathrm{throughput}_{\mathrm{pipeline}}\lesssim\min_i\mathrm{capacity}_i
+```
 
 #### 易错点
 

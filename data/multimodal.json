@@ -1118,7 +1118,7 @@
       ],
       "answer": {
         "body": "CLIP 使用图像、文本双编码器，将图文映射到同一表示空间，再用归一化特征的相似度区分匹配图文对。一个 batch 中，同一索引的图文对通常是正例，其他配对是负例；图到文和文到图分别做分类，两个交叉熵损失取平均。它学习跨模态匹配表征，并非直接训练文本生成器。\n\n若图像、文本单位向量为 $v_i,t_j$，相似度为 $s_{ij}=v_i^\\top t_j/\\tau$。温度 $\\tau$ 控制 softmax 的尖锐程度，原始实现使用可训练的对数尺度。实际图文数据可能含同义描述，此时 batch 内其他配对也可能相关，形成假负例。",
-        "formula": "\\begin{aligned}\ns_{ij}&=\\frac{v_i^\\top t_j}{\\tau},\\qquad \\|v_i\\|_2=\\|t_j\\|_2=1\\\\\n\\mathcal L_{\\mathrm{CLIP}}&=\\frac{1}{2}\\left[\\operatorname{CE}(s,\\operatorname{diag})+\\operatorname{CE}(s^\\top,\\operatorname{diag})\\right]\n\\end{aligned}",
+        "formula": "\\begin{aligned}\ns_{ij}&=\\frac{v_i^\\top t_j}{\\tau},\\qquad \\|v_i\\|_2=\\|t_j\\|_2=1\\\\\n\\mathcal L_{\\mathrm{CLIP}}&=\\frac{1}{2}\\left[\\mathrm{CE}(s,\\mathrm{diag})+\\mathrm{CE}(s^\\top,\\mathrm{diag})\\right]\n\\end{aligned}",
         "pitfalls": [
           "不要把 CLIP 的文本编码器当作生成式 LLM。"
         ],
@@ -1289,7 +1289,7 @@
       ],
       "answer": {
         "body": "Q-Former 是带可学习查询的 Transformer，用查询间的自注意力与读取视觉特征的交叉注意力，提取固定数量的表示，再投影成 LLM 的软提示。若视觉特征 shape 为 `N×d_v`，查询为 `M×d_q`，交叉注意力的 Q 来自查询，K/V 来自视觉特征，输出为 `M×d_q`，随后映射到 `M×d_LLM`；查询数量 $M$ 不随 patch 数 $N$ 直接增长。原始 BLIP-2 使用 32 个查询，这只是其配置。\n\n原始 Q-Former 从 BERT-base 初始化共享自注意力层，每隔一个 Transformer block 插入视觉 cross-attention。查询会相互交互，因此它并非对每个 patch 独立做投影。BLIP-2 用两阶段训练连接冻结的视觉骨干和 LLM：\n\n- 第一阶段通过 ITC、ITM、ITG 学图文表示。ITC 隔离 query 和文本；ITM 允许两者双向交互；ITG 中 query 相互双向可见且不看文本，文本可看全部 query 和已生成文本，所以 query 子图并不是 causal。\n- 第二阶段以 LLM 的生成目标更新 Q-Former 和投影层。冻结骨干指参数不更新，梯度仍须经过冻结的 LLM 回到连接器；将其前向整体放入 `no_grad` 会切断训练路径。\n\n原始 BLIP-2 生成阶段的视觉查询不直接接收用户指令；InstructBLIP 才将指令送入 Q-Former，以提取指令相关特征。",
-        "formula": "\\begin{aligned}\nZ&=\\operatorname{QFormer}(Q_{\\mathrm{learned}},X)\\in\\mathbb R^{M\\times d_q}\\\\\nV_{\\mathrm{soft}}&=ZW_{\\mathrm{proj}}\\in\\mathbb R^{M\\times d_{\\mathrm{LLM}}}\n\\end{aligned}",
+        "formula": "\\begin{aligned}\nZ&=\\mathrm{QFormer}(Q_{\\mathrm{learned}},X)\\in\\mathbb R^{M\\times d_q}\\\\\nV_{\\mathrm{soft}}&=ZW_{\\mathrm{proj}}\\in\\mathbb R^{M\\times d_{\\mathrm{LLM}}}\n\\end{aligned}",
         "pitfalls": [
           "可学习 query 是模型参数向量，不等于用户问题文本、检测框或 LLM 每步的 query。",
           "32 是原始 BLIP-2 实验设置；更多查询会改变瓶颈与 LLM 成本，不能当成架构必须值。"
@@ -1969,7 +1969,7 @@
       ],
       "answer": {
         "body": "视频问答通常评估答案，moment retrieval 还需输出与语言查询对应的起止时刻。Moment-DETR 将片段坐标与显著性作为不同目标，评测可用时间区间交并比 tIoU 和阈值召回衡量定位，并与显著性评分分开报告。\n\n设预测和真实区间分别为 $[s_p,e_p]$ 与 $[s_g,e_g]$，交集长度为 $I$，tIoU 是交集长度除以并集长度，适用于两个非零时长区间。按短片段、重复动作和多个正确片段分别检查；答案正确不代表定位正确。",
-        "formula": "\\begin{aligned}\nI&=\\max\\left(0,\\min(e_p,e_g)-\\max(s_p,s_g)\\right)\\\\\n\\operatorname{tIoU}&=\\frac{I}{(e_p-s_p)+(e_g-s_g)-I}\n\\end{aligned}",
+        "formula": "\\begin{aligned}\nI&=\\max\\left(0,\\min(e_p,e_g)-\\max(s_p,s_g)\\right)\\\\\n\\mathrm{tIoU}&=\\frac{I}{(e_p-s_p)+(e_g-s_g)-I}\n\\end{aligned}",
         "pitfalls": [
           "不要把时间 IoU 当作逐帧分类准确率。"
         ],
@@ -2027,7 +2027,7 @@
       ],
       "answer": {
         "body": "WER 在词级对齐预测与参考，将替换 $S$、删除 $D$、插入 $I$ 的总数除以参考词数 $N_{\\mathrm{ref}}$；参考词数等于正确、替换和删除的数量之和。CER 则在字符级对齐并使用参考字符数。\n\n中文分词规则影响 WER，CER 更便于比较，但仍须统一标点、数字和大小写规范。corpus WER 应先汇总错误数和参考词数再相除；插入可使 WER 超过 100%，空参考需明确协议。业务上还应报告关键实体错误率。",
-        "formula": "\\operatorname{WER}=\\frac{S+D+I}{N_{\\mathrm{ref}}}",
+        "formula": "\\mathrm{WER}=\\frac{S+D+I}{N_{\\mathrm{ref}}}",
         "pitfalls": [
           "不要无条件平均每句 WER，短句会被过度加权。"
         ],
@@ -2852,7 +2852,7 @@
       ],
       "answer": {
         "body": "GPU utilization 只反映设备是否忙；HFU 可包含重计算等实际执行 FLOPs；MFU 则用完成训练所需的模型有效 FLOPs，除以 step 时间与集群理论峰值的乘积。MFU 分子不把激活重计算当作额外有效工作，因此 GPU 忙也可能来自低效算子或通信等待。\n\n稠密 Transformer 的 $6NT$ 近似忽略 attention 和额外模块，长序列时这些项不可忽略，MoE 也不能直接按总参数量套用。峰值须匹配 dtype、稠密/稀疏口径和实际 GPU 数，并结合 token 吞吐与训练精度解释。",
-        "formula": "\\begin{aligned}\n\\operatorname{MFU}&=\\frac{C_{\\mathrm{model,step}}}{t_{\\mathrm{step}}F_{\\mathrm{peak,cluster}}}\\\\\nC_{\\mathrm{dense}}&\\approx 6NT\n\\end{aligned}",
+        "formula": "\\begin{aligned}\n\\mathrm{MFU}&=\\frac{C_{\\mathrm{model,step}}}{t_{\\mathrm{step}}F_{\\mathrm{peak,cluster}}}\\\\\nC_{\\mathrm{dense}}&\\approx 6NT\n\\end{aligned}",
         "pitfalls": [
           "MoE 不能无条件按总参数量套 $6NT$。"
         ],

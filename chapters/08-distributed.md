@@ -45,38 +45,34 @@
 
 #### 答案
 
-先把训练显存拆为权重、梯度、优化器/主权重、激活、工作区及通信临时状态。设参数量为 $P$，若低精度权重和梯度各为 $2P$ bytes，FP32 主权重为 $4P$，Adam 一二阶状态合计 $8P$，模型状态共 $16P$ bytes。$P=7\times10^9$ 时为十进制 112GB，约 104.3GiB；FP32 梯度、没有独立主权重或换优化器时须重算。峰值还包含激活、工作区、通信桶及临时聚合，`allocated`、`reserved` 和设备已用量也不是同一口径。
+先把训练显存拆为权重、梯度、优化器/主权重、激活、工作区及通信临时状态。设参数量为 $`P`$，若低精度权重和梯度各为 $`2P`$ bytes，FP32 主权重为 $`4P`$，Adam 一二阶状态合计 $`8P`$，模型状态共 $`16P`$ bytes。$`P=7\times10^9`$ 时为十进制 112GB，约 104.3GiB；FP32 梯度、没有独立主权重或换优化器时须重算。峰值还包含激活、工作区、通信桶及临时聚合，`allocated`、`reserved` 和设备已用量也不是同一口径。
 
-固定有效 batch 时，减小每卡 microbatch、增加累积步数，可通过逐次前后向释放计算图降低激活峰值；只增累积步数而不减 microbatch 不会自动省激活，也不减少权重或 Adam 状态。等大小样本时 $B_{\mathrm{eff}}=B_{\mathrm{micro}}AD$，$A$ 为累积步数、$D$ 为数据并行度；变长样本按有效监督 token 加权，避免重复归一化。FSDP 的 `no_sync` 等设置可能保留完整梯度，须实测峰值。
+固定有效 batch 时，减小每卡 microbatch、增加累积步数，可通过逐次前后向释放计算图降低激活峰值；只增累积步数而不减 microbatch 不会自动省激活，也不减少权重或 Adam 状态。等大小样本时 $`B_{\mathrm{eff}}=B_{\mathrm{micro}}AD`$，$`A`$ 为累积步数、$`D`$ 为数据并行度；变长样本按有效监督 token 加权，避免重复归一化。FSDP 的 `no_sync` 等设置可能保留完整梯度，须实测峰值。
 
 按瓶颈选择优化：
 
 - 模型状态：DDP 复制状态；TP 切单层矩阵与计算，PP 切不同层，ZeRO 在数据并行组中依次分片 optimizer/master、gradients、parameters。当前模块的参数 all-gather、通信桶和 PP 在途 microbatch 仍可能提高临时峰值。CPU/NVMe offload 用传输与主存/存储带宽换容量。
-- 激活与注意力：checkpointing 用反向重算换保留激活；标准 FlashAttention 通过分块、在线 softmax 避免完整 $S\times S$ 注意力矩阵驻留 HBM，仍是精确稠密注意力，浮点次序可不同，算术复杂度仍约 $O(S^2)$。稀疏注意力改变可见连接，需另测质量；LoRA 减少可训练状态，长序列激活仍可很大。
+- 激活与注意力：checkpointing 用反向重算换保留激活；标准 FlashAttention 通过分块、在线 softmax 避免完整 $`S\times S`$ 注意力矩阵驻留 HBM，仍是精确稠密注意力，浮点次序可不同，算术复杂度仍约 $`O(S^2)`$。稀疏注意力改变可见连接，需另测质量；LoRA 减少可训练状态，长序列激活仍可很大。
 - 数据：streaming 按需读取数据，可减少整库下载、转换和主存驻留，需设置分片、shuffle buffer 与 worker；它不自动压缩模型参数、优化器或当前 batch 的激活。
 
 先 profile OOM 出现在前向、反向还是优化器更新，再比较显存、有效 token 吞吐与任务质量。缩短序列、量化、冻结或稀疏化，都应说明目标或精度变化。
 
-同一混合精度 Adam 账单下，全参微调模型状态约 $16P$。底座全部冻结时，浮点 LoRA 约为 $2P+16P_a$，理想全量化 QLoRA 约为 $P/2+16P_a+M_{\mathrm{quant\ metadata}}$ bytes；$P_a$ 是实际新增的可训练 adapter 参数数，不是 rank 本身。未量化冻结层、额外解冻参数须单独重算，不能把已经计入底座的权重再重复加入 adapter 账单。这些都须再加激活、工作区与通信临时状态，且 master/gradient dtype、量化层范围和优化器实现不同会改写系数。14B 全参的这项模型状态账单约 224 GB、208.6 GiB，不能用推理的 28 GB FP16 权重直接估算训练卡数。若冻结视觉或语言模块但需向可训练前层传播梯度，也不能简单整段 no_grad；是否省激活取决于计算图中的可训练位置。
+同一混合精度 Adam 账单下，全参微调模型状态约 $`16P`$。底座全部冻结时，浮点 LoRA 约为 $`2P+16P_a`$，理想全量化 QLoRA 约为 $`P/2+16P_a+M_{\mathrm{quant\ metadata}}`$ bytes；$`P_a`$ 是实际新增的可训练 adapter 参数数，不是 rank 本身。未量化冻结层、额外解冻参数须单独重算，不能把已经计入底座的权重再重复加入 adapter 账单。这些都须再加激活、工作区与通信临时状态，且 master/gradient dtype、量化层范围和优化器实现不同会改写系数。14B 全参的这项模型状态账单约 224 GB、208.6 GiB，不能用推理的 28 GB FP16 权重直接估算训练卡数。若冻结视觉或语言模块但需向可训练前层传播梯度，也不能简单整段 no_grad；是否省激活取决于计算图中的可训练位置。
 
-$$
-\begin{aligned}
-M_{\mathrm{states}}&=(2+2+4+4+4)P=16P\ \mathrm{bytes}\\
-M_{\mathrm{peak}}&=M_{\mathrm{states}}+M_{\mathrm{activations}}+M_{\mathrm{workspace}}+M_{\mathrm{communication}}\\
-B_{\mathrm{eff}}&=B_{\mathrm{micro}}\times A\times D
-\end{aligned}
-$$
+```math
+\begin{aligned} M_{\mathrm{states}}&=(2+2+4+4+4)P=16P\ \mathrm{bytes}\\ M_{\mathrm{peak}}&=M_{\mathrm{states}}+M_{\mathrm{activations}}+M_{\mathrm{workspace}}+M_{\mathrm{communication}}\\ B_{\mathrm{eff}}&=B_{\mathrm{micro}}\times A\times D \end{aligned}
+```
 
 #### 易错点
 
-- 仅加梯度累积就声称显存下降，或用 $16P$ 状态账单冒充所有实现的峰值显存。
+- 仅加梯度累积就声称显存下降，或用 $`16P`$ 状态账单冒充所有实现的峰值显存。
 - 把数据流式加载、TP/PP、ZeRO 和稀疏 attention 视为同一种省显存操作，忽略各自影响的对象及通信/质量成本。
 
 #### 追问
 
 - microbatch 已经是 1，而权重与 optimizer 仍放不下时，应优先尝试哪些状态优化？
 - 怎么用 profiler 与峰值 `allocated`/`reserved` 区分激活、参数聚合和 `optimizer.step` 的 OOM？
-- 怎样根据 adapter 的 target_modules 和实际 shape 计算 $P_a$，而不是套固定显存百分比？
+- 怎样根据 adapter 的 target_modules 和实际 shape 计算 $`P_a`$，而不是套固定显存百分比？
 
 <a id="dst-004"></a>
 ### DST-004 · ZeRO-1/2/3 各切分什么？理想状态显存是多少？
@@ -85,17 +81,13 @@ $$
 
 #### 答案
 
-ZeRO 在数据并行组内逐步消除模型状态冗余：Stage 1 切优化器及主权重，Stage 2 再切梯度，Stage 3 再切参数。在 DST-003 的 $16P$ bytes 假设下，若分片数为 $D$，理想持久状态分别为 $4P+12P/D$、$2P+14P/D$ 和 $16P/D$。
+ZeRO 在数据并行组内逐步消除模型状态冗余：Stage 1 切优化器及主权重，Stage 2 再切梯度，Stage 3 再切参数。在 DST-003 的 $`16P`$ bytes 假设下，若分片数为 $`D`$，理想持久状态分别为 $`4P+12P/D`$、$`2P+14P/D`$ 和 $`16P/D`$。
 
 收益取决于状态 dtype 和并行度，不能说每升一级都减半。以上不含激活、通信桶和未分片参数；Stage 3 还需临时收集当前计算模块的参数，因此不保证每个 rank 的峰值相同，也不保证更快。ZeRO 切状态冗余，与 TP 切单个矩阵计算不同。
 
-$$
-\begin{aligned}
-M_1&=4P+\frac{12P}{D}\\
-M_2&=2P+\frac{14P}{D}\\
-M_3&\approx\frac{16P}{D}
-\end{aligned}
-$$
+```math
+\begin{aligned} M_1&=4P+\frac{12P}{D}\\ M_2&=2P+\frac{14P}{D}\\ M_3&\approx\frac{16P}{D} \end{aligned}
+```
 
 #### 易错点
 
@@ -193,17 +185,13 @@ PyTorch DataParallel通常在一个进程内多线程scatter输入、复制模�
 
 #### 答案
 
-按 $XW$ 的矩阵乘法记号，MLP 第一层权重沿输出维度切分，每卡独立得到并逐元素激活自己的中间特征；第二层权重沿对应输入维度切分，每卡得到输出的部分和，再归约相加。这样可避免两次 GEMM 之间收集中间特征。
+按 $`XW`$ 的矩阵乘法记号，MLP 第一层权重沿输出维度切分，每卡独立得到并逐元素激活自己的中间特征；第二层权重沿对应输入维度切分，每卡得到输出的部分和，再归约相加。这样可避免两次 GEMM 之间收集中间特征。
 
 第二层输出须求和而非拼接，反向也存在对应通信，SP 等方案可调整 collective 布局。框架实际存储的权重可能转置，应先明确所谓行、列所指的维度。
 
-$$
-\begin{aligned}
-W_1&=[W_{1,1},\ldots,W_{1,D}]\\
-H_i&=\phi(XW_{1,i})\\
-W_2&=\begin{bmatrix}W_{2,1}\\\vdots\\W_{2,D}\end{bmatrix},\qquad Y=\sum_{i=1}^{D}H_iW_{2,i}
-\end{aligned}
-$$
+```math
+\begin{aligned} W_1&=[W_{1,1},\ldots,W_{1,D}]\\ H_i&=\phi(XW_{1,i})\\ W_2&=\begin{bmatrix}W_{2,1}\\\vdots\\W_{2,D}\end{bmatrix},\qquad Y=\sum_{i=1}^{D}H_iW_{2,i} \end{aligned}
+```
 
 #### 易错点
 
@@ -222,11 +210,11 @@ $$
 
 流水线并行将不同层分配到不同阶段，启动和排空时部分卡等待，形成 bubble。多个 microbatch、合理前后向调度、虚拟阶段和负载平衡可减少浪费，但也会带来通信与激活驻留成本。
 
-GPipe 与 1F1B 的调度和激活驻留不同，阶段耗时还受层结构、输入长度和通信影响，不能只按层数平均切分。理想 fill-drain 中，$p$ 个等时阶段处理 $m$ 个 microbatch 时，bubble 比例约为 $(p-1)/(m+p-1)$，实际依调度与负载而变；增大 microbatch 个数也不等于增大每个 microbatch 的 batch size。
+GPipe 与 1F1B 的调度和激活驻留不同，阶段耗时还受层结构、输入长度和通信影响，不能只按层数平均切分。理想 fill-drain 中，$`p`$ 个等时阶段处理 $`m`$ 个 microbatch 时，bubble 比例约为 $`(p-1)/(m+p-1)`$，实际依调度与负载而变；增大 microbatch 个数也不等于增大每个 microbatch 的 batch size。
 
-$$
+```math
 f_{\mathrm{bubble}}\approx\frac{p-1}{m+p-1}
-$$
+```
 
 #### 易错点
 
@@ -302,11 +290,11 @@ Context Parallelism 将一条序列的 token 和各层激活分到多卡，每�
 
 AllReduce 使各 rank 获得全量归约结果；ReduceScatter 先归约，每卡只保留一块；AllGather 再将各块收集到所有卡。先 ReduceScatter 再 AllGather 可实现 AllReduce，分片训练则可只保留局部归约结果，减少驻留。
 
-参与 rank 须按相容顺序调用 collective，归约算子、shape 与 dtype 也要相容。理想 ring 中，$D$ 卡对每卡大小为 $S$ 的数据做 AllReduce，每卡发送量约 $2(D-1)S/D$，接收量相同，未计协议开销；NCCL 会依情况选择不同算法。AllGather 是拼接收集，并非求和。
+参与 rank 须按相容顺序调用 collective，归约算子、shape 与 dtype 也要相容。理想 ring 中，$`D`$ 卡对每卡大小为 $`S`$ 的数据做 AllReduce，每卡发送量约 $`2(D-1)S/D`$，接收量相同，未计协议开销；NCCL 会依情况选择不同算法。AllGather 是拼接收集，并非求和。
 
-$$
+```math
 V_{\mathrm{send}}\approx V_{\mathrm{recv}}\approx\frac{2(D-1)}{D}S
-$$
+```
 
 #### 易错点
 
@@ -346,9 +334,9 @@ bucket 太小会增加启动开销，太大会推迟通信；效果还取决于�
 
 TP每层通信频繁，常放在高带宽节点内；PP跨阶段传activation和gradient，适合相对慢的节点间链路；DP通信量依赖梯度/ZeRO阶段，EP有token all-to-all，长上下文还要考虑CP环通信。ZeRO节省状态显存却不替代TP算子切分或PP层分布，因此“有ZeRO就无需混合并行”不成立。选择DeepSpeed/Megatron/FSDP等框架要看所需并行、模型算子、checkpoint和运维支持，先做小规模稳定性/吞吐基线再扩展。
 
-$$
+```math
 W=D\times T\times P,\qquad B_{\rm global}=D\times B_{\rm micro}\times N_{\rm accumulation}
-$$
+```
 
 #### 易错点
 
@@ -371,9 +359,9 @@ $$
 
 划分改变时可能产生reshape/reshard通信，最小化单算子时间不一定最小化完整step。成本模型还受网络争用、kernel实现、dynamic shape与activation内存影响，模拟计划需实测校准。系统能降低手工设计负担，但不能保证任意图、拓扑和实际负载达到数学全局最优；支持的算子、编译耗时、计划稳定性和checkpoint可移植性同样重要。
 
-$$
+```math
 \min_{\pi}\ t_{\rm step}(\pi)\quad\text{s.t.}\quad M_i(\pi)\le M_i^{\rm available}\ \forall i
-$$
+```
 
 #### 易错点
 
@@ -396,9 +384,9 @@ GPipe的典型调度先完成多个microbatch前向，再集中反向并累积�
 
 原始PipeDream允许流水线各stage异步推进更新，microbatch的前向和反向可能跨权重版本，weight stashing保存对应版本以保持该microbatch局部计算一致；即使局部版本匹配，仍存在跨stage/时间的陈旧梯度，不等价普通同步SGD。PipeDream-Flush等同步变体在边界flush以恢复同步语义，2BW降低保留版本的成本但也有自己的约束。比较应报告bubble、activation、权重版本内存、收敛和global batch，不能只凭调度图判断数值等价。
 
-$$
+```math
 \theta_{k+1}=\theta_k-\eta\sum_m g_m(\theta_k)\quad\text{(synchronous accumulation)}
-$$
+```
 
 #### 易错点
 
@@ -421,9 +409,9 @@ $$
 
 分别测节点内GPU点对点带宽、节点间RDMA带宽和nccl-tests的collective，扫描从小到大消息，比较all_reduce/all_gather等真实通信模式。algorithm bandwidth与bus bandwidth使用不同口径，不直接混比。再用训练timeline查看计算与通信重叠、长尾rank、数据加载及同步等待，配合MFU和step time判断瓶颈；Deepspeed环境报告可确认安装能力，不能代替实际链路测量。保留拓扑、并行组、消息大小和测试版本，避免通过盲目改NCCL环境变量掩盖根因。
 
-$$
+```math
 t_{\rm comm}\approx\alpha+\frac{n_{\rm bytes}}{B_{\rm effective}}
-$$
+```
 
 #### 易错点
 
@@ -446,9 +434,9 @@ $$
 
 DP×TP×PP的3D混合并行则是三个不同策略组合：数据、同层算子、不同层。两处“3D”完全不同，2D TP也能作为混合并行里的TP维度。多维TP可能减少特定大矩阵的通信，却增加分片约束、拓扑要求和reshard开销，小规模或不匹配shape未必值得；框架版本对这些方案的支持也不同。回答应给实际sharding与collective路径，不只背1D/2D/3D名词。
 
-$$
+```math
 P_{\rm 2D}=q^2,\qquad P_{\rm 2.5D}=q^2c,\qquad P_{\rm 3D}=q^3\quad\text{for common square/cubic meshes}
-$$
+```
 
 #### 易错点
 
@@ -512,9 +500,9 @@ TF32是支持硬件上Tensor Core执行某些FP32矩阵乘/卷积时采用的计
 
 FP16尾数较细但指数范围较窄，BF16尾数较粗而指数范围接近FP32，二者可降低权重/activation存储和带宽。TF32主要加速受支持FP32运算，实际收益和误差依赖硬件、shape与后端开关；数学上乘单位矩阵也未必逐bit保持输入。数值敏感任务应比较收敛、输出误差和必要FP32路径，且查所用PyTorch版本的API，不把过去默认设置当永久规则。
 
-$$
-\operatorname{storage}(X_{\rm FP32})=4\,\operatorname{numel}(X)\ \text{bytes even when TF32 computation is enabled}
-$$
+```math
+\mathrm{storage}(X_{\rm FP32})=4\,\mathrm{numel}(X)\ \text{bytes even when TF32 computation is enabled}
+```
 
 #### 易错点
 
@@ -595,18 +583,15 @@ Sampler 和 DataLoader 的 `drop_last` 含义不同。评估需按全局样本�
 
 GPU utilization 只反映设备是否忙；HFU 可包含重计算等实际执行 FLOPs；MFU 则用完成训练所需的模型有效 FLOPs，除以 step 时间与集群理论峰值的乘积。MFU 分子不把激活重计算当作额外有效工作，因此 GPU 忙也可能来自低效算子或通信等待。
 
-稠密 Transformer 的 $6NT$ 近似忽略 attention 和额外模块，长序列时这些项不可忽略，MoE 也不能直接按总参数量套用。峰值须匹配 dtype、稠密/稀疏口径和实际 GPU 数，并结合 token 吞吐与训练精度解释。
+稠密 Transformer 的 $`6NT`$ 近似忽略 attention 和额外模块，长序列时这些项不可忽略，MoE 也不能直接按总参数量套用。峰值须匹配 dtype、稠密/稀疏口径和实际 GPU 数，并结合 token 吞吐与训练精度解释。
 
-$$
-\begin{aligned}
-\operatorname{MFU}&=\frac{C_{\mathrm{model,step}}}{t_{\mathrm{step}}F_{\mathrm{peak,cluster}}}\\
-C_{\mathrm{dense}}&\approx 6NT
-\end{aligned}
-$$
+```math
+\begin{aligned} \mathrm{MFU}&=\frac{C_{\mathrm{model,step}}}{t_{\mathrm{step}}F_{\mathrm{peak,cluster}}}\\ C_{\mathrm{dense}}&\approx 6NT \end{aligned}
+```
 
 #### 易错点
 
-- MoE 不能无条件按总参数量套 $6NT$。
+- MoE 不能无条件按总参数量套 $`6NT`$。
 
 #### 追问
 

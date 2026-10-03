@@ -54,14 +54,11 @@
 
 CLIP 使用图像、文本双编码器，将图文映射到同一表示空间，再用归一化特征的相似度区分匹配图文对。一个 batch 中，同一索引的图文对通常是正例，其他配对是负例；图到文和文到图分别做分类，两个交叉熵损失取平均。它学习跨模态匹配表征，并非直接训练文本生成器。
 
-若图像、文本单位向量为 $v_i,t_j$，相似度为 $s_{ij}=v_i^\top t_j/\tau$。温度 $\tau$ 控制 softmax 的尖锐程度，原始实现使用可训练的对数尺度。实际图文数据可能含同义描述，此时 batch 内其他配对也可能相关，形成假负例。
+若图像、文本单位向量为 $`v_i,t_j`$，相似度为 $`s_{ij}=v_i^\top t_j/\tau`$。温度 $`\tau`$ 控制 softmax 的尖锐程度，原始实现使用可训练的对数尺度。实际图文数据可能含同义描述，此时 batch 内其他配对也可能相关，形成假负例。
 
-$$
-\begin{aligned}
-s_{ij}&=\frac{v_i^\top t_j}{\tau},\qquad \|v_i\|_2=\|t_j\|_2=1\\
-\mathcal L_{\mathrm{CLIP}}&=\frac{1}{2}\left[\operatorname{CE}(s,\operatorname{diag})+\operatorname{CE}(s^\top,\operatorname{diag})\right]
-\end{aligned}
-$$
+```math
+\begin{aligned} s_{ij}&=\frac{v_i^\top t_j}{\tau},\qquad \|v_i\|_2=\|t_j\|_2=1\\ \mathcal L_{\mathrm{CLIP}}&=\frac{1}{2}\left[\mathrm{CE}(s,\mathrm{diag})+\mathrm{CE}(s^\top,\mathrm{diag})\right] \end{aligned}
+```
 
 #### 易错点
 
@@ -176,7 +173,7 @@ BLIP 的三个目标分别负责整体匹配、细粒度对应和条件生成：
 
 #### 答案
 
-Q-Former 是带可学习查询的 Transformer，用查询间的自注意力与读取视觉特征的交叉注意力，提取固定数量的表示，再投影成 LLM 的软提示。若视觉特征 shape 为 `N×d_v`，查询为 `M×d_q`，交叉注意力的 Q 来自查询，K/V 来自视觉特征，输出为 `M×d_q`，随后映射到 `M×d_LLM`；查询数量 $M$ 不随 patch 数 $N$ 直接增长。原始 BLIP-2 使用 32 个查询，这只是其配置。
+Q-Former 是带可学习查询的 Transformer，用查询间的自注意力与读取视觉特征的交叉注意力，提取固定数量的表示，再投影成 LLM 的软提示。若视觉特征 shape 为 `N×d_v`，查询为 `M×d_q`，交叉注意力的 Q 来自查询，K/V 来自视觉特征，输出为 `M×d_q`，随后映射到 `M×d_LLM`；查询数量 $`M`$ 不随 patch 数 $`N`$ 直接增长。原始 BLIP-2 使用 32 个查询，这只是其配置。
 
 原始 Q-Former 从 BERT-base 初始化共享自注意力层，每隔一个 Transformer block 插入视觉 cross-attention。查询会相互交互，因此它并非对每个 patch 独立做投影。BLIP-2 用两阶段训练连接冻结的视觉骨干和 LLM：
 
@@ -185,12 +182,9 @@ Q-Former 是带可学习查询的 Transformer，用查询间的自注意力与�
 
 原始 BLIP-2 生成阶段的视觉查询不直接接收用户指令；InstructBLIP 才将指令送入 Q-Former，以提取指令相关特征。
 
-$$
-\begin{aligned}
-Z&=\operatorname{QFormer}(Q_{\mathrm{learned}},X)\in\mathbb R^{M\times d_q}\\
-V_{\mathrm{soft}}&=ZW_{\mathrm{proj}}\in\mathbb R^{M\times d_{\mathrm{LLM}}}
-\end{aligned}
-$$
+```math
+\begin{aligned} Z&=\mathrm{QFormer}(Q_{\mathrm{learned}},X)\in\mathbb R^{M\times d_q}\\ V_{\mathrm{soft}}&=ZW_{\mathrm{proj}}\in\mathbb R^{M\times d_{\mathrm{LLM}}} \end{aligned}
+```
 
 #### 易错点
 
@@ -211,7 +205,7 @@ $$
 
 两层 MLP 逐 patch 做维度映射；Q-Former 则通过查询自注意力和视觉交叉注意力交互提取信息，并压缩成固定数量的查询表示。MLP 结构简单，通常保留 patch 粒度；Q-Former 增加连接器计算，却可减小 LLM 的序列长度、prefill 和 KV 预算。选择时要比较视觉编码、连接器和 LLM 的端到端成本。
 
-以 LLaVA-1.5 为例，连接器为 `Linear→GELU→Linear`，输入的 $N$ 个视觉 token 映射后仍为 $N$ 个。连接器本身不新增跨 token 混合，但视觉编码器此前已可通过注意力融合上下文；保留 patch 粒度不等于像素信息无损。Q-Former 用 $M$ 个查询汇聚 $N$ 个视觉特征，固定 $M$ 可能形成细节瓶颈。
+以 LLaVA-1.5 为例，连接器为 `Linear→GELU→Linear`，输入的 $`N`$ 个视觉 token 映射后仍为 $`N`$ 个。连接器本身不新增跨 token 混合，但视觉编码器此前已可通过注意力融合上下文；保留 patch 粒度不等于像素信息无损。Q-Former 用 $`M`$ 个查询汇聚 $`N`$ 个视觉特征，固定 $`M`$ 可能形成细节瓶颈。
 
 需要小字识别、局部定位且 token 预算充足时，可先试逐 patch MLP；多图、视频或 LLM 输入预算紧张时，可试查询压缩。压缩是否损害 OCR 要在相同任务、分辨率、数据和冻结策略下消融，不能只比较整模型成绩。
 
@@ -219,12 +213,9 @@ MLP 是简洁有效的基线；BLIP-2 的两阶段表征学习服务于冻结骨
 
 比较完整融合范式时，CLIP双塔输出可比表示但不能直接完成生成对话；LLaVA/BLIP-2等把转换后的视觉token作为LLM条件输入；Flamingo使用Perceiver Resampler压缩视觉特征，再在冻结语言模型层间加入可训练的gated cross-attention。BLIP-2的cross-attention主要发生在Q-Former，不能等同于Flamingo在LLM内部插层；“连接器/跨注意力”也并非互斥，因为连接器本身就可使用cross-attention。
 
-$$
-\begin{aligned}
-\text{MLP:}\quad&\mathbb R^{N\times d_v}\longrightarrow\mathbb R^{N\times d_{\mathrm{LLM}}}\\
-\text{Query bridge:}\quad&\mathbb R^{N\times d_v}\longrightarrow\mathbb R^{M\times d_q}\longrightarrow\mathbb R^{M\times d_{\mathrm{LLM}}}
-\end{aligned}
-$$
+```math
+\begin{aligned} \text{MLP:}\quad&\mathbb R^{N\times d_v}\longrightarrow\mathbb R^{N\times d_{\mathrm{LLM}}}\\ \text{Query bridge:}\quad&\mathbb R^{N\times d_v}\longrightarrow\mathbb R^{M\times d_q}\longrightarrow\mathbb R^{M\times d_{\mathrm{LLM}}} \end{aligned}
+```
 
 ![逐 token MLP 与 Q-Former 视觉连接器](../assets/visual-connectors.svg)
 
@@ -423,9 +414,9 @@ Qwen2-VL、Qwen2.5-VL 的常用配置将相邻 2×2 patch 特征并到通道，�
 
 patch 大小与 merge 大小是两件事：常见 Qwen2/2.5-VL patch 为 14，空间有效步长为 28；Qwen3-VL patch 为 16，对应 32。经过 processor 对齐的 H×W 图像，合并后空间 token 约为 HW/(ps)²，p 为 patch 大小，s 为 merge 边长；视频还要计时间 patch 和帧数。实际预算以 checkpoint 配置、resize 结果及 image/video grid 为准。
 
-$$
+```math
 N_{\mathrm{spatial}}\approx\frac{HW}{(ps)^2},\qquad s=2
-$$
+```
 
 #### 易错点
 
@@ -450,9 +441,9 @@ $$
 
 该方法仍需正确的视觉网格、position_ids 和增量 cache 位置；它不会直接减少 KV 元素数。文本 Qwen3 的原始配置采用一维 RoPE，不能因 Qwen3-VL 使用 Qwen3 骨干就把这项多模态改造归给纯文本模型。
 
-$$
+```math
 \phi_j=\theta_jp_{a(j)},\qquad a(j)\in\{t,h,w\},\qquad \widetilde q_j=R(\phi_j)q_j
-$$
+```
 
 #### 易错点
 
@@ -477,9 +468,9 @@ Qwen3-VL 在视频时间 patch 前加入可读的时间戳文本，使真实时�
 
 文本时间戳会占少量上下文，细粒度定位仍受抽帧密度和视觉 token 预算限制。评测应同时看事件内容是否正确、时间误差和区间 IoU，并检查视频预处理与训练约定一致。
 
-$$
+```math
 t_i=\frac{i}{f_{\mathrm{source}}},\qquad t_{\mathrm{patch}}=\frac{t_{\mathrm{first}}+t_{\mathrm{last}}}{2}
-$$
+```
 
 #### 易错点
 
@@ -522,11 +513,11 @@ LLaVA-1.5 在原始 LLaVA 基础上，将线性连接器改为两层 MLP，采�
 
 Qwen2.5-VL 的视觉编码器在多数层使用窗口注意力，在四层保留全局注意力；同时引入动态 FPS 采样，并将时间位置与绝对时间对齐，以改善时间表达。
 
-固定窗口大小时，窗口层计算对 patch 数近似线性，但全局层仍有跨窗口信息交互和全局成本。合并后的视觉特征进入语言模型，LLM 的序列长度成本也须计入，因此不能把整个 ViT 或 VLM 的复杂度都写成 $O(n)$。
+固定窗口大小时，窗口层计算对 patch 数近似线性，但全局层仍有跨窗口信息交互和全局成本。合并后的视觉特征进入语言模型，LLM 的序列长度成本也须计入，因此不能把整个 ViT 或 VLM 的复杂度都写成 $`O(n)`$。
 
 #### 易错点
 
-- 不要把整个 ViT 或整个 VLM 的复杂度都写成 $O(n)$。
+- 不要把整个 ViT 或整个 VLM 的复杂度都写成 $`O(n)`$。
 
 #### 追问
 
@@ -543,16 +534,12 @@ Qwen2.5-VL 的视觉编码器在多数层使用窗口注意力，在四层保留
 
 - 输入组织：LLaVA-1.5-7B 的此配置为 `image_aspect_ratio=pad`，单图补方后输入 336px 编码器，patch 大小 14px；InternVL2.5 示例按长宽比选择网格，切成 448px tile，`max_num=12` 限制局部块数，多块时再加全局 thumbnail，所以总块数可达 13。
 - 连接器与空间结构：前者去 CLS 后保留 `24×24=576` 个 patch token，经两层 MLP 映射；后者去 CLS 后，将 `32×32` 网格按 `ratio=0.5` 重排为 `16×16`，相邻 `2×2` 特征进入通道，再经 LayerNorm 和两层 MLP，得到每块 256 个 token。tile 按网格行优先排列，thumbnail 追加在末尾；pixel shuffle 保留邻域分组，但 LLM 最终接收的仍是一维序列，跨 tile 的表格或对象关系还需要全局视图与训练支持。
-- 输入预算：InternVL 视觉 token 数约为 $256$ 乘实际块数，不含边界与文本 token；12 个局部块加缩略图为 3328 个，而非每张原图固定 256 个。切图增加细节，也增加视觉编码、LLM prefill 与 KV 成本，比较应固定任务及实际预算。
+- 输入预算：InternVL 视觉 token 数约为 $`256`$ 乘实际块数，不含边界与文本 token；12 个局部块加缩略图为 3328 个，而非每张原图固定 256 个。切图增加细节，也增加视觉编码、LLM prefill 与 KV 成本，比较应固定任务及实际预算。
 - 多图/视频：InternVL2.5 quickstart 用 `num_patches_list` 标记每张图或每帧的块数，并提供抽帧和 Frame 编号示例；LLaVA-1.5 基础版以单图为主。不能将 LLaVA-NeXT/OneVision 的高分辨率或视频能力归给 1.5，也不能将抽帧接口等同于专用时序编码。
 
-$$
-\begin{aligned}
-N_{\mathrm{LLaVA\text{-}1.5}}&=\left(\frac{336}{14}\right)^2=576\\
-N_{\mathrm{InternVL,tile}}&=\left(\frac{448}{14}\right)^2\left(0.5\right)^2=256\\
-N_{\mathrm{InternVL,total}}&=256\left(n_{\mathrm{tiles}}+\mathbf 1_{\{\mathrm{thumbnail}\ \land\ n_{\mathrm{tiles}}>1\}}\right)
-\end{aligned}
-$$
+```math
+\begin{aligned} N_{\mathrm{LLaVA\text{-}1.5}}&=\left(\frac{336}{14}\right)^2=576\\ N_{\mathrm{InternVL,tile}}&=\left(\frac{448}{14}\right)^2\left(0.5\right)^2=256\\ N_{\mathrm{InternVL,total}}&=256\left(n_{\mathrm{tiles}}+\mathbf 1_{\{\mathrm{thumbnail}\ \land\ n_{\mathrm{tiles}}\gt 1\}}\right) \end{aligned}
+```
 
 #### 易错点
 
@@ -600,9 +587,9 @@ Qwen3-VL 的 DeepStack 从视觉编码器的不同深度取特征，各自经过
 
 解释收益时应做有无 DeepStack 的相同数据、预算消融，并分别观察 OCR、文档、空间和纯文本任务，避免只拿最终模型总分证明这条通路的作用。
 
-$$
-h_{\ell}^{\mathrm{vis}}\leftarrow h_{\ell}^{\mathrm{vis}}+\operatorname{Merger}_{\ell}(F_{k_\ell})
-$$
+```math
+h_{\ell}^{\mathrm{vis}}\leftarrow h_{\ell}^{\mathrm{vis}}+\mathrm{Merger}_{\ell}(F_{k_\ell})
+```
 
 #### 易错点
 

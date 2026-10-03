@@ -834,7 +834,7 @@
       ],
       "answer": {
         "body": "Qwen3-VL 的 DeepStack 从视觉编码器的不同深度取特征，各自经过专用 merger 映射到语言隐藏维度，再加到较早语言层的对应视觉位置。报告方案使用三个视觉层级注入前三个 LLM 层；具体取层索引以 checkpoint 配置为准。基础图像 embedding 仍形成语言输入，额外分支提供较浅纹理与较深语义的补充路径。\n\n这主要改变跨层信息通路，并非把三组特征全都追加成更长的 token 序列。因而不能把语言 KV 长度简单乘三，但额外 merger、保存的中间视觉特征和训练反向仍有计算与显存成本。模型代码用视觉位置 mask 对齐注入；多图拼接时，特征顺序错配会把另一张图的信息加到错误位置。\n\n解释收益时应做有无 DeepStack 的相同数据、预算消融，并分别观察 OCR、文档、空间和纯文本任务，避免只拿最终模型总分证明这条通路的作用。",
-        "formula": "h_{\\ell}^{\\mathrm{vis}}\\leftarrow h_{\\ell}^{\\mathrm{vis}}+\\operatorname{Merger}_{\\ell}(F_{k_\\ell})",
+        "formula": "h_{\\ell}^{\\mathrm{vis}}\\leftarrow h_{\\ell}^{\\mathrm{vis}}+\\mathrm{Merger}_{\\ell}(F_{k_\\ell})",
         "pitfalls": [
           "DeepStack 不等于把多层 ViT 输出全部拼到序列末尾。",
           "额外视觉分支不会凭空消除 OCR 分辨率限制。"
@@ -964,7 +964,7 @@
       ],
       "answer": {
         "body": "张量不仅有 shape，还通过 storage offset 与 stride 描述逻辑索引怎样映射到存储。transpose/permute 常只改变这组元数据并共享原 storage，因而输出可能不满足默认连续布局。shape 为 2×3、stride 为 (3,1) 的连续张量转置后是 3×2、stride 为 (1,3)，数据并未立即搬动。\n\ncontiguous 在输入已经满足指定 memory format 时返回自身，否则复制成连续布局。view 要求当前 shape/stride 兼容所需重解释，不能任意展开一个转置张量；reshape 可以在兼容时返回 view，也可能隐式复制，不能依赖它总是零拷贝。连续性还应指定默认行优先或 channels_last 等格式。\n\n推理中的频繁转置、拼头、KV 布局转换若触发大张量拷贝，会增加带宽消耗、临时显存和内核启动。但不少算子支持 strided 输入，不必在每个操作前无条件 contiguous；应依据后续内核要求，用 profiler 找出真正的复制与耗时。",
-        "formula": "\\operatorname{offset}(i_1,\\ldots,i_n)=\\operatorname{storage\\_offset}+\\sum_{j=1}^{n}i_j\\,\\operatorname{stride}_j",
+        "formula": "\\mathrm{offset}(i_1,\\ldots,i_n)=\\mathrm{storage\\_offset}+\\sum_{j=1}^{n}i_j\\,\\mathrm{stride}_j",
         "pitfalls": [
           "contiguous 可能复制数据，不是无需成本的 shape 操作。",
           "reshape 不保证总是 view；非默认 memory format 也可能连续。"
@@ -994,7 +994,7 @@
       ],
       "answer": {
         "body": "量化降低权重或激活的表示精度；剪枝删除或屏蔽连接、通道、注意力头或层。非结构化剪枝将任意权重置零，通常保留原矩阵形状；结构化剪枝直接缩小通道、head或层；N:M 半结构化要求每 M 个权重保留 N 个，例如 2:4，便于支持相应模式的稀疏硬件执行。普通 dense GEMM 仍可能处理完整矩阵，所以零权重比例不能直接换算为速度收益。\n\n幅值剪枝按权重绝对值估计重要性，Wanda 结合权重幅值与输入激活尺度，也有方法使用近似二阶信息；这些都是近似，应固定校准数据并测试恢复训练的收益。LLM-Pruner 等方法考虑模块依赖；删通道或头时必须同步相关投影、残差维度和配置，不能孤立删除一个张量维度。校准与恢复训练不得污染最终评测集。\n\n结构化剪枝较容易复用密集内核，但不适配硬件对齐的小矩阵也可能变慢。稀疏加速依赖硬件、dtype、布局、尺寸与内核，索引和不规则访存也有开销。比较实际权重内存、端到端延迟、吞吐、尾延迟和质量，并计入恢复训练预算；剪枝与量化可以组合，误差和内核兼容性需要联合验证。",
-        "formula": "\\operatorname{score}_{ij}^{\\rm Wanda}=|W_{ij}|\\,\\lVert X_{:,j}\\rVert_2,\\qquad\\rho=1-\\frac{\\#\\text{nonzero weights}}{\\#\\text{weights}}",
+        "formula": "\\mathrm{score}_{ij}^{\\rm Wanda}=|W_{ij}|\\,\\lVert X_{:,j}\\rVert_2,\\qquad\\rho=1-\\frac{\\#\\text{nonzero weights}}{\\#\\text{weights}}",
         "pitfalls": [
           "非结构化权重置零不自动缩小稠密权重文件或 GEMM 计算。",
           "独立删除通道却忽略残差和耦合模块维度。",
@@ -1032,7 +1032,7 @@
       ],
       "answer": {
         "body": "先把流程分成下载/读取、PDF 解码与页面渲染、OCR/版面识别、清洗切块、embedding 和入库，分别测 CPU、I/O、GPU 与队列等待。一般用线程或异步重叠网络和文件 I/O，用进程并行 CPU 密集的 Python 处理，把 GPU OCR/embedding 集中到受控批处理服务。默认带 GIL 的 CPython 不能让纯 Python CPU 任务仅靠线程实现多核；释放 GIL 的库或 free-threaded 构建须另看条件。\n\n库的线程安全优先于这条经验。PyMuPDF 官方不支持多线程调用，应由独立进程各自打开文档，传文件路径和页范围，不跨进程传 Document 对象或整页大图。结果携带文档 hash、页号、解析版本和状态，便于排序、重试和增量去重。\n\n用有界队列施加背压，避免解析快而 OCR 慢时把内存堆满。限制进程内 BLAS/OCR 线程，避免进程数乘线程数过度争抢；控制 GPU 模型实例数量，批量推理与失败页隔离并行设计。优化目标是每秒成功处理页数及峰值资源，不是启动最多 worker。",
-        "formula": "\\operatorname{throughput}_{\\mathrm{pipeline}}\\lesssim\\min_i\\operatorname{capacity}_i",
+        "formula": "\\mathrm{throughput}_{\\mathrm{pipeline}}\\lesssim\\min_i\\mathrm{capacity}_i",
         "pitfalls": [
           "PyMuPDF 的线程安全限制不能被“C 扩展可能释放 GIL”这个经验覆盖。",
           "无限队列和每个 worker 都加载一份 GPU 模型会放大内存与显存峰值。"

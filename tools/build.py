@@ -1,9 +1,9 @@
-"""Build concise chapters, the question index and the offline explorer."""
+"""Build concise Markdown chapters and a standalone search/self-test page."""
 import json
 from collections import Counter
 from common import ROOT, CATEGORIES, TOPICS, load_bank, validate
 from supplement import validate_supplement
-from presentation import answer_html
+from presentation import answer_html, markdown_prose, markdown_formula
 
 
 def write(path, text):
@@ -12,7 +12,7 @@ def write(path, text):
 
 
 def bullet(items):
-    return '\n'.join('- ' + item for item in items)
+    return '\n'.join('- ' + markdown_prose(item) for item in items)
 
 
 def main():
@@ -30,48 +30,6 @@ def main():
         rows = [q for q in questions if q['category'] == cat]
         introductions = ('TFM-004', 'TFM-014', 'TFM-015')
         rows.sort(key=lambda q: (0 if q['id'] in introductions else 1, q['id']))
-        groups = [(topic, [q for q in rows if q['topic'] == topic]) for topic in TOPICS[cat]]
-        groups = [(topic, group) for topic, group in groups if group]
-        lines = [f'# {title}', '', '[首页](../README.md) · [全部题目](../QUESTION-INDEX.md)', '', '## 目录', '']
-        for n, (topic, group) in enumerate(groups, 1):
-            lines.append(f'- [{topic}](#topic-{n})')
-            lines.extend(f"  - [{q['id']} · {q['title']}](#{q['id'].lower()})" for q in group)
-        for n, (topic, group) in enumerate(groups, 1):
-            lines.extend(['', f'<a id="topic-{n}"></a>', f'## {topic}'])
-            for q in group:
-                a = q['answer']
-                lines.extend(['', f'<a id="{q["id"].lower()}"></a>', f"### {q['id']} · {q['title']}", '', f"**{q['level']}**", '', '#### 答案', '', a['body']])
-                if a.get('formula'):
-                    lines.extend(['', '$$', a['formula'], '$$'])
-import json
-from collections import Counter
-from common import ROOT, CATEGORIES, TOPICS, load_bank, validate
-from supplement import validate_supplement
-from presentation import answer_html
-
-
-def write(path, text):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text, encoding='utf-8', newline='\n')
-
-
-def bullet(items):
-    return '\n'.join('- ' + item for item in items)
-
-
-def main():
-    sources, questions = load_bank()
-    errors = validate(sources, questions) + validate_supplement(questions, sources)
-    if errors:
-        raise SystemExit('\n'.join(errors))
-    smap = {s['id']: s for s in sources}
-    counts = Counter(q['category'] for q in questions)
-    home = ['# LLM / MLLM 面试题库', '', f'**{len(questions)} 道题 · {len(CATEGORIES)} 个分类**。每题包含完整答案、必要公式、易错点和追问。', '', '[全部题目](QUESTION-INDEX.md) · [搜索与自测](index.html) · [手撕代码](coding/README.md) · [复习路线](guides/study-plan.md)', '', '| 分类 | 题数 |', '|---|---:|']
-    home.extend(f'| [{title}](chapters/{slug}.md) | {counts[cat]} |' for cat, (slug, title) in CATEGORIES.items())
-    home.extend(['', 'L1 基础 · L2 进阶 · L3 深入', '', '[使用许可](LICENSE.md)', ''])
-    write(ROOT / 'README.md', '\n'.join(home))
-    for cat, (slug, title) in CATEGORIES.items():
-        rows = [q for q in questions if q['category'] == cat]
         lines = [f'# {title}', '', '[首页](../README.md) · [全部题目](../QUESTION-INDEX.md)', '', '## 目录', '']
         for n, topic in enumerate(TOPICS[cat], 1):
             members = [q for q in rows if q['topic'] == topic]
@@ -85,13 +43,14 @@ def main():
             lines.extend(['', f'<a id="topic-{n}"></a>', f'## {topic}'])
             for q in members:
                 a = q['answer']
-                lines.extend(['', f'<a id="{q["id"].lower()}"></a>', f"### {q['id']} · {q['title']}", '', f"**{q['level']}**", '', '#### 答案', '', a['body']])
+                lines.extend(['', f'<a id="{q["id"].lower()}"></a>', f"### {q['id']} · {q['title']}", '', f"**{q['level']}**", '', '#### 答案', '', markdown_prose(a['body'])])
                 if a.get('formula'):
-                    lines.extend(['', '$$', a['formula'], '$$'])
+                    # Physical newlines can gain an extra backslash in GitHub's math parser.
+                    lines.extend(['', '```math', markdown_formula(a['formula']), '```'])
                 for figure in q.get('figures', []):
                     lines.extend(['', f"![{figure['alt']}](../{figure['path']})"])
                     if figure.get('caption'):
-                        lines.extend(['', figure['caption']])
+                        lines.extend(['', markdown_prose(figure['caption'])])
                 lines.extend(['', '#### 易错点', '', bullet(a['pitfalls']), '', '#### 追问', '', bullet(a['followups'])])
         references = {}
         for q in rows:

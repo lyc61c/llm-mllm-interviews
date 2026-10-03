@@ -1115,7 +1115,7 @@
       ],
       "answer": {
         "body": "中文文本缺少天然空格边界，难点是切分标准、歧义与未登录词，例如“研究生命起源”不能仅靠最长匹配决定词界。jieba 精确模式先用前缀词典枚举各位置可能结束的词，构成有向无环图，再以词频估计的对数概率做动态规划，选全句得分最大的路径。它优化整体路径，局部最长词不一定最好。\n\n对词典无法可靠覆盖的片段，默认可用字符级 HMM，以 B/M/E/S 表示词首、词中、词尾和单字词，Viterbi 找最高概率标签路径。搜索模式会进一步切开长词以提高召回，全模式则枚举候选，通常不适合作唯一精确切分。业务中加入领域词典、检查频率与歧义例句，并分别测词界 F1 和下游检索效果；词级分词与 LLM 子词 tokenizer 的目标不同。",
-        "formula": "D(i)=\\max_{j\\in\\operatorname{DAG}(i)}\\{\\log P(x_{i:j})+D(j+1)\\},\\qquad D(n+1)=0",
+        "formula": "D(i)=\\max_{j\\in\\mathrm{DAG}(i)}\\{\\log P(x_{i:j})+D(j+1)\\},\\qquad D(n+1)=0",
         "pitfalls": [
           "把 jieba 的最大概率路径等同于最长词优先。",
           "把中文分词的词界直接当作模型 tokenizer 的 token 边界。"
@@ -1175,7 +1175,7 @@
       ],
       "answer": {
         "body": "成分句法把连续片段组织为短语树，例如名词短语、动词短语，常以 CFG 或概率 CFG 表示；依存句法在词之间建立有向中心词关系，例如主语、宾语。两者描述同一句子的不同结构，不能把依存边直接视为短语标签。\n\n成分解析可通过 chart/CKY 动态规划组合跨度，标准二元 CFG 的 CKY 复杂度约 O(n³|G|)，神经 span parser 为跨度打分后施加树约束。依存解析常见转移式解析或图式解析，后者为 head-dependent 边打分，再求满足单一中心词、连通与无环约束的树。成分结果常测标注跨度 F1；依存结果测 UAS（中心词正确）与 LAS（中心词和关系都正确），须说明标点与分词口径。解析能提供结构信号，但通用 LLM 不必先跑显式句法分析才能理解语言。",
-        "formula": "\\operatorname{UAS}=\\frac{\\#\\{i:\\hat h_i=h_i\\}}{N},\\qquad\\operatorname{LAS}=\\frac{\\#\\{i:\\hat h_i=h_i,\\hat r_i=r_i\\}}{N}",
+        "formula": "\\mathrm{UAS}=\\frac{\\#\\{i:\\hat h_i=h_i\\}}{N},\\qquad\\mathrm{LAS}=\\frac{\\#\\{i:\\hat h_i=h_i,\\hat r_i=r_i\\}}{N}",
         "pitfalls": [
           "混淆 constituency 的跨度标签与 dependency 的中心词边。",
           "把不同分词口径的 UAS/LAS 直接比较。"
@@ -1205,7 +1205,7 @@
       ],
       "answer": {
         "body": "one-hot 为每个词分配独立坐标，没有编码语义相似性。静态词向量用一个查表矩阵把词映射到低维密集向量，共现或上下文预测目标使相似使用环境的词接近；同一个词形通常只有一个向量，难直接区分一词多义。上下文 embedding 则由序列编码器计算，词在“苹果发布新品”和“吃苹果”中能得到不同表示。\n\n计数式向量可由共现矩阵、PPMI 和低秩分解得到，预测式向量可用 Word2Vec 学习；它们都依赖语料和上下文定义。ELMo 拼接分别训练的双向语言模型特征，BERT 在每层联合融合双向上下文，GPT 隐状态只依赖可见前缀。词向量平均或原始 BERT 的 CLS 并不自动成为高质量句向量，检索通常还需句级训练、pooling 与归一化。余弦相似度描述所选表示空间中的角度相似，不能单独证明事实一致。",
-        "formula": "\\begin{aligned}e(w)&=E^\\top\\operatorname{onehot}(w)\\\\h_t&=f_\\theta(x_{1:T})_t\\\\\\operatorname{cos}(u,v)&=\\frac{u^\\top v}{\\lVert u\\rVert\\lVert v\\rVert}\\end{aligned}",
+        "formula": "\\begin{aligned}e(w)&=E^\\top\\mathrm{onehot}(w)\\\\h_t&=f_\\theta(x_{1:T})_t\\\\\\mathrm{cos}(u,v)&=\\frac{u^\\top v}{\\lVert u\\rVert\\lVert v\\rVert}\\end{aligned}",
         "pitfalls": [
           "把词 embedding、上下文 token 隐状态和检索用句向量混为一谈。",
           "认为向量加减类比对任何语料与词汇都成立。"
@@ -1265,7 +1265,7 @@
       ],
       "answer": {
         "body": "完整 softmax 需要遍历整个输出词表。层次 softmax 用二叉树的路径概率表示词概率，只更新目标词路径上的节点；Huffman 树让高频词路径较短，典型路径长度约 log|V|，并保持一个归一化的分布。负采样把观察到的词对作为正例，从噪声分布抽 K 个负例，对每个词对做 sigmoid 二分类，只更新这些输出向量。\n\n负采样不是完整 softmax 的精确无偏梯度，也不直接产生所有词的归一化条件概率；它换了训练目标，以高效学习词表示。原始 Word2Vec 常用词频的 3/4 次方构造噪声分布，K 和噪声质量影响效果。负例不等于“语义上完全无关的词”，误负例应通过统计而非绝对断言理解。层次 softmax 的树结构、负采样的随机种子和输入/输出向量选择都会影响复现。",
-        "formula": "\\begin{aligned}\\mathcal L_{\\rm NS}&=-\\log\\sigma(u_o^\\top v_c)-\\sum_{k=1}^{K}\\log\\sigma(-u_{n_k}^\\top v_c)\\\\n_k&\\sim P_n(w)\\propto f(w)^{3/4}\\\\p_{\\rm HS}(w\\mid c)&=\\prod_{j\\in\\operatorname{path}(w)}\\sigma(b_j u_j^\\top v_c),\\quad b_j\\in\\{-1,1\\}\\end{aligned}",
+        "formula": "\\begin{aligned}\\mathcal L_{\\rm NS}&=-\\log\\sigma(u_o^\\top v_c)-\\sum_{k=1}^{K}\\log\\sigma(-u_{n_k}^\\top v_c)\\\\n_k&\\sim P_n(w)\\propto f(w)^{3/4}\\\\p_{\\rm HS}(w\\mid c)&=\\prod_{j\\in\\mathrm{path}(w)}\\sigma(b_j u_j^\\top v_c),\\quad b_j\\in\\{-1,1\\}\\end{aligned}",
         "pitfalls": [
           "宣称负采样是原始多分类 softmax 的完全等价实现。",
           "把所有抽出的负例都视为确定无关。"
@@ -1324,7 +1324,7 @@
       ],
       "answer": {
         "body": "CNN 用共享局部卷积核提取邻近片段模式，堆叠、空洞卷积或较大卷积核可扩大感受野；RNN 把上一时刻状态传给下一时刻，天然支持在线顺序处理；Transformer 的注意力直接连接可见位置，再以 FFN 做逐位置变换。三者都能共享参数，差别在跨位置的信息传递规则。\n\nRNN 的训练在时间轴有顺序依赖，长路径容易遇到梯度问题；CNN 的独立位置可并行，但远距离需要更多层或设计；全注意力的远距离路径较短，训练可在位置轴并行，代价是标准注意力的二次交互计算。Decoder Transformer 的 teacher forcing 训练可并行，普通自回归生成仍依赖前一个输出；这与层间串行是不同维度。不存在脱离数据、长度、硬件的固定效果排名，流式和边缘任务中 RNN/CNN 仍有合理应用。",
-        "formula": "\\begin{aligned}h_t^{\\rm RNN}&=\\phi(W_xx_t+W_hh_{t-1}+b)\\\\h_t^{\\rm CNN}&=\\phi\\!\\left(\\sum_{j=-k}^{k}W_jx_{t+j}+b\\right)\\\\H^{\\rm attn}&=\\operatorname{softmax}(QK^\\top/\\sqrt{d_k}+M)V\\end{aligned}",
+        "formula": "\\begin{aligned}h_t^{\\rm RNN}&=\\phi(W_xx_t+W_hh_{t-1}+b)\\\\h_t^{\\rm CNN}&=\\phi\\!\\left(\\sum_{j=-k}^{k}W_jx_{t+j}+b\\right)\\\\H^{\\rm attn}&=\\mathrm{softmax}(QK^\\top/\\sqrt{d_k}+M)V\\end{aligned}",
         "pitfalls": [
           "把 Transformer 的训练并行推广为所有生成步骤并行。",
           "以某次机器翻译结果宣称 CNN/RNN/Transformer 的效果排名永远固定。"
@@ -1383,7 +1383,7 @@
       ],
       "answer": {
         "body": "没有非线性时，多层线性映射仍可合成一个线性映射。Sigmoid 将值压到 (0,1)，适合二元概率或门；Tanh 输出在 (−1,1)，但两者在绝对值大时都易饱和。ReLU 对正值梯度为 1、负值为 0，计算简单，但神经元可能长期落在负区间；Leaky ReLU/PReLU 用固定或可学习的小负侧斜率减轻这一问题。\n\nGELU 为 xΦ(x)，平滑地按标准正态 CDF 调节输入；SiLU 为 xσ(x)，Swish 常写 xσ(βx)，β=1 时就是 SiLU。它们保留部分负输入，常用于 Transformer FFN；GLU/SwiGLU 是两个投影分支相乘的门控结构，不是仅替换一个标量激活。激活选择要和初始化、归一化、精度与 FFN 中间维度一起比较，不能因负值可通过就推断一定收敛更快。\n\nELU 在正侧为 x、负侧为 α(exp(x)−1)，负侧会饱和，α=1 时零点处一阶导数连续。RReLU 则在训练时随机取负侧斜率、推理时常用其期望值；PReLU 的斜率是学习得到的参数。三者的参数和随机性不同，早期 CNN 实验的优劣不能直接推广为所有 LLM 的结论。",
-        "formula": "\\begin{aligned}\\sigma(x)&=(1+e^{-x})^{-1},\\quad\\sigma'(x)=\\sigma(x)(1-\\sigma(x))\\\\\\tanh'(x)&=1-\\tanh^2(x)\\\\\\operatorname{ReLU}(x)&=\\max(0,x)\\\\\\operatorname{GELU}(x)&=x\\Phi(x)\\\\\\operatorname{SiLU}(x)&=x\\sigma(x),\\quad\\operatorname{SiLU}'(x)=\\sigma(x)+x\\sigma(x)(1-\\sigma(x))\\end{aligned}",
+        "formula": "\\begin{aligned}\\sigma(x)&=(1+e^{-x})^{-1},\\quad\\sigma'(x)=\\sigma(x)(1-\\sigma(x))\\\\\\tanh'(x)&=1-\\tanh^2(x)\\\\\\mathrm{ReLU}(x)&=\\max(0,x)\\\\\\mathrm{GELU}(x)&=x\\Phi(x)\\\\\\mathrm{SiLU}(x)&=x\\sigma(x),\\quad\\mathrm{SiLU}'(x)=\\sigma(x)+x\\sigma(x)(1-\\sigma(x))\\end{aligned}",
         "pitfalls": [
           "把 SwiGLU 当作只含一个投影的 SiLU 激活。",
           "把 ReLU 在 0 点的实现导数约定说成唯一数学导数。"
@@ -1505,7 +1505,7 @@
       ],
       "answer": {
         "body": "初始化要控制深层网络前向激活和反向梯度的尺度。对近似独立零均值输入，线性层的输出方差与 fan-in、权重方差相乘；Xavier 综合 fan-in/fan-out，适用于近似线性或对称激活的分析；He 对 ReLU 丢弃约一半输入的情形使用约 2/fan-in 的权重方差。假设会受相关性、残差、归一化和门控影响，所以这是设计起点而非任意网络的稳定性证明。\n\n原始 Transformer 将输入 embedding 乘 √d_model 后加位置编码，用来调节词表示相对于位置表示的尺度，并配合其共享 embedding 的参数化。现代模型可能直接使用未缩放 embedding，具体要看初始化和前向代码。输出 logits 是否缩放、Norm 放置和 residual 缩放是不同机制；不能见到“√d”就一概归因于注意力的缩放点积。初始化后可测各层激活 RMS、logits 和梯度范数，验证是否稳定。",
-        "formula": "\\begin{aligned}\\operatorname{Var}(Wx)_i&\\approx\\operatorname{fan\\_in}\\operatorname{Var}(W_{ij})\\operatorname{Var}(x_j)\\\\\\operatorname{Var}(W)_{\\rm Xavier}&\\approx\\frac{2}{\\operatorname{fan\\_in}+\\operatorname{fan\\_out}}\\\\\\operatorname{Var}(W)_{\\rm He}&\\approx\\frac{2}{\\operatorname{fan\\_in}}\\end{aligned}",
+        "formula": "\\begin{aligned}\\mathrm{Var}(Wx)_i&\\approx\\mathrm{fan\\_in}\\mathrm{Var}(W_{ij})\\mathrm{Var}(x_j)\\\\\\mathrm{Var}(W)_{\\rm Xavier}&\\approx\\frac{2}{\\mathrm{fan\\_in}+\\mathrm{fan\\_out}}\\\\\\mathrm{Var}(W)_{\\rm He}&\\approx\\frac{2}{\\mathrm{fan\\_in}}\\end{aligned}",
         "pitfalls": [
           "把 embedding 的 √d_model 缩放说成所有 Transformer 的必需组件。",
           "把初始化方差的独立性分析当作训练全过程成立。"
@@ -1565,7 +1565,7 @@
       ],
       "answer": {
         "body": "原始 BERT 输入为 WordPiece embedding、token-type/segment embedding 和可学习绝对位置 embedding 的和，再做 LayerNorm 与 dropout。它们共享 hidden 维度，相加能保持后续层输入大小；参数会共同学习各信息如何使用，并不存在“相加必然毁掉语义”的结论。CLS 常用于句级任务，SEP 标识分隔；segment 的 A/B 标签用来区分句对，许多单句任务都用同一个 segment。\n\n512 是原始模型的最大位置表与训练长度配置，不是 Transformer 的普遍数学上限，也不是512个中文词。超长输入可截断、滑窗分块加聚合，或扩位置表并继续训练；直接补随机位置或插值不能保证效果，成本仍受注意力和激活规模限制。若是抽取问答，要保留块到原文的offset与跨块答案处理；若是句向量，验证池化和训练目标。BERT 输入加法与 RoPE 旋转 Q/K 属于不同位置参数化。",
-        "formula": "h_i^{(0)}=\\operatorname{LN}(E_{x_i}+S_{a_i}+P_i),\\qquad E_{x_i},S_{a_i},P_i\\in\\mathbb R^d",
+        "formula": "h_i^{(0)}=\\mathrm{LN}(E_{x_i}+S_{a_i}+P_i),\\qquad E_{x_i},S_{a_i},P_i\\in\\mathbb R^d",
         "pitfalls": [
           "把最大位置表大小当作算法不能改变的理论上限。",
           "把 token 数等同于空格词数或汉字数。"
@@ -1654,7 +1654,7 @@
       ],
       "answer": {
         "body": "原始 GLM 从文本中删去若干连续 span，在剩余文本中用 mask 占位，再自回归生成缺失片段。未被删的部分互相双向可见，生成部分可访问未删文本和此前已生成内容，因此一个模型可支持理解、条件生成与无条件生成等目标。二维位置通常分别描述原文中的位置/遮蔽点以及缺失span内部的生成步，帮助在没有完整缺失内容时定位生成 token。\n\nChatGLM 是基于 GLM 思路发展出的对话模型系列，具体 checkpoint 的架构和训练已发生变化，不能把初代的二维位置、激活和 mask 规则套到全部后续版本。初代 ChatGLM-6B 以中英对话为重点，ChatGLM2 引入 MQA 等改动，ChatGLM3 进一步提供工具、代码等能力；回答对比时应明确版本并检查 config、attention mask 与 tokenizer，而非靠模型家族名猜公式。GLM 的 blank infilling 也不等于只在普通 causal LM 前面加一个 prompt。",
-        "formula": "p_\\theta(S\\mid A)=\\prod_{j}p_\\theta(S_j\\mid A,S_{<j}),\\qquad\\operatorname{pos}(S_j)=(\\operatorname{anchor}(S),j)",
+        "formula": "p_\\theta(S\\mid A)=\\prod_{j}p_\\theta(S_j\\mid A,S_{<j}),\\qquad\\mathrm{pos}(S_j)=(\\mathrm{anchor}(S),j)",
         "pitfalls": [
           "将 ChatGLM1 的组件断言为所有 GLM/ChatGLM 版本的共同配置。",
           "忽略空白填充中未删文本的双向可见性。"
@@ -1746,7 +1746,7 @@
       ],
       "answer": {
         "body": "稀疏 MoE 常把 FFN 替换成多个专家，router 根据 token 隐状态产生专家分数，只激活 Top-k 专家，按选中权重聚合输出。不同实现对选中概率是否重归一化有差异；Switch 使用Top-1，原始稀疏门控工作也研究噪声Top-k。总参数含全部专家，单 token 计算只涉及所选专家，因此 active参数与总参数必须分开。\n\ncapacity 对每个专家设置可接收 token 的预算，常按平均负载乘 capacity factor 取整；负载超过容量时传统实现可 drop 溢出分支、回退或走残差，不能简单理解为从语料删掉该token。提高容量减轻溢出但增加buffer、计算与通信，dropless方案避免drop却须面对不均衡显存和调度。Top-k 的离散选择不是处处可微，router梯度主要来自被选专家的门权重及辅助目标。选型需联合看质量、负载、通信与实际吞吐。",
-        "formula": "\\begin{aligned}p(x)&=\\operatorname{softmax}(W_rx)\\\\y&=\\sum_{e\\in\\operatorname{TopK}(p,k)}\\tilde p_e(x)E_e(x)\\\\C&=\\left\\lceil\\operatorname{capacity\\_factor}\\cdot\\frac{Tk}{E}\\right\\rceil\\end{aligned}",
+        "formula": "\\begin{aligned}p(x)&=\\mathrm{softmax}(W_rx)\\\\y&=\\sum_{e\\in\\mathrm{TopK}(p,k)}\\tilde p_e(x)E_e(x)\\\\C&=\\left\\lceil\\mathrm{capacity\\_factor}\\cdot\\frac{Tk}{E}\\right\\rceil\\end{aligned}",
         "pitfalls": [
           "只报总参数量就推断每 token FLOPs。",
           "把专家溢出drop说成完全删除序列位置。"
@@ -1776,7 +1776,7 @@
       ],
       "answer": {
         "body": "负载均衡项避免大量 token 拥挤到少数专家，使容量与通信更可控。Switch 的辅助项用每个专家实际接收比例 f_e 与平均门控概率 P_e 的乘积和，f_e 来自离散路由，梯度主要经过 P_e；它鼓励分配平衡，但系数过大可能牺牲任务特化。除这种形式外还有importance/load、expert-choice或无显式辅助loss的设计，公式不能混用。\n\nST-MoE 的 router z-loss 对 router logits 的 logsumexp 平方加惩罚，约束其尺度、改善数值稳定性，与把每个专家均匀使用不是同一目标。训练需同时记录专家负载、溢出率、熵、router logits和主loss，不能只看到辅助loss低就认为质量好。router可能用FP32计算敏感归一化；专家FFN仍可用低精度。辅助项大小还依赖token数、Top-k和是否按序列/批次归一化。",
-        "formula": "\\begin{aligned}\\mathcal L_{\\rm balance}&=\\alpha E\\sum_{e=1}^{E}f_eP_e\\\\f_e&=\\frac1T\\sum_t\\mathbf1\\{\\operatorname{route}(t)=e\\},\\quad P_e=\\frac1T\\sum_t p_e(x_t)\\\\\\mathcal L_z&=\\frac\\beta T\\sum_t\\left(\\log\\sum_e e^{z_{t,e}}\\right)^2\\end{aligned}",
+        "formula": "\\begin{aligned}\\mathcal L_{\\rm balance}&=\\alpha E\\sum_{e=1}^{E}f_eP_e\\\\f_e&=\\frac1T\\sum_t\\mathbf1\\{\\mathrm{route}(t)=e\\},\\quad P_e=\\frac1T\\sum_t p_e(x_t)\\\\\\mathcal L_z&=\\frac\\beta T\\sum_t\\left(\\log\\sum_e e^{z_{t,e}}\\right)^2\\end{aligned}",
         "pitfalls": [
           "把 z-loss 说成专家负载均衡的另一种名字。",
           "把上式 f_e 定义直接用于任意Top-k实现而不改归一化。"
@@ -1837,7 +1837,7 @@
       ],
       "answer": {
         "body": "T5 将任务统一成文本到文本，常见span corruption把连续片段替换成不同sentinel，decoder按顺序生成被删片段和对应sentinel；BART 用双向encoder与自回归decoder，从被扰动的文本重建完整原文，研究过text infilling、句序打乱等噪声。两者encoder可看到被破坏输入，decoder仍通过causal mask训练条件生成。\n\nBERT的MLM在被选位置接词表分类头，通常不生成整个目标序列；T5/BART的目标在decoder序列上做自回归交叉熵。连续遮蔽、目标格式、目标长度和可见上下文均会影响计算量，不能仅因使用mask就称为同一目标。encoder-decoder很适合输入输出分离的翻译、摘要和条件生成，也能缓存encoder输出及decoder历史；decoder-only的流行并不证明这些结构无效。",
-        "formula": "\\mathcal L_{\\rm denoise}=-\\sum_{t=1}^{|y|}\\log p_\\theta(y_t\\mid y_{<t},\\operatorname{corrupt}(x))",
+        "formula": "\\mathcal L_{\\rm denoise}=-\\sum_{t=1}^{|y|}\\log p_\\theta(y_t\\mid y_{<t},\\mathrm{corrupt}(x))",
         "pitfalls": [
           "把T5生成缺失span与BART重建全文的target格式混为一谈。",
           "认为encoder-decoder无法复用任何KV缓存。"
@@ -2073,7 +2073,7 @@
       ],
       "answer": {
         "body": "普通adapter是在主干中加入较小可训练模块，任务通常保存单独adapter。AdapterFusion先分别训练多个任务adapter并冻结，再训练融合模块，让当前token表示选择性地组合各adapter的输出；把知识提取与组合分成两阶段，有助于复用已有任务知识。它不是直接平均checkpoint，也不等于把全部任务重新做一次共享全参训练。\n\nAdapterDrop根据策略跳过部分层的adapter，训练时让模型适应不同保留范围，推理可减少adapter执行开销；应区分跳过adapter分支和删除整个Transformer层。融合多个adapter会额外增加前向成本和存储，Drop则可能牺牲精度。多任务服务要评价任务切换、并发batch、融合数量与延迟，确认减少adapter分支后实际瓶颈是否改善；对深度与任务敏感的能力不能只凭“下层较不重要”固定删除。",
-        "formula": "h'=h+\\sum_{a=1}^{A}\\alpha_a(h)\\,\\operatorname{Adapter}_a(h),\\qquad\\sum_a\\alpha_a(h)=1",
+        "formula": "h'=h+\\sum_{a=1}^{A}\\alpha_a(h)\\,\\mathrm{Adapter}_a(h),\\qquad\\sum_a\\alpha_a(h)=1",
         "pitfalls": [
           "把多个adapter融合误称为权重平均。",
           "把AdapterDrop说成删除Transformer主体层。"
@@ -2133,7 +2133,7 @@
       ],
       "answer": {
         "body": "logits蒸馏让学生拟合教师的软概率分布，温度提高时能显露非最大类之间的关系；常用KL或soft-target交叉熵，加T²使大温度下的梯度尺度更可比。对语言模型逐token做logits蒸馏，需要同一位置的上下文和可对齐词表；不同tokenizer不能直接按词表下标对KL。生成答案蒸馏把教师采样或搜索的回复作为学生SFT数据，兼容不同tokenizer，但丢掉完整分布，并继承教师错误、风格与覆盖偏差。\n\n隐藏层/attention蒸馏用层映射和投影对齐中间表示，PKD、TinyBERT在BERT压缩中采用此类信号，不能简单要求不同深度学生逐层等形状相等。实际还需混合真实标签、过滤教师答案、覆盖学生可能访问的前缀，并独立评测质量/幻觉与成本。蒸馏不保证学生超过教师，也不保证所有知识能在更小容量中保留。",
-        "formula": "\\begin{aligned}p_T&=\\operatorname{softmax}(z_T/T),\\quad p_S=\\operatorname{softmax}(z_S/T)\\\\\\mathcal L&=(1-\\lambda)\\mathcal L_{\\rm hard}+\\lambda T^2D_{\\rm KL}(p_T\\Vert p_S)\\\\\\mathcal L_{\\rm hidden}&=\\sum_\\ell\\lVert H_S^{(\\ell)}P_\\ell-H_T^{(m(\\ell))}\\rVert_F^2\\end{aligned}",
+        "formula": "\\begin{aligned}p_T&=\\mathrm{softmax}(z_T/T),\\quad p_S=\\mathrm{softmax}(z_S/T)\\\\\\mathcal L&=(1-\\lambda)\\mathcal L_{\\rm hard}+\\lambda T^2D_{\\rm KL}(p_T\\Vert p_S)\\\\\\mathcal L_{\\rm hidden}&=\\sum_\\ell\\lVert H_S^{(\\ell)}P_\\ell-H_T^{(m(\\ell))}\\rVert_F^2\\end{aligned}",
         "pitfalls": [
           "不同tokenizer的词表下标未经对齐就直接算KL。",
           "把教师生成数据无条件当作正确标签。"
@@ -2165,7 +2165,7 @@
       ],
       "answer": {
         "body": "Template把任务输入改造成模型熟悉的填空或生成格式，例如情感分类提示“这段评论的情感是MASK”；verbalizer把模型预测的标签词映射回类别，例如“好/差”对应正/负。分类结果会受模板措辞、标签词语义、词频和分词长度影响，模型原生概率不自动成为校准类别概率。\n\n离散prompt可人工设计、搜索或由模型生成；连续prompt直接优化可学习向量，不要求能解释为人类可读词。多标签词verbalizer需定义聚合与归一化，生成式模型对多token标签常算序列概率，还要防止长度偏差；在MLM里多MASK和多token标签的处理也须明确。用验证集选模板和标签词，测试集保持独立，比较多seed、样本顺序和格式扰动。Prompt engineering无需更新权重，prompt tuning则需要训练可学习提示，不能把两者混称“写几句话”。\n\n自动提示搜索可用输入梯度提出离散 trigger 候选，再在验证目标上筛选，例如 AutoPrompt；它不等同于直接优化连续 prompt embedding。KPT 借助外部知识扩展 verbalizer 的标签词，再用语言模型筛选和校准；虚拟标签词还可用可学习向量表示类别。PPT 则先预训练软提示以改善少样本初始化。模板搜索、标签空间设计与提示参数初始化是三个不同优化对象，均需防止在测试集上反复选择。",
-        "formula": "p(c\\mid x)=\\frac{\\sum_{w\\in\\mathcal V_c}p_\\theta(w\\mid\\operatorname{template}(x))}{\\sum_{c'}\\sum_{w\\in\\mathcal V_{c'}}p_\\theta(w\\mid\\operatorname{template}(x))}",
+        "formula": "p(c\\mid x)=\\frac{\\sum_{w\\in\\mathcal V_c}p_\\theta(w\\mid\\mathrm{template}(x))}{\\sum_{c'}\\sum_{w\\in\\mathcal V_{c'}}p_\\theta(w\\mid\\mathrm{template}(x))}",
         "pitfalls": [
           "把prompt engineering与训练soft prompt混为一谈。",
           "类别标签长短不同却直接比较未经处理的序列分数。"
@@ -2410,7 +2410,7 @@
       ],
       "answer": {
         "body": "TF32是支持硬件上Tensor Core执行某些FP32矩阵乘/卷积时采用的计算精度模式，使用近似FP32指数范围和约10bit显式尾数输入精度，通常以FP32累加；FP32输入和输出tensor仍占32bit。把符号、指数与有效尾数加成19位是描述计算格式，不能据此估算PyTorch参数存储为19bit，也不能把它当作torch.float16那样常规存储dtype。\n\nFP16尾数较细但指数范围较窄，BF16尾数较粗而指数范围接近FP32，二者可降低权重/activation存储和带宽。TF32主要加速受支持FP32运算，实际收益和误差依赖硬件、shape与后端开关；数学上乘单位矩阵也未必逐bit保持输入。数值敏感任务应比较收敛、输出误差和必要FP32路径，且查所用PyTorch版本的API，不把过去默认设置当永久规则。",
-        "formula": "\\operatorname{storage}(X_{\\rm FP32})=4\\,\\operatorname{numel}(X)\\ \\text{bytes even when TF32 computation is enabled}",
+        "formula": "\\mathrm{storage}(X_{\\rm FP32})=4\\,\\mathrm{numel}(X)\\ \\text{bytes even when TF32 computation is enabled}",
         "pitfalls": [
           "把TF32内部计算精度当作模型文件的存储位宽。",
           "把某一版本框架的TF32默认值当作所有版本的固定行为。"
@@ -2500,7 +2500,7 @@
       ],
       "answer": {
         "body": "TF-IDF给词赋予文档内频率与逆文档频率的乘积：当前文档频繁、在全语料较少见的词更显著。tf可以原始计数、归一化或log变换，idf常加平滑；实现需固定分词、停用词和语料范围，不能把高分直接理解为事实重要性。TextRank把词的局部共现构成图，通过PageRank式迭代累积邻接节点的重要性，不要求已标注关键词；也可用句子相似图提取摘要。\n\nTF-IDF依赖背景语料统计，对同义词和词序不敏感；TextRank依赖窗口和图边，可能偏向连接度高的常见词，也不保证覆盖语义关键但罕见的实体。jieba提供这两类工具，添加领域词典可影响候选，但不能单靠工具名保证质量。评估可用人工关键词覆盖、冗余率及检索/分类的下游收益，对单篇短文本尤其要检查分词和停用词规则。",
-        "formula": "\\begin{aligned}\\operatorname{TFIDF}(w,d)&=\\operatorname{tf}(w,d)\\log\\frac{N+1}{\\operatorname{df}(w)+1}\\\\S(v)&=(1-a)+a\\sum_{u\\to v}\\frac{w_{uv}}{\\sum_k w_{uk}}S(u)\\end{aligned}",
+        "formula": "\\begin{aligned}\\mathrm{TFIDF}(w,d)&=\\mathrm{tf}(w,d)\\log\\frac{N+1}{\\mathrm{df}(w)+1}\\\\S(v)&=(1-a)+a\\sum_{u\\to v}\\frac{w_{uv}}{\\sum_k w_{uk}}S(u)\\end{aligned}",
         "pitfalls": [
           "把tf-idf或中心性分数当作语义正确性的概率。",
           "用测试集拟合idf却称没有数据泄露。"
@@ -2530,7 +2530,7 @@
       ],
       "answer": {
         "body": "FIM把文档切成prefix、middle和suffix，使用特殊标记把前后文排到待补全middle之前，再用普通next-token目标训练。例如PSM布局为prefix标记+prefix+suffix标记+suffix+middle标记+middle；也可以混合SPM等布局。生成middle时前后文已在可见前缀中，因此causal mask仍足够，并不需要改成双向decoder。\n\n数据需随机选择合法切点、保留特殊token和语言边界，控制FIM比例与常规左到右训练的混合。代码补全要检查AST/缩进、tokenizer和跨文件上下文，同时单独测续写与infilling，不能仅用普通PPL验收。Code Llama等checkpoint对FIM支持并不完全相同，必须核对对应版本和prompt标记。FIM学的是按转换序列条件化的生成，和BERT在原位置并行预测MASK、GLM的空白填充参数化都有差异。",
-        "formula": "p(M\\mid P,S)=\\prod_{t=1}^{|M|}p(M_t\\mid\\operatorname{format}(P,S),M_{<t})",
+        "formula": "p(M\\mid P,S)=\\prod_{t=1}^{|M|}p(M_t\\mid\\mathrm{format}(P,S),M_{<t})",
         "pitfalls": [
           "认为causal LM永远无法使用后缀文本作为条件。",
           "对未学过FIM标记的模型直接拼标记并假设已获得infill能力。"

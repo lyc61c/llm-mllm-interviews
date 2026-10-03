@@ -124,9 +124,9 @@ PQ将向量拆成M个子空间，各自用有限码本编码，缩减存储并�
 
 HNSW通过分层近邻图导航，通常无需先训练聚类码本，但图结构增加内存。选择取决于数据量、内存、召回/延迟目标、增删维护和是否有代表性训练数据。IVF的nlist过大可能使列表过小/训练不足，nprobe越大通常更准也更慢；应在相同业务集合上测实际曲线。
 
-$$
-M_{\mathrm{PQ\ codes}}\approx N\frac{Mb}{8}\ \mathrm{bytes},\qquad \operatorname{probed\ fraction}\approx\frac{n_{\mathrm{probe}}}{n_{\mathrm{list}}}
-$$
+```math
+M_{\mathrm{PQ\ codes}}\approx N\frac{Mb}{8}\ \mathrm{bytes},\qquad \mathrm{probed\ fraction}\approx\frac{n_{\mathrm{probe}}}{n_{\mathrm{list}}}
+```
 
 #### 易错点
 
@@ -167,7 +167,7 @@ Embedding选型可用MTEB等公开任务筛候选，最终要在业务标注quer
 
 #### 答案
 
-BM25 通过词项匹配、逆文档频率和词频饱和打分，适合型号、人名和精确术语；向量检索更擅长语义近似，但可能模糊关键数字或否定条件，两者通常可以混合使用。BM25 的 $k_1$ 控制词频饱和，$b$ 控制文档长度归一化，具体取值需业务验证。
+BM25 通过词项匹配、逆文档频率和词频饱和打分，适合型号、人名和精确术语；向量检索更擅长语义近似，但可能模糊关键数字或否定条件，两者通常可以混合使用。BM25 的 $`k_1`$ 控制词频饱和，$`b`$ 控制文档长度归一化，具体取值需业务验证。
 
 稀有型号、错误码可使用 `exact`/`keyword` 字段，语义问题使用 dense 路径。中文分词、字段配置、同义词、大小写与中英混合都会影响召回，应先检查这些因素，再判断是否是模型能力问题。
 
@@ -186,13 +186,13 @@ BM25 通过词项匹配、逆文档频率和词频饱和打分，适合型号、
 
 #### 答案
 
-BM25 与向量检索分数的范围和分布不同，直接相加容易让一路占主导。融合可先校准分数再加权，也可用 RRF 累加各检索路的倒数排名贡献 $1/(k+\operatorname{rank}_j(d))$，避开原始分数之间的直接比较。
+BM25 与向量检索分数的范围和分布不同，直接相加容易让一路占主导。融合可先校准分数再加权，也可用 RRF 累加各检索路的倒数排名贡献 $`1/(k+\mathrm{rank}_j(d))`$，避开原始分数之间的直接比较。
 
-RRF 仍需验证排名常数 $k$、候选窗口与去重规则；未进入窗口的文档没有融合机会，重复文档应按稳定 ID 合并。评测按词项、语义和多跳 query 分层比较收益，同时监测 P95 延迟。RRF 分数不能视为余弦相似度或可靠性概率，也不能照搬原检索分数的阈值。
+RRF 仍需验证排名常数 $`k`$、候选窗口与去重规则；未进入窗口的文档没有融合机会，重复文档应按稳定 ID 合并。评测按词项、语义和多跳 query 分层比较收益，同时监测 P95 延迟。RRF 分数不能视为余弦相似度或可靠性概率，也不能照搬原检索分数的阈值。
 
-$$
-\operatorname{RRF}(d)=\sum_{j:\,d\in L_j}\frac{1}{k+\operatorname{rank}_j(d)}
-$$
+```math
+\mathrm{RRF}(d)=\sum_{j:\,d\in L_j}\frac{1}{k+\mathrm{rank}_j(d)}
+```
 
 #### 易错点
 
@@ -234,9 +234,9 @@ ANCE使用来自动态ANN索引的困难负例，缓解训练样本与检索阶�
 
 弱监督预训练中，ICT用句子与其上下文构造检索任务；SEED-Encoder借助较弱decoder形成瓶颈，促使encoder学习有用的全局表示；REALM把潜在文档检索纳入语言模型预训练，按检索文档条件化目标。这些方法改变训练任务或检索/语言目标耦合，不是换一个向量数据库。更换encoder后需同步索引，迭代采负例时关注索引滞后。
 
-$$
+```math
 \mathcal L_{\mathrm{retriever}}=-\log\frac{\exp(s(q,d^+)/\tau)}{\exp(s(q,d^+)/\tau)+\sum_{d^-}\exp(s(q,d^-)/\tau)}
-$$
+```
 
 #### 易错点
 
@@ -326,9 +326,9 @@ RAG 评测应依次检查检索是否覆盖证据、上下文是否相关，以�
 
 对每个query，MRR取第一个相关结果的倒数排名再平均，未命中记0；AP在每个二值相关命中位置计算Precision并按相关文档总数R_q归一，MAP对query平均。nDCG用等级相关性g_i的gain与位置折扣，再除以同一截断k的理想排序IDCG；下面使用2的g_i次方减1，也有直接用g_i的约定，需固定。R_q=0或IDCG=0时须预先规定剔除或记0，避免除零；AP@k的分母同样应声明。缺失标注可能把真实相关结果算负例，检索相关性也不等于答案证据支持。
 
-$$
-\begin{aligned}\mathrm{MRR}&=\frac1Q\sum_q\frac1{\operatorname{rank}_q^{\mathrm{first}}},\quad \text{无命中记 }0\\ \mathrm{AP}(q)&=\frac1{R_q}\sum_{i=1}^{N}\mathrm{Precision@}i\cdot\operatorname{rel}_{q,i}\\ \mathrm{MAP}&=\frac1Q\sum_q\mathrm{AP}(q)\\ \mathrm{DCG@}k&=\sum_{i=1}^k\frac{2^{g_i}-1}{\log_2(i+1)},\quad \mathrm{nDCG@}k=\frac{\mathrm{DCG@}k}{\mathrm{IDCG@}k}\end{aligned}
-$$
+```math
+\begin{aligned}\mathrm{MRR}&=\frac1Q\sum_q\frac1{\mathrm{rank}_q^{\mathrm{first}}},\quad \text{无命中记 }0\\ \mathrm{AP}(q)&=\frac1{R_q}\sum_{i=1}^{N}\mathrm{Precision@}i\cdot\mathrm{rel}_{q,i}\\ \mathrm{MAP}&=\frac1Q\sum_q\mathrm{AP}(q)\\ \mathrm{DCG@}k&=\sum_{i=1}^k\frac{2^{g_i}-1}{\log_2(i+1)},\quad \mathrm{nDCG@}k=\frac{\mathrm{DCG@}k}{\mathrm{IDCG@}k}\end{aligned}
+```
 
 #### 易错点
 

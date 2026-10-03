@@ -87,6 +87,10 @@ def validate(sources, questions, require_complete=True):
             check(isinstance(a.get(key), list) and bool(a[key]), f"{qid}: missing {key}")
         check(isinstance(a.get("formula", ""), str), f"{qid}: formula must be LaTeX text")
         check('$' not in a.get('formula', ''), f'{qid}: formula must not contain math delimiters')
+        math_expressions = [a.get('formula', '')]
+        for value in (a.get('body', ''), *a.get('pitfalls', []), *a.get('followups', [])):
+            math_expressions.extend(re.findall(r'\$([^$\n]+)\$', value))
+        check(not any(re.search(r'\\operatorname\b', expression) for expression in math_expressions), f'{qid}: use portable math names such as \\mathrm instead of operatorname')
         for value in (a.get('body', ''), a.get('formula', ''), *a.get('pitfalls', []), *a.get('followups', [])):
             check(not re.search(r'[\x00-\x09\x0b-\x1f]', value), f'{qid}: unexpected control character in answer')
         for figure in q.get('figures', []):

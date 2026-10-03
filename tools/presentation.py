@@ -12,13 +12,24 @@ if local_packages.exists():
 from latex2mathml.converter import convert
 
 
+def markdown_prose(text):
+    """Protect inline TeX from Markdown escapes using GitHub's documented syntax."""
+    parts = re.split(r'(`[^`\n]+`|\$[^$\n]+\$)', text)
+    return ''.join('$`' + part[1:-1] + '`$' if part.startswith('$') and part.endswith('$') else part for part in parts)
+
+
+def markdown_formula(expression):
+    """Keep block TeX intact through GitHub's line-break and HTML parsing."""
+    return expression.replace('\n', ' ').replace('<', r'\lt ').replace('>', r'\gt ')
+
+
 def math_html(expression, display=False):
     # latex2mathml supports split, which has the same two-column alignment
     # used by our aligned expressions. Keep the canonical LaTeX unchanged.
     expression = expression.replace(r'\begin{aligned}', r'\begin{split}').replace(r'\end{aligned}', r'\end{split}')
-    # Use an equivalent named operator for commands unsupported by latex2mathml.
-    expression = expression.replace(r'\arg\max', r'\operatorname{argmax}').replace(r'\arg\min', r'\operatorname{argmin}')
-    expression = re.sub(r'\\arg\s*\\?(max|min)\b', lambda match: r'\operatorname{arg' + match[1] + '}', expression)
+    # Use upright names without operatorname, which some Markdown renderers block.
+    expression = expression.replace(r'\arg\max', r'\mathrm{argmax}').replace(r'\arg\min', r'\mathrm{argmin}')
+    expression = re.sub(r'\\arg\s*\\?(max|min)\b', lambda match: r'\mathrm{arg' + match[1] + '}', expression)
     rendered = convert(expression, display='block' if display else 'inline')
     ElementTree.fromstring(rendered)
     return rendered

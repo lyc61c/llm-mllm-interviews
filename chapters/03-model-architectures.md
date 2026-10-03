@@ -5,12 +5,12 @@
 ## 目录
 
 - [架构范式与参数](#topic-1)
+  - [TFM-004 · Encoder-only、Decoder-only 与 Encoder-Decoder 怎样选择？](#tfm-004)
+  - [TFM-014 · 输入 embedding 与输出 LM head 权重共享有什么利弊？](#tfm-014)
   - [ARC-007 · Prefix LM 与 Causal LM 的 attention mask 有何区别，KV cache 有什么限制？](#arc-007)
   - [ARC-010 · 怎样由 config 估算 Transformer 参数量，12Ld² 为什么只是近似？](#arc-010)
   - [ARC-012 · 自回归与非自回归生成有什么区别，为什么并行输出可能牺牲质量？](#arc-012)
   - [ARC-015 · NAS 怎样搜索模型架构，DARTS 与权重共享有哪些取舍？](#arc-015)
-  - [TFM-004 · Encoder-only、Decoder-only 与 Encoder-Decoder 怎样选择？](#tfm-004)
-  - [TFM-014 · 输入 embedding 与输出 LM head 权重共享有什么利弊？](#tfm-014)
 - [预训练模型与家族对比](#topic-2)
   - [ARC-001 · BERT 的 MLM 与 NSP 怎么训练，15% 和 80/10/10 代表什么？](#arc-001)
   - [ARC-002 · BERT 的 token、segment、position embedding 为何相加？512 是数学上限吗？](#arc-002)
@@ -22,18 +22,74 @@
   - [ARC-022 · DeepSeek-V2、V3、R1 有何区别？它们还是 Transformer 吗？](#arc-022)
   - [ARC-025 · 原始 Qwen3 文本模型相较 Qwen2.5 有哪些结构和后训练变化？](#arc-025)
 - [MoE 路由、训练与压缩](#topic-3)
+  - [TFM-015 · MoE 与 Dense 的参数量和计算量应怎样比较？](#tfm-015)
   - [ARC-008 · MoE 路由、Top-k、capacity factor 与 token dropping 分别做什么？](#arc-008)
   - [ARC-009 · MoE 的负载均衡损失与 router z-loss 有何区别？](#arc-009)
   - [ARC-013 · MoE 怎样用于模型压缩，WideNet 与 MoEBERT 的思路有什么不同？](#arc-013)
   - [ARC-014 · MoE 微调为什么容易过拟合，专家一定按语言或领域自动分工吗？](#arc-014)
   - [ARC-023 · DeepSeek-V3 的负载平衡、MTP 和 FP8 分别解决什么问题？](#arc-023)
-  - [TFM-015 · MoE 与 Dense 的参数量和计算量应怎样比较？](#tfm-015)
 - [推理模型与 MLA](#topic-4)
   - [ARC-021 · MLA 怎样压缩 KV Cache？和 MQA/GQA、RoPE 有什么关系？](#arc-021)
   - [ARC-024 · DeepSeek-R1-Zero、R1 与蒸馏模型的训练流程分别是什么？](#arc-024)
 
 <a id="topic-1"></a>
 ## 架构范式与参数
+
+<a id="tfm-004"></a>
+### TFM-004 · Encoder-only、Decoder-only 与 Encoder-Decoder 怎样选择？
+
+**L1**
+
+#### 答案
+
+Encoder-Decoder 先编码源序列，再由 decoder 自回归生成目标，两边长度可以不同。原始 Transformer 的 encoder 和 decoder 各有 6 层：encoder 每层含双向 self-attention 和 FFN，decoder 另含因果 self-attention 与 cross-attention。源输入被编码为 $`H_{\rm src}`$，目标第 $`t`$ 步依赖源输入与目标历史。
+
+Cross-attention 用 decoder hidden 作 $`Q`$、encoder memory 作 $`K/V`$，可访问完整已知源句并屏蔽源 padding；decoder 自身仍只看目标历史。源 memory 可一次编码，各层的 cross-attention K/V 投影可复用。条件概率分解为 $`p(y\mid x)=\prod_t p(y_t\mid y_{<t},x)`$，训练时用右移目标和 teacher forcing 并行计算各位置损失。原模型使用 PostNorm，并在两边注入位置编码；后续架构不必固定 6 层或同一种归一化。
+
+BERT 等 encoder-only 常用双向表示和 MLM，适合理解及表示任务；GPT 类 decoder-only 用因果目标训练，可把输入与输出串到同一上下文。Prefix LM 的分段可见性不等于具有独立 encoder 和 cross-attention。选型要结合任务形态、源/目标长度、memory 复用、缓存、吞吐与训练数据：encoder-only 可经额外设计用于生成，decoder-only 也能分类，结构标签本身不能保证任务效果。
+
+Decoder-only 把各种任务统一成前缀后的 next-token 预测，可直接利用大量无标注连续文本做因果训练，推理再按相同概率分解配合 KV cache 逐步生成，输入/示例/对话也可用同一序列接口组织。这种统一目标、数据与部署方式是其常见优势，不是“Encoder 完全不能生成”的数学定理。Encoder-Decoder 在条件生成、较长源输入和 memory 复用等条件下仍有优势，训练并行能力也不能与自回归生成必须按步进行混淆。
+
+```math
+\begin{aligned}H_{\rm src}&=\mathrm{Encoder}(x)\\p_\theta(y\mid x)&=\prod_t p_\theta(y_t\mid y_{\lt t},H_{\rm src})\\Q&=H_{\rm dec}W_Q,\quad K=H_{\rm src}W_K,\quad V=H_{\rm src}W_V\end{aligned}
+```
+
+#### 易错点
+
+- 把 source 与 target 强制要求等长，或把 cross-attention 也无条件设置成目标三角 mask。
+- 把 encoder 的双向 attention 直接移到生成中的未知目标位置而造成未来信息泄漏。
+
+#### 追问
+
+- 改变 source 长度时，cross-attention 权重矩阵的哪一轴变化？
+- 条件 memory 的缓存与 decoder 历史 KV cache 的增长方式有何不同？
+
+<a id="tfm-014"></a>
+### TFM-014 · 输入 embedding 与输出 LM head 权重共享有什么利弊？
+
+**L2**
+
+#### 答案
+
+语言模型将 `H:[B,T,D]` 经 `W_vocab:[D,V]` 与 `b:[V]` 映射为 `logits:[B,T,V]`，再沿词表轴做 softmax，得到下一 token 概率。Logits 本身未归一化，交叉熵实现通常直接接收它。
+
+输入 embedding 表 $`E\in\mathbb R^{V\times D}`$ 与输出 head 维度相容时，可令 $`W_{\rm vocab}=E^\top`$。这样省去一份约 $`VD`$ 的权重，输入表示与输出分类器接收共同梯度；输出 bias 仍可保留，词表分类计算量也不会随之消失。若两边词表或 hidden 维度不同，需额外映射。原始 Transformer 共享两个 embedding 层与 pre-softmax 线性变换，并在 embedding 使用时乘 $`\sqrt D`$。
+
+权重 tying 不意味着标准 Transformer 的各层、各头自动共享参数：相同结构通常分别学习，fused QKV 也只是计算安排。ALBERT 的跨层共享是专门的设计，可共享 attention、FFN 或全部，默认全部共享。验证应检查参数别名、`state_dict`、词表与输出维度；共享也不等于冻结，不能保证所有任务都改善。
+
+```math
+\begin{aligned}Z&=HW_{\rm vocab}+b\\p_v&=\frac{\exp z_v}{\sum_u\exp z_u}\\W_{\rm vocab}&=E^\top,\quad \Delta N\approx VD\end{aligned}
+```
+
+#### 易错点
+
+- 把同一层内跨位置使用 FFN、embedding/head tying 与跨层或跨头共享混为一谈。
+- 对 logits 先 softmax 后再交给期望 logits 的 `CrossEntropyLoss`，或沿 hidden 轴做词表归一化。
+
+#### 追问
+
+- 共享 embedding/head 时，padding token 对应的输出行是否一定永远没有梯度？
+- ALBERT 共享参数为何省参数却仍要执行多层计算？
 
 <a id="arc-007"></a>
 ### ARC-007 · Prefix LM 与 Causal LM 的 attention mask 有何区别，KV cache 有什么限制？
@@ -46,9 +102,9 @@ Causal LM 的每个位置只访问自身及之前位置；Prefix LM 的前缀内
 
 固定前缀计算完成后，两者都可缓存可复用的 K/V 并增量生成后缀。若向双向前缀里插入或追加仍属于前缀的内容，旧前缀表示可能改变，必须重新计算相应缓存；causal 前缀的旧位置则不依赖新增后续内容，通常可复用。训练还须指定前缀/后缀划分、loss范围和position ids，Prefix LM 的结构不要求全部前缀都计算语言建模 loss。适合条件生成和填空的选择应结合预训练目标与任务验证。
 
-$$
-M_{ij}=\begin{cases}0,&i\le p,\ j\le p\\0,&i>p,\ (j\le p\text{ or }j\le i)\\-\infty,&\text{otherwise}\end{cases}
-$$
+```math
+M_{ij}=\begin{cases}0,&i\le p,\ j\le p\\0,&i\gt p,\ (j\le p\text{ or }j\le i)\\-\infty,&\text{otherwise}\end{cases}
+```
 
 #### 易错点
 
@@ -71,9 +127,9 @@ $$
 
 以head_dim=d_h、query头数h_q、KV头数h_kv表示，Q输出宽度为h_qd_h，K/V为h_kvd_h，O映射回d；只有h_qd_h=d时常用4d²简化才直接成立。共享embedding/head只计一次独立张量，切勿按module路径重复计数。模型磁盘大小约参数字节加元数据/量化scale，训练显存还包括梯度、优化器与激活；参数量、FLOPs、模型文件与显存分别回答。最终核对state_dict的shape及共享storage，避免只读模型名。
 
-$$
+```math
 \begin{aligned}P_{\rm attn}&=2d(h_q+h_{\rm kv})d_h\\P_{\rm FFN}&=2dd_{\rm ff}\ (\mathrm{MLP}),\quad3dd_{\rm ff}\ (\mathrm{SwiGLU})\\P_{\rm total}&\approx L(P_{\rm attn}+P_{\rm FFN})+n_{\rm table}|V|d+P_{\rm other}\end{aligned}
-$$
+```
 
 #### 易错点
 
@@ -96,9 +152,9 @@ $$
 
 改进包括引入latent/fertility、知识蒸馏、反复mask-and-refine、插入/编辑式解码或其他并行生成目标；它们不等于一次前向就生成任意长度的精确AR分布。AR训练用teacher forcing也可并行计算各位置loss，串行瓶颈主要在常规生成。比较速度要报质量、迭代次数、长度、batch与硬件；减少解码轮数不保证所有任务的端到端收益。用于固定格式或延迟敏感任务时，可以接受一定质量折中，而自由文本生成常仍依赖强输出相关性。
 
-$$
-p_{\rm AR}(y\mid x)=\prod_t p(y_t\mid x,y_{<t}),\qquad p_{\rm NAT}(y\mid x)=p(T\mid x)\prod_{t=1}^{T}p(y_t\mid x,T)
-$$
+```math
+p_{\rm AR}(y\mid x)=\prod_t p(y_t\mid x,y_{\lt t}),\qquad p_{\rm NAT}(y\mid x)=p(T\mid x)\prod_{t=1}^{T}p(y_t\mid x,T)
+```
 
 #### 易错点
 
@@ -121,9 +177,9 @@ NAS 要定义搜索空间、搜索策略和候选评估方式。搜索空间可�
 
 DARTS 用 softmax 权重将离散算子混合成可微结构，训练模型权重和架构参数，再离散选择候选；典型目标是双层优化，训练集拟合权重、验证集优化结构。共享 supernet 避免每个候选从头训练，节省搜索成本，但子结构在共享权重下的排名可能与独立训练不一致。最终候选应重新训练或按统一协议校准，在独立测试集上测性能，并把搜索本身的算力计入成本。FLOPs 与硬件时延不一一对应，不能用单个代理指标宣称最优。
 
-$$
-\min_{\alpha}\mathcal L_{\mathrm{val}}(w^*(\alpha),\alpha),\quad w^*(\alpha)=\arg\min_w\mathcal L_{\mathrm{train}}(w,\alpha),\qquad \bar o(x)=\sum_{o\in\mathcal O}\operatorname{softmax}(\alpha)_o\,o(x)
-$$
+```math
+\min_{\alpha}\mathcal L_{\mathrm{val}}(w^*(\alpha),\alpha),\quad w^*(\alpha)=\arg\min_w\mathcal L_{\mathrm{train}}(w,\alpha),\qquad \bar o(x)=\sum_{o\in\mathcal O}\mathrm{softmax}(\alpha)_o\,o(x)
+```
 
 #### 易错点
 
@@ -134,62 +190,6 @@ $$
 
 - 为什么 shared weights 会改变候选排序？
 - 如何在目标 GPU 上把延迟或显存约束纳入搜索？
-
-<a id="tfm-004"></a>
-### TFM-004 · Encoder-only、Decoder-only 与 Encoder-Decoder 怎样选择？
-
-**L1**
-
-#### 答案
-
-Encoder-Decoder 先编码源序列，再由 decoder 自回归生成目标，两边长度可以不同。原始 Transformer 的 encoder 和 decoder 各有 6 层：encoder 每层含双向 self-attention 和 FFN，decoder 另含因果 self-attention 与 cross-attention。源输入被编码为 $H_{\rm src}$，目标第 $t$ 步依赖源输入与目标历史。
-
-Cross-attention 用 decoder hidden 作 $Q$、encoder memory 作 $K/V$，可访问完整已知源句并屏蔽源 padding；decoder 自身仍只看目标历史。源 memory 可一次编码，各层的 cross-attention K/V 投影可复用。条件概率分解为 $p(y\mid x)=\prod_t p(y_t\mid y_{<t},x)$，训练时用右移目标和 teacher forcing 并行计算各位置损失。原模型使用 PostNorm，并在两边注入位置编码；后续架构不必固定 6 层或同一种归一化。
-
-BERT 等 encoder-only 常用双向表示和 MLM，适合理解及表示任务；GPT 类 decoder-only 用因果目标训练，可把输入与输出串到同一上下文。Prefix LM 的分段可见性不等于具有独立 encoder 和 cross-attention。选型要结合任务形态、源/目标长度、memory 复用、缓存、吞吐与训练数据：encoder-only 可经额外设计用于生成，decoder-only 也能分类，结构标签本身不能保证任务效果。
-
-Decoder-only 把各种任务统一成前缀后的 next-token 预测，可直接利用大量无标注连续文本做因果训练，推理再按相同概率分解配合 KV cache 逐步生成，输入/示例/对话也可用同一序列接口组织。这种统一目标、数据与部署方式是其常见优势，不是“Encoder 完全不能生成”的数学定理。Encoder-Decoder 在条件生成、较长源输入和 memory 复用等条件下仍有优势，训练并行能力也不能与自回归生成必须按步进行混淆。
-
-$$
-\begin{aligned}H_{\rm src}&=\operatorname{Encoder}(x)\\p_\theta(y\mid x)&=\prod_t p_\theta(y_t\mid y_{<t},H_{\rm src})\\Q&=H_{\rm dec}W_Q,\quad K=H_{\rm src}W_K,\quad V=H_{\rm src}W_V\end{aligned}
-$$
-
-#### 易错点
-
-- 把 source 与 target 强制要求等长，或把 cross-attention 也无条件设置成目标三角 mask。
-- 把 encoder 的双向 attention 直接移到生成中的未知目标位置而造成未来信息泄漏。
-
-#### 追问
-
-- 改变 source 长度时，cross-attention 权重矩阵的哪一轴变化？
-- 条件 memory 的缓存与 decoder 历史 KV cache 的增长方式有何不同？
-
-<a id="tfm-014"></a>
-### TFM-014 · 输入 embedding 与输出 LM head 权重共享有什么利弊？
-
-**L2**
-
-#### 答案
-
-语言模型将 `H:[B,T,D]` 经 `W_vocab:[D,V]` 与 `b:[V]` 映射为 `logits:[B,T,V]`，再沿词表轴做 softmax，得到下一 token 概率。Logits 本身未归一化，交叉熵实现通常直接接收它。
-
-输入 embedding 表 $E\in\mathbb R^{V\times D}$ 与输出 head 维度相容时，可令 $W_{\rm vocab}=E^\top$。这样省去一份约 $VD$ 的权重，输入表示与输出分类器接收共同梯度；输出 bias 仍可保留，词表分类计算量也不会随之消失。若两边词表或 hidden 维度不同，需额外映射。原始 Transformer 共享两个 embedding 层与 pre-softmax 线性变换，并在 embedding 使用时乘 $\sqrt D$。
-
-权重 tying 不意味着标准 Transformer 的各层、各头自动共享参数：相同结构通常分别学习，fused QKV 也只是计算安排。ALBERT 的跨层共享是专门的设计，可共享 attention、FFN 或全部，默认全部共享。验证应检查参数别名、`state_dict`、词表与输出维度；共享也不等于冻结，不能保证所有任务都改善。
-
-$$
-\begin{aligned}Z&=HW_{\rm vocab}+b\\p_v&=\frac{\exp z_v}{\sum_u\exp z_u}\\W_{\rm vocab}&=E^\top,\quad \Delta N\approx VD\end{aligned}
-$$
-
-#### 易错点
-
-- 把同一层内跨位置使用 FFN、embedding/head tying 与跨层或跨头共享混为一谈。
-- 对 logits 先 softmax 后再交给期望 logits 的 `CrossEntropyLoss`，或沿 hidden 轴做词表归一化。
-
-#### 追问
-
-- 共享 embedding/head 时，padding token 对应的输出行是否一定永远没有梯度？
-- ALBERT 共享参数为何省参数却仍要执行多层计算？
 
 <a id="topic-2"></a>
 ## 预训练模型与家族对比
@@ -205,9 +205,9 @@ $$
 
 NSP 为句对判别任务，原配方约一半用相邻片段、一半用随机片段；利用 CLS 表示预测 IsNext/NotNext，与 MLM loss 组合。MLM 的“遮蔽”是输入 token 扰动，双向 attention 仍可访问被扰动位置及两侧上下文，和 causal attention mask 完全不同。CLS 表示通过预训练任务与下游监督学会聚合信息，不天然是最佳通用句向量。BERT 可接分类、序列标注或起止位置预测头，不能直接把其双向 MLM 当作普通左到右生成器。
 
-$$
+```math
 \mathcal L_{\rm MLM}=-\sum_{i\in\mathcal M}\log p_\theta(x_i\mid\tilde x),\qquad\mathcal L_{\rm BERT}=\mathcal L_{\rm MLM}+\mathcal L_{\rm NSP}
-$$
+```
 
 #### 易错点
 
@@ -230,9 +230,9 @@ $$
 
 512 是原始模型的最大位置表与训练长度配置，不是 Transformer 的普遍数学上限，也不是512个中文词。超长输入可截断、滑窗分块加聚合，或扩位置表并继续训练；直接补随机位置或插值不能保证效果，成本仍受注意力和激活规模限制。若是抽取问答，要保留块到原文的offset与跨块答案处理；若是句向量，验证池化和训练目标。BERT 输入加法与 RoPE 旋转 Q/K 属于不同位置参数化。
 
-$$
-h_i^{(0)}=\operatorname{LN}(E_{x_i}+S_{a_i}+P_i),\qquad E_{x_i},S_{a_i},P_i\in\mathbb R^d
-$$
+```math
+h_i^{(0)}=\mathrm{LN}(E_{x_i}+S_{a_i}+P_i),\qquad E_{x_i},S_{a_i},P_i\in\mathbb R^d
+```
 
 #### 易错点
 
@@ -255,9 +255,9 @@ RoBERTa 重点改训练配方：更多数据和训练、较大 batch、动态 ML
 
 SpanBERT 对连续 span 进行遮蔽，并用两端表示及相对位置预测 span 内 token，使表示更适合抽取式问答、指代等 span 任务。三者都以双向表示为核心，但压参数、改训练和改监督目标解决的问题不同。ALBERT 的层共享减少独立参数和模型状态，不等于执行层数减少；SpanBERT 的连续遮蔽也不同于 T5 直接生成被删 span。评价需固定数据、算力、模型规模与任务。
 
-$$
+```math
 P_{\rm embed}^{\rm BERT}=|V|d,\qquad P_{\rm embed}^{\rm ALBERT}=|V|e+ed,\quad e\ll d
-$$
+```
 
 #### 易错点
 
@@ -280,9 +280,9 @@ XLNet 对位置的不同因子分解顺序取期望，让模型在不同预测�
 
 若用于预测某个位置的表示直接包含其 token，模型就能泄露标签。双流注意力因此区分 content stream 和 query stream：content stream 含位置内容用于后续上下文，query stream 只携带目标位置信息并访问已知位置的content，不读目标 token 本身。XLNet 还继承 Transformer-XL 的跨段记忆与相对位置思路，记忆常作为停止梯度的旧段状态；这和推理 KV cache 的含义不同。它通过条件概率表达预测项之间的关系，但实际训练部分预测、记忆和排列采样是计算折中，不宜宣称天然解决所有 MLM 局限。
 
-$$
-\mathcal L=-\mathbb E_{z\sim\mathcal Z_T}\sum_{t=1}^{T}\log p_\theta(x_{z_t}\mid x_{z_{<t}})
-$$
+```math
+\mathcal L=-\mathbb E_{z\sim\mathcal Z_T}\sum_{t=1}^{T}\log p_\theta(x_{z_t}\mid x_{z_{\lt t}})
+```
 
 #### 易错点
 
@@ -305,9 +305,9 @@ $$
 
 ChatGLM 是基于 GLM 思路发展出的对话模型系列，具体 checkpoint 的架构和训练已发生变化，不能把初代的二维位置、激活和 mask 规则套到全部后续版本。初代 ChatGLM-6B 以中英对话为重点，ChatGLM2 引入 MQA 等改动，ChatGLM3 进一步提供工具、代码等能力；回答对比时应明确版本并检查 config、attention mask 与 tokenizer，而非靠模型家族名猜公式。GLM 的 blank infilling 也不等于只在普通 causal LM 前面加一个 prompt。
 
-$$
-p_\theta(S\mid A)=\prod_{j}p_\theta(S_j\mid A,S_{<j}),\qquad\operatorname{pos}(S_j)=(\operatorname{anchor}(S),j)
-$$
+```math
+p_\theta(S\mid A)=\prod_{j}p_\theta(S_j\mid A,S_{\lt j}),\qquad\mathrm{pos}(S_j)=(\mathrm{anchor}(S),j)
+```
 
 #### 易错点
 
@@ -330,9 +330,9 @@ $$
 
 2024年首发 Llama3 8B/70B 采用约128K词表的 tokenizer、GQA 和更大、更精细过滤的预训练数据；首发窗口为8K，后来的 Llama3.1 等扩到128K，面试时须分开。架构小改与数据量、混合比例、去重、后训练都影响效果，不能据参数量推断能力。扩词表降低某些语言的 token 长度，但增加 embedding/LM head 成本；GQA 减少 KV 头和缓存负担，RoPE 参数与训练窗口共同决定外推表现。给具体比较应引用 checkpoint 配置而非使用家族级固定数字。
 
-$$
+```math
 P_{\rm vocab}=|V|d\quad(\text{one table}),\qquad M_{\rm KV}\propto L\,T\,n_{\rm kv}\,d_h
-$$
+```
 
 #### 易错点
 
@@ -355,9 +355,9 @@ T5 将任务统一成文本到文本，常见span corruption把连续片段替�
 
 BERT的MLM在被选位置接词表分类头，通常不生成整个目标序列；T5/BART的目标在decoder序列上做自回归交叉熵。连续遮蔽、目标格式、目标长度和可见上下文均会影响计算量，不能仅因使用mask就称为同一目标。encoder-decoder很适合输入输出分离的翻译、摘要和条件生成，也能缓存encoder输出及decoder历史；decoder-only的流行并不证明这些结构无效。
 
-$$
-\mathcal L_{\rm denoise}=-\sum_{t=1}^{|y|}\log p_\theta(y_t\mid y_{<t},\operatorname{corrupt}(x))
-$$
+```math
+\mathcal L_{\rm denoise}=-\sum_{t=1}^{|y|}\log p_\theta(y_t\mid y_{\lt t},\mathrm{corrupt}(x))
+```
 
 #### 易错点
 
@@ -418,6 +418,31 @@ R1 主要是基于 V3-Base 的推理后训练路线：R1-Zero 探索从底座直
 <a id="topic-3"></a>
 ## MoE 路由、训练与压缩
 
+<a id="tfm-015"></a>
+### TFM-015 · MoE 与 Dense 的参数量和计算量应怎样比较？
+
+**L2**
+
+#### 答案
+
+MoE 通常把部分 FFN 替换为专家集合，由 router 为每个 token 选择 top-k 专家并加权输出，以较少的激活计算提供较大的总参数容量。Dense 则通常每个 token 使用全部层参数。
+
+总参数、激活参数与真实成本要分别统计：激活参数包含共享模块和被选专家，不能简单用总参数乘 $`k/E`$。路由不均衡会形成热点、容量溢出或 token 丢弃，常需辅助损失等机制。专家并行还有 all-to-all 通信，小 batch、跨节点或低利用率场景可能抵消算术收益，甚至增加时延。
+
+![MoE 单 token 的 Top-2 专家路由](../assets/moe-routing.svg)
+
+示例为 4 个专家中激活 2 个；真实系统还需要处理负载、容量与通信。
+
+#### 易错点
+
+- MoE 总参数大就必然推理更慢，或激活参数少就必然更快。
+- 忽略共享模块、路由与通信成本。
+
+#### 追问
+
+- 负载均衡会不会损害专家专门化？
+- 如何区分模型 FLOPs 与实际 GPU 成本？
+
 <a id="arc-008"></a>
 ### ARC-008 · MoE 路由、Top-k、capacity factor 与 token dropping 分别做什么？
 
@@ -429,9 +454,9 @@ R1 主要是基于 V3-Base 的推理后训练路线：R1-Zero 探索从底座直
 
 capacity 对每个专家设置可接收 token 的预算，常按平均负载乘 capacity factor 取整；负载超过容量时传统实现可 drop 溢出分支、回退或走残差，不能简单理解为从语料删掉该token。提高容量减轻溢出但增加buffer、计算与通信，dropless方案避免drop却须面对不均衡显存和调度。Top-k 的离散选择不是处处可微，router梯度主要来自被选专家的门权重及辅助目标。选型需联合看质量、负载、通信与实际吞吐。
 
-$$
-\begin{aligned}p(x)&=\operatorname{softmax}(W_rx)\\y&=\sum_{e\in\operatorname{TopK}(p,k)}\tilde p_e(x)E_e(x)\\C&=\left\lceil\operatorname{capacity\_factor}\cdot\frac{Tk}{E}\right\rceil\end{aligned}
-$$
+```math
+\begin{aligned}p(x)&=\mathrm{softmax}(W_rx)\\y&=\sum_{e\in\mathrm{TopK}(p,k)}\tilde p_e(x)E_e(x)\\C&=\left\lceil\mathrm{capacity\_factor}\cdot\frac{Tk}{E}\right\rceil\end{aligned}
+```
 
 #### 易错点
 
@@ -454,9 +479,9 @@ $$
 
 ST-MoE 的 router z-loss 对 router logits 的 logsumexp 平方加惩罚，约束其尺度、改善数值稳定性，与把每个专家均匀使用不是同一目标。训练需同时记录专家负载、溢出率、熵、router logits和主loss，不能只看到辅助loss低就认为质量好。router可能用FP32计算敏感归一化；专家FFN仍可用低精度。辅助项大小还依赖token数、Top-k和是否按序列/批次归一化。
 
-$$
-\begin{aligned}\mathcal L_{\rm balance}&=\alpha E\sum_{e=1}^{E}f_eP_e\\f_e&=\frac1T\sum_t\mathbf1\{\operatorname{route}(t)=e\},\quad P_e=\frac1T\sum_t p_e(x_t)\\\mathcal L_z&=\frac\beta T\sum_t\left(\log\sum_e e^{z_{t,e}}\right)^2\end{aligned}
-$$
+```math
+\begin{aligned}\mathcal L_{\rm balance}&=\alpha E\sum_{e=1}^{E}f_eP_e\\f_e&=\frac1T\sum_t\mathbf1\{\mathrm{route}(t)=e\},\quad P_e=\frac1T\sum_t p_e(x_t)\\\mathcal L_z&=\frac\beta T\sum_t\left(\log\sum_e e^{z_{t,e}}\right)^2\end{aligned}
+```
 
 #### 易错点
 
@@ -533,31 +558,6 @@ FP8 主要降低矩阵乘法与部分存储通信成本，但采用细粒度缩�
 - 路由偏置和专家聚合权重为什么要分开？
 - FP8 溢出、量化误差与通信瓶颈应分别怎样监控？
 
-<a id="tfm-015"></a>
-### TFM-015 · MoE 与 Dense 的参数量和计算量应怎样比较？
-
-**L2**
-
-#### 答案
-
-MoE 通常把部分 FFN 替换为专家集合，由 router 为每个 token 选择 top-k 专家并加权输出，以较少的激活计算提供较大的总参数容量。Dense 则通常每个 token 使用全部层参数。
-
-总参数、激活参数与真实成本要分别统计：激活参数包含共享模块和被选专家，不能简单用总参数乘 $k/E$。路由不均衡会形成热点、容量溢出或 token 丢弃，常需辅助损失等机制。专家并行还有 all-to-all 通信，小 batch、跨节点或低利用率场景可能抵消算术收益，甚至增加时延。
-
-![MoE 单 token 的 Top-2 专家路由](../assets/moe-routing.svg)
-
-示例为 4 个专家中激活 2 个；真实系统还需要处理负载、容量与通信。
-
-#### 易错点
-
-- MoE 总参数大就必然推理更慢，或激活参数少就必然更快。
-- 忽略共享模块、路由与通信成本。
-
-#### 追问
-
-- 负载均衡会不会损害专家专门化？
-- 如何区分模型 FLOPs 与实际 GPU 成本？
-
 <a id="topic-4"></a>
 ## 推理模型与 MLA
 
@@ -568,15 +568,15 @@ MoE 通常把部分 FFN 替换为专家集合，由 router 为每个 token 选�
 
 #### 答案
 
-MLA 将每个 token 的内容 K/V 联合投影为低维 latent $c_t$，再由各头的上投影得到内容 K/V。MQA/GQA 直接共享少量 KV 头；MLA 共享压缩表示，同时允许各 query 头具有不同的内容投影。它是一种重新训练的注意力结构，不能把已有 MHA 模型的缓存直接压缩后声称等价。
+MLA 将每个 token 的内容 K/V 联合投影为低维 latent $`c_t`$，再由各头的上投影得到内容 K/V。MQA/GQA 直接共享少量 KV 头；MLA 共享压缩表示，同时允许各 query 头具有不同的内容投影。它是一种重新训练的注意力结构，不能把已有 MHA 模型的缓存直接压缩后声称等价。
 
 推理时，内容 key 的上投影可吸收到 query 投影，value 的上投影可与输出投影结合，从而在 latent 空间计算，避免永久缓存展开的每头 K/V。但普通 RoPE 把位置相关旋转夹在两次投影中，不能随意交换矩阵或完成同样的吸收。DeepSeek-V2 将内容分量与位置分量解耦，额外缓存共享的 RoPE key。
 
-若 latent 维为 $d_c$，额外位置 key 维为 $d_R$，$B$ 条等长序列、$L$ 层、长度 $T$、每元素 $s$ 字节，理想缓存为 $BLT(d_c+d_R)s$。MHA 则约为 $2BLTHd_hs$；这里不含块表、量化元数据和工作区。缓存减少有利于并发和带宽，但最终速度还依赖是否使用适配 MLA 的内核与并行布局。
+若 latent 维为 $`d_c`$，额外位置 key 维为 $`d_R`$，$`B`$ 条等长序列、$`L`$ 层、长度 $`T`$、每元素 $`s`$ 字节，理想缓存为 $`BLT(d_c+d_R)s`$。MHA 则约为 $`2BLTHd_hs`$；这里不含块表、量化元数据和工作区。缓存减少有利于并发和带宽，但最终速度还依赖是否使用适配 MLA 的内核与并行布局。
 
-$$
+```math
 \begin{aligned}c_t&=W_Dh_t,\quad k_{t,i}^{C}=W_{UK,i}c_t,\quad v_{t,i}=W_{UV,i}c_t\\(q_{t,i}^{C})^\top k_{j,i}^{C}&=(W_{UK,i}^{\top}q_{t,i}^{C})^\top c_j\\M_{\mathrm{MLA}}&\approx BLT(d_c+d_R)s\end{aligned}
-$$
+```
 
 #### 易错点
 
@@ -613,6 +613,14 @@ R1 的主路线是少量长 CoT 冷启动 SFT → 推理 RL → 对较好的生�
 
 ## 参考资料
 
+- [Attention Is All You Need](https://arxiv.org/pdf/1706.03762)
+- [BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](https://arxiv.org/abs/1810.04805)
+- [Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer](https://arxiv.org/pdf/1910.10683)
+- [Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)
+- [Using the Output Embedding to Improve Language Models](https://arxiv.org/abs/1608.05859)
+- [torch.nn.CrossEntropyLoss — PyTorch 2.14 documentation](https://docs.pytorch.org/docs/2.14/generated/torch.nn.CrossEntropyLoss.html)
+- [ALBERT: A Lite BERT for Self-supervised Learning of Language Representations](https://arxiv.org/pdf/1909.11942)
+- [Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity](https://arxiv.org/pdf/2101.03961)
 - [BERT: Pre-training of Deep Bidirectional Transformers](https://arxiv.org/html/1810.04805v2)
 - [RoBERTa: A Robustly Optimized BERT Pretraining Approach](https://arxiv.org/html/1907.11692v1)
 - [ALBERT: A Lite BERT](https://arxiv.org/html/1909.11942v6)
@@ -642,11 +650,3 @@ R1 的主路线是少量长 CoT 冷启动 SFT → 推理 RL → 对较好的生�
 - [DeepSeek-R1 Technical Report](https://arxiv.org/html/2501.12948v1)
 - [Qwen3 Technical Report](https://arxiv.org/html/2505.09388v1)
 - [Qwen3 official repository](https://github.com/QwenLM/Qwen3)
-- [Attention Is All You Need](https://arxiv.org/pdf/1706.03762)
-- [BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](https://arxiv.org/abs/1810.04805)
-- [Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer](https://arxiv.org/pdf/1910.10683)
-- [Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)
-- [Using the Output Embedding to Improve Language Models](https://arxiv.org/abs/1608.05859)
-- [torch.nn.CrossEntropyLoss — PyTorch 2.14 documentation](https://docs.pytorch.org/docs/2.14/generated/torch.nn.CrossEntropyLoss.html)
-- [ALBERT: A Lite BERT for Self-supervised Learning of Language Representations](https://arxiv.org/pdf/1909.11942)
-- [Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity](https://arxiv.org/pdf/2101.03961)

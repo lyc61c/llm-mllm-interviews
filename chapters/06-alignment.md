@@ -65,9 +65,9 @@ LLM 的状态可取 prompt 加已生成前缀，动作是下一个 token，终�
 
 若观察不完整，使用历史、记忆或 belief state 建模部分可观测性。深度学习是函数表示/优化手段，RL 是学习范式，两者不是对立关系；RL 也可能依赖答案标签、人工反馈或模拟器。
 
-$$
+```math
 \begin{aligned}G_t&=\sum_{k=0}^{T-t-1}\gamma^k r_{t+k+1}\\ V^\pi(s)&=\mathbb E_{a\sim\pi,\,s^\prime,r}[r+\gamma V^\pi(s^\prime)]\\ Q^\pi(s,a)&=\mathbb E_{s^\prime,r}[r+\gamma\mathbb E_{a^\prime\sim\pi}Q^\pi(s^\prime,a^\prime)]\end{aligned}
-$$
+```
 
 #### 易错点
 
@@ -90,9 +90,9 @@ n-step 把前 n 步实际奖励与末状态价值组合。n 增大通常减少�
 
 真实终止令后续价值为零；时间限制截断未必表示环境终止，需要按任务语义处理 bootstrap。GAE 可看作不同步长优势信息的加权组合。
 
-$$
+```math
 \begin{aligned}V(s_t)&\leftarrow V(s_t)+\alpha\big[r_{t+1}+\gamma V(s_{t+1})-V(s_t)\big]\\ G_t^{(n)}&=\sum_{k=0}^{n-1}\gamma^k r_{t+k+1}+\gamma^n V(s_{t+n})\end{aligned}
-$$
+```
 
 #### 易错点
 
@@ -115,9 +115,9 @@ REINFORCE 按当前策略采样轨迹，计算回报，最小化负的 log-prob 
 
 baseline b(s) 不依赖当前采样动作时，其期望梯度贡献为零，可以降低方差。用 V(s) 得到回报减价值的优势估计。实现中回报/优势应 detach，避免策略梯度通过权重误反传；状态访问权重及折扣须与定义的目标一致。
 
-$$
+```math
 \begin{aligned}\nabla_\theta J&=\mathbb E_\tau\left[\sum_t \gamma^t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\big(G_t-b(s_t)\big)\right]\\ \mathbb E_{a\sim\pi}[b(s)\nabla_\theta\log\pi(a\mid s)]&=b(s)\nabla_\theta\sum_a\pi(a\mid s)=0\end{aligned}
-$$
+```
 
 #### 易错点
 
@@ -140,9 +140,9 @@ A3C 让多个 worker 与独立环境交互，从共享参数同步局部副本�
 
 RLHF 的 RM 评价回答质量，Critic 预测包含 RM/KL 等定义后未来能获得的回报，二者不同。优势 A=Q−V 是期望函数；单步 TD residual 是它的一种估计，不能处处当成完全相等的真值。
 
-$$
-\mathcal L_{\mathrm{actor}}=-\mathbb E[\log\pi_\theta(a_t\mid s_t)\operatorname{sg}(\hat A_t)],\qquad \mathcal L_{\mathrm{critic}}=\mathbb E[(V_\phi(s_t)-\operatorname{sg}(\hat G_t))^2]
-$$
+```math
+\mathcal L_{\mathrm{actor}}=-\mathbb E[\log\pi_\theta(a_t\mid s_t)\mathrm{sg}(\hat A_t)],\qquad \mathcal L_{\mathrm{critic}}=\mathbb E[(V_\phi(s_t)-\mathrm{sg}(\hat G_t))^2]
+```
 
 #### 易错点
 
@@ -165,9 +165,9 @@ On-policy学习当前交互策略，off-policy允许数据由不同的行为策�
 
 TRPO用KL约束限制更新，通常涉及二阶近似和线搜索；PPO-clip采用一阶优化的截断代理目标，PPO-penalty则采用KL惩罚。clip并不是严格KL信任域保证，仍应监控KL/采用早停。RLHF参考模型KL又是行为锚点约束，与本轮新旧策略限制分开。
 
-$$
-\mathbb E_{z\sim p}[f(z)]=\mathbb E_{z\sim q}\left[\frac{p(z)}{q(z)}f(z)\right],\qquad p(z)>0\Rightarrow q(z)>0
-$$
+```math
+\mathbb E_{z\sim p}[f(z)]=\mathbb E_{z\sim q}\left[\frac{p(z)}{q(z)}f(z)\right],\qquad p(z)\gt 0\Rightarrow q(z)\gt 0
+```
 
 #### 易错点
 
@@ -190,9 +190,9 @@ Q值是期望回报，不是动作概率；由价值导出的策略也可随机�
 
 表格型收敛结论需要充分访问、步长条件与有限状态动作等假设，换成神经网络后不能直接套用。连续动作上的max较难，常借助Actor-Critic；LLM词表可作为离散动作，但长程状态、信用分配与计算成本仍令直接Q学习具有挑战。
 
-$$
+```math
 \begin{aligned}Q_{\mathrm{Q\text{-}learn}}(s_t,a_t)&\leftarrow Q(s_t,a_t)+\alpha[r_{t+1}+\gamma\max_aQ(s_{t+1},a)-Q(s_t,a_t)]\\ Q_{\mathrm{SARSA}}(s_t,a_t)&\leftarrow Q(s_t,a_t)+\alpha[r_{t+1}+\gamma Q(s_{t+1},a_{t+1})-Q(s_t,a_t)]\end{aligned}
-$$
+```
 
 #### 易错点
 
@@ -215,9 +215,9 @@ DQN用神经网络近似动作价值，回归Bellman target。经验回放打散
 
 Double是target构造的变化，Dueling是网络结构的变化，可以组合。目标网络与actor-critic中的价值模型也不是同一个概念，DQN本身没有独立输出动作的Actor。
 
-$$
+```math
 \begin{aligned}y_{\mathrm{DDQN}}&=r+\gamma Q_{\mathrm{target}}(s^\prime,\arg\max_aQ_{\mathrm{online}}(s^\prime,a))\\ Q(s,a)&=V(s)+A(s,a)-\frac1{|\mathcal A|}\sum_{a^\prime}A(s,a^\prime)\end{aligned}
-$$
+```
 
 #### 易错点
 
@@ -240,9 +240,9 @@ D4PG在确定性策略梯度框架加入分布式采样、回报分布表示、n
 
 LLM token是离散词表动作，普通确定性连续动作梯度不能直接穿过采样token；应使用适配离散动作的目标与实现，而非把DDPG的网络名换成Transformer就当作等价算法。SAC存在离散变体，但需要具体说明动作分布、Q计算成本与采样方式。
 
-$$
+```math
 J_{\mathrm{SAC}}=\mathbb E\left[\sum_t\gamma^t\big(r_t+\alpha\mathcal H(\pi(\cdot\mid s_t))\big)\right]
-$$
+```
 
 #### 易错点
 
@@ -265,9 +265,9 @@ $$
 
 预测误差不等于业务价值，随机噪声也可持续提供奖励，产生“noisy TV”问题。对LLM Agent不应直接把新奇token、更多工具调用或更长轨迹当成功；应设内在奖励权重、资源约束与外部目标验收。
 
-$$
+```math
 \begin{aligned}r_t^\prime&=r_t+\gamma\Phi(s_{t+1})-\Phi(s_t)\\ r_t^{\mathrm{intrinsic}}&\propto\left\|f(\phi(s_t),a_t)-\phi(s_{t+1})\right\|_2^2\end{aligned}
-$$
+```
 
 #### 易错点
 
@@ -290,9 +290,9 @@ IRL从示范推断能解释专家行为的奖励，再求策略，但奖励通�
 
 Agent SFT相当于示范轨迹上的行为学习；数据应包含工具选择、参数、观察与恢复。修复deployment失误时，可以收集当前Agent错误状态上的示范，而非仅增加更多理想轨迹；危险状态不能为采样而无约束执行。
 
-$$
+```math
 \mathcal L_{\mathrm{BC}}=-\mathbb E_{(s,a)\sim\mathcal D_E}[\log\pi_\theta(a\mid s)]
-$$
+```
 
 #### 易错点
 
@@ -333,13 +333,13 @@ DPO 直接用同一问题的偏好回答对更新策略，省去独立奖励模�
 
 #### 答案
 
-PPO 使用新旧策略的概率比 $\rho_t=\pi_\theta(a_t\mid s_t)/\pi_{\mathrm{old}}(a_t\mid s_t)$，对本轮旧策略采集的样本进行更新；优势为正时鼓励提高动作概率，为负时鼓励降低概率。
+PPO 使用新旧策略的概率比 $`\rho_t=\pi_\theta(a_t\mid s_t)/\pi_{\mathrm{old}}(a_t\mid s_t)`$，对本轮旧策略采集的样本进行更新；优势为正时鼓励提高动作概率，为负时鼓励降低概率。
 
-clip 与 min 共同截断有利方向上过度更新带来的目标收益：$A_t>0$ 时限制过度增大概率的收益，$A_t<0$ 时限制过度减小概率的收益。它削弱大幅更新的动机，并非裁剪模型参数，也不保证所有概率比都留在区间内。多轮 minibatch 更新应同时监测 KL、clip fraction、熵和 value loss。
+clip 与 min 共同截断有利方向上过度更新带来的目标收益：$`A_t>0`$ 时限制过度增大概率的收益，$`A_t<0`$ 时限制过度减小概率的收益。它削弱大幅更新的动机，并非裁剪模型参数，也不保证所有概率比都留在区间内。多轮 minibatch 更新应同时监测 KL、clip fraction、熵和 value loss。
 
-$$
-L^{\mathrm{clip}}=\mathbb{E}\left[\min\left(\rho_t A_t,\operatorname{clip}(\rho_t,1-\epsilon,1+\epsilon)A_t\right)\right]
-$$
+```math
+L^{\mathrm{clip}}=\mathbb{E}\left[\min\left(\rho_t A_t,\mathrm{clip}(\rho_t,1-\epsilon,1+\epsilon)A_t\right)\right]
+```
 
 #### 易错点
 
@@ -356,13 +356,13 @@ $$
 
 #### 答案
 
-GAE 把多个 TD 残差按 $(\gamma\lambda)^l$ 衰减求和，可在序列末尾向前递推计算。每步残差为 $\delta_t=r_t+\gamma V(s_{t+1})-V(s_t)$，其中 $\gamma$ 决定折扣目标，$\lambda$ 决定优势估计对多步信息与 bootstrap 的依赖，两者作用不同。
+GAE 把多个 TD 残差按 $`(\gamma\lambda)^l`$ 衰减求和，可在序列末尾向前递推计算。每步残差为 $`\delta_t=r_t+\gamma V(s_{t+1})-V(s_t)`$，其中 $`\gamma`$ 决定折扣目标，$`\lambda`$ 决定优势估计对多步信息与 bootstrap 的依赖，两者作用不同。
 
-较小的 $\lambda$ 更依赖局部价值估计，价值模型不准时可能引入偏差；$\lambda$ 接近 1 时更接近回报减基线，通常也有更高方差。终止、超时、截断和 padding 对应的 bootstrap 与 mask 必须和任务定义一致，否则即使递推公式正确，优势也可能算错。
+较小的 $`\lambda`$ 更依赖局部价值估计，价值模型不准时可能引入偏差；$`\lambda`$ 接近 1 时更接近回报减基线，通常也有更高方差。终止、超时、截断和 padding 对应的 bootstrap 与 mask 必须和任务定义一致，否则即使递推公式正确，优势也可能算错。
 
-$$
+```math
 \begin{aligned}\hat A_t^{\mathrm{GAE}}&=\sum_{l\geq 0}(\gamma\lambda)^l\delta_{t+l}\\\delta_t&=r_t+\gamma V(s_{t+1})-V(s_t)\end{aligned}
-$$
+```
 
 #### 易错点
 
@@ -379,9 +379,9 @@ $$
 
 #### 答案
 
-RLHF 的参考策略 KL 惩罚用于约束模型相对行为锚点的漂移，目标可写为 $\mathbb{E}[r]-\beta D_{\mathrm{KL}}(\pi_\theta\Vert\pi_{\mathrm{ref}})$；参考策略通常是冻结的 SFT 模型。PPO 的 clip 或新旧策略 KL 则约束相对本轮采样策略的局部更新，旧策略随 rollout 轮次刷新。
+RLHF 的参考策略 KL 惩罚用于约束模型相对行为锚点的漂移，目标可写为 $`\mathbb{E}[r]-\beta D_{\mathrm{KL}}(\pi_\theta\Vert\pi_{\mathrm{ref}})`$；参考策略通常是冻结的 SFT 模型。PPO 的 clip 或新旧策略 KL 则约束相对本轮采样策略的局部更新，旧策略随 rollout 轮次刷新。
 
-两种约束的参照对象和作用范围不同，不能互相替代。实现中可用采样 token 的 $\log\pi_\theta-\log\pi_{\mathrm{ref}}$ 估计参考 KL，但单个采样项未必非负，不能把逐 token 出现负值直接视为实现错误。
+两种约束的参照对象和作用范围不同，不能互相替代。实现中可用采样 token 的 $`\log\pi_\theta-\log\pi_{\mathrm{ref}}`$ 估计参考 KL，但单个采样项未必非负，不能把逐 token 出现负值直接视为实现错误。
 
 β过大可能让策略难以利用任务奖励，过小可能放大奖励过优化与行为漂移。联合监控参考KL、独立胜率/正确率、熵与输出长度，必要时按目标KL自适应调节；不是只让训练RM分数最高。PPO的参考KL系数、clip范围和DPO β作用路径不同，数值不能直接互相移植。
 
@@ -391,7 +391,7 @@ RLHF 的参考策略 KL 惩罚用于约束模型相对行为锚点的漂移，�
 
 #### 追问
 
-- 为何增大 $\beta$ 可能伤害偏好奖励提升？
+- 为何增大 $`\beta`$ 可能伤害偏好奖励提升？
 
 <a id="aln-008"></a>
 ### ALN-008 · PPO 与 DPO 在工程上如何选型？
@@ -427,9 +427,9 @@ RLHF 的参考策略 KL 惩罚用于约束模型相对行为锚点的漂移，�
 
 V_target 是当前采样批次的估计回报，不是 RM 分数直接广播，也不是新 Critic 自己给自己作标签。只有回答有效位置参与相应 loss，截断是否 bootstrap、KL 正则是否另作损失、价值归一化须保持一致。
 
-$$
-\begin{aligned}\tilde r_t&=r_t^{\mathrm{task}}-\beta(\log\pi_{\mathrm{old}}(y_t\mid s_t)-\log\pi_{\mathrm{ref}}(y_t\mid s_t))\\ \hat A_t&=\delta_t+\gamma\lambda\hat A_{t+1},\quad \delta_t=\tilde r_t+\gamma V_{\mathrm{old}}(s_{t+1})-V_{\mathrm{old}}(s_t)\\ \hat V_t^{\mathrm{target}}&=\operatorname{sg}(V_{\mathrm{old}}(s_t)+\hat A_t)\\ \mathcal L_V&=\tfrac12\operatorname{mean}_{t\in\mathcal V}(V_\phi(s_t)-\hat V_t^{\mathrm{target}})^2\end{aligned}
-$$
+```math
+\begin{aligned}\tilde r_t&=r_t^{\mathrm{task}}-\beta(\log\pi_{\mathrm{old}}(y_t\mid s_t)-\log\pi_{\mathrm{ref}}(y_t\mid s_t))\\ \hat A_t&=\delta_t+\gamma\lambda\hat A_{t+1},\quad \delta_t=\tilde r_t+\gamma V_{\mathrm{old}}(s_{t+1})-V_{\mathrm{old}}(s_t)\\ \hat V_t^{\mathrm{target}}&=\mathrm{sg}(V_{\mathrm{old}}(s_t)+\hat A_t)\\ \mathcal L_V&=\tfrac12\mathrm{mean}_{t\in\mathcal V}(V_\phi(s_t)-\hat V_t^{\mathrm{target}})^2\end{aligned}
+```
 
 ![RLHF-PPO 的 Actor、Reference、Reward Model 和 Critic](../assets/ppo-roles.svg)
 
@@ -456,9 +456,9 @@ $$
 
 按 rollout、RM/reference 打分、Actor/Critic 更新分别测峰值；角色共卡/分卡与 offload 改变峰值和吞吐。7B Actor+7B Critic+两个7B冻结模型，在上述未分片假设下仅状态就约252 GB十进制，尚未包含激活/KV，不能据此简单平均后断言4张80GB足够。
 
-$$
+```math
 M_{\mathrm{peak}}\approx\max_{\mathrm{phase}}\big(M_{\mathrm{train\ states}}+M_{\mathrm{frozen\ weights}}+M_{\mathrm{activations}}+M_{\mathrm{KV}}+M_{\mathrm{buffers}}\big)
-$$
+```
 
 #### 易错点
 
@@ -478,13 +478,13 @@ $$
 
 #### 答案
 
-从奖励最大化并惩罚参考策略 KL 的目标出发，最优策略满足 $\pi^*(y\mid x)\propto\pi_{\mathrm{ref}}(y\mid x)\exp(r(x,y)/\beta)$。将奖励改写为 $r(x,y)=\beta\log[\pi^*(y\mid x)/\pi_{\mathrm{ref}}(y\mid x)]+\beta\log Z(x)$，再代入 Bradley–Terry 偏好概率；同一问题的奖励差中，$Z(x)$ 项抵消，得到 DPO 损失。
+从奖励最大化并惩罚参考策略 KL 的目标出发，最优策略满足 $`\pi^*(y\mid x)\propto\pi_{\mathrm{ref}}(y\mid x)\exp(r(x,y)/\beta)`$。将奖励改写为 $`r(x,y)=\beta\log[\pi^*(y\mid x)/\pi_{\mathrm{ref}}(y\mid x)]+\beta\log Z(x)`$，再代入 Bradley–Terry 偏好概率；同一问题的奖励差中，$`Z(x)`$ 项抵消，得到 DPO 损失。
 
-该推导要求 $\beta>0$，参考策略的支持覆盖候选回答，并采用相应的偏好建模假设。训练时用参数化策略替代最优策略，有限数据、模型容量和优化误差仍然存在，因此推导不能保证实际模型一定达到原目标的最优解。
+该推导要求 $`\beta>0`$，参考策略的支持覆盖候选回答，并采用相应的偏好建模假设。训练时用参数化策略替代最优策略，有限数据、模型容量和优化误差仍然存在，因此推导不能保证实际模型一定达到原目标的最优解。
 
-$$
+```math
 \mathcal{L}_{\mathrm{DPO}}=-\mathbb{E}_{(x,y_w,y_l)}\left[\log\sigma\left(\beta\left[\log\frac{\pi_\theta(y_w\mid x)}{\pi_{\mathrm{ref}}(y_w\mid x)}-\log\frac{\pi_\theta(y_l\mid x)}{\pi_{\mathrm{ref}}(y_l\mid x)}\right]\right)\right]
-$$
+```
 
 #### 易错点
 
@@ -501,9 +501,9 @@ $$
 
 #### 答案
 
-参考模型提供偏好优化的行为锚点，通常选用适合任务的 SFT 模型。理论 KL 正则目标中，较大的 $\beta$ 意味着更强的参考策略约束，最优策略对奖励变化的响应较弱；在实际 DPO 损失中，$\beta$ 同时改变偏好 logit 与梯度尺度，其效果还受学习率、数据和训练时长影响，不能简单断言最终 KL 会单调变化。
+参考模型提供偏好优化的行为锚点，通常选用适合任务的 SFT 模型。理论 KL 正则目标中，较大的 $`\beta`$ 意味着更强的参考策略约束，最优策略对奖励变化的响应较弱；在实际 DPO 损失中，$`\beta`$ 同时改变偏好 logit 与梯度尺度，其效果还受学习率、数据和训练时长影响，不能简单断言最终 KL 会单调变化。
 
-调参应比较多组 $\beta$，联合观察 chosen/rejected 的隐式奖励差、KL、胜率和通用能力。如果参考模型与偏好数据的生成模型不一致，先检查模板、长度及候选支持是否匹配，再判断超参数的影响。
+调参应比较多组 $`\beta`$，联合观察 chosen/rejected 的隐式奖励差、KL、胜率和通用能力。如果参考模型与偏好数据的生成模型不一致，先检查模板、长度及候选支持是否匹配，再判断超参数的影响。
 
 #### 易错点
 
@@ -511,7 +511,7 @@ $$
 
 #### 追问
 
-- 同样 $\beta$，换参考模型为什么结果会变？
+- 同样 $`\beta`$，换参考模型为什么结果会变？
 
 <a id="aln-009"></a>
 ### ALN-009 · 如何把点赞、点踩和日志变成高质量偏好数据？
@@ -599,9 +599,9 @@ GRPO 对同一问题采样一组回答，以组内平均奖励作为基线并标
 
 #### 答案
 
-原始 GRPO 的组内优势通常写为 $\hat A_i=(r_i-\bar r)/(\operatorname{std}(r)+\epsilon)$；标准差的具体定义需与实现一致。减均值提供相对基线，除以标准差则进一步按每个问题的奖励方差重加权：较小但非零的方差可能放大少数回答的信号。
+原始 GRPO 的组内优势通常写为 $`\hat A_i=(r_i-\bar r)/(\mathrm{std}(r)+\epsilon)`$；标准差的具体定义需与实现一致。减均值提供相对基线，除以标准差则进一步按每个问题的奖励方差重加权：较小但非零的方差可能放大少数回答的信号。
 
-二元奖励下，全对或全错的组没有相对学习信号；$\epsilon$ 只能改善数值稳定性，不能创造奖励差异。组大小影响方差估计及出现混合结果的概率。比较取消标准差归一化、跨 batch 归一化或难度采样时，应控制总采样量，避免把数据分布变化误认为目标函数改进。
+二元奖励下，全对或全错的组没有相对学习信号；$`\epsilon`$ 只能改善数值稳定性，不能创造奖励差异。组大小影响方差估计及出现混合结果的概率。比较取消标准差归一化、跨 batch 归一化或难度采样时，应控制总采样量，避免把数据分布变化误认为目标函数改进。
 
 #### 易错点
 
@@ -683,9 +683,9 @@ GRPO 使用组内相对奖励作优势，常见实现逐 token 计算新旧策�
 
 论文在特定 Qwen3/MoE 实验中报告稳定性与效率收益；这不保证所有数据、模型与奖励下都优于 GRPO。比较时应固定 rollout 预算、奖励、响应长度和训练算力，并记录 clip fraction、策略漂移和独立能力。
 
-$$
-\begin{aligned}s_i(\theta)&=\exp\left(\frac{1}{|y_i|}\sum_t\log\frac{\pi_\theta(y_{i,t}\mid x,y_{i,<t})}{\pi_{\mathrm{old}}(y_{i,t}\mid x,y_{i,<t})}\right)\\ J_{\mathrm{GSPO}}&=\mathbb E\left[\frac1G\sum_i\min(s_i\hat A_i,\operatorname{clip}(s_i,1-\epsilon,1+\epsilon)\hat A_i)\right]\end{aligned}
-$$
+```math
+\begin{aligned}s_i(\theta)&=\exp\left(\frac{1}{|y_i|}\sum_t\log\frac{\pi_\theta(y_{i,t}\mid x,y_{i,\lt t})}{\pi_{\mathrm{old}}(y_{i,t}\mid x,y_{i,\lt t})}\right)\\ J_{\mathrm{GSPO}}&=\mathbb E\left[\frac1G\sum_i\min(s_i\hat A_i,\mathrm{clip}(s_i,1-\epsilon,1+\epsilon)\hat A_i)\right]\end{aligned}
+```
 
 #### 易错点
 
@@ -708,9 +708,9 @@ Clip-Higher 放宽正优势概率增加的上边界，以缓解探索受限，�
 
 超长处理通过长度缓冲区等减轻硬截断对奖励的错误归因；论文recipe去掉显式KL也不能外推为所有任务都应去KL。应同时检查熵、非零优势组比例、长度/截断率与独立正确率；只提高训练奖励不能证明能力改善。
 
-$$
-J\propto\frac{\sum_{i,t}m_{i,t}\min(\rho_{i,t}\hat A_i,\operatorname{clip}(\rho_{i,t},1-\epsilon_{\mathrm{low}},1+\epsilon_{\mathrm{high}})\hat A_i)}{\sum_{i,t}m_{i,t}}
-$$
+```math
+J\propto\frac{\sum_{i,t}m_{i,t}\min(\rho_{i,t}\hat A_i,\mathrm{clip}(\rho_{i,t},1-\epsilon_{\mathrm{low}},1+\epsilon_{\mathrm{high}})\hat A_i)}{\sum_{i,t}m_{i,t}}
+```
 
 #### 易错点
 
@@ -796,9 +796,9 @@ GRPO 的训练基本输入是prompt及奖励计算所需的任务元数据，不
 
 PPO/DAPO的clip取决于优势符号：正优势只限制过度增加概率，负优势只限制过度减少概率。不对称上下界改变允许更新区间，而非直接给正负样本乘不同常数。选型应说明业务成本、归一化和最终阈值，并报告正负分层的收益与误伤。
 
-$$
-\begin{aligned}\mathcal L_{\mathrm{weighted\ BCE}}&=-\mathbb E[w_+y\log p+w_-(1-y)\log(1-p)]\\ \ell_{\mathrm{PPO}}&=\min(\rho A,\operatorname{clip}(\rho,1-\epsilon_{\mathrm{low}},1+\epsilon_{\mathrm{high}})A)\end{aligned}
-$$
+```math
+\begin{aligned}\mathcal L_{\mathrm{weighted\ BCE}}&=-\mathbb E[w_+y\log p+w_-(1-y)\log(1-p)]\\ \ell_{\mathrm{PPO}}&=\min(\rho A,\mathrm{clip}(\rho,1-\epsilon_{\mathrm{low}},1+\epsilon_{\mathrm{high}})A)\end{aligned}
+```
 
 #### 易错点
 
@@ -818,15 +818,15 @@ $$
 
 #### 答案
 
-奖励模型对完整回答输出一个标量。对同一问题 $x$ 的优选回答 $y_w$ 和非优选回答 $y_l$，用分数差的 sigmoid 拟合偏好概率，再最小化二元负对数似然。这里采用 Bradley–Terry 建模假设，不能把它当作所有真实偏好都必然遵循的规律。
+奖励模型对完整回答输出一个标量。对同一问题 $`x`$ 的优选回答 $`y_w`$ 和非优选回答 $`y_l`$，用分数差的 sigmoid 拟合偏好概率，再最小化二元负对数似然。这里采用 Bradley–Terry 建模假设，不能把它当作所有真实偏好都必然遵循的规律。
 
 成对比较只能约束相对分数：对同一问题的全部回答加上相同常数，偏好概率不变，因此绝对奖励零点无法由这些比较唯一确定，实际使用还需校准。数据与评测应按领域、回答长度和标注者分层，防止模型主要学到“越长越好”或套话风格。
 
 成对比较常比绝对打分更易校准，但仍有平局、不传递、领域差异与标注噪声；它不直接说明质量差距大小。完整排序并非必须做全部O(K²)比较，可用排序/主动选择减少次数。RM常在语言骨干上加标量head，架构和参数规模不必与Actor完全一致；对奖励排序准确率之外，还应测当前策略生成分布上的泛化。
 
-$$
+```math
 \mathcal{L}_{\mathrm{RM}}=-\mathbb{E}_{(x,y_w,y_l)}\left[\log\sigma\left(r_\phi(x,y_w)-r_\phi(x,y_l)\right)\right]
-$$
+```
 
 #### 易错点
 

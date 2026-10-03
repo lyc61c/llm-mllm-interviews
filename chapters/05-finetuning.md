@@ -44,7 +44,7 @@
 
 #### 答案
 
-预训练与常规 SFT 都可使用 next-token 交叉熵，主要差异是数据分布与监督范围。序列 $x_0,\ldots,x_{T-1}$ 的 logits 第 $t$ 行基于 $x_{\le t}$，预测 $x_{t+1}$；可对齐 `logits[:,:-1]` 和 `labels[:,1:]`，或用尾部补 ignore 的等价实现，shift 只能由一处负责。
+预训练与常规 SFT 都可使用 next-token 交叉熵，主要差异是数据分布与监督范围。序列 $`x_0,\ldots,x_{T-1}`$ 的 logits 第 $`t`$ 行基于 $`x_{\le t}`$，预测 $`x_{t+1}`$；可对齐 `logits[:,:-1]` 和 `labels[:,1:]`，或用尾部补 ignore 的等价实现，shift 只能由一处负责。
 
 例如输入 `[P0,P1,A0,A1,EOS]`，未 shift 的标签为 `[-100,-100,A0,A1,EOS]`。末 prompt 的 P1 logits 监督首回答 A0，A0 监督 A1，A1 监督 EOS；P0 到 P1 的目标忽略，末 EOS logits 没有下一标签。若额外屏蔽 P1 logits，就会丢掉首回答监督。
 
@@ -52,9 +52,9 @@
 
 常规损失按有效 token 平均；若改为每样本等权或加入辅助项，目标也随之改变。比较效果时应核对模板、监督范围、数据和任务指标，不能直接用不同 mask 下的 loss 排名。
 
-$$
-\begin{aligned}z_t&\longrightarrow x_{t+1}\\\mathcal L&=-\frac{\sum_{t=0}^{T-2}m_{t+1}\log\operatorname{softmax}(z_t)_{x_{t+1}}}{\sum_{t=0}^{T-2}m_{t+1}}\end{aligned}
-$$
+```math
+\begin{aligned}z_t&\longrightarrow x_{t+1}\\\mathcal L&=-\frac{\sum_{t=0}^{T-2}m_{t+1}\log\mathrm{softmax}(z_t)_{x_{t+1}}}{\sum_{t=0}^{T-2}m_{t+1}}\end{aligned}
+```
 
 #### 易错点
 
@@ -75,13 +75,13 @@ $$
 
 只监督回答时，在最终 token 序列中把 prompt、padding 和其他不监督位置的 labels 设为 `ignore_index`，例如 `-100`，回答标签保留真实 ID。应先应用模型 chat template 再标注，多轮可选择所有 assistant 回合或最后回合，并明确正文、角色结束及 EOS 的监督范围，避免混用字符和 token 边界。
 
-若首 answer 在 $j$，保留 `labels[j]=input_ids[j]`，prompt 的 `labels[:j]=-100`；shift 后 `logits[j-1]` 预测首回答。因此只忽略 prompt 目标，不删除末 prompt 的 logits，模型内部 shift 时 collator 仍保持标签与输入同位置。合法 prompt 的 attention mask 继续有效，回答 loss 的梯度也能经过它的上下文路径。
+若首 answer 在 $`j`$，保留 `labels[j]=input_ids[j]`，prompt 的 `labels[:j]=-100`；shift 后 `logits[j-1]` 预测首回答。因此只忽略 prompt 目标，不删除末 prompt 的 logits，模型内部 shift 时 collator 仍保持标签与输入同位置。合法 prompt 的 attention mask 继续有效，回答 loss 的梯度也能经过它的上下文路径。
 
 Padding 与真实 EOS 即使共用 ID，也必须按位置区分，不能按 EOS ID 全部忽略；EOS 可以是有效停止监督。独立 packing 段首目标不能由上一段末 logits 预测，还需块状可见性或后端段边界。最后用小序列逐项检查 logits 索引、目标、mask、有效数量和 loss。
 
-$$
+```math
 \mathcal L=-\frac{\sum_{t=0}^{T-2}m_{t+1}\log p_\theta(x_{t+1}\mid x_{\le t})}{\sum_{t=0}^{T-2}m_{t+1}}
-$$
+```
 
 #### 易错点
 
@@ -186,17 +186,17 @@ Base模型主要学语言建模，适合希望完全控制指令、格式和领�
 
 Packing 把多个短样本装入一条训练行，减少 padding。先应用 chat template、分词并标记回答监督区间，再连同 `input_ids`、`labels`、样本编号和边界一起装箱。BFD 等策略可减少空位；截断或拆分会改变保留内容，应统计丢弃的回答 token，而不只报告吞吐。
 
-独立 SFT 样本的可见性必须同时满足同一样本与因果条件 $j\le i$，并排除 padding。可以用块对角 causal mask，或给支持变长 attention 的后端显式段边界。EOS 和把 `position_ids` 归零都不会自动隔离通用 attention。
+独立 SFT 样本的可见性必须同时满足同一样本与因果条件 $`j\le i`$，并排除 padding。可以用块对角 causal mask，或给支持变长 attention 的后端显式段边界。EOS 和把 `position_ids` 归零都不会自动隔离通用 attention。
 
 普通全行 label shift 会让前一段末 logits 预测下一段首 token。独立样本目标应把后一段首 label 设为 `ignore_index`，或逐段 shift 并在段尾补 ignore；BOS/EOS 是否监督要按段定义，不能粗暴删除全部 EOS loss。Prompt labels 忽略而首 answer label 保留，末 prompt logits 才能预测首回答；合法 prompt 仍需作为上下文。
 
 连续语料 concatenate-then-split 可有意允许跨文档上下文，这与独立 SFT 目标不同。可对比未 packing 的逐段有效 NLL 与梯度，并扰动另一段检查当前段 logits 是否改变；比较时要控制内核、dropout 和浮点次序，再评估显存与吞吐收益。
 
-式中 $s_t$ 是样本编号，$v_j$ 标记有效 key，$m_t$ 选择监督目标，$\mathcal H_t$ 是同一样本的有效历史。
+式中 $`s_t`$ 是样本编号，$`v_j`$ 标记有效 key，$`m_t`$ 选择监督目标，$`\mathcal H_t`$ 是同一样本的有效历史。
 
-$$
-\begin{aligned}\operatorname{allowed}(i,j)&=\mathbf1[s_i=s_j]\,\mathbf1[j\le i]\,\mathbf1[v_j=1]\\\mathcal L&=-\frac{\sum_t m_t\log p_\theta(x_t\mid x_{\mathcal H_t})}{\sum_t m_t}\\\mathcal H_t&=\{j:j<t,\ s_j=s_t,\ v_j=1\}\end{aligned}
-$$
+```math
+\begin{aligned}\mathrm{allowed}(i,j)&=\mathbf1[s_i=s_j]\,\mathbf1[j\le i]\,\mathbf1[v_j=1]\\\mathcal L&=-\frac{\sum_t m_t\log p_\theta(x_t\mid x_{\mathcal H_t})}{\sum_t m_t}\\\mathcal H_t&=\{j:j\lt t,\ s_j=s_t,\ v_j=1\}\end{aligned}
+```
 
 ![普通因果 mask 与样本隔离 packing mask](../assets/causal-packing.svg)
 
@@ -243,15 +243,15 @@ LoRA 给线性层加低秩更新，合适时可合并回权重；Adapter 加任�
 
 #### 答案
 
-LoRA 冻结 $W_0\in\mathbb R^{d_{\rm out}\times d_{\rm in}}$，学习 $\Delta W=(\alpha/r)BA$，其中 $A\in\mathbb R^{r\times d_{\rm in}}$、$B\in\mathbb R^{d_{\rm out}\times r}$。更新秩至多为 $r$，可训练参数为 $r(d_{\rm in}+d_{\rm out})$，不要求底座或整个模型低秩。
+LoRA 冻结 $`W_0\in\mathbb R^{d_{\rm out}\times d_{\rm in}}`$，学习 $`\Delta W=(\alpha/r)BA`$，其中 $`A\in\mathbb R^{r\times d_{\rm in}}`$、$`B\in\mathbb R^{d_{\rm out}\times r}`$。更新秩至多为 $`r`$，可训练参数为 $`r(d_{\rm in}+d_{\rm out})`$，不要求底座或整个模型低秩。
 
-前向为 $W_0x+(\alpha/r)BAx$，梯度能经过冻结底座传播到需要训练的模块。标准浮点部署可合并增量，免去额外小投影；需要多适配器切换时则未必合并。LoRA 主要节省权重梯度与优化器状态，长序列激活仍可能主导显存。
+前向为 $`W_0x+(\alpha/r)BAx`$，梯度能经过冻结底座传播到需要训练的模块。标准浮点部署可合并增量，免去额外小投影；需要多适配器切换时则未必合并。LoRA 主要节省权重梯度与优化器状态，长序列激活仍可能主导显存。
 
-合并要求底座与 adapter 的 checkpoint、目标层、缩放和 dtype 对齐，并在 eval 模式关闭 adapter dropout。浮点权重 $W_{\mathrm{merged}}=W_0+sBA$ 免去额外低秩分支，通常减少内核调用；但不会把大模型权重变成“小 adapter 大小”。低精度舍入使结果未必逐 bit 相同，应比对 logits 与任务结果。保留未合并 adapter 有利于共享底座、多租户切换和回滚；merge_and_unload 后应保留独立原件。量化底座的合并受量化后端支持限制，不能把浮点增量直接加到整数码，必要时反量化合并并重新校准量化。
+合并要求底座与 adapter 的 checkpoint、目标层、缩放和 dtype 对齐，并在 eval 模式关闭 adapter dropout。浮点权重 $`W_{\mathrm{merged}}=W_0+sBA`$ 免去额外低秩分支，通常减少内核调用；但不会把大模型权重变成“小 adapter 大小”。低精度舍入使结果未必逐 bit 相同，应比对 logits 与任务结果。保留未合并 adapter 有利于共享底座、多租户切换和回滚；merge_and_unload 后应保留独立原件。量化底座的合并受量化后端支持限制，不能把浮点增量直接加到整数码，必要时反量化合并并重新校准量化。
 
-$$
-\begin{aligned}\Delta W&=\frac{\alpha}{r}BA\\N_{\rm train}&=r(d_{\rm in}+d_{\rm out})\\\operatorname{rank}(\Delta W)&\le r\end{aligned}
-$$
+```math
+\begin{aligned}\Delta W&=\frac{\alpha}{r}BA\\N_{\rm train}&=r(d_{\rm in}+d_{\rm out})\\\mathrm{rank}(\Delta W)&\le r\end{aligned}
+```
 
 ![LoRA 冻结主权重与低秩增量分支](../assets/lora.svg)
 
@@ -276,20 +276,20 @@ $$
 
 #### 答案
 
-原始 LoRA 使用随机高斯 $A$、零 $B$，使初始 $\Delta W=sBA=0$。PEFT 普通 Linear 默认采用 Kaiming-uniform A、零 B，Gaussian 选项也使用零 B；Embedding 等模块可能有不同约定，其他初始化则应按方法确认。
+原始 LoRA 使用随机高斯 $`A`$、零 $`B`$，使初始 $`\Delta W=sBA=0`$。PEFT 普通 Linear 默认采用 Kaiming-uniform A、零 B，Gaussian 选项也使用零 B；Embedding 等模块可能有不同约定，其他初始化则应按方法确认。
 
-令 $G=\partial L/\partial\Delta W$，有 $\partial L/\partial A=sB^\top G$、$\partial L/\partial B=sGA^\top$。初始 B 为零时，纯低秩分支的 A 梯度为零，B 通常先更新，随后 A 获得梯度；A/B 同时为零则纯 BA 路径无法启动，零 A 加随机 B 是可启动但轨迹不同的方案。PiSSA、EVA、LoftQ 等使用权重、激活或量化信息，要核对是否改动底座及是否保持初始函数；`init_lora_weights=False` 通常随机初始化 A/B，不再是 no-op。
+令 $`G=\partial L/\partial\Delta W`$，有 $`\partial L/\partial A=sB^\top G`$、$`\partial L/\partial B=sGA^\top`$。初始 B 为零时，纯低秩分支的 A 梯度为零，B 通常先更新，随后 A 获得梯度；A/B 同时为零则纯 BA 路径无法启动，零 A 加随机 B 是可启动但轨迹不同的方案。PiSSA、EVA、LoftQ 等使用权重、激活或量化信息，要核对是否改动底座及是否保持初始函数；`init_lora_weights=False` 通常随机初始化 A/B，不再是 no-op。
 
-$r$ 控制秩上界与参数量，标准 $s=\alpha/r$ 控制分支尺度，rsLoRA 使用 $\alpha/\sqrt r$。固定 alpha 改 rank 同时改变容量和缩放，alpha 也不等于学习率。普通 Linear 的 dropout 施加在低秩分支输入，训练时正则、eval 时关闭，底座分支保留。应联合消融 rank、alpha、dropout、目标模块与学习率，没有通用最佳 rank 或 alpha:rank 比例。
+$`r`$ 控制秩上界与参数量，标准 $`s=\alpha/r`$ 控制分支尺度，rsLoRA 使用 $`\alpha/\sqrt r`$。固定 alpha 改 rank 同时改变容量和缩放，alpha 也不等于学习率。普通 Linear 的 dropout 施加在低秩分支输入，训练时正则、eval 时关闭，底座分支保留。应联合消融 rank、alpha、dropout、目标模块与学习率，没有通用最佳 rank 或 alpha:rank 比例。
 
-$$
-\begin{aligned}\Delta W&=sBA,\quad\operatorname{rank}(\Delta W)\le r\\s_{\rm standard}&=\frac{\alpha}{r},\quad s_{\rm rsLoRA}=\frac{\alpha}{\sqrt r}\\G&=\frac{\partial L}{\partial\Delta W}\\\frac{\partial L}{\partial A}&=sB^\top G,\quad\frac{\partial L}{\partial B}=sGA^\top\end{aligned}
-$$
+```math
+\begin{aligned}\Delta W&=sBA,\quad\mathrm{rank}(\Delta W)\le r\\s_{\rm standard}&=\frac{\alpha}{r},\quad s_{\rm rsLoRA}=\frac{\alpha}{\sqrt r}\\G&=\frac{\partial L}{\partial\Delta W}\\\frac{\partial L}{\partial A}&=sB^\top G,\quad\frac{\partial L}{\partial B}=sGA^\top\end{aligned}
+```
 
 #### 易错点
 
 - 把原论文高斯初始化、PEFT Linear 默认和所有新初始化变体说成完全相同。
-- 双零 A/B、默认 no-op 与训练阶段梯度为零混为一谈，或把 $\alpha$ 当作优化器学习率。
+- 双零 A/B、默认 no-op 与训练阶段梯度为零混为一谈，或把 $`\alpha`$ 当作优化器学习率。
 
 #### 追问
 
@@ -303,25 +303,25 @@ $$
 
 #### 答案
 
-LoRA 调参需要一起考虑更新容量、分支尺度、正则与适配位置。Rank 的参数预算线性增长，更新秩仅满足 $\operatorname{rank}(\Delta W)\le r$，实际容量收益可能饱和或过拟合；比较时控制数据、有效 token、目标模块和学习率，并看验证指标、参数量与吞吐。
+LoRA 调参需要一起考虑更新容量、分支尺度、正则与适配位置。Rank 的参数预算线性增长，更新秩仅满足 $`\mathrm{rank}(\Delta W)\le r`$，实际容量收益可能饱和或过拟合；比较时控制数据、有效 token、目标模块和学习率，并看验证指标、参数量与吞吐。
 
-标准缩放为 $s=\alpha/r$，`use_rslora=True` 为 $\alpha/\sqrt r$。固定 alpha 增大 rank 会减小标准分支尺度，固定 alpha/r 也不能保证优化轨迹相同，因此可在同一缩放家族内分别消融容量与尺度。普通 Linear 分支是 $sBA\operatorname{Dropout}(x)$，它不删除底座权重，eval 时关闭；小数据可检查正则收益，过大 dropout 也会欠拟合，且它与全模型 attention/hidden dropout 配置不同。
+标准缩放为 $`s=\alpha/r`$，`use_rslora=True` 为 $`\alpha/\sqrt r`$。固定 alpha 增大 rank 会减小标准分支尺度，固定 alpha/r 也不能保证优化轨迹相同，因此可在同一缩放家族内分别消融容量与尺度。普通 Linear 分支是 $`sBA\mathrm{Dropout}(x)`$，它不删除底座权重，eval 时关闭；小数据可检查正则收益，过大 dropout 也会欠拟合，且它与全模型 attention/hidden dropout 配置不同。
 
 `target_modules` 决定更新位置，可比较 attention 投影、MLP 或 `all-linear`，并核对输出层排除、embedding/LM head 保存及额外 trainable bias。常见 Q/V 实验不意味着 LoRA 只支持 Q/V。记录 PEFT 版本、初始化、缩放变体、优化器和成本；库默认不是数据相关实验中的最优值。
 
-$$
-\begin{aligned}h&=W_0x+sBA\operatorname{Dropout}(x)\\N_{\rm train}&\approx r(d_{\rm in}+d_{\rm out})\\s_{\rm standard}&=\alpha/r,\quad s_{\rm rsLoRA}=\alpha/\sqrt r\end{aligned}
-$$
+```math
+\begin{aligned}h&=W_0x+sBA\mathrm{Dropout}(x)\\N_{\rm train}&\approx r(d_{\rm in}+d_{\rm out})\\s_{\rm standard}&=\alpha/r,\quad s_{\rm rsLoRA}=\alpha/\sqrt r\end{aligned}
+```
 
 #### 易错点
 
-- 给所有模型套 $r=8$、$\alpha=2r$ 等万能值，或声称 dropout 在推理时继续增强多样性。
+- 给所有模型套 $`r=8`$、$`\alpha=2r`$ 等万能值，或声称 dropout 在推理时继续增强多样性。
 - 改变 rank/模块/缩放后仍把消融结果归因于单个因素。
 
 #### 追问
 
 - 扩展 `target_modules` 和增大 r，怎样在相同训练参数预算下比较？
-- 为什么相同 $\alpha/r$ 仍不能保证两个 rank 的有效更新相同？
+- 为什么相同 $`\alpha/r`$ 仍不能保证两个 rank 的有效更新相同？
 
 <a id="ft-008"></a>
 ### FT-008 · LoRA 与 QLoRA 有何区别，NF4、双重量化与分页优化器做什么？
@@ -336,13 +336,13 @@ NF4 为近似正态权重设计非均匀码本和块 scale，是有损量化，�
 
 Paged optimizer 借助分页或统一内存管理优化器状态峰值，缓解瞬时显存压力，也可能产生 CPU/GPU 迁移开销；它不压缩激活。长序列的 attention 激活、反量化工作区、adapter 梯度和状态、batch 与 checkpoint 策略仍可决定是否 OOM。
 
-QLoRA 主要改善底座存储和训练可行性，速度与精度要按硬件、内核、权重分布和任务实测。合并部署可先反量化底座、加 $sBA$ 再量化，但会引入新误差，不能直接把浮点增量加到整数码；应比较未合并、合并与重新量化的输出。
+QLoRA 主要改善底座存储和训练可行性，速度与精度要按硬件、内核、权重分布和任务实测。合并部署可先反量化底座、加 $`sBA`$ 再量化，但会引入新误差，不能直接把浮点增量加到整数码；应比较未合并、合并与重新量化的输出。
 
-例如 NF4 存储配 BF16 compute 是“4-bit 冻结权重 + 较高精度算子”，并非全部运算采用 4 bit；BF16 指数范围较宽，FP16 要注意溢出与 loss scaling，选择取决于 GPU 和内核支持。LoRA 底座仍约占 $2P$ bytes；QLoRA 的理想权重码约 $P/2$ bytes，另外有 scale、未量化层和反量化工作区。两者的 adapter 参数量 $P_a$ 相同：若按低精度参数/梯度、FP32 master 和两个 Adam 状态估算，可训练状态约 $16P_a$ bytes，但实际 dtype 与优化器应逐项核对。冻结底座不会删除为训练 adapter 所需的中间激活，所以不能仅凭 $P/2$ 判断训练显存。
+例如 NF4 存储配 BF16 compute 是“4-bit 冻结权重 + 较高精度算子”，并非全部运算采用 4 bit；BF16 指数范围较宽，FP16 要注意溢出与 loss scaling，选择取决于 GPU 和内核支持。LoRA 底座仍约占 $`2P`$ bytes；QLoRA 的理想权重码约 $`P/2`$ bytes，另外有 scale、未量化层和反量化工作区。两者的 adapter 参数量 $`P_a`$ 相同：若按低精度参数/梯度、FP32 master 和两个 Adam 状态估算，可训练状态约 $`16P_a`$ bytes，但实际 dtype 与优化器应逐项核对。冻结底座不会删除为训练 adapter 所需的中间激活，所以不能仅凭 $`P/2`$ 判断训练显存。
 
-$$
-h=\operatorname{Dequantize}(Q(W_0))x+sBAx
-$$
+```math
+h=\mathrm{Dequantize}(Q(W_0))x+sBAx
+```
 
 #### 易错点
 
@@ -387,9 +387,9 @@ BitFit冻结大部分预训练权重，仅训练模型中的bias项或其子集�
 
 参数和optimizer状态小、存储与切任务成本低，但表达能力受可调bias的位置和数量限制。很多现代decoder使用无bias线性层和RMSNorm，没有对应bias就几乎无可调参数，此时BitFit不能凭方法名直接套用。实践应打印requires_grad参数列表，确认没有误解冻整层，比较任务表现、遗忘和训练显存；冻结权重仍可能需要反向经过它们来计算bias梯度。
 
-$$
+```math
 \min_{b,\theta_{\rm head}}\mathcal L\big(f_{W_0,b}(x),y\big),\qquad W_0\ \text{fixed}
-$$
+```
 
 #### 易错点
 
@@ -412,9 +412,9 @@ Prompt Tuning通常只学习输入端连续virtual token；Prefix Tuning把可�
 
 P-Tuning v2将连续提示放到多个层，适配不同规模和序列标注等任务，可视为经过优化的deep prompt tuning，与Prefix Tuning有密切联系。两者究竟增加输入token还是K/V、是否用重参数化网络、任务head是否训练，要看具体实现。冻结底座只减少权重和optimizer更新，前缀到loss的梯度仍穿过网络；更长prompt会增加有效上下文或KV成本。选型需固定可训练参数预算、长度和任务，不能把v2的经验效果解读为所有场景都等价全参微调。
 
-$$
+```math
 \theta^*=\arg\min_{\theta_p,\theta_h}\mathcal L\big(f_{\theta_0,\theta_p,\theta_h}(x),y\big),\qquad\theta_0\ \text{fixed in the frozen setting}
-$$
+```
 
 #### 易错点
 
@@ -437,9 +437,9 @@ $$
 
 训练常从较大预算开始，逐渐降到目标预算，配合正交正则让方向更可辨识。动态重要性依赖当前任务、梯度与训练阶段，不能只根据某层权重范数决定rank。它需要预算调度和更多状态管理，未必比简单LoRA更稳定或更快；比较时保持总参数预算、target modules和数据相同。最终可像低秩增量一样合并到同形状全精度权重，但若底座量化，合并和再量化要单独验证。
 
-$$
+```math
 \Delta W=P\Lambda Q,\qquad\mathcal L_{\rm orth}=\lVert P^\top P-I\rVert_F^2+\lVert QQ^\top-I\rVert_F^2
-$$
+```
 
 #### 易错点
 
@@ -462,9 +462,9 @@ $$
 
 AdapterDrop根据策略跳过部分层的adapter，训练时让模型适应不同保留范围，推理可减少adapter执行开销；应区分跳过adapter分支和删除整个Transformer层。融合多个adapter会额外增加前向成本和存储，Drop则可能牺牲精度。多任务服务要评价任务切换、并发batch、融合数量与延迟，确认减少adapter分支后实际瓶颈是否改善；对深度与任务敏感的能力不能只凭“下层较不重要”固定删除。
 
-$$
-h'=h+\sum_{a=1}^{A}\alpha_a(h)\,\operatorname{Adapter}_a(h),\qquad\sum_a\alpha_a(h)=1
-$$
+```math
+h'=h+\sum_{a=1}^{A}\alpha_a(h)\,\mathrm{Adapter}_a(h),\qquad\sum_a\alpha_a(h)=1
+```
 
 #### 易错点
 
@@ -487,9 +487,9 @@ PEFT方法可按修改的位置、形式与组合方式统一理解：adapter增
 
 它们不是同一个算法，也不意味着把所有PEFT叠上去总会更好。模块叠加可能增加前向算子、上下文、KV和超参数，门控还可能塌缩到少数分支。比较需控制总可训练参数、推理成本与训练预算，做逐模块消融；保存时明确每个分支配置和底座版本，若某种分支可merge，其他需要执行的prefix/adapter并不会因此自动消失。
 
-$$
+```math
 h'=h+\sum_{m\in\mathcal M}g_m(h)\,\Delta_m(h)
-$$
+```
 
 #### 易错点
 
@@ -514,9 +514,9 @@ Template把任务输入改造成模型熟悉的填空或生成格式，例如情
 
 自动提示搜索可用输入梯度提出离散 trigger 候选，再在验证目标上筛选，例如 AutoPrompt；它不等同于直接优化连续 prompt embedding。KPT 借助外部知识扩展 verbalizer 的标签词，再用语言模型筛选和校准；虚拟标签词还可用可学习向量表示类别。PPT 则先预训练软提示以改善少样本初始化。模板搜索、标签空间设计与提示参数初始化是三个不同优化对象，均需防止在测试集上反复选择。
 
-$$
-p(c\mid x)=\frac{\sum_{w\in\mathcal V_c}p_\theta(w\mid\operatorname{template}(x))}{\sum_{c'}\sum_{w\in\mathcal V_{c'}}p_\theta(w\mid\operatorname{template}(x))}
-$$
+```math
+p(c\mid x)=\frac{\sum_{w\in\mathcal V_c}p_\theta(w\mid\mathrm{template}(x))}{\sum_{c'}\sum_{w\in\mathcal V_{c'}}p_\theta(w\mid\mathrm{template}(x))}
+```
 
 #### 易错点
 
@@ -563,9 +563,9 @@ Replay 的配比会影响领域收益，参数重要性正则等持续学习方�
 
 对 token 平均目标，应累加窗口内有效 token 的 NLL，再除以整个窗口的有效 token 总数，不能等权平均长度不同的 micro-batch 的 token 平均 loss。DDP 的梯度平均和框架自动缩放会影响系数，不能重复除世界大小。Optimizer 和 scheduler 按真实更新推进，累积中可用 `no_sync` 减少通信。
 
-$$
-\begin{aligned}B_{\rm effective}&=B_{\rm micro}K_{\rm accum}N_{\rm DP}\\\mathcal L_{\rm window}&=\frac{\sum_{k=1}^{K_{\rm accum}}\sum_{t\in\mathcal T_k}\operatorname{NLL}_{k,t}}{\sum_{k=1}^{K_{\rm accum}}|\mathcal T_k|}\end{aligned}
-$$
+```math
+\begin{aligned}B_{\rm effective}&=B_{\rm micro}K_{\rm accum}N_{\rm DP}\\\mathcal L_{\rm window}&=\frac{\sum_{k=1}^{K_{\rm accum}}\sum_{t\in\mathcal T_k}\mathrm{NLL}_{k,t}}{\sum_{k=1}^{K_{\rm accum}}|\mathcal T_k|}\end{aligned}
+```
 
 #### 易错点
 
@@ -633,9 +633,9 @@ logits蒸馏让学生拟合教师的软概率分布，温度提高时能显露�
 
 隐藏层/attention蒸馏用层映射和投影对齐中间表示，PKD、TinyBERT在BERT压缩中采用此类信号，不能简单要求不同深度学生逐层等形状相等。实际还需混合真实标签、过滤教师答案、覆盖学生可能访问的前缀，并独立评测质量/幻觉与成本。蒸馏不保证学生超过教师，也不保证所有知识能在更小容量中保留。
 
-$$
-\begin{aligned}p_T&=\operatorname{softmax}(z_T/T),\quad p_S=\operatorname{softmax}(z_S/T)\\\mathcal L&=(1-\lambda)\mathcal L_{\rm hard}+\lambda T^2D_{\rm KL}(p_T\Vert p_S)\\\mathcal L_{\rm hidden}&=\sum_\ell\lVert H_S^{(\ell)}P_\ell-H_T^{(m(\ell))}\rVert_F^2\end{aligned}
-$$
+```math
+\begin{aligned}p_T&=\mathrm{softmax}(z_T/T),\quad p_S=\mathrm{softmax}(z_S/T)\\\mathcal L&=(1-\lambda)\mathcal L_{\rm hard}+\lambda T^2D_{\rm KL}(p_T\Vert p_S)\\\mathcal L_{\rm hidden}&=\sum_\ell\lVert H_S^{(\ell)}P_\ell-H_T^{(m(\ell))}\rVert_F^2\end{aligned}
+```
 
 #### 易错点
 
@@ -660,9 +660,9 @@ ROME 把特定 MLP 的事实关联视为 key—value 映射，用带保留约束
 
 评估至少看目标事实的编辑成功率、同义改写泛化、无关邻近事实的 locality，以及连续/批量编辑后的累计退化；需要跨实体、反向关系和多跳问题测试。先保存可回滚权重，对比单纯微调和 RAG，再验证困惑度与通用任务。模型编辑是定向纠错工具，不是已证明能无副作用维护完整知识库的保证。
 
-$$
+```math
 \Delta W=u v^{\top}\quad(\text{rank-one update}),\qquad (W+\Delta W)k_*\approx v_*
-$$
+```
 
 #### 易错点
 

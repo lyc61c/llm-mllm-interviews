@@ -63,9 +63,9 @@ Self-Consistency采样多条推理路径，对规范化后的最终答案聚合�
 
 Plan-and-Execute先产生任务分解，再由执行器完成步骤，并按观察更新计划；ReAct更强调逐步决策与行动反馈。真实Agent规划须用环境状态验证里程碑，限制分支、深度、token与时间。比较方法应给相同总预算，否则更高成功率可能主要来自更多调用。
 
-$$
-\hat a=\arg\max_a\sum_{i=1}^K\mathbf1[\operatorname{normalize}(a_i)=a]
-$$
+```math
+\hat a=\arg\max_a\sum_{i=1}^K\mathbf1[\mathrm{normalize}(a_i)=a]
+```
 
 #### 易错点
 

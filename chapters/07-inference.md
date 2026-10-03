@@ -67,15 +67,15 @@ KV cache 保存已处理 token 在各层的 K/V，prefill 建立前缀缓存，d
 
 #### 答案
 
-推理显存应拆为权重、KV cache、激活/工作区和框架预留。全注意力 KV 约为 $2BLTH_{\rm kv}d_hs$：$B$ 是并发序列数，$L$ 是层数，$T$ 是缓存长度，$H_{\rm kv}$ 是 KV 头数，$d_h$ 是头维，$s$ 是每元素字节；应使用 KV 头数而非 query 头数。
+推理显存应拆为权重、KV cache、激活/工作区和框架预留。全注意力 KV 约为 $`2BLTH_{\rm kv}d_hs`$：$`B`$ 是并发序列数，$`L`$ 是层数，$`T`$ 是缓存长度，$`H_{\rm kv}`$ 是 KV 头数，$`d_h`$ 是头维，$`s`$ 是每元素字节；应使用 KV 头数而非 query 头数。
 
-32 层、32 KV 头、头维 128、长度 4096、单序列 FP16 的 KV 为 2 GiB，改为 8 KV 头则为 0.5 GiB。70 亿参数 FP16 权重约 14 GB，即 13.0 GiB，仅指权重。请求长度不同时按 $\sum_iT_i$ 累加，并检查并行布局是否均分或复制 KV；分页、量化 scale、对齐与碎片都可能增加实际占用，应与实测峰值比较。
+32 层、32 KV 头、头维 128、长度 4096、单序列 FP16 的 KV 为 2 GiB，改为 8 KV 头则为 0.5 GiB。70 亿参数 FP16 权重约 14 GB，即 13.0 GiB，仅指权重。请求长度不同时按 $`\sum_iT_i`$ 累加，并检查并行布局是否均分或复制 KV；分页、量化 scale、对齐与碎片都可能增加实际占用，应与实测峰值比较。
 
-以十进制 14B 即 $14\times10^9$ 个参数为例，纯 FP16/BF16 权重约 28 GB，即 26.1 GiB；纯 INT8 码约 14 GB，即 13.0 GiB，还未计 scale、未量化模块与运行时开销。这不能直接推出“14 GB 卡可完整运行 14B INT8”。长回答会逐步增加每个请求的 KV；分页复用、准入限制、较低 KV dtype 或有效窗口可控制容量，裁掉上下文则会改变可见信息，需要质量评测。prefill 和 decode 峰值还可能不同，应记录生成到接近最大长度时的显存，而非只测模型刚加载完。
+以十进制 14B 即 $`14\times10^9`$ 个参数为例，纯 FP16/BF16 权重约 28 GB，即 26.1 GiB；纯 INT8 码约 14 GB，即 13.0 GiB，还未计 scale、未量化模块与运行时开销。这不能直接推出“14 GB 卡可完整运行 14B INT8”。长回答会逐步增加每个请求的 KV；分页复用、准入限制、较低 KV dtype 或有效窗口可控制容量，裁掉上下文则会改变可见信息，需要质量评测。prefill 和 decode 峰值还可能不同，应记录生成到接近最大长度时的显存，而非只测模型刚加载完。
 
-$$
+```math
 M_{\rm KV}\approx2BLTH_{\rm kv}d_hs
-$$
+```
 
 #### 易错点
 
@@ -95,17 +95,17 @@ $$
 
 #### 答案
 
-MHA 的各 query 头有独立 K/V，MQA 的全部 query 头共用一组 K/V，GQA 按组共享，保留 query 头数 $H_q$。对应 $H_{\rm kv}=H_q$、$H_{\rm kv}=1$ 和 $1<H_{\rm kv}<H_q$，均匀分组通常要求 $H_q$ 能被 $H_{\rm kv}$ 整除；query 头 $i$ 使用组 $g(i)$，并非先平均 query。
+MHA 的各 query 头有独立 K/V，MQA 的全部 query 头共用一组 K/V，GQA 按组共享，保留 query 头数 $`H_q`$。对应 $`H_{\rm kv}=H_q`$、$`H_{\rm kv}=1`$ 和 $`1<H_{\rm kv}<H_q`$，均匀分组通常要求 $`H_q`$ 能被 $`H_{\rm kv}`$ 整除；query 头 $`i`$ 使用组 $`g(i)`$，并非先平均 query。
 
 典型形状为 `Q:[B,H_q,L_q,d_h]`、`K/V:[B,H_kv,L_k,d_h]`，每个 query 头单独匹配其组内 K/V，再拼接输出。逻辑上的重复映射可由内核直接实现，显式物理 repeat 可能抵消显存和带宽收益。
 
-$N$ 层、总缓存 token 数 $T_{\rm total}$、每元素 $b$ 字节时，KV 约为 $2NT_{\rm total}H_{\rm kv}d_hb$。32 头改 8 头使理论 KV 降为 1/4，但 Q、输出投影与大部分 FFN 不随之下降。Decode 在小 Q、长 K 时常受 KV 读带宽限制；prefill 仍要处理各 query 头，速度还依赖 batch、内核、上下文与硬件。TP 超过 KV 头数时可能复制 KV，不能理想地继续均分。
+$`N`$ 层、总缓存 token 数 $`T_{\rm total}`$、每元素 $`b`$ 字节时，KV 约为 $`2NT_{\rm total}H_{\rm kv}d_hb`$。32 头改 8 头使理论 KV 降为 1/4，但 Q、输出投影与大部分 FFN 不随之下降。Decode 在小 Q、长 K 时常受 KV 读带宽限制；prefill 仍要处理各 query 头，速度还依赖 batch、内核、上下文与硬件。TP 超过 KV 头数时可能复制 KV，不能理想地继续均分。
 
 已有 MHA 转换 GQA 可按组聚合 K/V 权重后再 uptraining，直接平均上线不能保证质量恢复。GQA 是容量与效率的折中，MQA 也可能有任务精度代价，应同时用任务评测、长上下文测试和服务压测验证。
 
-$$
-\begin{aligned}M_{\rm KV}&\approx2NT_{\rm total}H_{\rm kv}d_hb\\O_i&=\operatorname{softmax}\!\left(Q_iK_{g(i)}^\top/\sqrt{d_h}\right)V_{g(i)}\\H_q\bmod H_{\rm kv}&=0\end{aligned}
-$$
+```math
+\begin{aligned}M_{\rm KV}&\approx2NT_{\rm total}H_{\rm kv}d_hb\\O_i&=\mathrm{softmax}\!\left(Q_iK_{g(i)}^\top/\sqrt{d_h}\right)V_{g(i)}\\H_q\bmod H_{\rm kv}&=0\end{aligned}
+```
 
 #### 易错点
 
@@ -124,7 +124,7 @@ $$
 
 #### 答案
 
-Prefill 一次处理输入前缀并建立 KV cache，token 并行度较高，线性层能形成较大的 GEMM，稠密 attention 有长度二次项。Decode 通常每请求每步只处理一个新 token，反复读取权重和历史 KV，新 query 的 attention 计算约为 $O(Td)$。
+Prefill 一次处理输入前缀并建立 KV cache，token 并行度较高，线性层能形成较大的 GEMM，稠密 attention 有长度二次项。Decode 通常每请求每步只处理一个新 token，反复读取权重和历史 KV，新 query 的 attention 计算约为 $`O(Td)`$。
 
 前者常更偏计算，后者在小 batch 下常更偏带宽，但长上下文、batch 与硬件会改变瓶颈。扩大 batch 能摊薄权重读取、提高利用率，也增加排队、显存和请求间竞争。先用 profiler 区分权重/KV 带宽、算子启动和计算瓶颈，再选择量化、batching 或融合。
 
@@ -280,7 +280,7 @@ TTFT 是从请求发出到首 token 的时间，包含排队与 prefill；ITL �
 
 #### 答案
 
-Temperature 用 $p_i\propto\exp(z_i/\tau)$ 调整分布尖锐程度，$\tau>0$ 时较小值通常更集中，$\tau=0$ 应按框架的贪心等特殊规则处理。Top-k 保留固定数量候选，top-p 保留累计概率达到阈值的最小候选集合，其大小随分布变化。
+Temperature 用 $`p_i\propto\exp(z_i/\tau)`$ 调整分布尖锐程度，$`\tau>0`$ 时较小值通常更集中，$`\tau=0`$ 应按框架的贪心等特殊规则处理。Top-k 保留固定数量候选，top-p 保留累计概率达到阈值的最小候选集合，其大小随分布变化。
 
 过滤后须重新归一化，多参数联用的执行顺序依实现而定。这些设置控制多样性，不保证事实正确；创作和可验证问答可用不同配置。固定种子有助于复现，但并行数值与运行环境仍可能使贪心或采样结果不能跨环境逐 token 一致。
 
@@ -301,13 +301,13 @@ Temperature 用 $p_i\propto\exp(z_i/\tau)$ 调整分布尖锐程度，$\tau>0$ �
 
 #### 答案
 
-投机解码用便宜的 draft 模型提出多个 token，由 target 并行验证并执行接受/修正采样。对草稿分布 $q$ 提出的候选 $x$，以 $\min(1,p(x)/q(x))$ 接受；首次拒绝后从归一化的 $\max(p-q,0)$ 修正分布采样，不能直接从 $p$ 重采仍套用相同分布证明。全部接受时通常还能从 target 下一位置分布采额外 token。
+投机解码用便宜的 draft 模型提出多个 token，由 target 并行验证并执行接受/修正采样。对草稿分布 $`q`$ 提出的候选 $`x`$，以 $`\min(1,p(x)/q(x))`$ 接受；首次拒绝后从归一化的 $`\max(p-q,0)`$ 修正分布采样，不能直接从 $`p`$ 重采仍套用相同分布证明。全部接受时通常还能从 target 下一位置分布采额外 token。
 
 标准算法保持目标模型分布，不要求每次随机运行文本完全相同。Tokenizer、采样变换与约束需协调；速度由接受率、draft 成本及验证开销决定，草稿越长不一定越快，低接受率或大 batch 可能收益不足。
 
-$$
+```math
 \begin{aligned}a(x)&=\min\!\left(1,\frac{p(x)}{q(x)}\right)\\p_{\rm correction}(x)&=\frac{\max(p(x)-q(x),0)}{\sum_y\max(p(y)-q(y),0)}\end{aligned}
-$$
+```
 
 #### 易错点
 
@@ -330,9 +330,9 @@ Greedy每步选最大条件概率token；beam保留B条得分最高的候选前�
 
 序列得分通常为log概率和，长度越长更容易累计负值，因此beam常配length penalty、EOS规则或任务约束；这些会改变搜索目标。beam增大提高搜索覆盖却增加KV/cache、重排和计算，可能更偏向高概率但重复/空泛的文本，也未必提升任务质量。翻译等输入强约束任务常可用beam，自由生成常更适合合理采样；选择要看事实性、可复现性、多样性和成本。流式beam还须处理候选共享前缀、终止和cache重排。
 
-$$
-S(y)=\sum_{t=1}^{|y|}\log p_\theta(y_t\mid x,y_{<t}),\qquad S_{\rm norm}(y)=S(y)/|y|^\alpha
-$$
+```math
+S(y)=\sum_{t=1}^{|y|}\log p_\theta(y_t\mid x,y_{\lt t}),\qquad S_{\rm norm}(y)=S(y)/|y|^\alpha
+```
 
 #### 易错点
 
@@ -355,9 +355,9 @@ $$
 
 常见repetition penalty对已出现token的logit按符号处理：正值除以r、负值乘r，r>1时两者都降低相对概率；frequency/presence penalty分别按次数或是否出现减去分数，no_repeat_ngram则硬禁重复片段。这些方法改变模型分布，可能误伤代码、引文、必要术语和正常重复，不能保障事实正确。应按任务调节、保留必要EOS并回归质量，数据或模板根因优先在训练和协议层修复。
 
-$$
-z_i'=\begin{cases}z_i/r,&z_i>0\text{ and }i\text{ repeated}\\rz_i,&z_i<0\text{ and }i\text{ repeated}\\z_i,&\text{otherwise}\end{cases},\quad r>1
-$$
+```math
+z_i'=\begin{cases}z_i/r,&z_i\gt 0\text{ and }i\text{ repeated}\\rz_i,&z_i\lt 0\text{ and }i\text{ repeated}\\z_i,&\text{otherwise}\end{cases},\quad r\gt 1
+```
 
 #### 易错点
 
@@ -380,9 +380,9 @@ $$
 
 它比生成后repair更直接保证已完成输出的语法，但实际保证取决于引擎支持的Schema子集、终止、长度和tokenizer规则。遇到空允许集合、截断或工具取消时仍需显式错误处理。合法JSON不保证字段事实正确、业务一致或工具执行安全，因此还应在应用层做类型、范围、权限和业务校验。grammar编译与每步mask有开销，可缓存固定schema和常见语法状态；约束越复杂越应实测延迟和准确率。
 
-$$
+```math
 p'(i\mid s)=\frac{\mathbf1\{i\in A(s)\}\exp(z_i)}{\sum_{j\in A(s)}\exp(z_j)},\qquad A(s)\ne\varnothing
-$$
+```
 
 #### 易错点
 
@@ -404,13 +404,13 @@ $$
 
 #### 答案
 
-FlashAttention 分块加载 Q/K/V，在片上 SRAM 计算局部分数，维护每行最大值与归一化累计量，以在线 softmax 累积输出，避免将完整 $T\times T$ 分数矩阵写回 HBM。它优化 IO 与中间存储，仍计算精确稠密注意力，算术复杂度为二次。
+FlashAttention 分块加载 Q/K/V，在片上 SRAM 计算局部分数，维护每行最大值与归一化累计量，以在线 softmax 累积输出，避免将完整 $`T\times T`$ 分数矩阵写回 HBM。它优化 IO 与中间存储，仍计算精确稠密注意力，算术复杂度为二次。
 
 分块改变浮点求和次序，可产生小误差，并不保证逐 bit 相同，也不同于近似稀疏 attention。训练反向可重算部分分数和统计，以局部计算换更少保存与 IO。收益受长度、dtype、硬件、mask 和内核支持影响，短序列或不兼容场景不保证加速。
 
 #### 易错点
 
-- 说它把稠密注意力 FLOPs 从 $O(T^2)$ 降到 $O(T)$。
+- 说它把稠密注意力 FLOPs 从 $`O(T^2)`$ 降到 $`O(T)`$。
 - 把 FlashAttention 与 KV cache 视为同一技术。
 
 #### 追问
@@ -431,9 +431,9 @@ contiguous 在输入已经满足指定 memory format 时返回自身，否则复
 
 推理中的频繁转置、拼头、KV 布局转换若触发大张量拷贝，会增加带宽消耗、临时显存和内核启动。但不少算子支持 strided 输入，不必在每个操作前无条件 contiguous；应依据后续内核要求，用 profiler 找出真正的复制与耗时。
 
-$$
-\operatorname{offset}(i_1,\ldots,i_n)=\operatorname{storage\_offset}+\sum_{j=1}^{n}i_j\,\operatorname{stride}_j
-$$
+```math
+\mathrm{offset}(i_1,\ldots,i_n)=\mathrm{storage\_offset}+\sum_{j=1}^{n}i_j\,\mathrm{stride}_j
+```
 
 #### 易错点
 
@@ -456,9 +456,9 @@ $$
 
 Graph replay通常要求captured地址和执行结构稳定；动态batch/长度可用shape bucket、固定buffer或partial capture，相关框架有不同支持。数据相关控制流、CPU同步、内存分配和graph break会削弱收益，compile和CUDA Graphs也可能叠加。先profile确定launch/访存/计算瓶颈，区分首次编译/捕获时间与warm稳态，核对输出误差、显存增长及真实输入分布；不能只跑一个固定shape就宣称端到端总能加速。
 
-$$
+```math
 t_{\rm eager}\approx t_{\rm compute}+N_{\rm launch}t_{\rm launch}+t_{\rm memory},\qquad t_{\rm replay}\approx t_{\rm compute}+t_{\rm graph\ launch}+t_{\rm memory}
-$$
+```
 
 #### 易错点
 
@@ -480,15 +480,15 @@ $$
 
 #### 答案
 
-PTQ 在训练后量化，QAT 在训练中模拟或考虑量化误差。W4A16 表示权重约 4 bit、激活约 16 bit，不表示全部算子都使用 INT4。仿射量化常取 $q=\operatorname{clip}(\operatorname{round}(x/s)+z)$，反量化为 $\hat x=s(q-z)$，其中 $s$ 为 scale，$z$ 为 zero-point。
+PTQ 在训练后量化，QAT 在训练中模拟或考虑量化误差。W4A16 表示权重约 4 bit、激活约 16 bit，不表示全部算子都使用 INT4。仿射量化常取 $`q=\mathrm{clip}(\mathrm{round}(x/s)+z)`$，反量化为 $`\hat x=s(q-z)`$，其中 $`s`$ 为 scale，$`z`$ 为 zero-point。
 
 Per-tensor、per-channel、per-group 分别是量化参数的共享粒度；组越小通常误差更低，也增加元数据和实现成本。总存储还含 scale、zero-point、未量化层与对齐，不能只按参数量乘位宽估算。校准要覆盖部署输入、长度和领域，速度也要结合硬件及内核实测。
 
 INT8/INT4不必比FP16/BF16快：小batch decode若权重带宽是瓶颈，低bit可减少读取；较大batch或prefill若更受GEMM计算约束，反量化、scale和布局转换可能抵消收益。CPU与GPU的kernel支持、SIMD/Tensor Core、shape及线程配置不同，不能给一个脱离硬件的固定速度倍数。基于相同输入/输出长度、batch和质量约束测端到端延迟与吞吐，才能比较量化收益。
 
-$$
-\begin{aligned}q&=\operatorname{clip}(\operatorname{round}(x/s)+z)\\\hat x&=s(q-z)\end{aligned}
-$$
+```math
+\begin{aligned}q&=\mathrm{clip}(\mathrm{round}(x/s)+z)\\\hat x&=s(q-z)\end{aligned}
+```
 
 #### 易错点
 
@@ -507,7 +507,7 @@ $$
 
 #### 答案
 
-GPTQ 用校准输入 $X$ 形成近似二阶信息，逐步量化权重，并补偿尚未量化权重的误差，目标是减少原层 $WX$ 与量化层 $\hat WX$ 的输出差异。输入二阶统计反映权重误差对输出的敏感性，比独立 round-to-nearest 更有信息。
+GPTQ 用校准输入 $`X`$ 形成近似二阶信息，逐步量化权重，并补偿尚未量化权重的误差，目标是减少原层 $`WX`$ 与量化层 $`\hat WX`$ 的输出差异。输入二阶统计反映权重误差对输出的敏感性，比独立 round-to-nearest 更有信息。
 
 工程上按列或块处理和更新以控制成本，通常属于低 bit 权重 PTQ。它仍是有损压缩，效果依赖校准覆盖、分组和阻尼；领域、长上下文或多模态校准错配须通过端到端回归检查。
 
@@ -551,13 +551,13 @@ Scale 由离线校准搜索，正式方案不需完整梯度训练。论文讨�
 
 #### 答案
 
-SmoothQuant 针对激活少数大值通道造成的量化困难，用离线等价通道缩放压低激活、相应放大权重，让两者更适合 W8A8。线性层可写为 $XW=(XS^{-1})(SW)$，$S$ 是按输入通道定义的可逆正对角矩阵。
+SmoothQuant 针对激活少数大值通道造成的量化困难，用离线等价通道缩放压低激活、相应放大权重，让两者更适合 W8A8。线性层可写为 $`XW=(XS^{-1})(SW)`$，$`S`$ 是按输入通道定义的可逆正对角矩阵。
 
 缩放前浮点函数等价，量化后仍有误差；平滑系数需平衡两边动态范围，压低一方也可能增大另一方的误差。缩放可吸收到相关参数，减少额外运行操作，实际效果取决于激活量化粒度、代表性校准长度和 INT8 硬件支持。
 
-$$
+```math
 XW=(XS^{-1})(SW)
-$$
+```
 
 #### 易错点
 
@@ -582,9 +582,9 @@ $$
 
 结构化剪枝较容易复用密集内核，但不适配硬件对齐的小矩阵也可能变慢。稀疏加速依赖硬件、dtype、布局、尺寸与内核，索引和不规则访存也有开销。比较实际权重内存、端到端延迟、吞吐、尾延迟和质量，并计入恢复训练预算；剪枝与量化可以组合，误差和内核兼容性需要联合验证。
 
-$$
-\operatorname{score}_{ij}^{\rm Wanda}=|W_{ij}|\,\lVert X_{:,j}\rVert_2,\qquad\rho=1-\frac{\#\text{nonzero weights}}{\#\text{weights}}
-$$
+```math
+\mathrm{score}_{ij}^{\rm Wanda}=|W_{ij}|\,\lVert X_{:,j}\rVert_2,\qquad\rho=1-\frac{\#\text{nonzero weights}}{\#\text{weights}}
+```
 
 #### 易错点
 

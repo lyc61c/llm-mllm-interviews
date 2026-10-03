@@ -300,7 +300,7 @@
       ],
       "answer": {
         "body": "Shaw 的相对位置表示把截断的距离向量加入 key，并可加入 value，所以不仅改变权重，也改变被聚合的内容。Transformer-XL 使用内容与相对位置的多个打分项和全局可学习偏置，配合跨片段缓存，避免把缓存 token 的绝对位置编号机械重复；XLNet 使用这一结构，relative shift 是高效对齐相对分数的实现技巧。\n\nT5 在注意力 logit 上加可学习距离桶偏置，近距离区分细，远距离合并，value 通常保持内容表示。T5 的常见实现不在 logits 上再次除以根号维度，尺度由投影初始化等约定处理；不能把标准 attention 的缩放机械套进每个模型实现。DeBERTa 将内容与位置解耦，核心打分包含内容—内容、内容—位置、位置—内容三项；预训练的 enhanced mask decoder 再利用绝对位置，它的“decoder”不表示常规自回归生成解码器。TUPE 则分别计算内容相关性与位置相关性，减少两者的混合交互，并特殊处理 CLS；TUPE-A 使用解耦的绝对位置相关性，TUPE-R 在此基础上再加相对位置偏置，不应把 TUPE 的所有版本都称为相对位置编码。分桶、截断和相对旋转是不同设计，能计算任意距离不意味着对任意长文本都保留分辨率或任务精度。",
-        "formula": "s_{ij}^{\\mathrm{T5}}=q_i^{\\top}k_j+b_{\\operatorname{bucket}(j-i)},\\qquad s_{ij}^{\\mathrm{DeBERTa}}\\propto (q_i^c)^{\\top}k_j^c+(q_i^c)^{\\top}k^r_{\\delta(i,j)}+(q^r_{\\delta(j,i)})^{\\top}k_j^c",
+        "formula": "s_{ij}^{\\mathrm{T5}}=q_i^{\\top}k_j+b_{\\mathrm{bucket}(j-i)},\\qquad s_{ij}^{\\mathrm{DeBERTa}}\\propto (q_i^c)^{\\top}k_j^c+(q_i^c)^{\\top}k^r_{\\delta(i,j)}+(q^r_{\\delta(j,i)})^{\\top}k_j^c",
         "pitfalls": [
           "认为相对位置只能修改 logit，不能修改 value。",
           "把 DeBERTa enhanced mask decoder 当成 Encoder-Decoder 生成架构。"
@@ -396,7 +396,7 @@
       ],
       "answer": {
         "body": "NAS 要定义搜索空间、搜索策略和候选评估方式。搜索空间可包含深度、宽度、算子、连接和注意力配置；策略可用随机搜索、进化、强化学习或梯度方法；评估需同时考虑质量、参数量、显存及目标设备延迟。只搜索某个固定结构的学习率属于超参数优化，两者可以联合但不完全相同。\n\nDARTS 用 softmax 权重将离散算子混合成可微结构，训练模型权重和架构参数，再离散选择候选；典型目标是双层优化，训练集拟合权重、验证集优化结构。共享 supernet 避免每个候选从头训练，节省搜索成本，但子结构在共享权重下的排名可能与独立训练不一致。最终候选应重新训练或按统一协议校准，在独立测试集上测性能，并把搜索本身的算力计入成本。FLOPs 与硬件时延不一一对应，不能用单个代理指标宣称最优。",
-        "formula": "\\min_{\\alpha}\\mathcal L_{\\mathrm{val}}(w^*(\\alpha),\\alpha),\\quad w^*(\\alpha)=\\arg\\min_w\\mathcal L_{\\mathrm{train}}(w,\\alpha),\\qquad \\bar o(x)=\\sum_{o\\in\\mathcal O}\\operatorname{softmax}(\\alpha)_o\\,o(x)",
+        "formula": "\\min_{\\alpha}\\mathcal L_{\\mathrm{val}}(w^*(\\alpha),\\alpha),\\quad w^*(\\alpha)=\\arg\\min_w\\mathcal L_{\\mathrm{train}}(w,\\alpha),\\qquad \\bar o(x)=\\sum_{o\\in\\mathcal O}\\mathrm{softmax}(\\alpha)_o\\,o(x)",
         "pitfalls": [
           "把连续混合结构的验证分数当成离散结构的最终测试分数。",
           "用测试集反复挑结构，或漏报搜索与重训成本。"

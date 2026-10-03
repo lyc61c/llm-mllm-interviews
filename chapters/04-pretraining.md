@@ -34,15 +34,15 @@
 
 #### 答案
 
-自回归语言模型按概率链式法则分解 $p_\theta(x_{1:T})=\prod_{t=1}^T p_\theta(x_t\mid x_{<t})$，第一项以 BOS 或空历史为条件；完整可变长序列通常还需 EOS 或约定结束机制。这不表示 token 相互独立，有 prompt 时可同样写条件响应的分解。训练最大化对数似然，以有效目标平均 next-token 交叉熵为损失。
+自回归语言模型按概率链式法则分解 $`p_\theta(x_{1:T})=\prod_{t=1}^T p_\theta(x_t\mid x_{<t})`$，第一项以 BOS 或空历史为条件；完整可变长序列通常还需 EOS 或约定结束机制。这不表示 token 相互独立，有 prompt 时可同样写条件响应的分解。训练最大化对数似然，以有效目标平均 next-token 交叉熵为损失。
 
 Teacher forcing 使用真实历史，已知整条序列后可一次前向计算各位置 logits，再用 causal mask 排除未来；位置间仍有依赖，只是矩阵运算可以并行。比如 `input_ids=[a,b,c]`，a/b 位置分别预测 b/c。常见模型在 loss 内部完成 shift，collator 不应重复移动标签；没有额外目标时最后 c 的 logits 不计损，有 EOS 时可监督结束。
 
 Padding、无效跨样本边界及配方不监督的 prompt 目标通过 loss mask 忽略，并按有效目标数归一化；prompt 标签不计损不等于 prompt 在 attention 中不可见。生成通常先 prefill 再逐步 decode，下一输入由已生成 token 决定，无法预先知道完整历史。KV cache 复用旧 K/V，投机解码可批量验证候选改善吞吐，但仍保持自回归条件关系；真实历史与生成历史的差异也可能造成错误累积。
 
-$$
-\begin{aligned}p_\theta(x_{1:T})&=\prod_{t=1}^T p_\theta(x_t\mid x_{<t})\\\mathcal L&=-\frac1{N_{\rm valid}}\sum_{t\in\mathcal T_{\rm valid}}\log p_\theta(x_t\mid x_{<t})\end{aligned}
-$$
+```math
+\begin{aligned}p_\theta(x_{1:T})&=\prod_{t=1}^T p_\theta(x_t\mid x_{\lt t})\\\mathcal L&=-\frac1{N_{\rm valid}}\sum_{t\in\mathcal T_{\rm valid}}\log p_\theta(x_t\mid x_{\lt t})\end{aligned}
+```
 
 #### 易错点
 
@@ -61,7 +61,7 @@ $$
 
 #### 答案
 
-Scaling Law 是模型损失随参数、训练数据与计算规模变化的经验规律，常以 held-out loss 为因变量，以参数量 $N$、训练 token 数 $D$ 和 FLOPs $C$ 为资源变量。它能帮助小实验外推和算力分配，但系数依赖实验范围、数据、架构与优化，并不保证全部下游指标或新能力服从同一曲线。
+Scaling Law 是模型损失随参数、训练数据与计算规模变化的经验规律，常以 held-out loss 为因变量，以参数量 $`N`$、训练 token 数 $`D`$ 和 FLOPs $`C`$ 为资源变量。它能帮助小实验外推和算力分配，但系数依赖实验范围、数据、架构与优化，并不保证全部下游指标或新能力服从同一曲线。
 
 应在若干规模和训练长度上拟合，再保留额外规模验证预测，不能只报告拟合优度。数据质量、重复曝光、多语言配比和优化未收敛都可能改变曲线。预算还应包含推理成本，训练计算最优不一定是模型生命周期成本最优。
 
@@ -84,11 +84,11 @@ Scaling Law 是模型损失随参数、训练数据与计算规模变化的经�
 
 Chinchilla 在其训练设置和预算范围内发现，计算最优的参数量与训练 token 数应近似同步增长；常说的每参数约 20 个 token 是该拟合下的量级参考，数据质量、目标与推理预算变化后需重新估计。
 
-Dense Transformer 训练常以 $C\approx6ND$ 粗估 FLOPs，长上下文注意力等计算应另加。在固定预算下扫描参数量并相应调整数据量，再比较训练末端的验证损失；更大的模型若数据不足，并不总优于较小且训练充分的模型。若上线调用量很大，训练小模型更久可能更划算，因此不能只优化一次训练成本。
+Dense Transformer 训练常以 $`C\approx6ND`$ 粗估 FLOPs，长上下文注意力等计算应另加。在固定预算下扫描参数量并相应调整数据量，再比较训练末端的验证损失；更大的模型若数据不足，并不总优于较小且训练充分的模型。若上线调用量很大，训练小模型更久可能更划算，因此不能只优化一次训练成本。
 
-$$
+```math
 C\approx6ND
-$$
+```
 
 #### 易错点
 
@@ -111,9 +111,9 @@ PPL 是有效 token 平均负对数似然的指数，测量文本预测分布，
 
 固定窗口模型评估长文时，互不重叠切块会使块开头缺少历史，通常抬高 PPL。滑动窗口能补足上下文，但重叠部分应只作条件，避免目标重复计数，并考虑模型内部 label shift 后的有效数量。还需结合领域 loss、指令遵循、事实性与任务正确率判断能力。
 
-$$
-\operatorname{PPL}=\exp\!\left(\frac{\sum_{t\in\mathcal T_{\rm valid}}\operatorname{NLL}_t}{N_{\rm valid}}\right)
-$$
+```math
+\mathrm{PPL}=\exp\!\left(\frac{\sum_{t\in\mathcal T_{\rm valid}}\mathrm{NLL}_t}{N_{\rm valid}}\right)
+```
 
 #### 易错点
 
@@ -136,9 +136,9 @@ $$
 
 先比较独立验证集loss、下游任务、成员推断/记忆风险及训练—验证差距，再看固定算力下重复次数、模型规模与数据混合的消融。清除偶然重复文档不等同于禁止训练计划中的多次采样；高质量领域数据可有意上采样，但要记录有效独特token、总token和各源曝光次数。可用更广覆盖的数据、适当正则、不同mask/目标和混合回放降低退化，不能靠继续增加epoch保证知识获得。
 
-$$
+```math
 D_{\rm seen}=E\,D_{\rm unique},\qquad D_{\rm effective}\ne D_{\rm seen}\ \text{in general}
-$$
+```
 
 #### 易错点
 
@@ -161,9 +161,9 @@ $$
 
 因此应同时报告连续分数、部分正确、序列概率或校准指标，增加规模采样点，并控制数据、训练预算、prompt和评估样本。指标效应能解释部分现象，不意味着已证明所有新能力都是幻觉；grokking是训练时间轴上延迟泛化的现象，与跨模型规模的能力曲线也不是同一定义。提出机制相变还需可重复干预、表示或计算过程证据，不能仅凭榜单折线。用于选型时直接验证任务质量和资源成本比争论标签更有价值。
 
-$$
+```math
 P(\text{all }m\text{ steps correct})=p^m\quad\text{under an independence toy assumption}
-$$
+```
 
 #### 易错点
 
@@ -186,9 +186,9 @@ FIM把文档切成prefix、middle和suffix，使用特殊标记把前后文排�
 
 数据需随机选择合法切点、保留特殊token和语言边界，控制FIM比例与常规左到右训练的混合。代码补全要检查AST/缩进、tokenizer和跨文件上下文，同时单独测续写与infilling，不能仅用普通PPL验收。Code Llama等checkpoint对FIM支持并不完全相同，必须核对对应版本和prompt标记。FIM学的是按转换序列条件化的生成，和BERT在原位置并行预测MASK、GLM的空白填充参数化都有差异。
 
-$$
-p(M\mid P,S)=\prod_{t=1}^{|M|}p(M_t\mid\operatorname{format}(P,S),M_{<t})
-$$
+```math
+p(M\mid P,S)=\prod_{t=1}^{|M|}p(M_t\mid\mathrm{format}(P,S),M_{\lt t})
+```
 
 #### 易错点
 
@@ -339,15 +339,15 @@ FP16 和 BF16 都是 16 bit：FP16 使用 1 位符号、5 位指数、10 位尾�
 
 #### 答案
 
-Warmup 缓慢增加训练初期的学习率，给优化器状态和激活尺度建立提供缓冲；需要多长取决于模型尺度、初始化、优化器与数据。原 Transformer 的 Noam 策略先线性增长，再按步数平方根倒数衰减：更新步 $s\ge1$、模型维度 $D$、warmup 步 $w$ 时，$\eta(s)=cD^{-1/2}\min(s^{-1/2},sw^{-3/2})$。交点 $s=w$ 的峰值为 $c/\sqrt{Dw}$；原实验 $w=4000$，现代配方也可用 cosine 或 linear，不能把历史设置当作通用规则。
+Warmup 缓慢增加训练初期的学习率，给优化器状态和激活尺度建立提供缓冲；需要多长取决于模型尺度、初始化、优化器与数据。原 Transformer 的 Noam 策略先线性增长，再按步数平方根倒数衰减：更新步 $`s\ge1`$、模型维度 $`D`$、warmup 步 $`w`$ 时，$`\eta(s)=cD^{-1/2}\min(s^{-1/2},sw^{-3/2})`$。交点 $`s=w`$ 的峰值为 $`c/\sqrt{Dw}`$；原实验 $`w=4000`$，现代配方也可用 cosine 或 linear，不能把历史设置当作通用规则。
 
-Global norm clipping 将全部参数梯度的总范数 $G=\sqrt{\sum_p\|g_p\|_2^2}$ 限制在 $C>0$，对所有梯度统一乘 $\min(1,C/G)$；$G=0$ 时保持零。这样保留方向，与逐元素 clamp 或各张量独立裁剪不同。
+Global norm clipping 将全部参数梯度的总范数 $`G=\sqrt{\sum_p\|g_p\|_2^2}`$ 限制在 $`C>0`$，对所有梯度统一乘 $`\min(1,C/G)`$；$`G=0`$ 时保持零。这样保留方向，与逐元素 clamp 或各张量独立裁剪不同。
 
 应在完整梯度累积之后、AMP unscale 之后裁剪，再做 `optimizer.step`；scheduler 按真实参数更新计步。分布式分片要检查全局范数聚合，非有限梯度须先检测和处理，裁剪不能修复 NaN/Inf。它限制当前梯度，却不保证 Adam 更新范数或后续 loss，动量、二阶矩和衰减仍会影响结果。持续触发时应记录裁剪前范数、比例、loss 与 AMP 跳步，再排查数据、学习率和数值。
 
-$$
-\begin{aligned}\eta(s)&=cD^{-1/2}\min(s^{-1/2},sw^{-3/2}),\quad s\ge1\\G&=\sqrt{\sum_p\|g_p\|_2^2}\\g'_p&=\begin{cases}g_p\min(1,C/G),&G>0\\0,&G=0\end{cases}\end{aligned}
-$$
+```math
+\begin{aligned}\eta(s)&=cD^{-1/2}\min(s^{-1/2},sw^{-3/2}),\quad s\ge1\\G&=\sqrt{\sum_p\|g_p\|_2^2}\\g'_p&=\begin{cases}g_p\min(1,C/G),&G\gt 0\\0,&G=0\end{cases}\end{aligned}
+```
 
 #### 易错点
 
@@ -357,7 +357,7 @@ $$
 #### 追问
 
 - 若 warmup 步数翻 4 倍且其他因子不变，Noam 峰值怎样变化？
-- 为何梯度范数已被裁到 C，Adam 的参数更新范数仍可能大于 $\eta C$？
+- 为何梯度范数已被裁到 C，Adam 的参数更新范数仍可能大于 $`\eta C`$？
 
 <a id="topic-4"></a>
 ## 继续预训练与域适配

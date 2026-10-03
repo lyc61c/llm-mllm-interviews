@@ -1214,7 +1214,7 @@
         "followups": [
           "去掉外面的 min 后，负 advantage 会有什么错误？"
         ],
-        "formula": "L^{\\mathrm{clip}}=\\mathbb{E}\\left[\\min\\left(\\rho_t A_t,\\operatorname{clip}(\\rho_t,1-\\epsilon,1+\\epsilon)A_t\\right)\\right]",
+        "formula": "L^{\\mathrm{clip}}=\\mathbb{E}\\left[\\min\\left(\\rho_t A_t,\\mathrm{clip}(\\rho_t,1-\\epsilon,1+\\epsilon)A_t\\right)\\right]",
         "body": "PPO 使用新旧策略的概率比 $\\rho_t=\\pi_\\theta(a_t\\mid s_t)/\\pi_{\\mathrm{old}}(a_t\\mid s_t)$，对本轮旧策略采集的样本进行更新；优势为正时鼓励提高动作概率，为负时鼓励降低概率。\n\nclip 与 min 共同截断有利方向上过度更新带来的目标收益：$A_t>0$ 时限制过度增大概率的收益，$A_t<0$ 时限制过度减小概率的收益。它削弱大幅更新的动机，并非裁剪模型参数，也不保证所有概率比都留在区间内。多轮 minibatch 更新应同时监测 KL、clip fraction、熵和 value loss。"
       },
       "reference_ids": [
@@ -1470,7 +1470,7 @@
         "followups": [
           "奖励为连续多维分数时，量纲怎样影响组优势？"
         ],
-        "body": "原始 GRPO 的组内优势通常写为 $\\hat A_i=(r_i-\\bar r)/(\\operatorname{std}(r)+\\epsilon)$；标准差的具体定义需与实现一致。减均值提供相对基线，除以标准差则进一步按每个问题的奖励方差重加权：较小但非零的方差可能放大少数回答的信号。\n\n二元奖励下，全对或全错的组没有相对学习信号；$\\epsilon$ 只能改善数值稳定性，不能创造奖励差异。组大小影响方差估计及出现混合结果的概率。比较取消标准差归一化、跨 batch 归一化或难度采样时，应控制总采样量，避免把数据分布变化误认为目标函数改进。"
+        "body": "原始 GRPO 的组内优势通常写为 $\\hat A_i=(r_i-\\bar r)/(\\mathrm{std}(r)+\\epsilon)$；标准差的具体定义需与实现一致。减均值提供相对基线，除以标准差则进一步按每个问题的奖励方差重加权：较小但非零的方差可能放大少数回答的信号。\n\n二元奖励下，全对或全错的组没有相对学习信号；$\\epsilon$ 只能改善数值稳定性，不能创造奖励差异。组大小影响方差估计及出现混合结果的概率。比较取消标准差归一化、跨 batch 归一化或难度采样时，应控制总采样量，避免把数据分布变化误认为目标函数改进。"
       },
       "reference_ids": [
         "APP-S162"
@@ -1909,8 +1909,8 @@
         "followups": [
           "为何融合后的分数阈值不能照搬原来的 cosine 阈值？"
         ],
-        "formula": "\\operatorname{RRF}(d)=\\sum_{j:\\,d\\in L_j}\\frac{1}{k+\\operatorname{rank}_j(d)}",
-        "body": "BM25 与向量检索分数的范围和分布不同，直接相加容易让一路占主导。融合可先校准分数再加权，也可用 RRF 累加各检索路的倒数排名贡献 $1/(k+\\operatorname{rank}_j(d))$，避开原始分数之间的直接比较。\n\nRRF 仍需验证排名常数 $k$、候选窗口与去重规则；未进入窗口的文档没有融合机会，重复文档应按稳定 ID 合并。评测按词项、语义和多跳 query 分层比较收益，同时监测 P95 延迟。RRF 分数不能视为余弦相似度或可靠性概率，也不能照搬原检索分数的阈值。"
+        "formula": "\\mathrm{RRF}(d)=\\sum_{j:\\,d\\in L_j}\\frac{1}{k+\\mathrm{rank}_j(d)}",
+        "body": "BM25 与向量检索分数的范围和分布不同，直接相加容易让一路占主导。融合可先校准分数再加权，也可用 RRF 累加各检索路的倒数排名贡献 $1/(k+\\mathrm{rank}_j(d))$，避开原始分数之间的直接比较。\n\nRRF 仍需验证排名常数 $k$、候选窗口与去重规则；未进入窗口的文档没有融合机会，重复文档应按稳定 ID 合并。评测按词项、语义和多跳 query 分层比较收益，同时监测 P95 延迟。RRF 分数不能视为余弦相似度或可靠性概率，也不能照搬原检索分数的阈值。"
       },
       "reference_ids": [
         "APP-S126"
@@ -2061,7 +2061,7 @@
           "召回提升但答案质量不变，应做哪些消融？"
         ],
         "body": "RAG 评测应依次检查检索是否覆盖证据、上下文是否相关，以及答案是否忠于证据、正确且完整。准备带证据位置的业务集，按失败环节归因，并联合报告成本、延迟和拒答；只看 BLEU 或单一总分会掩盖链路瓶颈。\n\n检索可使用 Recall@K、MRR 与 nDCG，多段联合证据还需检查是否完整覆盖。用 oracle evidence 替换真实检索，可分析生成器读取证据的能力上限。自动 judge 与无参考指标均有误差，应通过人工样本校准，并记录模型、prompt、语料和指标版本。\n\n对每个query，MRR取第一个相关结果的倒数排名再平均，未命中记0；AP在每个二值相关命中位置计算Precision并按相关文档总数R_q归一，MAP对query平均。nDCG用等级相关性g_i的gain与位置折扣，再除以同一截断k的理想排序IDCG；下面使用2的g_i次方减1，也有直接用g_i的约定，需固定。R_q=0或IDCG=0时须预先规定剔除或记0，避免除零；AP@k的分母同样应声明。缺失标注可能把真实相关结果算负例，检索相关性也不等于答案证据支持。",
-        "formula": "\\begin{aligned}\\mathrm{MRR}&=\\frac1Q\\sum_q\\frac1{\\operatorname{rank}_q^{\\mathrm{first}}},\\quad \\text{无命中记 }0\\\\ \\mathrm{AP}(q)&=\\frac1{R_q}\\sum_{i=1}^{N}\\mathrm{Precision@}i\\cdot\\operatorname{rel}_{q,i}\\\\ \\mathrm{MAP}&=\\frac1Q\\sum_q\\mathrm{AP}(q)\\\\ \\mathrm{DCG@}k&=\\sum_{i=1}^k\\frac{2^{g_i}-1}{\\log_2(i+1)},\\quad \\mathrm{nDCG@}k=\\frac{\\mathrm{DCG@}k}{\\mathrm{IDCG@}k}\\end{aligned}"
+        "formula": "\\begin{aligned}\\mathrm{MRR}&=\\frac1Q\\sum_q\\frac1{\\mathrm{rank}_q^{\\mathrm{first}}},\\quad \\text{无命中记 }0\\\\ \\mathrm{AP}(q)&=\\frac1{R_q}\\sum_{i=1}^{N}\\mathrm{Precision@}i\\cdot\\mathrm{rel}_{q,i}\\\\ \\mathrm{MAP}&=\\frac1Q\\sum_q\\mathrm{AP}(q)\\\\ \\mathrm{DCG@}k&=\\sum_{i=1}^k\\frac{2^{g_i}-1}{\\log_2(i+1)},\\quad \\mathrm{nDCG@}k=\\frac{\\mathrm{DCG@}k}{\\mathrm{IDCG@}k}\\end{aligned}"
       },
       "reference_ids": [
         "APP-S123",
@@ -2548,7 +2548,7 @@
           "两个模型PPL相近，但盲评偏好明显不同，应怎样分层定位原因？",
           "如何区分正确改写导致低ROUGE、事实错误导致高ROUGE，以及对参考答案的背诵？"
         ],
-        "formula": "\\operatorname{PPL}=\\exp\\left(-\\frac{1}{N_{\\mathrm{valid}}}\\sum_{t\\in\\mathcal{V}}\\log p_\\theta(x_t\\mid x_{<t})\\right),\\qquad N_{\\mathrm{valid}}=|\\mathcal{V}|",
+        "formula": "\\mathrm{PPL}=\\exp\\left(-\\frac{1}{N_{\\mathrm{valid}}}\\sum_{t\\in\\mathcal{V}}\\log p_\\theta(x_t\\mid x_{<t})\\right),\\qquad N_{\\mathrm{valid}}=|\\mathcal{V}|",
         "body": "文本生成评测先按任务选择指标，再在固定生成协议下比较输出，结合独立分层问题、事实或执行核验与盲评。BLEU/ROUGE 反映参考文本重合，teacher-forced PPL 反映真实历史下的预测概率，两者均不足以代表自由生成质量。\n\n有明确参考答案的任务可使用 EM/token F1，但需固定规范化、中文分词和别名处理。BLEU 原用于翻译，ROUGE 常用于摘要；报告具体变体、tokenizer、corpus/sentence 聚合及多参考处理。多参考能覆盖部分合理改写，词面重合仍不保证事实、逻辑或指令遵循，不能将任务内适用性外推为通用 LLM 质量。\n\nTeacher-forced PPL 是有效目标 token 平均负对数似然的指数，用评测文本的真实历史 $x_{<t}$ 预测 $x_t$；自由生成会将自己的输出纳入后续历史，两者条件分布不同。比较 PPL 须统一 tokenizer、数据、模板、loss mask 和上下文窗口/stride，不能直接跨分词粒度排名。低 PPL 不保证回答有用、事实正确或能从多轮错误中恢复。\n\n建立未用于调参的 held-out prompt 集，按任务、领域、语言、难度、长度和风险分层，报告各层及按目标流量加权的结果。检查训练或调参材料的重复、近似改写与模板泄漏，加入新写问题和表述变体；背诵参考能抬高词面分数，但单个高分或低 PPL 不能证明污染或泛化，训练数据未知时需明确核验边界。\n\n自由生成须固定并记录模型/checkpoint、system prompt、chat template、检索与工具条件、`temperature`、`top-p`、`top-k`、最大输出长度和停止规则，明确资源预算。随机采样使用多次 trial 并记录 seed，但 seed 不保证跨后端逐 bit 重现；必要时比较多个预先声明的解码协议，避免将解码变化当作模型能力变化。\n\n人工评测以带锚点的 rubric 分别评价准确性、材料忠实性、完整性、指令遵循和可读性，隐藏模型身份、随机 A/B 顺序，允许平局、无法判定及分歧复核。事实任务核查证据，代码执行测试，LLM judge 校准位置与冗长偏差；报告样本量、一致性及按 prompt 统计的不确定度，不能用单个平均词面分数代替全部结论。"
       },
       "reference_ids": [

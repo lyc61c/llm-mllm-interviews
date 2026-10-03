@@ -1,13 +1,63 @@
 """Regression checks for formulas, tables and local diagrams in offline answers."""
 import re
 import json
+import copy
 import unittest
 from xml.etree import ElementTree
-from common import ROOT, load_bank
-from presentation import answer_html
+from common import ROOT, load_bank, validate
+from presentation import answer_html, math_html, markdown_prose, markdown_formula
 
 
 class PresentationTests(unittest.TestCase):
+    def test_inline_math_is_protected_without_changing_code(self):
+        text = r'$Q=XW_Q$、$K=XW_K$，$D_{\mathrm{KL}}(p\|q)$，`$literal$`'
+        self.assertEqual(markdown_prose(text), r'$`Q=XW_Q`$、$`K=XW_K`$，$`D_{\mathrm{KL}}(p\|q)`$，`$literal$`')
+
+    def test_block_math_avoids_html_tags_and_extra_line_breaks(self):
+        expression = r'\begin{aligned}p(y_t\mid y_{<t})&>0\\' + '\n' + r'q&=1\end{aligned}'
+        protected = markdown_formula(expression)
+        self.assertEqual(protected, r'\begin{aligned}p(y_t\mid y_{\lt t})&\gt 0\\ q&=1\end{aligned}')
+        self.assertEqual(math_html(expression, True), math_html(protected, True))
+
+    def test_chapter_math_keeps_canonical_tex(self):
+        from collections import Counter
+        from common import CATEGORIES
+        _, questions = load_bank()
+        for category, (slug, _) in CATEGORIES.items():
+            chapter = (ROOT / 'chapters' / (slug+'.md')).read_text(encoding='utf-8')
+            blocks = re.findall(r'```math\n([\s\S]*?)\n```', chapter)
+            inline = re.findall(r'\$`([^`\n]+)`\$', chapter)
+            expected_blocks, expected_inline = [], []
+            for question in questions:
+                if question['category'] != category:
+                    continue
+                answer = question['answer']
+                if answer.get('formula'):
+                    expected_blocks.append(answer['formula'].replace('\n', ' ').replace('<', r'\lt ').replace('>', r'\gt '))
+                for value in [answer['body'], *answer['pitfalls'], *answer['followups']]:
+                    expected_inline.extend(re.findall(r'\$([^$\n]+)\$', value))
+            with self.subTest(category=category):
+                self.assertEqual(Counter(blocks), Counter(expected_blocks))
+                self.assertEqual(Counter(inline), Counter(expected_inline))
+
+    def test_blocked_macro_is_rejected_before_publication(self):
+        sources, questions = load_bank()
+        question = copy.deepcopy(next(q for q in questions if q['id'] == 'BAS-001'))
+        question['answer']['formula'] = r'D(i)=\operatorname{DAG}(i)'
+        self.assertTrue(any('operatorname' in error for error in validate(sources, [question], require_complete=False)))
+
+    def test_formulas_avoid_blocked_markdown_macro(self):
+        _, questions = load_bank()
+        for question in questions:
+            with self.subTest(question=question['id']):
+                answer = question['answer']
+                values = [answer['body'], answer.get('formula', ''), *answer['pitfalls'], *answer['followups']]
+                self.assertFalse(any(re.search(r'\\operatorname\b', value) for value in values))
+        rendered = math_html(r'D(i)=\max_{j\in\mathrm{DAG}(i)}\{\log P(x_{i:j})+D(j+1)\}')
+        self.assertIn('DAG', ''.join(ElementTree.fromstring(rendered).itertext()))
+        for expression in (r'\arg\max_a Q(a)', r'\arg\min_x f(x)'):
+            self.assertNotIn('\\', ''.join(ElementTree.fromstring(math_html(expression)).itertext()))
+
     def test_generated_answers_match_canonical_data(self):
         _, questions = load_bank()
         html = (ROOT / 'index.html').read_text(encoding='utf-8')

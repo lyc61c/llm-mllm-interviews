@@ -1005,7 +1005,7 @@
         "followups": [
           "Actor 与 Critic 共用 Transformer 时，应怎样检查梯度冲突？"
         ],
-        "formula": "\\mathcal L_{\\mathrm{actor}}=-\\mathbb E[\\log\\pi_\\theta(a_t\\mid s_t)\\operatorname{sg}(\\hat A_t)],\\qquad \\mathcal L_{\\mathrm{critic}}=\\mathbb E[(V_\\phi(s_t)-\\operatorname{sg}(\\hat G_t))^2]"
+        "formula": "\\mathcal L_{\\mathrm{actor}}=-\\mathbb E[\\log\\pi_\\theta(a_t\\mid s_t)\\mathrm{sg}(\\hat A_t)],\\qquad \\mathcal L_{\\mathrm{critic}}=\\mathbb E[(V_\\phi(s_t)-\\mathrm{sg}(\\hat G_t))^2]"
       },
       "reference_ids": [
         "JUN26-P017",
@@ -1035,7 +1035,7 @@
         "followups": [
           "PPO actor loss 下降而独立胜率降低，先检查哪些日志？"
         ],
-        "formula": "\\begin{aligned}\\tilde r_t&=r_t^{\\mathrm{task}}-\\beta(\\log\\pi_{\\mathrm{old}}(y_t\\mid s_t)-\\log\\pi_{\\mathrm{ref}}(y_t\\mid s_t))\\\\ \\hat A_t&=\\delta_t+\\gamma\\lambda\\hat A_{t+1},\\quad \\delta_t=\\tilde r_t+\\gamma V_{\\mathrm{old}}(s_{t+1})-V_{\\mathrm{old}}(s_t)\\\\ \\hat V_t^{\\mathrm{target}}&=\\operatorname{sg}(V_{\\mathrm{old}}(s_t)+\\hat A_t)\\\\ \\mathcal L_V&=\\tfrac12\\operatorname{mean}_{t\\in\\mathcal V}(V_\\phi(s_t)-\\hat V_t^{\\mathrm{target}})^2\\end{aligned}"
+        "formula": "\\begin{aligned}\\tilde r_t&=r_t^{\\mathrm{task}}-\\beta(\\log\\pi_{\\mathrm{old}}(y_t\\mid s_t)-\\log\\pi_{\\mathrm{ref}}(y_t\\mid s_t))\\\\ \\hat A_t&=\\delta_t+\\gamma\\lambda\\hat A_{t+1},\\quad \\delta_t=\\tilde r_t+\\gamma V_{\\mathrm{old}}(s_{t+1})-V_{\\mathrm{old}}(s_t)\\\\ \\hat V_t^{\\mathrm{target}}&=\\mathrm{sg}(V_{\\mathrm{old}}(s_t)+\\hat A_t)\\\\ \\mathcal L_V&=\\tfrac12\\mathrm{mean}_{t\\in\\mathcal V}(V_\\phi(s_t)-\\hat V_t^{\\mathrm{target}})^2\\end{aligned}"
       },
       "reference_ids": [
         "JUN26-P004",
@@ -1099,7 +1099,7 @@
         "followups": [
           "两个响应某个 token 的 ratio 极端，但序列均值接近1，GSPO与GRPO会怎样不同？"
         ],
-        "formula": "\\begin{aligned}s_i(\\theta)&=\\exp\\left(\\frac{1}{|y_i|}\\sum_t\\log\\frac{\\pi_\\theta(y_{i,t}\\mid x,y_{i,<t})}{\\pi_{\\mathrm{old}}(y_{i,t}\\mid x,y_{i,<t})}\\right)\\\\ J_{\\mathrm{GSPO}}&=\\mathbb E\\left[\\frac1G\\sum_i\\min(s_i\\hat A_i,\\operatorname{clip}(s_i,1-\\epsilon,1+\\epsilon)\\hat A_i)\\right]\\end{aligned}"
+        "formula": "\\begin{aligned}s_i(\\theta)&=\\exp\\left(\\frac{1}{|y_i|}\\sum_t\\log\\frac{\\pi_\\theta(y_{i,t}\\mid x,y_{i,<t})}{\\pi_{\\mathrm{old}}(y_{i,t}\\mid x,y_{i,<t})}\\right)\\\\ J_{\\mathrm{GSPO}}&=\\mathbb E\\left[\\frac1G\\sum_i\\min(s_i\\hat A_i,\\mathrm{clip}(s_i,1-\\epsilon,1+\\epsilon)\\hat A_i)\\right]\\end{aligned}"
       },
       "reference_ids": [
         "JUN26-P007"
@@ -1127,7 +1127,7 @@
         "followups": [
           "过滤全对/全错组会对样本难度和每步采样成本产生什么影响？"
         ],
-        "formula": "J\\propto\\frac{\\sum_{i,t}m_{i,t}\\min(\\rho_{i,t}\\hat A_i,\\operatorname{clip}(\\rho_{i,t},1-\\epsilon_{\\mathrm{low}},1+\\epsilon_{\\mathrm{high}})\\hat A_i)}{\\sum_{i,t}m_{i,t}}"
+        "formula": "J\\propto\\frac{\\sum_{i,t}m_{i,t}\\min(\\rho_{i,t}\\hat A_i,\\mathrm{clip}(\\rho_{i,t},1-\\epsilon_{\\mathrm{low}},1+\\epsilon_{\\mathrm{high}})\\hat A_i)}{\\sum_{i,t}m_{i,t}}"
       },
       "reference_ids": [
         "JUN26-P008"
@@ -1237,7 +1237,7 @@
         "followups": [
           "高风险拒答任务怎样验证提高负类权重没有导致过度拒答？"
         ],
-        "formula": "\\begin{aligned}\\mathcal L_{\\mathrm{weighted\\ BCE}}&=-\\mathbb E[w_+y\\log p+w_-(1-y)\\log(1-p)]\\\\ \\ell_{\\mathrm{PPO}}&=\\min(\\rho A,\\operatorname{clip}(\\rho,1-\\epsilon_{\\mathrm{low}},1+\\epsilon_{\\mathrm{high}})A)\\end{aligned}"
+        "formula": "\\begin{aligned}\\mathcal L_{\\mathrm{weighted\\ BCE}}&=-\\mathbb E[w_+y\\log p+w_-(1-y)\\log(1-p)]\\\\ \\ell_{\\mathrm{PPO}}&=\\min(\\rho A,\\mathrm{clip}(\\rho,1-\\epsilon_{\\mathrm{low}},1+\\epsilon_{\\mathrm{high}})A)\\end{aligned}"
       },
       "reference_ids": [
         "JUN26-P012",
@@ -1473,7 +1473,7 @@
         "followups": [
           "没有唯一短答案的开放任务，Self-Consistency怎样设计聚合？"
         ],
-        "formula": "\\hat a=\\arg\\max_a\\sum_{i=1}^K\\mathbf1[\\operatorname{normalize}(a_i)=a]"
+        "formula": "\\hat a=\\arg\\max_a\\sum_{i=1}^K\\mathbf1[\\mathrm{normalize}(a_i)=a]"
       },
       "reference_ids": [
         "JUN26-P024",
@@ -1672,7 +1672,7 @@
         "followups": [
           "ANN召回差怎样区分粗量化漏簇、PQ误差与embedding本身不合适？"
         ],
-        "formula": "M_{\\mathrm{PQ\\ codes}}\\approx N\\frac{Mb}{8}\\ \\mathrm{bytes},\\qquad \\operatorname{probed\\ fraction}\\approx\\frac{n_{\\mathrm{probe}}}{n_{\\mathrm{list}}}"
+        "formula": "M_{\\mathrm{PQ\\ codes}}\\approx N\\frac{Mb}{8}\\ \\mathrm{bytes},\\qquad \\mathrm{probed\\ fraction}\\approx\\frac{n_{\\mathrm{probe}}}{n_{\\mathrm{list}}}"
       },
       "reference_ids": [
         "JUN26-P034",
