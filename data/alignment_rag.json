@@ -1,0 +1,3133 @@
+{
+  "sources": [
+    {
+      "id": "APP-S001",
+      "title": "字节多模态大模型面经一面",
+      "url": "https://www.nowcoder.com/discuss/932594519835443200",
+      "platform": "牛客",
+      "type": "community",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "搜索可见 RLHF、DPO loss、PPO/DPO trade-off、幻觉；全文请求受阻。作者自述公司与经历未经核实。",
+      "topics": [
+        "RLHF",
+        "DPO",
+        "PPO",
+        "幻觉"
+      ],
+      "claimed_company": "字节跳动"
+    },
+    {
+      "id": "APP-S002",
+      "title": "字节跳动 AI 应用开发一面面经",
+      "url": "https://api-cdn.nowcoder.com/feed/main/detail/15af3788a038477bba99f2f9d94b2cef",
+      "platform": "牛客",
+      "type": "community",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "搜索可见 RAG 流程、chunk、混合召回、rerank、多 Agent；全文受阻，仅作搜索题目线索。",
+      "topics": [
+        "RAG",
+        "chunk",
+        "rerank",
+        "多Agent"
+      ],
+      "claimed_company": "字节跳动"
+    },
+    {
+      "id": "APP-S003",
+      "title": "面了一轮 Agent 岗，我把问过的问题整理成了文章",
+      "url": "https://ac.nowcoder.com/discuss/1680599",
+      "platform": "牛客",
+      "type": "community",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "搜索可见上下文、幂等重试、多 Agent、RLHF/DPO、点赞点踩转偏好数据；全文受阻。",
+      "topics": [
+        "Agent",
+        "RLHF",
+        "偏好数据",
+        "幂等"
+      ]
+    },
+    {
+      "id": "APP-S004",
+      "title": "2026 年最新 AI agent 面试（05）：RAG 基础应用",
+      "url": "https://zhuanlan.zhihu.com/p/2063918418823230700",
+      "platform": "知乎",
+      "type": "community",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "搜索可见 RAG 与微调、HyDE、召回；全文超时。公司归属未核实，答案未采用。",
+      "topics": [
+        "RAG",
+        "HyDE",
+        "微调"
+      ]
+    },
+    {
+      "id": "APP-S005",
+      "title": "多模态大模型面试（六）：多模态 RAG/Agent",
+      "url": "https://zhuanlan.zhihu.com/p/2059680845074638745",
+      "platform": "知乎",
+      "type": "community",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "搜索可见多模态检索、RAG/Agent、长上下文；全文超时。未采用固定成本倍数与绝对化结论。",
+      "topics": [
+        "多模态RAG",
+        "长上下文",
+        "Agent"
+      ]
+    },
+    {
+      "id": "APP-S006",
+      "title": "Awesome-LLM-Interview-Questions-and-Answers",
+      "url": "https://github.com/DolbyUUU/Awesome-LLM-Interview-Questions-and-Answers",
+      "platform": "GitHub",
+      "type": "community",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取公开 README 题目目录；作者自述面试经历，答案主要由模型生成，仅选少量主题重新核验。",
+      "topics": [
+        "GRPO",
+        "RL显存",
+        "MCP",
+        "ReAct",
+        "灾难性遗忘"
+      ]
+    },
+    {
+      "id": "APP-S007",
+      "title": "大模型算法岗面试题复盘：RAG、Agent、评测",
+      "url": "https://nanhubrain.csdn.net/6a3ce7a8662f9a54cb841a94.html",
+      "platform": "CSDN",
+      "type": "community",
+      "access": "full",
+      "published_date": "2026-06-20",
+      "accessed_date": "2026-10-02",
+      "notes": "公开正文可读，只选自动指标、人工评测、KL penalty、PPO 稳定性主题。原答案有过度简化，未照抄。",
+      "topics": [
+        "评测",
+        "PPO",
+        "KL",
+        "人工评测"
+      ]
+    },
+    {
+      "id": "APP-S008",
+      "title": "字节面经：大模型算法岗面经 04",
+      "url": "https://www.nowcoder.com/discuss/922308546966847488",
+      "platform": "牛客",
+      "type": "community",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "公开正文为汇总面经，尾部付费截断；只选 PPO advantage、GRPO clip、过程奖励主题。属于二手报道，公司归属未核实。",
+      "topics": [
+        "GRPO",
+        "PPO",
+        "advantage",
+        "过程奖励"
+      ],
+      "claimed_company": "字节跳动"
+    },
+    {
+      "id": "APP-S009",
+      "title": "字节大模型算法实习生：电商业务（已 oc）",
+      "url": "https://www.nowcoder.com/discuss/724319940982898688",
+      "platform": "牛客",
+      "type": "community",
+      "access": "full",
+      "published_date": "2025-02-26",
+      "accessed_date": "2026-10-02",
+      "notes": "公开正文可读，作者自述 SFT/DPO、损失、变种、评测、RAG；只选少量主题。",
+      "topics": [
+        "SFT",
+        "DPO",
+        "评测",
+        "RAG"
+      ],
+      "claimed_company": "字节跳动"
+    },
+    {
+      "id": "APP-S010",
+      "title": "字节大模型实习算法面经 55min",
+      "url": "https://www.nowcoder.com/feed/main/detail/59b472d7ec6645cc95ac0735885234e3",
+      "platform": "牛客",
+      "type": "community",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "搜索摘要列出 DPO/PPO/GRPO、在线离线 RL、多目标奖励冲突；未读取全文，自述未核实。",
+      "topics": [
+        "在线RL",
+        "GRPO",
+        "多目标奖励"
+      ],
+      "claimed_company": "字节跳动"
+    },
+    {
+      "id": "APP-S011",
+      "title": "LLM as a Judge：如何给 AI 工作台做自动化测试？",
+      "url": "https://zhuanlan.zhihu.com/p/2052331223993921976",
+      "platform": "知乎",
+      "type": "community",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "只读搜索摘要，是技术讨论而非面经，用于评判模型校准主题线索。",
+      "topics": [
+        "LLM-as-Judge"
+      ]
+    },
+    {
+      "id": "APP-S012",
+      "title": "月之暗面 AI Agent 开发岗一面面经（含答案）",
+      "url": "https://www.nowcoder.com/discuss/922643334898647040",
+      "platform": "牛客",
+      "type": "community",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "搜索摘要含工具 schema、成本、幻觉与结果验证；公司归属未经独立核验。",
+      "topics": [
+        "上下文",
+        "工具调用",
+        "幻觉"
+      ],
+      "claimed_company": "月之暗面"
+    },
+    {
+      "id": "APP-S101",
+      "title": "Training language models to follow instructions with human feedback",
+      "url": "https://arxiv.org/html/2203.02155v1",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "full",
+      "published_date": "2022-03-04",
+      "accessed_date": "2026-10-02",
+      "notes": "读取 §3 RLHF、§4.2 alignment tax、PPO-ptx 公式。",
+      "topics": [
+        "RLHF",
+        "对齐税"
+      ]
+    },
+    {
+      "id": "APP-S102",
+      "title": "Proximal Policy Optimization Algorithms",
+      "url": "https://arxiv.org/abs/1707.06347",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2017-07-20",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验 arXiv 摘要；clip 公式由官方 Spinning Up 另核对。",
+      "topics": [
+        "PPO"
+      ]
+    },
+    {
+      "id": "APP-S103",
+      "title": "Generalized Advantage Estimation",
+      "url": "https://arxiv.org/pdf/1506.02438",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "full",
+      "published_date": "2015-06-08",
+      "accessed_date": "2026-10-02",
+      "notes": "读取 PDF 第 4 页 Eq.16-18，核验 GAE 与 bias/variance 条件。",
+      "topics": [
+        "GAE"
+      ]
+    },
+    {
+      "id": "APP-S104",
+      "title": "Direct Preference Optimization",
+      "url": "https://arxiv.org/html/2305.18290v3",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "full",
+      "published_date": "2023-05-29",
+      "accessed_date": "2026-10-02",
+      "notes": "读取 §3-5 Eq.3-7、附录推导；核验 KL、BT 假设、分区函数抵消。",
+      "topics": [
+        "DPO",
+        "偏好模型"
+      ]
+    },
+    {
+      "id": "APP-S105",
+      "title": "PPO — Spinning Up",
+      "url": "https://spinningup.openai.com/en/latest/algorithms/ppo.html",
+      "platform": "spinningup.openai.com",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取 clip 公式、正负 advantage、KL early stopping。",
+      "topics": [
+        "PPO",
+        "clip",
+        "KL"
+      ]
+    },
+    {
+      "id": "APP-S106",
+      "title": "DeepSeekMath",
+      "url": "https://arxiv.org/html/2402.03300v3",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "full",
+      "published_date": "2024-02-05",
+      "accessed_date": "2026-10-02",
+      "notes": "读取 §4.1 Eq.21、outcome/process supervision，核验原始 GRPO。",
+      "topics": [
+        "GRPO"
+      ]
+    },
+    {
+      "id": "APP-S107",
+      "title": "Understanding R1-Zero-Like Training: A Critical Perspective",
+      "url": "https://arxiv.org/html/2503.20783v2",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "full",
+      "published_date": "2025-03-26",
+      "accessed_date": "2026-10-02",
+      "notes": "读取 §3.1-3.2：响应长度、问题难度重加权与 Dr. GRPO。",
+      "topics": [
+        "Dr.GRPO",
+        "长度偏差"
+      ]
+    },
+    {
+      "id": "APP-S108",
+      "title": "Is DPO Superior to PPO for LLM Alignment?",
+      "url": "https://arxiv.org/abs/2404.10719",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2024-04-16",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要；单篇实验优势不外推为普遍排序。",
+      "topics": [
+        "DPO",
+        "PPO"
+      ]
+    },
+    {
+      "id": "APP-S109",
+      "title": "UltraFeedback",
+      "url": "https://arxiv.org/html/2310.01377v1",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "full",
+      "published_date": "2023-10-02",
+      "accessed_date": "2026-10-02",
+      "notes": "读取反馈构造、多维评价章节；清洗建议为独立综合。",
+      "topics": [
+        "偏好数据"
+      ]
+    },
+    {
+      "id": "APP-S110",
+      "title": "DeepSeek-R1",
+      "url": "https://arxiv.org/html/2501.12948v1",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "full",
+      "published_date": "2025-01-22",
+      "accessed_date": "2026-10-02",
+      "notes": "读取 rule-based reward、cold start；规则奖励不等于万能评分。",
+      "topics": [
+        "RLVR"
+      ]
+    },
+    {
+      "id": "APP-S111",
+      "title": "Let's Verify Step by Step",
+      "url": "https://arxiv.org/abs/2305.20050",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2023-05-31",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要：过程/结果监督与 MATH 实验范围。",
+      "topics": [
+        "PRM",
+        "ORM"
+      ]
+    },
+    {
+      "id": "APP-S112",
+      "title": "Scaling Laws for Reward Model Overoptimization",
+      "url": "https://arxiv.org/abs/2210.10760",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2022-10-19",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要的代理奖励过优化，不外推拟合曲线。",
+      "topics": [
+        "reward hacking"
+      ]
+    },
+    {
+      "id": "APP-S113",
+      "title": "Constitutional AI",
+      "url": "https://arxiv.org/abs/2212.08073",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2022-12-15",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要的自我修订、AI 偏好、RLAIF 阶段。",
+      "topics": [
+        "RLAIF"
+      ]
+    },
+    {
+      "id": "APP-S114",
+      "title": "A General Theoretical Paradigm to Understand Learning from Human Preferences",
+      "url": "https://arxiv.org/abs/2310.12036",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2023-10-18",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验 ΨPO/IPO 摘要与偏好转奖励假设，不提供未读公式。",
+      "topics": [
+        "IPO",
+        "偏好假设"
+      ]
+    },
+    {
+      "id": "APP-S115",
+      "title": "Safe RLHF",
+      "url": "https://arxiv.org/abs/2310.12773",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要：有用性/无害性冲突；工程步骤为独立综合。",
+      "topics": [
+        "多目标",
+        "安全"
+      ]
+    },
+    {
+      "id": "APP-S116",
+      "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+      "url": "https://arxiv.org/abs/2005.11401",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2020-05-22",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要中的参数/非参数记忆；现代工程链路为综合。",
+      "topics": [
+        "RAG"
+      ]
+    },
+    {
+      "id": "APP-S117",
+      "title": "Dense Passage Retrieval",
+      "url": "https://arxiv.org/abs/2004.04906",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2020-04-10",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要的 dual encoder；不引用未读对比损失公式。",
+      "topics": [
+        "dense retrieval"
+      ]
+    },
+    {
+      "id": "APP-S118",
+      "title": "Sentence-BERT",
+      "url": "https://arxiv.org/abs/1908.10084",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2019-08-27",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要的独立 embedding、余弦检索。",
+      "topics": [
+        "embedding"
+      ]
+    },
+    {
+      "id": "APP-S119",
+      "title": "Precise Zero-Shot Dense Retrieval without Relevance Labels",
+      "url": "https://arxiv.org/abs/2212.10496",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2022-12-20",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验 HyDE 摘要：假设文档非证据，检索真实文档。",
+      "topics": [
+        "HyDE"
+      ]
+    },
+    {
+      "id": "APP-S120",
+      "title": "Self-RAG",
+      "url": "https://arxiv.org/abs/2310.11511",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2023-10-17",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要中的按需检索与 reflection tokens。",
+      "topics": [
+        "Self-RAG"
+      ]
+    },
+    {
+      "id": "APP-S121",
+      "title": "Lost in the Middle",
+      "url": "https://arxiv.org/abs/2307.03172",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2023-07-06",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要的位置敏感现象，不外推所有当前模型。",
+      "topics": [
+        "长上下文"
+      ]
+    },
+    {
+      "id": "APP-S122",
+      "title": "RAG for Large Language Models: A Survey",
+      "url": "https://arxiv.org/abs/2312.10997",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "仅核验作者摘要和范围，选型为独立综合。",
+      "topics": [
+        "RAG"
+      ]
+    },
+    {
+      "id": "APP-S123",
+      "title": "Ragas",
+      "url": "https://arxiv.org/abs/2309.15217",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2023-09-26",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要的检索、忠实度、生成质量维度，不提供版本 API。",
+      "topics": [
+        "RAG评测"
+      ]
+    },
+    {
+      "id": "APP-S124",
+      "title": "Chunk Documents — Azure AI Search",
+      "url": "https://learn.microsoft.com/en-us/azure/search/vector-search-how-to-chunk-documents",
+      "platform": "learn.microsoft.com",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取切分因素、overlap；512 tokens/25% 仅起点，不当最优值。",
+      "topics": [
+        "chunk"
+      ]
+    },
+    {
+      "id": "APP-S125",
+      "title": "Similarity settings — Elasticsearch",
+      "url": "https://www.elastic.co/docs/reference/elasticsearch/index-settings/similarity",
+      "platform": "www.elastic.co",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取 BM25 k1/b 定义，不把默认值当算法要求。",
+      "topics": [
+        "BM25"
+      ]
+    },
+    {
+      "id": "APP-S126",
+      "title": "Reciprocal rank fusion — Elasticsearch",
+      "url": "https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion",
+      "platform": "www.elastic.co",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "核验 RRF 公式、排名起点、rank_constant 与窗口。",
+      "topics": [
+        "RRF"
+      ]
+    },
+    {
+      "id": "APP-S127",
+      "title": "Retrieve & Re-Rank — Sentence Transformers",
+      "url": "https://sbert.net/examples/sentence_transformer/applications/retrieve_rerank/README.html",
+      "platform": "sbert.net",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取 bi-encoder/cross-encoder 检索重排分工。",
+      "topics": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "APP-S128",
+      "title": "hnswlib — official repository",
+      "url": "https://github.com/nmslib/hnswlib",
+      "platform": "github.com",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取 M、ef_construction、ef 与 recall/speed；ANN recall 不等于语义召回。",
+      "topics": [
+        "ANN",
+        "HNSW"
+      ]
+    },
+    {
+      "id": "APP-S129",
+      "title": "Document-Level Access Control — Azure AI Search",
+      "url": "https://learn.microsoft.com/en-us/azure/search/search-document-level-access-overview",
+      "platform": "learn.microsoft.com",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取 query-time ACL 与权限同步；部分功能 preview，不外推 API。",
+      "topics": [
+        "ACL"
+      ]
+    },
+    {
+      "id": "APP-S130",
+      "title": "ColPali",
+      "url": "https://arxiv.org/abs/2407.01449",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "只核验作者摘要的页图、多向量、late interaction。",
+      "topics": [
+        "多模态检索"
+      ]
+    },
+    {
+      "id": "APP-S131",
+      "title": "ReAct",
+      "url": "https://arxiv.org/abs/2210.03629",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要 reasoning/action 交错，工程实现为综合。",
+      "topics": [
+        "ReAct"
+      ]
+    },
+    {
+      "id": "APP-S132",
+      "title": "AutoGen",
+      "url": "https://arxiv.org/abs/2308.08155",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要的可配置 Agent 与对话编排。",
+      "topics": [
+        "多Agent"
+      ]
+    },
+    {
+      "id": "APP-S133",
+      "title": "AgentBench",
+      "url": "https://arxiv.org/abs/2308.03688",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要的交互环境、长期决策评测。",
+      "topics": [
+        "Agent评测"
+      ]
+    },
+    {
+      "id": "APP-S134",
+      "title": "Persistence — LangGraph",
+      "url": "https://docs.langchain.com/oss/python/langgraph/persistence",
+      "platform": "docs.langchain.com",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "durable-execution 重定向此页，读取 checkpointer/store 与恢复。",
+      "topics": [
+        "持久化"
+      ]
+    },
+    {
+      "id": "APP-S135",
+      "title": "Memory overview — LangChain",
+      "url": "https://docs.langchain.com/oss/python/concepts/memory",
+      "platform": "docs.langchain.com",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取 thread scope、cross-thread memory、namespace。",
+      "topics": [
+        "记忆"
+      ]
+    },
+    {
+      "id": "APP-S136",
+      "title": "Building effective agents — Anthropic",
+      "url": "https://www.anthropic.com/engineering/building-effective-agents",
+      "platform": "www.anthropic.com",
+      "type": "primary",
+      "access": "full",
+      "published_date": "2024-12-19",
+      "accessed_date": "2026-10-02",
+      "notes": "读取 workflow/agent、停止条件、环境反馈；工具生态为历史版本。",
+      "topics": [
+        "Agent",
+        "规划"
+      ]
+    },
+    {
+      "id": "APP-S137",
+      "title": "Writing effective tools for agents — Anthropic",
+      "url": "https://www.anthropic.com/engineering/writing-tools-for-agents",
+      "platform": "www.anthropic.com",
+      "type": "primary",
+      "access": "full",
+      "published_date": "2025-09-11",
+      "accessed_date": "2026-10-02",
+      "notes": "读取严格输入输出、分页、截断、错误反馈。",
+      "topics": [
+        "工具调用"
+      ]
+    },
+    {
+      "id": "APP-S138",
+      "title": "Effective context engineering — Anthropic",
+      "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+      "platform": "www.anthropic.com",
+      "type": "primary",
+      "access": "full",
+      "published_date": "2025-09-29",
+      "accessed_date": "2026-10-02",
+      "notes": "读取 compaction、structured notes、multi-agent。",
+      "topics": [
+        "上下文"
+      ]
+    },
+    {
+      "id": "APP-S139",
+      "title": "Demystifying evals for AI agents — Anthropic",
+      "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
+      "platform": "www.anthropic.com",
+      "type": "primary",
+      "access": "full",
+      "published_date": "2026-01-09",
+      "accessed_date": "2026-10-02",
+      "notes": "读取 trace、task、grader、多次 trial；只采用评测结构。",
+      "topics": [
+        "Agent评测",
+        "回归"
+      ]
+    },
+    {
+      "id": "APP-S140",
+      "title": "MCP Architecture (2025-06-18 revision)",
+      "url": "https://modelcontextprotocol.io/specification/2025-06-18/architecture",
+      "platform": "modelcontextprotocol.io",
+      "type": "primary",
+      "access": "full",
+      "published_date": "2025-06-18",
+      "accessed_date": "2026-10-02",
+      "notes": "读取历史指定版本 host/client/server、JSON-RPC，不当 2026 最新版。",
+      "topics": [
+        "MCP"
+      ]
+    },
+    {
+      "id": "APP-S141",
+      "title": "Indirect Prompt Injection in LLM-integrated applications",
+      "url": "https://arxiv.org/abs/2302.12173",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2023-02-23",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要：被检索数据携带间接注入，数据与指令边界。",
+      "topics": [
+        "prompt injection"
+      ]
+    },
+    {
+      "id": "APP-S142",
+      "title": "Holistic Evaluation of Language Models",
+      "url": "https://arxiv.org/abs/2211.09110",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要的多场景多指标与标准化条件。",
+      "topics": [
+        "评测"
+      ]
+    },
+    {
+      "id": "APP-S143",
+      "title": "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
+      "url": "https://arxiv.org/html/2306.05685v4",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取 §3 偏差与人工一致性，保留 self-enhancement 无确定结论。",
+      "topics": [
+        "LLM-as-Judge"
+      ]
+    },
+    {
+      "id": "APP-S144",
+      "title": "TruthfulQA",
+      "url": "https://arxiv.org/abs/2109.07958",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2021-09-08",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要的模仿常见错误，不外推历史排名。",
+      "topics": [
+        "真实性"
+      ]
+    },
+    {
+      "id": "APP-S145",
+      "title": "Extracting Training Data from Large Language Models",
+      "url": "https://arxiv.org/abs/2012.07805",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2020-12-14",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要查询可恢复训练文本/个人信息，防御为综合。",
+      "topics": [
+        "隐私"
+      ]
+    },
+    {
+      "id": "APP-S146",
+      "title": "Evaluating Large Language Models Trained on Code",
+      "url": "https://arxiv.org/pdf/2107.03374",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取 §3.1 Eq.1，第 2 页 pass@k 与功能正确性。",
+      "topics": [
+        "HumanEval",
+        "pass@k"
+      ]
+    },
+    {
+      "id": "APP-S147",
+      "title": "MMMU",
+      "url": "https://arxiv.org/abs/2311.16502",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要的学科、图像类型、感知推理范围。",
+      "topics": [
+        "MLLM评测"
+      ]
+    },
+    {
+      "id": "APP-S148",
+      "title": "HarmBench",
+      "url": "https://arxiv.org/abs/2402.04249",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要的红队、拒答标准化评测。",
+      "topics": [
+        "安全评测"
+      ]
+    },
+    {
+      "id": "APP-S149",
+      "title": "Red Teaming Language Models with Language Models",
+      "url": "https://arxiv.org/abs/2202.03286",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2022-02-07",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要的模型生成测试、危害多样性。",
+      "topics": [
+        "红队"
+      ]
+    },
+    {
+      "id": "APP-S150",
+      "title": "Rethinking Benchmark and Contamination with Rephrased Samples",
+      "url": "https://arxiv.org/abs/2311.04850",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2023-11-08",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要的改写/翻译污染、新鲜测试，不外推污染比例。",
+      "topics": [
+        "污染"
+      ]
+    },
+    {
+      "id": "APP-S151",
+      "title": "FActScore",
+      "url": "https://arxiv.org/abs/2305.14251",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2023-05-23",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要的原子事实支持率，不等于完整度。",
+      "topics": [
+        "事实评测"
+      ]
+    },
+    {
+      "id": "APP-S152",
+      "title": "Language Models (Mostly) Know What They Know",
+      "url": "https://arxiv.org/abs/2207.05221",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要 P(True)/P(IK) 与跨任务校准困难。",
+      "topics": [
+        "校准"
+      ]
+    },
+    {
+      "id": "APP-S153",
+      "title": "Instruction-Following Evaluation for Large Language Models",
+      "url": "https://arxiv.org/abs/2311.07911",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2023-11-14",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要的规则可验证指令，不等于通用语义质量。",
+      "topics": [
+        "IFEval"
+      ]
+    },
+    {
+      "id": "APP-S154",
+      "title": "scipy.stats.bootstrap",
+      "url": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.bootstrap.html",
+      "platform": "docs.scipy.org",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取 paired=True 同索引重采样与置信区间。",
+      "topics": [
+        "统计显著性"
+      ]
+    },
+    {
+      "id": "APP-S155",
+      "title": "BLEU: A Method for Automatic Evaluation of Machine Translation",
+      "url": "https://aclanthology.org/P02-1040.pdf",
+      "platform": "aclanthology.org",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "本轮补读ACL原论文PDF第1–2节及多参考、corpus聚合讨论，核验翻译任务、参考重合和多参考处理。full指相关正文可读，未通读/复现实验；没有将词面分数外推成通用LLM质量。",
+      "topics": [
+        "BLEU"
+      ]
+    },
+    {
+      "id": "APP-S156",
+      "title": "ROUGE: A Package for Automatic Evaluation of Summaries",
+      "url": "https://aclanthology.org/W04-1013.pdf",
+      "platform": "aclanthology.org",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "本轮补读ACL原论文PDF第2节ROUGE-N、2.1多参考及第3节ROUGE-L，核验摘要任务、参考覆盖与多参考协议。full指相关正文可读，未通读实验或运行工具；没有把不同ROUGE变体和库聚合规则说成相同。",
+      "topics": [
+        "ROUGE"
+      ]
+    },
+    {
+      "id": "APP-S157",
+      "title": "HaluEval",
+      "url": "https://arxiv.org/abs/2305.11747",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2023-05-19",
+      "accessed_date": "2026-10-02",
+      "notes": "只核验摘要与来源冲突/无法验证幻觉定义、识别任务范围。",
+      "topics": [
+        "幻觉"
+      ]
+    },
+    {
+      "id": "APP-S158",
+      "title": "MCP Architecture (2026-07-28 revision)",
+      "url": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2026-07-28/architecture/index.mdx",
+      "platform": "github.com",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2026-07-28",
+      "accessed_date": "2026-10-02",
+      "notes": "仅核验搜索可见官方段落；请求/能力机制与 2025 版不同，具体实现需固定版本。",
+      "topics": [
+        "MCP"
+      ]
+    },
+    {
+      "id": "APP-S159",
+      "title": "DPO Trainer — TRL",
+      "url": "https://huggingface.co/docs/trl/dpo_trainer",
+      "platform": "huggingface.co",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取 beta、implicit reward、logit 公式与 logged metrics；不固定当前默认参数。",
+      "topics": [
+        "DPO",
+        "beta"
+      ]
+    },
+    {
+      "id": "APP-S160",
+      "title": "Reward Modeling — TRL",
+      "url": "https://huggingface.co/docs/trl/reward_trainer",
+      "platform": "huggingface.co",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取 Bradley–Terry 损失与奖励平移不可辨识性。",
+      "topics": [
+        "Reward Model"
+      ]
+    },
+    {
+      "id": "APP-S161",
+      "title": "Secrets of RLHF in Large Language Models Part I: PPO",
+      "url": "https://arxiv.org/pdf/2307.04964",
+      "platform": "arxiv.org",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "PDF 可读；核验参考策略 KL 与 PPO rollout/update 模型关系。",
+      "topics": [
+        "PPO",
+        "RLHF"
+      ]
+    },
+    {
+      "id": "APP-S162",
+      "title": "GRPO Trainer — TRL",
+      "url": "https://huggingface.co/docs/trl/grpo_trainer",
+      "platform": "huggingface.co",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取优势归一化、difficulty bias、loss reduction；文档与原始 GRPO 定义分开。",
+      "topics": [
+        "GRPO",
+        "归一化"
+      ]
+    },
+    {
+      "id": "APP-S163",
+      "title": "Making retries safe with idempotent APIs — AWS Builders' Library",
+      "url": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/",
+      "platform": "aws.amazon.com",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取 client request identifier、参数意图、原子幂等记录与迟到请求；Agent 场景建议为综合。",
+      "topics": [
+        "幂等",
+        "重试"
+      ]
+    },
+    {
+      "id": "APP-S164",
+      "title": "Online DPO Trainer — TRL",
+      "url": "https://huggingface.co/docs/trl/online_dpo_trainer",
+      "platform": "huggingface.co",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取 Overview、Expected dataset type：当前策略生成候选并由奖励模型或 judge 形成在线偏好；接口属实验模块，题库不依赖具体 API。",
+      "topics": [
+        "Online DPO",
+        "在线偏好"
+      ]
+    },
+    {
+      "id": "APP-S165",
+      "title": "XSTest: A Test Suite for Identifying Exaggerated Safety Behaviours in Large Language Models",
+      "url": "https://arxiv.org/abs/2308.01263",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2023-08-02",
+      "accessed_date": "2026-10-02",
+      "notes": "仅读摘要，核验过度拒答及安全/不安全对照设计；未读全文或搬运提示词。",
+      "topics": [
+        "过度拒答",
+        "安全评测"
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "ALN-001",
+      "category": "ALN",
+      "title": "SFT、RLHF 与 DPO 分别解决什么问题？",
+      "level": "L1",
+      "tags": [
+        "SFT",
+        "RLHF",
+        "DPO"
+      ],
+      "answer": {
+        "quick": "SFT 用优质示范教模型按指令作答；典型 RLHF 用偏好训练奖励模型，再以 RL 优化策略；DPO 用偏好对直接更新策略。三者都依赖数据质量，不能仅凭是否出现某个 bad case 判断算法优劣。",
+        "detail": [
+          "SFT 通常最小化目标回答的负对数似然，重点是行为和任务示范。",
+          "典型 RLHF 为 SFT→偏好/RM→策略优化；现实流水线可迭代或混合。",
+          "DPO 仍表达偏好奖励，只省去独立 RM 拟合与在线 RL 更新环节。"
+        ],
+        "pitfalls": [
+          "不要说 SFT 只学知识、RL 只学推理；数据与任务同样重要。"
+        ],
+        "followups": [
+          "同一 bad case 何时补 SFT 示范，何时补偏好对？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S101",
+        "APP-S104"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S009",
+          "support": "reported_question",
+          "note": "正文问过 SFT/DPO 的选择及 SFT 无法解决的 bad case。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "ALN-002",
+      "category": "ALN",
+      "title": "奖励模型如何用成对偏好训练？",
+      "level": "L2",
+      "tags": [
+        "Reward Model",
+        "Bradley-Terry"
+      ],
+      "answer": {
+        "quick": "常见奖励模型给完整回答输出标量，使用同一 prompt 下赢家与输家的分差拟合偏好概率。Bradley–Terry 是建模假设，不是所有人类偏好的真实规律；奖励绝对零点通常不能由成对比较唯一确定。",
+        "detail": [
+          "输入是 (x,y_w,y_l)，把 r_w−r_l 送入 sigmoid 后做二元负对数似然。",
+          "对同一 x 给所有回答加相同常数不改变比较，所以 RM 分数需要校准。",
+          "按领域、长度、标注者分层检查，防止奖励只学到长回答或固定套话。"
+        ],
+        "pitfalls": [
+          "RM 高准确率不代表策略优化后分布外仍可靠。"
+        ],
+        "followups": [
+          "如何处理平局与偏好不传递？"
+        ],
+        "formula": "\\mathcal L_{\\rm RM}=-\\mathbb E\\log\\sigma(r_\\phi(x,y_w)-r_\\phi(x,y_l))"
+      },
+      "reference_ids": [
+        "APP-S160"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "ALN-003",
+      "category": "ALN",
+      "title": "PPO 的概率比、clip 和 min 分别起什么作用？",
+      "level": "L2",
+      "tags": [
+        "PPO",
+        "importance ratio"
+      ],
+      "answer": {
+        "quick": "PPO 用新旧策略概率比修正同批旧策略样本，以 advantage 判断增减概率方向。clip 加 min 截断有利方向上的过度收益，减少大幅更新动机；它不是参数裁剪，也不保证更新后的所有概率比都在区间内。",
+        "detail": [
+          "定义 ρ_t=π_θ(a_t|s_t)/π_old(a_t|s_t)，old 是本轮采样策略。",
+          "A>0 时限制继续增加概率的收益；A<0 时限制过度减少概率的收益。",
+          "多轮小批更新仍需监测 KL、clip fraction、熵和 value loss。"
+        ],
+        "pitfalls": [
+          "clip 不是严格信赖域约束，异常 KL 可触发早停。"
+        ],
+        "followups": [
+          "去掉外面的 min 后，负 advantage 会有什么错误？"
+        ],
+        "formula": "L^{\\rm clip}=\\mathbb E[\\min(\\rho_t A_t,\\operatorname{clip}(\\rho_t,1-\\epsilon,1+\\epsilon)A_t)]"
+      },
+      "reference_ids": [
+        "APP-S105",
+        "APP-S102"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S007",
+          "support": "reported_question",
+          "note": "正文问 PPO 为何比普通 policy gradient 稳定。"
+        },
+        {
+          "source_id": "APP-S008",
+          "support": "secondary_report",
+          "note": "公开汇总问 clip 后为何再取 min；属于二手题目。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "ALN-004",
+      "category": "ALN",
+      "title": "GAE 如何计算，λ 与 γ 如何影响优势估计？",
+      "level": "L2",
+      "tags": [
+        "GAE",
+        "Critic"
+      ],
+      "answer": {
+        "quick": "GAE 将多个 TD 残差按 γλ 衰减求和，利用价值模型在偏差和方差间折中。λ 越小越依赖局部 bootstrap，λ 接近一越接近回报减 baseline；γ 决定折扣目标，不能把二者混为同一个超参数。",
+        "detail": [
+          "δ_t=r_t+γV(s_{t+1})−V(s_t)，从轨迹末尾递推优势。",
+          "λ<1 在价值估计不准时可引入偏差；λ=1 通常方差更高。",
+          "终止、超时截断、padding 的 bootstrap/mask 必须与任务定义一致。"
+        ],
+        "pitfalls": [
+          "标准 outcome GRPO 用组内相对奖励，通常没有 GAE/value critic。"
+        ],
+        "followups": [
+          "生成被 max_tokens 截断时怎样处理末状态价值？"
+        ],
+        "formula": "\\hat A_t^{\\rm GAE}=\\sum_{l\\ge0}(\\gamma\\lambda)^l\\delta_{t+l},\\quad \\delta_t=r_t+\\gamma V(s_{t+1})-V(s_t)"
+      },
+      "reference_ids": [
+        "APP-S103"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S008",
+          "support": "secondary_report",
+          "note": "汇总出现 advantage 计算及“GRPO 的 GAE”措辞；答案明确纠正概念。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "ALN-005",
+      "category": "ALN",
+      "title": "RLHF 的 KL 惩罚与 PPO 新旧策略约束有什么区别？",
+      "level": "L2",
+      "tags": [
+        "KL",
+        "reference model"
+      ],
+      "answer": {
+        "quick": "RLHF 的参考 KL 约束策略偏离参考模型，通常参考 SFT 初始化；PPO 的 clip/KL 则控制当前更新相对采样旧策略的变化。一个约束整体行为漂移，一个稳定局部更新，两个模型的更新节奏也不同。",
+        "detail": [
+          "RLHF 目标常为 E[r]−βKL(π_θ||π_ref)，参考模型通常冻结。",
+          "PPO old policy 随 rollout 刷新，概率比用于同批样本的策略更新。",
+          "token 上 logπ_θ−logπ_ref 可用于采样估计，单个 token 值不必非负。"
+        ],
+        "pitfalls": [
+          "KL 惩罚不能保证事实正确或彻底阻止 reward hacking。"
+        ],
+        "followups": [
+          "为何增大 β 可能伤害偏好奖励提升？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S161"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S007",
+          "support": "reported_question",
+          "note": "正文明确问 RLHF 为什么需要 KL penalty。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "ALN-006",
+      "category": "ALN",
+      "title": "DPO 的损失如何从 KL 正则化 RLHF 目标推出？",
+      "level": "L3",
+      "tags": [
+        "DPO",
+        "推导"
+      ],
+      "answer": {
+        "quick": "先解带参考 KL 的奖励最大化，得到最优策略正比于参考策略乘 exp(r/β)；再把奖励改写为策略对数比。代入同一 prompt 的 Bradley–Terry 偏好模型后分区函数抵消，得到直接拟合偏好概率的 DPO 损失。",
+        "detail": [
+          "需要 β>0、参考分布覆盖候选支持集，且使用相应偏好模型假设。",
+          "r=βlog(π*/π_ref)+βlogZ(x)，比较两个回答时相同 Z(x) 消失。",
+          "有限数据、受限模型与优化误差意味着实训不能保证恢复理论最优策略。"
+        ],
+        "pitfalls": [
+          "目标推导对应不等于 DPO 和任意 PPO 实训过程完全等价。"
+        ],
+        "followups": [
+          "当偏好出现循环时，BT 标量奖励假设有什么局限？"
+        ],
+        "formula": "\\mathcal L_{\\rm DPO}=-\\mathbb E\\log\\sigma\\left(\\beta\\left[\\log\\frac{\\pi_\\theta(y_w|x)}{\\pi_{\\rm ref}(y_w|x)}-\\log\\frac{\\pi_\\theta(y_l|x)}{\\pi_{\\rm ref}(y_l|x)}\\right]\\right)"
+      },
+      "reference_ids": [
+        "APP-S104"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S001",
+          "support": "search_snippet",
+          "note": "搜索结果明确出现 DPO loss 题。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "ALN-007",
+      "category": "ALN",
+      "title": "DPO 的 β 和参考模型如何理解与调参？",
+      "level": "L2",
+      "tags": [
+        "DPO",
+        "beta"
+      ],
+      "answer": {
+        "quick": "理论 KL 目标中 β 越大，最优策略对奖励的响应越受约束；DPO 损失中 β 同时缩放偏好 logit 与梯度，实训效果还受学习率、数据和训练时长影响。应观察 KL、偏好胜率与通用能力，而不是机械套用单调规律。",
+        "detail": [
+          "参考模型定义行为锚点与对数概率比，常用对应任务的 SFT 模型。",
+          "相同数据下用多组 β 做验证，观察 chosen/rejected 隐式奖励间距与 KL。",
+          "参考模型与数据生成分布不匹配时，先检查格式、长度和支持覆盖。"
+        ],
+        "pitfalls": [
+          "不要把 β 大简单解释成每步梯度必然更小。"
+        ],
+        "followups": [
+          "同样 β，换参考模型为什么结果会变？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S159"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "ALN-008",
+      "category": "ALN",
+      "title": "PPO 与 DPO 在工程上如何选型？",
+      "level": "L2",
+      "tags": [
+        "PPO",
+        "DPO",
+        "选型"
+      ],
+      "answer": {
+        "quick": "DPO 适合已有可靠偏好对、希望以较低工程成本建立基线的场景；PPO 可在线采样并优化显式奖励，便于探索但流水线复杂。没有算法普遍胜出的结论，必须在同数据、预算、奖励和评测条件下比较。",
+        "detail": [
+          "比较 RM 质量、rollout 成本、value/参考模型显存与调参预算。",
+          "DPO 受离线偏好覆盖限制；PPO 也会利用奖励模型漏洞、产生分布偏移。",
+          "先做 SFT/DPO 基线，再判断在线探索的收益是否足以覆盖复杂度。"
+        ],
+        "pitfalls": [
+          "“PPO 一定更强”或“DPO 一定更稳定”都缺少条件。"
+        ],
+        "followups": [
+          "奖励可执行验证且偏好很少时，你会优先试哪条路线？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S108"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S001",
+          "support": "search_snippet",
+          "note": "搜索摘要报告 PPO/DPO trade-off 问题。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "ALN-009",
+      "category": "ALN",
+      "title": "如何把点赞、点踩和日志变成高质量偏好数据？",
+      "level": "L2",
+      "tags": [
+        "偏好数据",
+        "反馈偏差"
+      ],
+      "answer": {
+        "quick": "用户反馈并不自动组成同 prompt 的可比偏好对。应先统一任务、上下文与评分准则，再为同问题生成或匹配候选，排除位置、长度和曝光偏差，抽样复核赢家是否真的更正确，保留不确定与平局记录。",
+        "detail": [
+          "点踩可能来自答案错误、体验延迟或立场差异，需分类后进入对应训练集。",
+          "对比候选保持工具证据与用户需求可比，避免把缺证据回答当负例。",
+          "训练/验证按用户、模板、文档或时间切分，避免近重复泄漏。"
+        ],
+        "pitfalls": [
+          "不能把不同用户不同问题的点赞答案与点踩答案直接配对。"
+        ],
+        "followups": [
+          "AI 评分生成偏好时怎样估计标注噪声？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S109"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S003",
+          "support": "search_snippet",
+          "note": "搜索可见“线上点赞点踩如何变成 DPO 数据”题。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "ALN-010",
+      "category": "ALN",
+      "title": "GRPO 为什么不需要独立价值模型？",
+      "level": "L2",
+      "tags": [
+        "GRPO",
+        "PPO"
+      ],
+      "answer": {
+        "quick": "原始 GRPO 对同一问题采样一组回答，用组内奖励均值作相对 baseline，再归一化形成优势，代替 PPO 中常见的价值模型估计。它节省 critic 的参数与训练开销，但仍需 rollout、奖励和可能的参考模型。",
+        "detail": [
+          "outcome supervision 将同一回答的相对终局奖励用于其各 token 优势。",
+          "策略更新仍使用新旧 token 概率比与 clipped surrogate。",
+          "显存还受组大小、序列长度、优化器、激活与推理 KV cache 影响。"
+        ],
+        "pitfalls": [
+          "去掉 critic 不等于没有 baseline，也不等于没有奖励模型。"
+        ],
+        "followups": [
+          "如何分离 rollout 显存和训练显存预算？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S106"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S006",
+          "support": "reported_topic",
+          "note": "README 列 GRPO 与 RL 显存主题。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "ALN-011",
+      "category": "ALN",
+      "title": "GRPO 组内标准差归一化带来哪些问题？",
+      "level": "L3",
+      "tags": [
+        "GRPO",
+        "归一化"
+      ],
+      "answer": {
+        "quick": "组内奖励减均值再除标准差能统一数值尺度，但会按每题的奖励方差重加权。二值奖励全对或全错时没有相对区分信号，低非零方差的组也可能放大少数样本；ε 只防数值异常，不能创造学习信号。",
+        "detail": [
+          "原始 A_i=(r_i−mean(r))/(std(r)+ε)，属于特定 GRPO 定义。",
+          "组大小改变 baseline/方差估计与出现混合对错样本的概率。",
+          "可比较去 std、跨 batch 归一化、难度采样等方案，需同步控制总采样预算。"
+        ],
+        "pitfalls": [
+          "不要声称组内标准化天然无偏或对所有任务更优。"
+        ],
+        "followups": [
+          "奖励为连续多维分数时，量纲怎样影响组优势？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S162"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "ALN-012",
+      "category": "ALN",
+      "title": "GRPO 的长度偏差与 Dr. GRPO 有什么关系？",
+      "level": "L3",
+      "tags": [
+        "GRPO",
+        "长度偏差"
+      ],
+      "answer": {
+        "quick": "按每条响应长度取 token loss 均值会改变不同长度样本的权重：同样正优势下短答的单 token 激励更强，负优势下长错答的单 token 惩罚更弱。Dr. GRPO 移除响应长度和组标准差归一化，以常数缩放恢复其讨论的目标。",
+        "detail": [
+          "问题在 loss reduction 的分母；response mean、batch token mean 和固定常数并不相同。",
+          "该分析不能简单归纳为“GRPO 一定偏爱短回答”，错误长答也可能被相对优待。",
+          "核对实际 mask、EOS、截断规则与采样长度，做长度/正确率联合消融。"
+        ],
+        "pitfalls": [
+          "某项修正有益不等于对所有训练目标无偏；需说明比较的目标函数。"
+        ],
+        "followups": [
+          "全 batch token mean 会怎样改变样本之间的相对权重？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S107"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "ALN-013",
+      "category": "ALN",
+      "title": "RLVR 的可验证奖励如何设计？",
+      "level": "L2",
+      "tags": [
+        "RLVR",
+        "verifier"
+      ],
+      "answer": {
+        "quick": "RLVR 使用可执行或规则可核对的结果作奖励，例如数学答案检查、代码单测。先定义正确性和环境边界，隔离格式分与内容分，再验证评分器能否识别投机。可验证奖励减少主观标注，却不能保证覆盖所有推理质量。",
+        "detail": [
+          "数学要处理等价表达和解析失败；代码要用隔离执行、超时与隐藏测试。",
+          "格式奖励权重过大可能诱导只满足格式；正确结果也未必说明过程可靠。",
+          "用对抗样本、人工复核和未参与训练的任务监测评分器漏洞。"
+        ],
+        "pitfalls": [
+          "一个正则或少量公开测试不是完备的 correctness oracle。"
+        ],
+        "followups": [
+          "工具调用成功但业务目标未完成，应怎样给奖励？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S110"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "ALN-014",
+      "category": "ALN",
+      "title": "ORM 与 PRM 的区别和信用分配难点是什么？",
+      "level": "L2",
+      "tags": [
+        "ORM",
+        "PRM",
+        "信用分配"
+      ],
+      "answer": {
+        "quick": "ORM 针对最终结果评分，PRM 在推理步骤提供反馈，能定位早期错误但需要昂贵且一致的步骤标注。过程分还涉及划分粒度与聚合方式；终局奖励回传给所有 token 并不意味着每个 token 对正确性贡献相同。",
+        "detail": [
+          "先明确一步的边界与可验证性；自然语言分步可被模型改变粒度投机。",
+          "PRM 能用于训练信号或推理时排序，两者用途与验证方案不同。",
+          "论文中数学任务收益不应直接外推为所有开放领域任务都优于 ORM。"
+        ],
+        "pitfalls": [
+          "步骤看似合理不代表整个推理或最终结果正确。"
+        ],
+        "followups": [
+          "Agent 的检索、工具、答复步骤如何构造过程评分？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S111"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S008",
+          "support": "secondary_report",
+          "note": "公开汇总包含 Agentic RL 的过程评分与 token 分数问题。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "ALN-015",
+      "category": "ALN",
+      "title": "如何识别和缓解 reward hacking？",
+      "level": "L2",
+      "tags": [
+        "奖励投机",
+        "Goodhart"
+      ],
+      "answer": {
+        "quick": "奖励是业务目标的代理，优化过强时模型可能利用它的盲点，出现分数上涨而真实质量下降。要分开训练奖励和独立验证指标，追踪长度、套话、异常工具行为，使用人工抽检、对抗样本与更新评分器控制投机。",
+        "detail": [
+          "典型症状包括重复关键词、讨好裁判、输出空安全答案或绕过弱验证。",
+          "参考 KL、提前停止、多样化反馈可减缓漂移，但不保证消除漏洞。",
+          "保存 rollout 样本与奖励分项，检查高分 bad case 是否系统性聚集。"
+        ],
+        "pitfalls": [
+          "GRPO 的相对优势或换成 LLM judge 本身不是 reward hacking 的解药。"
+        ],
+        "followups": [
+          "如果训练奖励上升、独立胜率下降，你先停哪一环？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S112"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "ALN-016",
+      "category": "ALN",
+      "title": "后训练为什么会出现对齐税或遗忘？",
+      "level": "L2",
+      "tags": [
+        "alignment tax",
+        "遗忘"
+      ],
+      "answer": {
+        "quick": "后训练把优化重点转向特定任务与偏好，可能让部分原有能力下降，称为对齐税或遗忘现象。要对比基座、SFT、偏好训练各阶段的同条件评测，使用任务数据混合、正则与预训练回放寻找能力和行为控制的平衡。",
+        "detail": [
+          "退化也可能来自回答格式、拒答或解码差异，先排除评测设置变化。",
+          "InstructGPT 的 PPO-ptx 混入预训练目标缓解部分基准退化，但并未解决全部。",
+          "按数学、代码、多语、安全分别监测，避免只看偏好总分。"
+        ],
+        "pitfalls": [
+          "LoRA 或小学习率可降低变化幅度，但不能保证没有遗忘。"
+        ],
+        "followups": [
+          "如何区分知识丢失和评测 parser 失配？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S101"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S006",
+          "support": "reported_topic",
+          "note": "README 有模型微调通用能力与灾难性遗忘主题。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "ALN-017",
+      "category": "ALN",
+      "title": "RLAIF 和 Constitutional AI 如何工作？",
+      "level": "L2",
+      "tags": [
+        "RLAIF",
+        "Constitutional AI"
+      ],
+      "answer": {
+        "quick": "RLAIF 用模型生成偏好或反馈，降低逐条人工标注成本；Constitutional AI 按一组人类制定原则进行自我批评修订，再使用 AI 偏好训练奖励和策略。监督来源改变并不等于完全无人参与或自动消除偏见。",
+        "detail": [
+          "原则、提示、评分模型与训练数据共同决定偏好，需明确可审计版本。",
+          "自我修订样本可用于监督训练，AI 比较标签可用于偏好/RL 阶段。",
+          "保留专家标注验证集，对少数群体、领域事实和过度拒答独立检查。"
+        ],
+        "pitfalls": [
+          "模型反馈可能传播同类错误，数据量增加不能替代质量核验。"
+        ],
+        "followups": [
+          "同一个模型生成和打分会产生哪些相关误差？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S113"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "ALN-018",
+      "category": "ALN",
+      "title": "IPO 等 DPO 变种主要试图解决什么问题？",
+      "level": "L3",
+      "tags": [
+        "IPO",
+        "偏好建模"
+      ],
+      "answer": {
+        "quick": "偏好学习方法会改变偏好概率映射、正则方式或数据利用方式。IPO 从更一般的成对偏好目标出发，讨论 DPO 对偏好转标量奖励等假设的依赖。面试应先讲要解决的假设与过拟合问题，再比较损失和实证条件。",
+        "detail": [
+          "人类成对偏好可能不传递，无法总由一个标量奖励精确表示。",
+          "变种不能只凭名字判断更好，需要看噪声、样本覆盖、参考策略与预算。",
+          "比较相同验证集的偏好胜率、KL、长度分布和任务正确率。"
+        ],
+        "pitfalls": [
+          "不要把所有 DPO 变种说成只是“加一项 SFT loss”。"
+        ],
+        "followups": [
+          "若所有标注都绝对偏好同一答案，怎样监测过拟合？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S114"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S009",
+          "support": "reported_question",
+          "note": "正文明确问 DPO 缺点与相关变种。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "ALN-019",
+      "category": "ALN",
+      "title": "离线偏好优化和在线 RL 的分布差异是什么？",
+      "level": "L2",
+      "tags": [
+        "offline",
+        "online",
+        "distribution shift"
+      ],
+      "answer": {
+        "quick": "离线方法主要在固定候选分布上学习，简单可复现，却可能缺少当前策略的困难负例；在线方法更新采样分布，能探索新回答，也让评分器面对分布外样本。选型需看反馈成本、任务奖励及可承担的 rollout 预算。",
+        "detail": [
+          "数据生成策略与训练策略差距增大会影响有效覆盖，尤其长回答和罕见任务。",
+          "可迭代生成偏好数据补覆盖，但要保留独立测试与版本追踪。",
+          "在线 rollout 与多 epoch 更新间有策略滞后，应监测新旧策略比值。"
+        ],
+        "pitfalls": [
+          "在线 DPO 等变体存在，不能把 DPO 永久等同于固定离线流程。"
+        ],
+        "followups": [
+          "怎样发现离线数据覆盖不足，而非优化器没收敛？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S108",
+        "APP-S164"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S010",
+          "support": "search_snippet",
+          "note": "搜索摘要列离线/在线强化学习与项目使用方式。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "ALN-020",
+      "category": "ALN",
+      "title": "多目标奖励发生冲突时如何处理？",
+      "level": "L3",
+      "tags": [
+        "多目标",
+        "安全对齐"
+      ],
+      "answer": {
+        "quick": "正确性、简洁度、有用性与安全并不总能同时提高。应先区分必须满足的约束与可权衡指标，校准各奖励尺度，再用分层约束、加权或约束优化建立可解释权衡，报告各维结果而非一个掩盖冲突的总分。",
+        "detail": [
+          "权重前先看奖励量纲、方差和样本分布，防止大数值项支配训练。",
+          "严重违规可定义约束或门禁；一般质量属性可探索 Pareto 前沿。",
+          "保留各项奖励与失败案例，评估过度拒答及正确但冗长等边界。"
+        ],
+        "pitfalls": [
+          "奖励简单相加不保证满足硬约束，也不保证各项单调改善。"
+        ],
+        "followups": [
+          "如何确定安全阈值并防止模型输出空答案拿高分？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S115"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S010",
+          "support": "search_snippet",
+          "note": "搜索摘要出现多目标奖励冲突题。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "RAG-001",
+      "category": "RAG",
+      "title": "一个可落地的 RAG 系统有哪些环节？",
+      "level": "L1",
+      "tags": [
+        "RAG",
+        "pipeline"
+      ],
+      "answer": {
+        "quick": "离线将文档解析、清洗、切分并建立带元数据的索引；在线把问题转换为检索请求，召回、重排、构造证据上下文，再生成可追溯回答。要把检索、证据使用和生成分别评估，因为端到端答错可能来自完全不同的环节。",
+        "detail": [
+          "索引保存文档 ID、页码、版本、权限与片段边界，便于更新和引用。",
+          "生成输入应区分任务指令与外部资料，资料不足时允许拒答或澄清。",
+          "现代 prompt RAG 不一定训练模型；原始 RAG 论文也研究了检索生成联合微调。"
+        ],
+        "pitfalls": [
+          "不要把 RAG 定义为必须零训练，也不要把它等同向量数据库。"
+        ],
+        "followups": [
+          "怎样定位是没检索到还是模型没用好证据？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S116"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S009",
+          "support": "reported_question",
+          "note": "正文明确问 RAG 理解与一般工作流程。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "RAG-002",
+      "category": "RAG",
+      "title": "RAG、微调和 prompt engineering 如何选择？",
+      "level": "L1",
+      "tags": [
+        "RAG",
+        "SFT",
+        "选型"
+      ],
+      "answer": {
+        "quick": "prompt 改变当次任务约束，RAG 在推理时提供外部证据，微调改变模型行为分布。知识常更新、需权限和溯源时优先评估 RAG；稳定格式或专门能力可用微调。它们可以组合，仍要比较效果、时延、数据维护和成本。",
+        "detail": [
+          "别把微调当可靠数据库写入方式：事实可能难以精确更新或撤回。",
+          "RAG 需要解析、召回与证据质量，训练可改善模型读证据或检索能力。",
+          "用代表性业务样本对 prompt、RAG、SFT 及组合做同预算消融。"
+        ],
+        "pitfalls": [
+          "“RAG 只学知识、微调只学能力”是粗略划分，不是严格理论。"
+        ],
+        "followups": [
+          "客服政策每天更新但答复格式严格，该怎么组合？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S122"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S004",
+          "support": "search_snippet",
+          "note": "知乎搜索摘要包含 RAG 与微调区别。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "RAG-003",
+      "category": "RAG",
+      "title": "chunk 大小与 overlap 怎样设置？",
+      "level": "L2",
+      "tags": [
+        "chunk",
+        "文档解析"
+      ],
+      "answer": {
+        "quick": "chunk 应覆盖一个可回答的信息单元，同时适配 embedding 与生成器预算。优先按标题、段落、表格结构切分，再比较多个大小与重叠比例。重叠可保留边界上下文，也会重复召回和增加存储，没有固定最优参数。",
+        "detail": [
+          "表格要保留表头、单位和关联行，代码或公式尽量不在语义中间断开。",
+          "可采用小片段检索、大父段返回，兼顾定位准确与上下文完整。",
+          "联合评估 evidence recall、答案质量、重复率与 token 成本。"
+        ],
+        "pitfalls": [
+          "切分字符数不能自动等价为 token 数，中文与代码差异明显。"
+        ],
+        "followups": [
+          "大 chunk 提高答案质量但降低召回时，你怎样定位原因？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S124"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S002",
+          "support": "search_snippet",
+          "note": "摘要明确问切块大小、重叠度与参数对比。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "RAG-004",
+      "category": "RAG",
+      "title": "embedding 模型与相似度应如何选？",
+      "level": "L2",
+      "tags": [
+        "embedding",
+        "dual encoder"
+      ],
+      "answer": {
+        "quick": "双塔分别编码 query 和文档，支持预计算与快速检索。选型要看语言、领域、文档长度和 query/document 指令模板，用业务检索标注集验证。索引与查询必须使用兼容向量空间，归一化和距离度量也要一致。",
+        "detail": [
+          "专有实体、代码、跨语言与长段落表现可能不同，不能只看通用榜单。",
+          "单位归一化向量下余弦和内积排序一致；未归一化时不一定。",
+          "换模型、模板或维度往往要重建/重编码索引，保留可回滚版本。"
+        ],
+        "pitfalls": [
+          "向量距离小不是事实正确，也不能解释为跨模型通用置信度。"
+        ],
+        "followups": [
+          "如何区分 embedding 失效与 ANN 索引漏召回？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S117",
+        "APP-S118"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "RAG-005",
+      "category": "RAG",
+      "title": "BM25 与向量检索各有什么优势？",
+      "level": "L2",
+      "tags": [
+        "BM25",
+        "dense retrieval"
+      ],
+      "answer": {
+        "quick": "BM25 根据词项匹配、逆文档频率和词频饱和打分，适合型号、人名和精确术语；向量检索更擅长语义近似，但可能模糊关键数字或否定。中文分词与字段配置很关键，通常通过混合检索取长补短。",
+        "detail": [
+          "k1 控制词频饱和，b 控制文档长度归一化；具体数值需验证。",
+          "稀有型号、错误码可用 exact/keyword 字段，语义问题走 dense 路径。",
+          "分词、同义词、大小写和中英混合先检查，别直接归因模型太小。"
+        ],
+        "pitfalls": [
+          "关键词检索不是必然落后，也不能用 BM25 分数当概率。"
+        ],
+        "followups": [
+          "涉及 SKU 与价格区间时如何组合结构过滤和语义召回？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S125"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "RAG-006",
+      "category": "RAG",
+      "title": "混合检索的分数融合与 RRF 有什么区别？",
+      "level": "L2",
+      "tags": [
+        "hybrid search",
+        "RRF"
+      ],
+      "answer": {
+        "quick": "BM25 和向量分数的范围、分布不同，直接相加容易让一路占主导。可以先校准再加权，或用 RRF 将多路排名转为倒数排名贡献相加。RRF 避免直接比原始分数，但仍需验证排名常数、候选窗口和去重策略。",
+        "detail": [
+          "RRF 对检索路 j 中排名 rank_j(d) 的文档累加 1/(k+rank_j(d))。",
+          "窗口决定候选是否有融合机会；重复文档应按稳定 ID 合并。",
+          "比较词项类、语义类、多跳类 query 的分层收益和 P95 延迟。"
+        ],
+        "pitfalls": [
+          "RRF 分数不等于余弦相似度或可靠性概率。"
+        ],
+        "followups": [
+          "为何融合后的分数阈值不能照搬原来的 cosine 阈值？"
+        ],
+        "formula": "\\operatorname{RRF}(d)=\\sum_{j:d\\in L_j}\\frac{1}{k+\\operatorname{rank}_j(d)}"
+      },
+      "reference_ids": [
+        "APP-S126"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S002",
+          "support": "search_snippet",
+          "note": "摘要问向量召回不准时的关键词+语义混合方案。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "RAG-007",
+      "category": "RAG",
+      "title": "reranker 和 embedding 检索模型如何分工？",
+      "level": "L2",
+      "tags": [
+        "rerank",
+        "cross encoder"
+      ],
+      "answer": {
+        "quick": "embedding 检索用独立表示快速缩小候选，cross-encoder 将问题与候选联合输入，利用交互判断相关性后重排。重排一般更精细但成本更高，而且无法找回粗召回阶段完全漏掉的证据，应先保证候选覆盖。",
+        "detail": [
+          "粗召回 Top-N 关注覆盖，精排 Top-K 关注上下文质量与预算。",
+          "reranker 分数是否校准、支持多语和长片段，需要业务标注验证。",
+          "批处理、候选去重、轻量排序及缓存可降低精排延迟。"
+        ],
+        "pitfalls": [
+          "不能把精排理解成一定手工加特征权重；模型类型与任务有关。"
+        ],
+        "followups": [
+          "rerank 提升相关性却降低端到端正确率时怎样排查？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S127"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S002",
+          "support": "search_snippet",
+          "note": "摘要明确列出 Rerank 实现与排序追问。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "RAG-008",
+      "category": "RAG",
+      "title": "HNSW 的 M、ef_construction 和 ef_search 怎样权衡？",
+      "level": "L2",
+      "tags": [
+        "ANN",
+        "HNSW"
+      ],
+      "answer": {
+        "quick": "HNSW 用分层近邻图减少搜索量，以近似召回换取速度。M 影响图连接及内存，ef_construction 影响建图质量，查询 ef 影响搜索宽度和延迟。先与暴力近邻结果比较索引 recall，再单独评估文档的语义相关性。",
+        "detail": [
+          "增大 M/构建搜索宽度通常提高图质量，也增加内存或建库时间。",
+          "查询 ef 增大通常提高 ANN recall、增加耗时，需验证并满足实现的 k 约束。",
+          "过滤条件、删除更新、距离函数及索引版本都会影响结果。"
+        ],
+        "pitfalls": [
+          "ANN recall 高不代表找到业务所需证据；两种召回要分开。"
+        ],
+        "followups": [
+          "精确搜索命中、ANN 未命中时你会调什么？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S128"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "RAG-009",
+      "category": "RAG",
+      "title": "query rewrite、multi-query 和 HyDE 何时有用？",
+      "level": "L2",
+      "tags": [
+        "query rewrite",
+        "HyDE"
+      ],
+      "answer": {
+        "quick": "改写可补全指代或检索术语，多查询增加语义覆盖；HyDE 先生成假设文档，再用其表示检索真实资料。它们适合用户问题与文档表达差距较大的场景，也可能改变原意、增加噪声和延迟，需要保留原问题并比较召回收益。",
+        "detail": [
+          "对历史上下文补全实体时，记录补全依据；关键数值和否定不得丢失。",
+          "多路结果合并去重，避免相似改写浪费候选预算。",
+          "HyDE 的假设文本可能含错误，不能作为最终答案的事实来源。"
+        ],
+        "pitfalls": [
+          "改写不是必加环节，简单准确的 query 可能被越改越差。"
+        ],
+        "followups": [
+          "怎样检测 rewrite 错把用户需求改成另一个问题？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S119"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S004",
+          "support": "search_snippet",
+          "note": "知乎摘要描述 rewrite、HyDE 与多角度扩写。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "RAG-010",
+      "category": "RAG",
+      "title": "Self-RAG 和多跳检索怎样改善复杂问答？",
+      "level": "L3",
+      "tags": [
+        "Self-RAG",
+        "multi-hop"
+      ],
+      "answer": {
+        "quick": "复杂问题可能需要先找实体，再根据中间证据检索下一跳。可以迭代检索、验证缺口并设停止条件；Self-RAG 进一步训练 reflection tokens 控制检索与评价。额外步骤只有提供有效证据时才有价值，并会增加成本与传播错误风险。",
+        "detail": [
+          "将问题拆为可验证子问题，记录每跳证据和实体关系。",
+          "设置跳数、token 与重复查询预算，防止在无证据时无限检索。",
+          "Self-RAG 是具体训练框架，随便加一句“自我反思”不等于复现它。"
+        ],
+        "pitfalls": [
+          "模型自评不是事实裁判，错误中间实体会污染后续检索。"
+        ],
+        "followups": [
+          "两跳答案正确时，怎样证明每跳证据真的被使用？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S120"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "RAG-011",
+      "category": "RAG",
+      "title": "RAG 如何建立分层评测并定位 bad case？",
+      "level": "L2",
+      "tags": [
+        "RAG评测",
+        "recall"
+      ],
+      "answer": {
+        "quick": "先评测检索是否覆盖证据，再评测上下文是否相关，最后看答案是否忠于证据、正确且完整。准备带证据位置的业务集，按失败环节做归因，并加入成本、延迟和拒答指标；只看 BLEU 或单一总分会掩盖链路瓶颈。",
+        "detail": [
+          "检索可看 Recall@K、MRR/nDCG；多段联合证据需检查完整覆盖。",
+          "用 oracle evidence 替换真实检索，判断生成器读证据的上限。",
+          "自动 judge 要与人工样本校准，记录模型、prompt、语料与指标版本。"
+        ],
+        "pitfalls": [
+          "judge 分数和自动 reference-free 指标都有误差，不是无成本真值。"
+        ],
+        "followups": [
+          "召回提升但答案质量不变，应做哪些消融？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S123"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S006",
+          "support": "reported_topic",
+          "note": "README 明列 RAG 系统评测。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "RAG-012",
+      "category": "RAG",
+      "title": "RAG 为什么仍会幻觉，怎样设计引用与拒答？",
+      "level": "L2",
+      "tags": [
+        "幻觉",
+        "grounding"
+      ],
+      "answer": {
+        "quick": "RAG 可能检索错误、遗漏条件或让模型忽略证据，因而不能保证消除幻觉。把答案拆成可验证事实，将关键陈述绑定真实片段，再检查证据是否支持。资料冲突、过期或不足时应澄清、补检索或拒答，不能伪造出处。",
+        "detail": [
+          "验证引用不只看链接存在，还要看对应段落确实支持该结论。",
+          "事实支持率需与答案覆盖度结合，避免少说或空答拿高精度。",
+          "保存时间、版本、页码与检索结果，允许用户回查原文条件。"
+        ],
+        "pitfalls": [
+          "低 temperature 或“只依据资料”提示不能构成正确性保证。"
+        ],
+        "followups": [
+          "两份文档政策冲突时如何选择并解释？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S151"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S001",
+          "support": "search_snippet",
+          "note": "摘要中出现如何解决幻觉问题。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "RAG-013",
+      "category": "RAG",
+      "title": "企业 RAG 如何处理权限、更新与删除？",
+      "level": "L3",
+      "tags": [
+        "ACL",
+        "版本",
+        "企业RAG"
+      ],
+      "answer": {
+        "quick": "权限应在检索和数据访问层强制执行，文档拆成 chunk 后也要继承权限与版本；不能寄希望于模型拒绝输出。更新需同步原文、索引、缓存和权限元数据，删除时要清理残余片段与可见缓存，并验证用户边界。",
+        "detail": [
+          "身份由服务端可信认证获得，检索前/中使用租户和 ACL 过滤。",
+          "权限元数据延迟同步会出现短暂可见性问题，需明确更新 SLA。",
+          "缓存键考虑用户/租户、权限版本、文档版本，避免跨用户复用泄露。"
+        ],
+        "pitfalls": [
+          "生成后再让模型过滤敏感片段太晚，证据可能已经进入上下文。"
+        ],
+        "followups": [
+          "文档撤权后，如何发现并阻断旧缓存仍被使用？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S129"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "RAG-014",
+      "category": "RAG",
+      "title": "长上下文能否替代 RAG？",
+      "level": "L2",
+      "tags": [
+        "long context",
+        "RAG"
+      ],
+      "answer": {
+        "quick": "长上下文适合规模可控的完整材料阅读，RAG 适合大型、频繁更新、带权限的知识库按需取证。两者可组合，选择取决于真实证据覆盖、位置鲁棒性、时延与成本；上下文窗口够长不等于模型能同样可靠地利用所有位置。",
+        "detail": [
+          "使用单文档、多文档、多跳和长尾事实样本比较直接输入与检索。",
+          "保持相同答案预算和采样设置，分别计入索引、prefill 与生成成本。",
+          "Lost in the Middle 是特定模型/任务实验现象，当前系统应重新测量。"
+        ],
+        "pitfalls": [
+          "不要说长上下文必然淘汰 RAG，或 RAG 在一切场景永远更便宜。"
+        ],
+        "followups": [
+          "若证据在正文中段，怎样验证模型是否漏读？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S121"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S005",
+          "support": "search_snippet",
+          "note": "知乎摘要明确问长上下文 VLM 是否淘汰多模态 RAG。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "RAG-015",
+      "category": "RAG",
+      "title": "多模态 RAG 怎样检索图表、扫描 PDF 与视频？",
+      "level": "L3",
+      "tags": [
+        "multimodal RAG",
+        "ColPali"
+      ],
+      "answer": {
+        "quick": "多模态检索可用 OCR 文本、图像描述或视觉多向量表示，并保留页码、区域和时间戳。ColPali 直接对文档页图建立多向量表示，结合 late interaction 匹配；工程上应按信息类型评估，图像命中并不等于已正确读出表格数值。",
+        "detail": [
+          "扫描件需对比 OCR 误差、视觉编码成本与图文混合检索效果。",
+          "结果回传保留原图/区域/表头等证据，让生成器可核对单位和位置。",
+          "视频先定义片段和时间粒度，多帧证据要支持时序问题而非仅相似画面。"
+        ],
+        "pitfalls": [
+          "视觉检索不意味着所有 OCR、文本索引与结构化抽取都能省略。"
+        ],
+        "followups": [
+          "一个检索正确但 VLM 读表错误的案例该怎么归因？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S130"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S005",
+          "support": "search_snippet",
+          "note": "文章标题和摘要明确覆盖多模态 RAG 与多轮多模态检索。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "AGT-001",
+      "category": "AGT",
+      "title": "ReAct、固定工作流和 Agent 有什么区别？",
+      "level": "L1",
+      "tags": [
+        "ReAct",
+        "workflow"
+      ],
+      "answer": {
+        "quick": "固定工作流由代码定义分支与步骤；Agent 让模型根据观察动态决定行动；ReAct 通过推理与行动交错利用环境反馈。是否需要 Agent 取决于步骤的不确定性与收益，能够稳定用固定流程完成的任务通常更容易评测和维护。",
+        "detail": [
+          "典型循环为决定下一步→工具执行→观察结果→更新任务状态。",
+          "模型提出调用只是计划，宿主负责执行、权限与结果回传。",
+          "可将确定步骤与有限自主探索混合，保留清晰的失败和停止条件。"
+        ],
+        "pitfalls": [
+          "展示自然语言思考并不能证明决策正确或复现具体 ReAct 实验。"
+        ],
+        "followups": [
+          "客服退款查询何时需要规划，何时只要工作流？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S131"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S006",
+          "support": "reported_topic",
+          "note": "README 有 ReAct 论文与工具使用主题。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "AGT-002",
+      "category": "AGT",
+      "title": "如何让 function calling 更可靠？",
+      "level": "L2",
+      "tags": [
+        "function calling",
+        "schema"
+      ],
+      "answer": {
+        "quick": "可靠调用需要明确工具用途、参数 schema 与错误语义，并在执行端验证类型、权限、业务约束。模型生成合法 JSON 只是第一步；工具选择、参数正确、操作成功和目标完成需要分别判断，再把真实结果交给模型继续决策。",
+        "detail": [
+          "工具名与描述清晰，参数用具体字段、枚举和必要约束减少歧义。",
+          "流式参数要完整接收后再验证，不能执行尚未完成的片段。",
+          "返回简洁结构结果、稳定 ID 与可行动错误，控制大结果的分页和字段投影。"
+        ],
+        "pitfalls": [
+          "schema 合法不代表账号、时间、金额或权限在业务上有效。"
+        ],
+        "followups": [
+          "工具显示成功后，怎样验证实体状态确实改变？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S137"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S012",
+          "support": "search_snippet",
+          "note": "搜索摘要提到工具 schema、渐进工具加载与结果验证。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "AGT-003",
+      "category": "AGT",
+      "title": "Agent 工具超时、重试与幂等怎么设计？",
+      "level": "L2",
+      "tags": [
+        "retry",
+        "idempotency"
+      ],
+      "answer": {
+        "quick": "超时意味着结果未知，写操作可能已成功。应分类可重试与确定失败，使用同一业务意图的幂等键和操作日志查询结果，结合有限重试、退避与总预算。重复调用需要避免重复副作用，而不能只让模型说“不要重复”。",
+        "detail": [
+          "重试保持同一请求 ID，服务端保存参数与结果并检测同 ID 参数变更。",
+          "不能只对参数做哈希认定意图相同，用户可能确实要创建两个相同对象。",
+          "执行、幂等记录和结果状态要可靠协调；未知状态可回查或交由人工处理。"
+        ],
+        "pitfalls": [
+          "取消客户端等待不等于远端操作已取消。"
+        ],
+        "followups": [
+          "支付工具响应丢失时，为什么不能换新幂等键再试？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S163"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S003",
+          "support": "search_snippet",
+          "note": "摘要明确问重试、熔断、幂等的 Agent 设计。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "AGT-004",
+      "category": "AGT",
+      "title": "短期记忆、长期记忆与 checkpoint 分别是什么？",
+      "level": "L2",
+      "tags": [
+        "memory",
+        "checkpoint"
+      ],
+      "answer": {
+        "quick": "短期记忆保存当前会话的任务上下文，长期记忆跨会话保存事实或偏好，checkpoint 保存执行状态以继续或恢复。三者服务不同目的；需要范围、版本、权限和删除策略，不能把向量数据库中存了聊天记录就等同完整记忆系统。",
+        "detail": [
+          "checkpoint 要保留任务进度、工具调用状态与待处理动作，不只消息文本。",
+          "长期记忆需按用户/租户隔离，记录来源、更新时间与置信度。",
+          "回忆通过相关性和任务需要按需注入，避免过期偏好压过当前指令。"
+        ],
+        "pitfalls": [
+          "存储持久化不自动提供外部副作用的 exactly-once 保证。"
+        ],
+        "followups": [
+          "用户更正旧事实时如何更新已有记忆及缓存？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S134",
+        "APP-S135"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S003",
+          "support": "search_snippet",
+          "note": "摘要可见上下文恢复与管理主题。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "AGT-005",
+      "category": "AGT",
+      "title": "多 Agent 的通信与共享状态如何设计？",
+      "level": "L3",
+      "tags": [
+        "multi-agent",
+        "状态共享"
+      ],
+      "answer": {
+        "quick": "先按任务依赖划分角色，再定义消息契约、状态所有权与完成条件。可用协调者编排、共享状态或消息传递，但要控制并发写入、循环等待、重复任务和上下文成本。多 Agent 的额外调用只有带来质量或并行收益才值得。",
+        "detail": [
+          "消息包含任务 ID、输入、结果、证据、失败状态，避免自由对话难以审计。",
+          "共享文件/状态要有唯一写入责任、版本或合并规则，处理冲突。",
+          "限制扇出、深度与总 token，结果由明确节点汇总并独立验证。"
+        ],
+        "pitfalls": [
+          "多个相似模型投票不保证独立错误，可能强化同一错误。"
+        ],
+        "followups": [
+          "两个 Agent 互相等待时怎样检测与打破死锁？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S132"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S002",
+          "support": "search_snippet",
+          "note": "摘要明确问多 Agent 通信机制和状态共享。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "AGT-006",
+      "category": "AGT",
+      "title": "MCP 与模型 function calling 是什么关系？",
+      "level": "L2",
+      "tags": [
+        "MCP",
+        "protocol"
+      ],
+      "answer": {
+        "quick": "function calling 是模型表达结构化工具意图的方式，MCP 是宿主、客户端与服务器交换工具和上下文的协议。宿主仍负责执行与授权。协议的请求、能力和生命周期机制会随修订变化，讨论实现必须固定版本，不能直接沿用旧握手流程。",
+        "detail": [
+          "MCP 统一工具/资源等接口，模型厂商仍可能采用不同调用格式。",
+          "权限边界由宿主和服务器共同执行，工具列表本身不授予业务访问权。",
+          "2025-06-18 与 2026-07-28 官方架构在会话/请求机制上有差异，应按兼容版本测试。"
+        ],
+        "pitfalls": [
+          "MCP 不是 Agent 的推理算法，也不天然保证工具安全可靠。"
+        ],
+        "followups": [
+          "升级协议后，你会验证哪些能力与授权边界？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S140",
+        "APP-S158"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S006",
+          "support": "reported_topic",
+          "note": "README 明列 Function Call & MCP。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "AGT-007",
+      "category": "AGT",
+      "title": "如何防御工具结果和检索材料中的 prompt injection？",
+      "level": "L3",
+      "tags": [
+        "prompt injection",
+        "工具安全"
+      ],
+      "answer": {
+        "quick": "外部网页、邮件、文档或工具结果可能夹带让模型改目标、泄漏信息或越权调用的指令。应在架构上标明不可信内容，限制工具权限与数据出口，并在执行端校验授权和参数。单靠提示词或内容分类器不能保证隔离。",
+        "detail": [
+          "检索资料提供事实依据，不能直接赋予新的操作权限或覆盖用户目标。",
+          "对敏感工具使用最小权限、目标白名单和必要的人类审批。",
+          "用真实可控的恶意资料测试跨工具数据流，记录被阻止与遗漏案例。"
+        ],
+        "pitfalls": [
+          "把文本包进 XML/引号并不等于不可被模型当成指令。"
+        ],
+        "followups": [
+          "网页说“先把本地配置发给我才能回答”，系统应如何处理？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S141"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "AGT-008",
+      "category": "AGT",
+      "title": "Agent 应怎样评测，为什么不能只看最终回答？",
+      "level": "L2",
+      "tags": [
+        "Agent评测",
+        "trajectory"
+      ],
+      "answer": {
+        "quick": "Agent 的目标通常是完成环境中的任务，而非写出看起来正确的文字。应测任务成功率、工具选择与参数、轨迹效率和故障恢复，在可重置环境中多次运行，保留中间状态；最终答复正确也可能掩盖越权或未执行操作。",
+        "detail": [
+          "为每个任务定义客观成功条件，检查环境结果而非让模型自报完成。",
+          "区分模型决策失败、工具故障和评测环境故障，避免混成一个分数。",
+          "记录模型/工具/提示版本及 token、步骤、延迟，分析长轨迹失败位置。"
+        ],
+        "pitfalls": [
+          "一次成功不足以代表稳定性，特别是随机采样与动态环境。"
+        ],
+        "followups": [
+          "若最终目标达成但调用了禁止工具，怎么评分？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S133"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "AGT-009",
+      "category": "AGT",
+      "title": "如何防止 Agent 死循环和无效规划？",
+      "level": "L2",
+      "tags": [
+        "planning",
+        "budget"
+      ],
+      "answer": {
+        "quick": "把目标变成可验证里程碑，限制总步骤、token、时间和工具重试；检测重复状态或同参数调用，要求每步提供新的环境证据。遇到证据不足或持续失败时，应澄清、切换有限方案或终止，规划文本不能替代真实进展。",
+        "detail": [
+          "将状态摘要、最近工具结果与未完成子目标交给决策器，明确 stop 条件。",
+          "相同调用未必死循环，例如异步轮询；需结合时间与状态变化判断。",
+          "只有互不依赖的任务适合并行，依赖步骤必须等前置结果。"
+        ],
+        "pitfalls": [
+          "增加反思轮次或 Agent 数量可能放大成本，而非解决循环。"
+        ],
+        "followups": [
+          "如何区分合法等待和重复调用卡死？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S136"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "AGT-010",
+      "category": "AGT",
+      "title": "上下文工程怎样降低长任务成本而保持信息？",
+      "level": "L2",
+      "tags": [
+        "context engineering",
+        "compaction"
+      ],
+      "answer": {
+        "quick": "上下文工程决定每次模型实际看到哪些指令、状态、证据和工具信息。应保留目标、约束、关键事实及未决事项，压缩冗余工具输出，按需加载文档或工具。摘要要能追溯原始记录，并用长任务评测验证信息是否丢失。",
+        "detail": [
+          "大日志/文件保存为可检索对象，只回传字段、摘要和稳定引用。",
+          "压缩时保留失败原因、操作状态与用户更正，避免把推测变成事实。",
+          "拆分子任务可减少相互污染，但汇总要保留跨任务依赖与关键证据。"
+        ],
+        "pitfalls": [
+          "token 少不必然质量高；过度摘要会丢掉后续关键条件。"
+        ],
+        "followups": [
+          "压缩后忘记某个约束，怎样定位并修复摘要策略？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S138"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S012",
+          "support": "search_snippet",
+          "note": "搜索摘要含工具渐进披露、分页和上下文成本控制。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "EVA-001",
+      "category": "EVA",
+      "title": "如何避免训练数据污染评测集？",
+      "level": "L2",
+      "tags": [
+        "data contamination",
+        "leakage"
+      ],
+      "answer": {
+        "quick": "训练/测试题目或答案重叠会夸大泛化能力，近重复、翻译和模型改写也可能造成污染。按来源、实体、用户或时间划分数据，做精确和语义去重，保留新鲜私有测试与版本；不知道训练语料时，应明确污染检测的局限。",
+        "detail": [
+          "仅 n-gram 去重不足以发现语义改写和答案泄漏。",
+          "调参验证集与最终测试集分开，避免反复看测试结果选方案。",
+          "合成数据生成提示也可能包含公开题，需追踪源问题与教师输出。"
+        ],
+        "pitfalls": [
+          "检测不到重叠不等于证明无污染；不能只改几个词就称新基准。"
+        ],
+        "followups": [
+          "项目数据量小，按用户拆分后类别不平衡怎么处理？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S150"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "EVA-002",
+      "category": "EVA",
+      "title": "怎样评价文本生成质量？BLEU/ROUGE、PPL与人工评测如何组合？",
+      "level": "L1",
+      "tags": [
+        "metrics",
+        "BLEU",
+        "ROUGE",
+        "PPL",
+        "TeacherForcing",
+        "自由生成",
+        "BlindPairwise",
+        "PromptStrata",
+        "Memorization"
+      ],
+      "answer": {
+        "quick": "文本评测先按任务选指标，再在固定生成协议下比较输出。BLEU/ROUGE刻画参考文本重合，teacher-forced PPL衡量真实前缀下的预测概率，都不足以代表自由生成质量。结合独立分层prompt、事实/执行检查与盲评成对比较，并排查污染和背诵。",
+        "detail": [
+          "EM/token F1适合有明确参考答案的任务，但需固定规范化、中文分词和别名处理；BLEU原用于翻译，ROUGE常用于摘要。报告分数变体、tokenizer、corpus/sentence聚合与多参考处理；多参考可覆盖部分合理改写，但词面重合仍不保证事实、逻辑或指令遵循，任务适用性不能外推为通用LLM质量。",
+          "Teacher-forced PPL用评测文本真实历史x_<t预测x_t，是有效目标平均NLL的指数；自由生成则会把自己的输出纳入后续历史，两种条件分布不同。比较PPL须统一tokenizer、数据、模板、loss mask和上下文窗口/stride；低PPL不保证回答有用、事实正确或在多轮错误后能恢复，也不能直接跨不同分词粒度排名。",
+          "建立未用于调参的held-out prompt集，按任务、领域、语言、难度、长度与风险分层，报告各层和按目标流量加权结果。检查与训练/调参材料的重复、近似改写和模板泄漏，加入新写问题及表述变体测试；背诵参考可抬高词面分数，不能据单个高分/低PPL就证明训练污染或泛化。训练数据未知时明确该核验边界。",
+          "自由生成固定并记录模型/checkpoint、system prompt、chat template、检索/工具条件、temperature/top-p/top-k、最大输出长度和停止规则，明确资源预算；随机采样用多次trial和seed记录，seed本身不保证跨后端逐bit重现。必要时同时比较多个预先声明的解码协议，以免把解码变化误当模型能力变化。",
+          "人工评测用含锚点的rubric分别评准确性、材料忠实性、完整性、遵循指令和可读性；隐藏模型身份，随机A/B顺序，允许平局、无法判定及分歧复核。事实任务用证据核验，代码用执行测试；LLM judge需校准位置/冗长偏差。报告样本数、一致性及按prompt统计的不确定度，不用一个平均词面分数替代全部结论。"
+        ],
+        "pitfalls": [
+          "将BLEU/ROUGE或teacher-forced PPL当作所有开放生成任务的统一质量，或只看训练loss验证泛化。",
+          "一边改变prompt、检索、解码或输出预算一边比较模型，或把未查证的训练污染当成高分的唯一解释。"
+        ],
+        "followups": [
+          "两个模型PPL相近，但盲评偏好明显不同，应怎样分层定位原因？",
+          "如何区分正确改写导致低ROUGE、事实错误导致高ROUGE，以及对参考答案的背诵？"
+        ],
+        "formula": "PPL=exp[−Σ_{t∈valid} log p_θ(x_t|真实评测前缀x_<t)/N_valid]；自由生成质量另按固定decode协议评价"
+      },
+      "reference_ids": [
+        "APP-S155",
+        "APP-S156",
+        "CORE-S043",
+        "APP-S143",
+        "APP-S145",
+        "APP-S150"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S007",
+          "support": "reported_question",
+          "note": "正文明确问生成指标及 BLEU/ROUGE 局限。"
+        }
+      ],
+      "editorial": false,
+      "article_supplement_keys": [
+        "Z30"
+      ]
+    },
+    {
+      "id": "EVA-003",
+      "category": "EVA",
+      "title": "LLM-as-a-Judge 有哪些偏差，如何校准？",
+      "level": "L2",
+      "tags": [
+        "LLM-as-Judge",
+        "bias"
+      ],
+      "answer": {
+        "quick": "模型裁判能降低开放回答评测成本，但会受位置、长度、提示和领域能力影响。用盲测 rubric、交换候选顺序、可核验参考答案和人工金标准检查一致性，固定模型与提示版本。自动评判应报告不确定样本及系统性误判。",
+        "detail": [
+          "记录评分理由和证据，数学、代码优先使用执行或参考验证。",
+          "随机顺序与双向比较缓解位置偏差；冗长答案需按内容质量打分。",
+          "用人工分层样本估计 judge 的召回/误报与领域差异。"
+        ],
+        "pitfalls": [
+          "原论文 self-enhancement 实验不足以下确定结论，不能笼统声称所有裁判必偏爱自己。"
+        ],
+        "followups": [
+          "裁判和被评模型是同一家时，你如何检验风格偏差？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S143"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S011",
+          "support": "search_snippet",
+          "note": "知乎技术文章摘要讨论 judge 质量与人工黄金集校准；并非面经。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "EVA-004",
+      "category": "EVA",
+      "title": "两个模型只差一个百分点，怎样判断提升可靠？",
+      "level": "L2",
+      "tags": [
+        "statistics",
+        "bootstrap"
+      ],
+      "answer": {
+        "quick": "必须先看样本量与逐题配对差异，报告置信区间，必要时做配对检验或 bootstrap。对同一测试题比较时应一起重采样两模型结果，相关对话按用户/任务成组；还要考虑多次调参和不同随机种子的影响。",
+        "detail": [
+          "保存逐样本结果，估计分数差的区间，比只看两个独立均值更有信息。",
+          "重复题、同用户和同文档不是独立样本，采用 cluster 级抽样更合理。",
+          "区分统计显著与业务收益，报告成本、延迟与关键分组退化。"
+        ],
+        "pitfalls": [
+          "区间是否重叠不能替代正确的差值检验，反复挑最好 seed 也会偏高。"
+        ],
+        "followups": [
+          "如果总分升但关键安全分组下降，你会怎样验收？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S154"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "EVA-005",
+      "category": "EVA",
+      "title": "如何设计人工评测，降低标注分歧？",
+      "level": "L2",
+      "tags": [
+        "human eval",
+        "rubric"
+      ],
+      "answer": {
+        "quick": "人工评测应定义准确性、完整性、证据、可读性等维度及锚点样例，隐藏模型身份并随机顺序。分层抽样覆盖普通与困难案例，保留平局、分歧和复核；专家不足时要限制领域结论，不能将个人偏好当统一真值。",
+        "detail": [
+          "先做小规模试标，修订含糊规则，再独立多标注与分歧仲裁。",
+          "评估事实正确性时提供可信材料，偏好评估与 correctness 分开。",
+          "报告一致性、样本构成与不确定度，不仅给一个总胜率。"
+        ],
+        "pitfalls": [
+          "只挑中等分样本或成功案例会改变目标分布，须说明抽样与权重。"
+        ],
+        "followups": [
+          "专家与普通用户偏好相反时如何制定业务 rubric？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S143"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "APP-S007",
+          "support": "reported_question",
+          "note": "正文明确问人工评测流程；本题修正其只选中等样本的建议。"
+        }
+      ],
+      "editorial": false,
+      "article_supplement_keys": [
+        "Z30"
+      ]
+    },
+    {
+      "id": "EVA-006",
+      "category": "EVA",
+      "title": "如何区分和测量事实幻觉与上下文不忠实？",
+      "level": "L2",
+      "tags": [
+        "hallucination",
+        "faithfulness"
+      ],
+      "answer": {
+        "quick": "事实幻觉指陈述缺乏事实支持或错误，上下文不忠实指输出与给定材料矛盾或超出其依据。应先确定评价的证据范围，再对实体、数字、关系和引用分解核验。可用专门数据集做回归，但识别幻觉的能力不等于生成时从不幻觉。",
+        "detail": [
+          "正确外部事实也可能超出任务限定材料；错误材料上的忠实答案也未必真实。",
+          "分开 unsupported、contradicted、不可验证与过期，避免全部粗记为错误。",
+          "用真实业务案例和可靠来源复核，覆盖缺证据、误导前提和冲突文档。"
+        ],
+        "pitfalls": [
+          "常见基准只覆盖部分类型，低温或更大参数不保证事实正确。"
+        ],
+        "followups": [
+          "如何评价模型纠正了资料中的错误，但没有解释证据冲突？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S144",
+        "APP-S157"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "article_supplement_keys": [
+        "Z30"
+      ]
+    },
+    {
+      "id": "EVA-007",
+      "category": "EVA",
+      "title": "模型自报置信度可靠吗，怎样设计拒答阈值？",
+      "level": "L3",
+      "tags": [
+        "calibration",
+        "abstention"
+      ],
+      "answer": {
+        "quick": "“我有九成把握”并不天然对应九成正确率。可结合验证集、答复正确标签和置信信号做校准，按风险选择拒答阈值并画覆盖率—错误率曲线。新领域或分布变化时需要重新验证，不能只看平均准确率。",
+        "detail": [
+          "token 概率、答案语义置信和事实可信是不同对象，应明确所用信号。",
+          "拒答减少错误也降低覆盖，需同时评估未答率、错答成本与正确率。",
+          "证据检索、自检和多样采样可提供信号，但其有效性需要实测。"
+        ],
+        "pitfalls": [
+          "模型声称不确定也可能是模板行为，不代表具备准确的自我知识。"
+        ],
+        "followups": [
+          "对高风险和低风险问题为什么应使用不同阈值？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S152"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "EVA-008",
+      "category": "EVA",
+      "title": "安全评测如何兼顾越狱成功率与过度拒答？",
+      "level": "L2",
+      "tags": [
+        "safety",
+        "jailbreak",
+        "over-refusal"
+      ],
+      "answer": {
+        "quick": "安全评测既要检查模型在恶意请求和攻击改写下是否违规，也要检查正常相似问题是否被误拒。按风险类别、语言、轮次与工具环境分层，固定攻击预算和判定标准，报告成功率、误拒率与不确定样本，避免只优化一句拒答模板。",
+        "detail": [
+          "恶意与合法边界相近的成对样本能检测语义判断而非关键词拦截。",
+          "攻击成功必须核验实际内容/行动，不仅统计是否出现某些敏感词。",
+          "单轮文本测试不能覆盖多轮诱导、图像输入或工具副作用。"
+        ],
+        "pitfalls": [
+          "零次成功只是当前测试集与预算结果，不能证明不存在漏洞。"
+        ],
+        "followups": [
+          "拒绝表达更礼貌了，但泄露率没下降，如何判断改进？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S148",
+        "APP-S165"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "EVA-009",
+      "category": "EVA",
+      "title": "如何构建红队测试而不只刷固定攻击集？",
+      "level": "L3",
+      "tags": [
+        "red teaming",
+        "coverage"
+      ],
+      "answer": {
+        "quick": "红队先定义资产与威胁模型，再设计人工、规则和模型生成的多样攻击，记录具体成功条件与复现轨迹。持续把新的失败类别加入回归，同时留出未见攻击验证，防止系统只适应公开模板；攻击与防御模型都需要独立评估。",
+        "detail": [
+          "覆盖直接请求、间接资料、跨轮组合和工具权限边界。",
+          "模型可生成候选攻击，但自动裁判需人工抽检以避免伪成功。",
+          "同一目标下比较攻击预算、成功率、覆盖度与可复现性。"
+        ],
+        "pitfalls": [
+          "红队发现问题不等于全面量化风险，未测领域要明确列出。"
+        ],
+        "followups": [
+          "如何避免同一失败模板大量重复导致覆盖率虚高？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S149"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "EVA-010",
+      "category": "EVA",
+      "title": "训练数据泄露与 RAG 越权泄露如何区分？",
+      "level": "L2",
+      "tags": [
+        "privacy",
+        "memorization"
+      ],
+      "answer": {
+        "quick": "训练数据泄露来自参数化记忆被查询诱导重现；RAG 越权来自检索、缓存或工具授权把不该访问的资料交给模型。前者需要数据最小化、去重和泄露测试等防护，后者必须在访问层隔离，不能用同一种拒答 prompt 解决。",
+        "detail": [
+          "检查信息来源：未接入该资料仍复现，可能是记忆或其他上游输入泄漏。",
+          "测试时使用可控 canary 与访问矩阵，避免把真实敏感数据继续扩散。",
+          "删除索引不意味着模型参数内记忆删除；两类数据生命周期分开追踪。"
+        ],
+        "pitfalls": [
+          "输出里有个人信息不自动证明来自训练语料，须排查输入和工具路径。"
+        ],
+        "followups": [
+          "企业要求撤回某用户数据时，哪些层需要分别处理？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S145"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "EVA-011",
+      "category": "EVA",
+      "title": "MLLM 评测如何区分感知、OCR 与推理错误？",
+      "level": "L2",
+      "tags": [
+        "multimodal eval",
+        "MMMU"
+      ],
+      "answer": {
+        "quick": "多模态模型答错可能因为没看清文字、定位错对象、误读图表，也可能因为跨模态关系或推理失败。应按图像类型和能力拆分样本，并通过原图、裁剪、人工文本转写等消融定位瓶颈，同时固定分辨率、图片数与答案解析规则。",
+        "detail": [
+          "OCR、计数、空间关系、图表、专业多学科推理应分别汇报。",
+          "文本-only 与真实图像输入对比能检查模型是否只凭语言先验猜答案。",
+          "替换或打乱图像后答案不变，提示视觉依赖不足，仍需排除多答案歧义。"
+        ],
+        "pitfalls": [
+          "一个综合榜单不能代表视频、定位或高分辨率读图的全部能力。"
+        ],
+        "followups": [
+          "原图错、人工 OCR 文本对时，应优先改哪一环？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S147"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "EVA-012",
+      "category": "EVA",
+      "title": "怎样评估 prompt 扰动、多语言和分布外鲁棒性？",
+      "level": "L2",
+      "tags": [
+        "robustness",
+        "OOD"
+      ],
+      "answer": {
+        "quick": "准确率应在语言、领域、长度和输入表达变化下分别测量。构造语义等价改写、拼写噪声及格式变化，也保留真正更难或语义改变的任务。报告各组差异与成本，并检查 parser、检索与安全策略是否引入非模型退化。",
+        "detail": [
+          "等价扰动可测一致性，事实改变的对照测模型是否随证据正确更新。",
+          "同一任务采用标准化 prompt 与解码，再测试多模板敏感性。",
+          "总体均值不能掩盖少数语言、长尾实体或长上下文的显著退化。"
+        ],
+        "pitfalls": [
+          "语义变了的样本不是纯鲁棒性测试，需人工确认变换标签。"
+        ],
+        "followups": [
+          "翻译后性能下降如何区分知识缺失、检索和 tokenizer 问题？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S142"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "EVA-013",
+      "category": "EVA",
+      "title": "如何验证 prompt 优化确实有效？",
+      "level": "L2",
+      "tags": [
+        "prompt eval",
+        "instruction following"
+      ],
+      "answer": {
+        "quick": "把 prompt 优化视为有验证集的实验：定义可观察目标，固定模型和解码，每次改变明确因素，使用留出样本比较。格式、长度和关键词要求可规则检测，事实或语义质量需要其他验证；一个演示样例变好不能证明泛化。",
+        "detail": [
+          "可执行约束如 JSON 合法性、指定字段和字数需用稳定 parser 检查。",
+          "任务级成功与单项指令遵循分开统计，多个约束全部满足才算整题通过。",
+          "版本化模板与 few-shot 样例，避免样例与测试内容重叠。"
+        ],
+        "pitfalls": [
+          "prompt 中加入更多约束可能互相冲突，temperature 降低不必缩短输出。"
+        ],
+        "followups": [
+          "同 prompt 训练集涨分、留出集退化时如何处理？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S153"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "EVA-014",
+      "category": "EVA",
+      "title": "代码生成的 pass@k 是什么，如何避免错误估计？",
+      "level": "L3",
+      "tags": [
+        "pass@k",
+        "code eval"
+      ],
+      "answer": {
+        "quick": "pass@k 衡量每题采样 k 个候选至少一个通过测试的概率，并对任务取平均。生成 n≥k 个候选、其中 c 个通过时，可用组合数估计，不能直接把经验 pass@1 代入 1−(1−p)^k 当无偏估计。比较时还需固定采样和测试预算。",
+        "detail": [
+          "通过条件是可执行功能测试，不能用 BLEU 衡量等价代码正确性。",
+          "若 n−c<k，估计为一；实际计算用稳定乘积避免大组合数溢出。",
+          "测试覆盖、超时、沙箱和依赖版本会影响得分，需与生成条件同时记录。",
+          "无偏估计的标准解释以每题固定生成分布的独立采样为前提；自适应搜索、去重或依赖先前测试结果生成的候选需另定义评测。"
+        ],
+        "pitfalls": [
+          "oracle pass@k 不等于用户拿到正确答案的概率，部署仍需要选择/验证候选。"
+        ],
+        "followups": [
+          "为什么提高温度可能提升 pass@100 却降低 pass@1？"
+        ],
+        "formula": "\\widehat{\\mathrm{pass@}k}=1-\\frac{\\binom{n-c}{k}}{\\binom{n}{k}},\\qquad n\\ge k"
+      },
+      "reference_ids": [
+        "APP-S146"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "EVA-015",
+      "category": "EVA",
+      "title": "线上如何监控、验收并回归 LLM/Agent 系统？",
+      "level": "L2",
+      "tags": [
+        "observability",
+        "regression"
+      ],
+      "answer": {
+        "quick": "离线通过后仍要观测线上任务成功、拒答、工具错误、事实反馈、时延和成本。保存能复现的版本与 trace，按风险和流量分层抽检，把新 bad case 加入回归并保留独立验收集。发布前后用同口径比较，设置退化回滚条件。",
+        "detail": [
+          "trace 记录请求、检索、工具、结果与版本，敏感字段做最小化记录和访问控制。",
+          "重复 trial 检查随机性，故障注入验证限流、断线和恢复。",
+          "回归同时检查能力、合规边界与效率，避免一个平均分掩盖新问题。"
+        ],
+        "pitfalls": [
+          "把线上点击率当答案正确率会受曝光、用户群与界面变化混杂。"
+        ],
+        "followups": [
+          "线上成本骤增但准确率没变，应怎样定位？"
+        ]
+      },
+      "reference_ids": [
+        "APP-S139"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "article_supplement_keys": [
+        "Z30"
+      ]
+    }
+  ]
+}

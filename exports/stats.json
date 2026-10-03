@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-02",
+  "questions": 229,
+  "categories": {
+    "TFM": 23,
+    "PRE": 15,
+    "FT": 15,
+    "INF": 15,
+    "ALN": 20,
+    "RAG": 15,
+    "AGT": 10,
+    "EVA": 15,
+    "VLM": 26,
+    "OMM": 15,
+    "DST": 20,
+    "COD": 15,
+    "SYS": 15,
+    "PRJ": 10
+  },
+  "levels": {
+    "L1": 53,
+    "L2": 143,
+    "L3": 33
+  },
+  "community_questions": 106,
+  "editorial_questions": 123,
+  "source_records": 273,
+  "unique_source_urls": 261,
+  "source_types": {
+    "community": 39,
+    "primary": 234
+  },
+  "source_access": {
+    "snippet": 97,
+    "full": 172,
+    "partial": 2,
+    "blocked": 2
+  }
+}

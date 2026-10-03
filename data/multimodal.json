@@ -1,0 +1,3138 @@
+{
+  "sources": [
+    {
+      "id": "MM-S001",
+      "claimed_company": "阿里巴巴（淘天）",
+      "title": "淘天面经：大模型（知乎英语索引页）",
+      "url": "https://www.zhihu.com/en/article/26593966342",
+      "platform": "知乎",
+      "type": "community",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读公开面经正文；页面为英文索引/翻译呈现。仅抽取问题主题；发布主体和面试经历为作者自述，未独立核实公司来源。",
+      "topics": [
+        "CLIP",
+        "BLIP",
+        "BLIP-2",
+        "连接器"
+      ]
+    },
+    {
+      "id": "MM-S002",
+      "title": "大模型基础架构岗面经（二）",
+      "url": "https://www.nowcoder.com/discuss/656279057671155712",
+      "platform": "牛客",
+      "type": "community",
+      "access": "full",
+      "published_date": "2024-08-22",
+      "accessed_date": "2026-10-02",
+      "notes": "已读公开正文；列出并行、显存、ZeRO、长文本主题，公司未指明。",
+      "topics": [
+        "数据并行",
+        "流水线并行",
+        "ZeRO",
+        "显存"
+      ]
+    },
+    {
+      "id": "MM-S003",
+      "title": "NLP 大模型春招记录",
+      "url": "https://www.nowcoder.com/discuss/601149086300971008",
+      "platform": "牛客",
+      "type": "community",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "搜索返回正文片段；直接打开仅返回页面壳。只保留片段明确出现的 Adam 显存、ZeRO、重计算、TP 主题；经历为作者自述。",
+      "topics": [
+        "Adam显存",
+        "ZeRO",
+        "重计算",
+        "张量并行"
+      ]
+    },
+    {
+      "id": "MM-S004",
+      "title": "llm-rl-infra-interview",
+      "url": "https://github.com/XFWang522/llm-rl-infra-interview",
+      "platform": "GitHub",
+      "type": "community",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "公开题目整理集合，含作者延伸追问；不把其中的频率标签或公司归因继承为事实，仅取少量主题。",
+      "topics": [
+        "FSDP",
+        "通信",
+        "MFU",
+        "故障诊断"
+      ]
+    },
+    {
+      "id": "MM-S005",
+      "title": "AI-Engineer-Interview-Questions / Multimodal",
+      "url": "https://github.com/ombharatiya/AI-Engineer-Interview-Questions/blob/main/10-multimodal/README.md",
+      "platform": "GitHub",
+      "type": "community",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "公开备考主题集合，并非可核实公司面试记录；仅抽题目主题，不采纳附带答案或延迟数字。",
+      "topics": [
+        "Whisper",
+        "语音流水线",
+        "Codec",
+        "TTS",
+        "融合"
+      ]
+    },
+    {
+      "id": "MM-S006",
+      "title": "ai-engineering-interview-questions",
+      "url": "https://github.com/amitshekhariitbhu/ai-engineering-interview-questions/blob/main/README.md",
+      "platform": "GitHub",
+      "type": "community",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "公开题目列表，非公司真题认证；仅抽少量 VQA、文档、幻觉、看图失败主题。",
+      "topics": [
+        "VQA",
+        "文档理解",
+        "视觉幻觉",
+        "多图"
+      ]
+    },
+    {
+      "id": "MM-S007",
+      "claimed_company": "字节跳动",
+      "title": "字节多模态算法面试题详解",
+      "url": "https://zhuanlan.zhihu.com/p/2023042484121413435",
+      "platform": "知乎",
+      "type": "community",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "仅读搜索返回片段，含 Qwen2.5-VL 结构问法；题目公司归因未独立核实，附带答案存在泛化表述，不作为答案依据。",
+      "topics": [
+        "Qwen2.5-VL"
+      ]
+    },
+    {
+      "id": "MM-S008",
+      "title": "awesome-ai-interviews / multimodal-ai",
+      "url": "https://github.com/JustInCache/awesome-ai-interviews/blob/main/topics/11-multimodal-ai.md",
+      "platform": "GitHub",
+      "type": "community",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "搜索摘要有多模态主题，直接打开 cache miss；未用于题目证据。",
+      "topics": [
+        "多模态"
+      ]
+    },
+    {
+      "id": "MM-S010",
+      "title": "Learning Transferable Visual Models From Natural Language Supervision",
+      "url": "https://arxiv.org/html/2103.00020v1",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "published_date": "2021-02-26",
+      "accessed_date": "2026-10-02",
+      "notes": "已读 HTML 的训练伪代码，核对归一化特征、可训练温度、双向交叉熵；零样本接口另有官方实现。",
+      "topics": [
+        "CLIP"
+      ]
+    },
+    {
+      "id": "MM-S011",
+      "title": "OpenAI CLIP 官方实现",
+      "url": "https://github.com/openai/CLIP",
+      "platform": "GitHub 官方仓库",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 README 的归一化特征、零样本分类与 encode_image/encode_text 示例。",
+      "topics": [
+        "CLIP",
+        "零样本"
+      ]
+    },
+    {
+      "id": "MM-S012",
+      "title": "Winoground: Probing Vision and Language Models for Visio-Linguistic Compositionality",
+      "url": "https://arxiv.org/abs/2204.03162",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读论文摘要，用于核对组合性评测动机；诊断步骤为编辑补充。",
+      "topics": [
+        "组合性",
+        "CLIP局限"
+      ]
+    },
+    {
+      "id": "MM-S013",
+      "title": "Sigmoid Loss for Language Image Pre-Training",
+      "url": "https://arxiv.org/abs/2303.15343",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2023-03-27",
+      "accessed_date": "2026-10-02",
+      "notes": "已读论文摘要；HTML 版本读取失败。核对逐对 sigmoid 与无全局 softmax 归一化，未摘录实验表。",
+      "topics": [
+        "SigLIP"
+      ]
+    },
+    {
+      "id": "MM-S014",
+      "title": "BLIP: Bootstrapping Language-Image Pre-training",
+      "url": "https://arxiv.org/html/2201.12086v2",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读公开 HTML，重点为三种目标与 CapFilt；仅概括机制，未搬运论文段落。",
+      "topics": [
+        "BLIP",
+        "ITC",
+        "ITM",
+        "LM",
+        "CapFilt"
+      ]
+    },
+    {
+      "id": "MM-S015",
+      "title": "BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models",
+      "url": "https://arxiv.org/html/2301.12597v3",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 HTML 的 Q-Former、attention mask、两阶段和冻结骨干说明。",
+      "topics": [
+        "BLIP-2",
+        "Q-Former"
+      ]
+    },
+    {
+      "id": "MM-S016",
+      "title": "Visual Instruction Tuning",
+      "url": "https://arxiv.org/html/2304.08485v2",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 HTML 4.1/4.2，核对连接器、两阶段冻结策略和只对 assistant token 计算损失。",
+      "topics": [
+        "LLaVA",
+        "SFT"
+      ]
+    },
+    {
+      "id": "MM-S017",
+      "title": "Improved Baselines with Visual Instruction Tuning",
+      "url": "https://arxiv.org/html/2310.03744v2",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 HTML，核对 LLaVA-1.5 的 MLP、336px 和任务数据/格式改进。",
+      "topics": [
+        "LLaVA-1.5"
+      ]
+    },
+    {
+      "id": "MM-S018",
+      "title": "Qwen2-VL: Enhancing Vision-Language Model's Perception of the World at Any Resolution",
+      "url": "https://arxiv.org/html/2409.12191v2",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 HTML 架构部分，核对动态分辨率、2×2 合并和 M-RoPE。",
+      "topics": [
+        "动态分辨率",
+        "M-RoPE"
+      ]
+    },
+    {
+      "id": "MM-S019",
+      "title": "Qwen2.5-VL Technical Report",
+      "url": "https://arxiv.org/html/2502.13923v1",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 HTML，核对窗口与四层全局注意力、动态 FPS、绝对时间位置编码和训练负载平衡。",
+      "topics": [
+        "Qwen2.5-VL",
+        "视频",
+        "负载平衡"
+      ]
+    },
+    {
+      "id": "MM-S020",
+      "title": "InternVL2 Quick Start 官方文档",
+      "url": "https://internvl.readthedocs.io/en/latest/internvl2.0/quick_start.html",
+      "platform": "InternVL 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 dynamic_preprocess 代码及多图接口；tile 规则是该版本实现，非所有 VLM 通则。",
+      "topics": [
+        "InternVL",
+        "动态切图",
+        "多图"
+      ]
+    },
+    {
+      "id": "MM-S021",
+      "title": "DocVQA: A Dataset for VQA on Document Images",
+      "url": "https://arxiv.org/abs/2007.00398",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读论文摘要，核对文档问答需利用文本与布局；工程诊断为编辑补充。",
+      "topics": [
+        "OCR",
+        "DocVQA"
+      ]
+    },
+    {
+      "id": "MM-S022",
+      "title": "Hierarchical multimodal transformers for Multi-Page DocVQA",
+      "url": "https://arxiv.org/abs/2212.05935",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读摘要，核对多页定位与分层建模；系统设计步骤为编辑整理。",
+      "topics": [
+        "多页文档"
+      ]
+    },
+    {
+      "id": "MM-S023",
+      "title": "Evaluating Object Hallucination in Large Vision-Language Models",
+      "url": "https://arxiv.org/abs/2305.10355",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 POPE 论文摘要，核对对象存在性问答评测思路；不将其当全部幻觉指标。",
+      "topics": [
+        "POPE",
+        "视觉幻觉"
+      ]
+    },
+    {
+      "id": "MM-S024",
+      "title": "Mitigating Object Hallucinations in Large Vision-Language Models through Visual Contrastive Decoding",
+      "url": "https://arxiv.org/abs/2311.16922",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读摘要，核对对比视觉条件降低语言先验影响；故障排查顺序为编辑建议。",
+      "topics": [
+        "VCD",
+        "图像依赖"
+      ]
+    },
+    {
+      "id": "MM-S025",
+      "title": "MMBench: Is Your Multi-modal Model an All-around Player?",
+      "url": "https://arxiv.org/abs/2307.06281",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读摘要，用于核对多维评估与选择题评测；推荐评估组合为编辑补充。",
+      "topics": [
+        "MMBench",
+        "评估"
+      ]
+    },
+    {
+      "id": "MM-S026",
+      "title": "LLaVA 官方仓库",
+      "url": "https://github.com/haotian-liu/LLaVA",
+      "platform": "GitHub 官方仓库",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 README 训练与 LoRA 说明；微调决策为编辑综合，不把原版冻结策略推广到所有版本。",
+      "topics": [
+        "VLM微调"
+      ]
+    },
+    {
+      "id": "MM-S027",
+      "title": "Flamingo: a Visual Language Model for Few-Shot Learning",
+      "url": "https://arxiv.org/abs/2204.14198",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读论文摘要，核对交错图文/视频输入和 few-shot 目标。",
+      "topics": [
+        "交错图文",
+        "融合"
+      ]
+    },
+    {
+      "id": "MM-S028",
+      "title": "Kosmos-2: Grounding Multimodal Large Language Models to the World",
+      "url": "https://arxiv.org/abs/2306.14824",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读摘要，核对语言片段与图像区域关联；坐标变换排查为编辑补充。",
+      "topics": [
+        "Grounding"
+      ]
+    },
+    {
+      "id": "MM-S029",
+      "title": "Cambrian-1: A Fully Open, Vision-Centric Exploration of Multimodal LLMs",
+      "url": "https://arxiv.org/abs/2406.16860",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读摘要，核对视觉表征、数据和多模态评估共同影响能力；采样策略为编辑建议。",
+      "topics": [
+        "数据配比",
+        "视觉表征"
+      ]
+    },
+    {
+      "id": "MM-S030",
+      "title": "ColPali: Efficient Document Retrieval with Vision Language Models",
+      "url": "https://arxiv.org/abs/2407.01449",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读摘要，核对文档视觉多向量检索；与生成式问答的对照为编辑总结。",
+      "topics": [
+        "多模态检索",
+        "ColPali"
+      ]
+    },
+    {
+      "id": "MM-S031",
+      "title": "Video-LLaVA: Learning United Visual Representation by Alignment Before Projection",
+      "url": "https://arxiv.org/abs/2311.10122",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2023-11-16",
+      "accessed_date": "2026-10-02",
+      "notes": "已读摘要，核对联合图像视频表征；抽帧预算为通用工程推导。",
+      "topics": [
+        "视频VLM"
+      ]
+    },
+    {
+      "id": "MM-S032",
+      "title": "VideoLLaMA 2: Advancing Spatial-Temporal Modeling and Audio Understanding in Video-LLMs",
+      "url": "https://arxiv.org/abs/2406.07476",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2024-06-11",
+      "accessed_date": "2026-10-02",
+      "notes": "已读摘要，核对 STC 连接器与音频分支；长视频方案为编辑比较。",
+      "topics": [
+        "时空连接器",
+        "视频压缩"
+      ]
+    },
+    {
+      "id": "MM-S033",
+      "title": "QVHighlights: Detecting Moments and Highlights in Videos via Natural Language Queries",
+      "url": "https://arxiv.org/abs/2107.09609",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": "2021-07-20",
+      "accessed_date": "2026-10-02",
+      "notes": "已读摘要，核对 Moment-DETR 输出片段坐标与显著性；tIoU 为区间交并比定义。",
+      "topics": [
+        "视频定位",
+        "Moment-DETR"
+      ]
+    },
+    {
+      "id": "MM-S034",
+      "title": "Robust Speech Recognition via Large-Scale Weak Supervision",
+      "url": "https://arxiv.org/html/2212.04356v1",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 Whisper HTML 架构/预处理/长音频窗口部分。",
+      "topics": [
+        "Whisper",
+        "ASR"
+      ]
+    },
+    {
+      "id": "MM-S035",
+      "title": "Hugging Face Evaluate WER 官方实现",
+      "url": "https://huggingface.co/spaces/evaluate-metric/wer/blob/main/wer.py",
+      "platform": "Hugging Face 官方实现",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读公式、动态字符串对齐说明及 corpus 聚合代码。",
+      "topics": [
+        "WER"
+      ]
+    },
+    {
+      "id": "MM-S036",
+      "title": "PyTorch CTCLoss 文档",
+      "url": "https://docs.pytorch.org/docs/2.14/generated/torch.nn.CTCLoss.html",
+      "platform": "PyTorch 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 CTC 对齐假设、输入形状、blank 和长度约束。",
+      "topics": [
+        "CTC"
+      ]
+    },
+    {
+      "id": "MM-S037",
+      "title": "High Fidelity Neural Audio Compression",
+      "url": "https://arxiv.org/abs/2210.13438",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 EnCodec 论文摘要，核对神经音频压缩/RVQ 目标。",
+      "topics": [
+        "EnCodec",
+        "Codec"
+      ]
+    },
+    {
+      "id": "MM-S038",
+      "title": "Neural Codec Language Models are Zero-Shot Text to Speech Synthesizers",
+      "url": "https://arxiv.org/abs/2301.02111",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 VALL-E 摘要，核对声学 token 建模与短音频条件。",
+      "topics": [
+        "VALL-E",
+        "TTS"
+      ]
+    },
+    {
+      "id": "MM-S039",
+      "title": "Qwen2-Audio Technical Report",
+      "url": "https://arxiv.org/abs/2407.10759",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读摘要，核对语音交互、音频分析和指令模式；未摘录详细训练超参数。",
+      "topics": [
+        "音频理解",
+        "Qwen2-Audio"
+      ]
+    },
+    {
+      "id": "MM-S040",
+      "title": "Qwen2.5-Omni Technical Report",
+      "url": "https://arxiv.org/html/2503.20215v1",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 Thinker-Talker、TMRoPE、音频编码及流式解码章节。",
+      "topics": [
+        "Omni",
+        "Thinker-Talker",
+        "TMRoPE"
+      ]
+    },
+    {
+      "id": "MM-S041",
+      "title": "Moshi: a speech-text foundation model for real-time dialogue",
+      "url": "https://arxiv.org/html/2410.00037v2",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读多流音频/文本和延迟章节；区分理论编解码延迟与端到端用户延迟。",
+      "topics": [
+        "Moshi",
+        "全双工",
+        "语音延迟"
+      ]
+    },
+    {
+      "id": "MM-S042",
+      "title": "Learning Audio-Visual Speech Representation by Masked Multimodal Cluster Prediction",
+      "url": "https://arxiv.org/abs/2201.02184",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 AV-HuBERT 摘要，核对音视频自监督表征与唇读用途。",
+      "topics": [
+        "AV-HuBERT",
+        "唇读"
+      ]
+    },
+    {
+      "id": "MM-S043",
+      "title": "OmniBench: Towards The Future of Universal Omni-Language Models",
+      "url": "https://arxiv.org/abs/2409.15272",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读摘要，核对图像、声音和文本联合理解评测；冲突与同步切片为编辑扩展。",
+      "topics": [
+        "Omni评估"
+      ]
+    },
+    {
+      "id": "MM-S050",
+      "title": "PyTorch DistributedDataParallel 文档",
+      "url": "https://docs.pytorch.org/docs/2.14/generated/torch.nn.parallel.DistributedDataParallel.html",
+      "platform": "PyTorch 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读输入切分、梯度同步与 no_sync 说明。",
+      "topics": [
+        "DDP",
+        "梯度累积"
+      ]
+    },
+    {
+      "id": "MM-S051",
+      "title": "PyTorch Distributed Data Parallel 设计说明",
+      "url": "https://docs.pytorch.org/docs/2.14/notes/ddp.html",
+      "platform": "PyTorch 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 reducer/bucket/autograd hook 和 collective 顺序说明。",
+      "topics": [
+        "DDP",
+        "通信重叠"
+      ]
+    },
+    {
+      "id": "MM-S052",
+      "title": "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models",
+      "url": "https://arxiv.org/html/1910.02054v3",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 HTML 状态显存分析；16 字节/参数基于 FP16 参数/梯度、FP32 主权重及 Adam 双状态的假设。",
+      "topics": [
+        "ZeRO",
+        "显存"
+      ]
+    },
+    {
+      "id": "MM-S053",
+      "title": "DeepSpeed ZeRO 官方文档",
+      "url": "https://deepspeed.readthedocs.io/en/latest/zero3.html",
+      "platform": "DeepSpeed 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 Stage 1/2/3、CPU/NVMe offload 和逐模块收集参数说明。",
+      "topics": [
+        "ZeRO",
+        "Offload"
+      ]
+    },
+    {
+      "id": "MM-S054",
+      "title": "PyTorch FSDP2 fully_shard 文档",
+      "url": "https://docs.pytorch.org/docs/2.14/distributed.fsdp.fully_shard.html",
+      "platform": "PyTorch 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读按参数 DTensor 分片、reshard、all-gather 与梯度同步说明；不混用 FSDP1 包装 API。",
+      "topics": [
+        "FSDP2"
+      ]
+    },
+    {
+      "id": "MM-S055",
+      "title": "Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism",
+      "url": "https://arxiv.org/html/1909.08053v4",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 HTML 的 MLP/attention 张量切分，核对列并行与行并行的通信位置。",
+      "topics": [
+        "张量并行"
+      ]
+    },
+    {
+      "id": "MM-S056",
+      "title": "Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM",
+      "url": "https://arxiv.org/abs/2104.04473",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "snippet",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读摘要，核对张量/流水线/数据并行联合扩展；bubble 公式仅为理想调度近似。",
+      "topics": [
+        "流水线并行"
+      ]
+    },
+    {
+      "id": "MM-S057",
+      "title": "Megatron Bridge Parallelisms 官方文档",
+      "url": "https://github.com/NVIDIA-NeMo/Megatron-Bridge/blob/main/docs/parallelisms.md",
+      "platform": "GitHub 官方仓库",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 SP/CP 的作用范围和 sequence_parallel 对 TP 的要求。",
+      "topics": [
+        "序列并行",
+        "上下文并行"
+      ]
+    },
+    {
+      "id": "MM-S058",
+      "title": "Megatron Core Parallelism Strategies Guide",
+      "url": "https://docs.nvidia.com/megatron-core/developer-guide/latest/user-guide/parallelism-guide.html",
+      "platform": "NVIDIA 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 DP/TP/PP/CP/EP 的作用维度，MoE 与通信配置；不将指南示例当性能保证。",
+      "topics": [
+        "专家并行",
+        "并行选择"
+      ]
+    },
+    {
+      "id": "MM-S059",
+      "title": "NCCL Collective Operations",
+      "url": "https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html",
+      "platform": "NVIDIA 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 all-reduce、reduce-scatter、all-gather 及等价关系；ring 通信量由算法步骤自行推导。",
+      "topics": [
+        "Collective",
+        "Ring AllReduce"
+      ]
+    },
+    {
+      "id": "MM-S060",
+      "title": "PyTorch torch.utils.checkpoint 文档",
+      "url": "https://docs.pytorch.org/docs/2.14/checkpoint.html",
+      "platform": "PyTorch 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读重计算/RNG/可重入与非可重入行为。",
+      "topics": [
+        "激活重计算"
+      ]
+    },
+    {
+      "id": "MM-S061",
+      "title": "PyTorch AMP 文档",
+      "url": "https://docs.pytorch.org/docs/2.14/amp.html",
+      "platform": "PyTorch 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 autocast 和 GradScaler；dtype 数值范围按 IEEE 表示解释。",
+      "topics": [
+        "BF16",
+        "FP16",
+        "AMP"
+      ]
+    },
+    {
+      "id": "MM-S062",
+      "title": "PyTorch Distributed Checkpoint 文档",
+      "url": "https://docs.pytorch.org/docs/2.14/distributed.checkpoint.html",
+      "platform": "PyTorch 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读分片保存/加载和 state_dict 说明；完整恢复状态列表为编辑综合。",
+      "topics": [
+        "断点续训"
+      ]
+    },
+    {
+      "id": "MM-S063",
+      "title": "PyTorch torch.utils.data 文档",
+      "url": "https://docs.pytorch.org/docs/2.14/data.html",
+      "platform": "PyTorch 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 DistributedSampler、set_epoch、drop_last 与 worker 行为。",
+      "topics": [
+        "DistributedSampler"
+      ]
+    },
+    {
+      "id": "MM-S064",
+      "title": "NCCL Troubleshooting",
+      "url": "https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/troubleshooting.html",
+      "platform": "NVIDIA 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读故障排查入口；进程组一致性另参照 PyTorch distributed 文档。",
+      "topics": [
+        "NCCL故障"
+      ]
+    },
+    {
+      "id": "MM-S065",
+      "title": "PaLM: Scaling Language Modeling with Pathways",
+      "url": "https://arxiv.org/html/2204.02311v5",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 HTML 训练效率与 MFU 定义；6NT 只作为忽略额外项的稠密 Transformer 近似。",
+      "topics": [
+        "MFU"
+      ]
+    },
+    {
+      "id": "MM-S066",
+      "title": "PyTorch Profiler 文档",
+      "url": "https://docs.pytorch.org/docs/2.14/profiler.html",
+      "platform": "PyTorch 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 CPU/CUDA 活动、shape、memory 和 trace 能力；瓶颈定位建议为编辑整理。",
+      "topics": [
+        "训练Profiling"
+      ]
+    },
+    {
+      "id": "MM-S067",
+      "title": "PyTorch Distributed communication 文档",
+      "url": "https://docs.pytorch.org/docs/2.14/distributed.html",
+      "platform": "PyTorch 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 collective 一致性、调试和 monitored_barrier；用于 NCCL 挂起诊断。",
+      "topics": [
+        "分布式调试"
+      ]
+    },
+    {
+      "id": "MM-S068",
+      "title": "InstructBLIP 官方模型文档",
+      "url": "https://huggingface.co/docs/transformers/model_doc/instructblip",
+      "platform": "Hugging Face 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 Overview、Usage tips 和 InstructBlipQFormerModel 接口；核验指令输入 Q-Former、num_query_tokens 为配置。只引用这些机制，不采用文档中的笼统每图 token 数建议。",
+      "topics": [
+        "InstructBLIP",
+        "Q-Former",
+        "指令感知"
+      ],
+      "scope": "InstructBLIP 的模型结构及接口；不用于证明行业部署比例。"
+    },
+    {
+      "id": "MM-S069",
+      "title": "MiniCPM-V 4.5 技术报告",
+      "url": "https://arxiv.org/html/2509.18154v1",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 HTML §2.1.1：可学习查询与位置编码、图像分片、时空 cross-attention 压缩；用于证明查询重采样是一条实际架构路线，未摘性能排行或通用速度倍数。",
+      "topics": [
+        "MiniCPM-V4.5",
+        "3D-Resampler",
+        "视觉压缩"
+      ],
+      "scope": "固定论文版本 v1 的架构；Resampler 不等同 BLIP-2 Q-Former。"
+    },
+    {
+      "id": "MM-S070",
+      "title": "MiniCPM-V 4.5 Resampler 固定提交官方实现",
+      "url": "https://huggingface.co/openbmb/MiniCPM-V-4_5/blob/bf6f912c8f3d652bda9431e4ec0b8de07c902205/resampler.py",
+      "platform": "OpenBMB 官方模型代码",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读固定提交的 Resampler 初始化、query、MultiheadAttention、2D/temporal position cache 与跨帧 K/V 拼接；没有运行模型。",
+      "topics": [
+        "Resampler",
+        "CrossAttention",
+        "位置编码"
+      ],
+      "scope": "提交 bf6f912c8f3d652bda9431e4ec0b8de07c902205 的源码静态核验。"
+    },
+    {
+      "id": "MM-S071",
+      "title": "InternVL2.5 Quick Start 官方文档",
+      "url": "https://internvl.readthedocs.io/en/latest/internvl2.5/quick_start.html",
+      "platform": "InternVL 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 dynamic_preprocess、load_image、多图 num_patches_list、load_video 与 Frame 编号示例；核验 max_num 限局部 tile，多个 tile 时 thumbnail 另加。没有运行示例。",
+      "topics": [
+        "InternVL2.5",
+        "动态切图",
+        "Thumbnail",
+        "视频"
+      ],
+      "scope": "InternVL2.5 quickstart 及该页示例参数，不推广为全部系列默认值。"
+    },
+    {
+      "id": "MM-S072",
+      "title": "InternVL2.5-8B modeling_internvl_chat 官方实现",
+      "url": "https://huggingface.co/OpenGVLab/InternVL2_5-8B/blob/main/modeling_internvl_chat.py",
+      "platform": "OpenGVLab 官方模型代码",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 num_image_token、mlp1、pixel_shuffle、extract_feature、chat/generate；核验去 CLS、空间重排到通道、模板按每块视觉 token 展开。页面文件最近提交显示 e9e4c0d；没有运行模型。",
+      "topics": [
+        "InternVL2.5",
+        "PixelShuffle",
+        "连接器"
+      ],
+      "scope": "指定 InternVL2_5-8B checkpoint 的代码；访问日 2026-10-02 的 main，需与配置共同读。"
+    },
+    {
+      "id": "MM-S073",
+      "title": "InternVL2.5-8B 官方 checkpoint 配置",
+      "url": "https://huggingface.co/OpenGVLab/InternVL2_5-8B/blob/main/config.json",
+      "platform": "OpenGVLab 官方模型配置",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 force_image_size=448、patch_size=14、downsample_ratio=0.5、ps_version=v2、max_dynamic_patch=12、use_thumbnail=true；256/tile 为按这些值与模型公式独立计算。",
+      "topics": [
+        "InternVL2.5",
+        "Token预算",
+        "配置"
+      ],
+      "scope": "指定 InternVL2_5-8B checkpoint 在访问日的配置，不代表所有尺寸/版本。"
+    },
+    {
+      "id": "MM-S074",
+      "title": "LLaVA-1.5-7B 官方 checkpoint 配置",
+      "url": "https://huggingface.co/liuhaotian/llava-v1.5-7b/blob/main/config.json",
+      "platform": "LLaVA 作者模型配置",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 image_aspect_ratio=pad、mm_projector_type=mlp2x_gelu、mm_vision_select_feature=patch、select_layer=-2、CLIP patch14-336；结合官方代码独立推导单图 576 patch token。",
+      "topics": [
+        "LLaVA-1.5",
+        "MLP",
+        "Token预算"
+      ],
+      "scope": "指定 llava-v1.5-7b checkpoint，未将 NeXT/OneVision 能力倒填。"
+    },
+    {
+      "id": "MM-S075",
+      "title": "LLaVA 官方 CLIP 视觉特征选择代码",
+      "url": "https://github.com/haotian-liu/LLaVA/blob/main/llava/model/multimodal_encoder/clip_encoder.py",
+      "platform": "GitHub 官方实现",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 feature_select 在 patch 模式下移除 CLS、使用配置层特征，以及 num_patches_per_side 公式；未运行代码。",
+      "topics": [
+        "LLaVA",
+        "PatchToken",
+        "视觉编码"
+      ],
+      "scope": "访问日 main 代码中基础 CLIPVisionTower；额外 S2 路径不作为 LLaVA-1.5 默认配方。"
+    },
+    {
+      "id": "MM-S076",
+      "title": "LLaVA 官方多模态投影器构建代码",
+      "url": "https://github.com/haotian-liu/LLaVA/blob/main/llava/model/multimodal_projector/builder.py",
+      "platform": "GitHub 官方实现",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "已读 build_vision_projector 的 mlpNx_gelu 分支，核验 mlp2x_gelu 为两层 Linear 中间 GELU，投影作用在特征最后维；未运行代码。",
+      "topics": [
+        "MLP",
+        "连接器",
+        "LLaVA-1.5"
+      ],
+      "scope": "访问日 main 源码与 MM-S074 的 checkpoint 类型组合核验。"
+    },
+    {
+      "id": "MM-S077",
+      "title": "Dataset streaming — Hugging Face Datasets",
+      "url": "https://huggingface.co/docs/datasets/stream",
+      "platform": "Hugging Face",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取Stream、IterableDataset、shuffle buffer、分片与worker段；支持按需读取和数据管线资源讨论。它不自动改变模型状态或当前训练batch张量大小为独立工程推断，未运行数据集。",
+      "topics": [
+        "Streaming",
+        "IterableDataset",
+        "数据加载",
+        "主存与磁盘"
+      ]
+    },
+    {
+      "id": "MM-S078",
+      "title": "Performing gradient accumulation with Accelerate",
+      "url": "https://huggingface.co/docs/accelerate/main/en/usage_guides/gradient_accumulation",
+      "platform": "Hugging Face",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取累积流程、损失缩放及variable-size训练样本示例；有效batch与小microbatch的显存关系由前向/反向生命周期独立说明，不把累积步数本身当作状态压缩。main为本次读取版本，未运行示例。",
+      "topics": [
+        "GradientAccumulation",
+        "Microbatch",
+        "LossNormalization"
+      ]
+    },
+    {
+      "id": "MM-S079",
+      "title": "Gradient synchronization — Accelerate main",
+      "url": "https://huggingface.co/docs/accelerate/main/en/concept_guides/gradient_synchronization",
+      "platform": "Hugging Face",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "notes": "读取no_sync前向/反向范围及FSDP no_sync需额外显存段，只核验同步和内存边界，不引用页面性能倍数或把FSDP行为推广到全部累积实现。",
+      "topics": [
+        "GradientAccumulation",
+        "FSDP",
+        "NoSync",
+        "Memory"
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "VLM-001",
+      "category": "VLM",
+      "title": "CLIP 的结构和双向对比损失是什么？",
+      "level": "L1",
+      "tags": [
+        "CLIP",
+        "对比学习"
+      ],
+      "answer": {
+        "quick": "CLIP 用图像和文本双编码器把两种输入映射到同一空间，以归一化特征相似度区分匹配图文对。一个 batch 同时做图到文和文到图分类，学习的是跨模态匹配表征，并非直接训练文本生成器。",
+        "detail": [
+          "正样本通常是同一索引的图文对，其他配对作为负样本。",
+          "温度控制 softmax 的尖锐程度；原论文用可训练对数尺度。",
+          "双向交叉熵取平均，实际数据可能出现同义描述造成的假负例。"
+        ],
+        "pitfalls": [
+          "不要把 CLIP 的文本编码器当作生成式 LLM。"
+        ],
+        "followups": [
+          "大 batch 为什么有帮助，又有什么代价？"
+        ],
+        "formula": "s_ij = <v_i,t_j>/τ；L = (CE(s,diag) + CE(s^T,diag))/2，其中 v、t 为单位向量。"
+      },
+      "reference_ids": [
+        "MM-S010"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S001",
+          "support": "reported_question",
+          "note": "公开面经明确要求介绍 CLIP；此处将其拆成架构与目标。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "VLM-002",
+      "category": "VLM",
+      "title": "CLIP 如何做零样本分类？提示模板有什么作用？",
+      "level": "L1",
+      "tags": [
+        "CLIP",
+        "零样本"
+      ],
+      "answer": {
+        "quick": "把候选类别写成自然语言模板，经文本编码器得到类别向量，再与图像向量计算相似度并排序即可分类。模板影响文本表示和训练分布匹配，因此需验证集选择或模板集成，输出分数也不天然等于校准后的置信度。",
+        "detail": [
+          "例如把类别名嵌入描述照片的句子，而非只用孤立标签。",
+          "图像与文本特征归一化后计算点积，候选类别变动会影响 softmax。",
+          "多模板可先聚合类别特征，再统一归一化与打分。"
+        ],
+        "pitfalls": [
+          "零样本不代表类别概念从未出现在预训练数据。"
+        ],
+        "followups": [
+          "如何评估跨域类别和相似类别？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S011"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "VLM-003",
+      "category": "VLM",
+      "title": "图文检索很好，为什么关系和计数题仍可能答错？",
+      "level": "L2",
+      "tags": [
+        "组合性",
+        "计数"
+      ],
+      "answer": {
+        "quick": "整体图文匹配分数高，不等于模型可靠理解主体、关系、顺序和数量。应构建只交换关系或属性的最小对照样本，看分数能否区分，再分别检查视觉细节、局部表示、训练监督和语言先验的影响。",
+        "detail": [
+          "Winoground 用同词不同组合的图文配对检验组合性。",
+          "计数要区分遮挡、小目标、重复目标与语言猜测。",
+          "整体检索和关系问答应分开评估，不能用一个均值替代。"
+        ],
+        "pitfalls": [
+          "不要由单例错误推断所有 VLM 都缺乏该能力。"
+        ],
+        "followups": [
+          "怎样生成不引入答案泄漏的对照集？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S012"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "VLM-004",
+      "category": "VLM",
+      "title": "SigLIP 与 CLIP 的损失主要区别是什么？",
+      "level": "L2",
+      "tags": [
+        "SigLIP",
+        "对比学习"
+      ],
+      "answer": {
+        "quick": "CLIP 用 batch 内 softmax 比较图文相似度，SigLIP 对每个图文配对分别做 sigmoid 二分类，无需为损失归一化获取完整相似度分布。这改变了正负配对和通信的组织方式，但仍需要处理负样本与计算预算。",
+        "detail": [
+          "正对和负对分别贡献二分类损失。",
+          "小 batch 与大 batch 的效果取决于样本数、负正比例和训练设置。",
+          "损失改变不意味着编码器自动具备生成或 grounding 能力。"
+        ],
+        "pitfalls": [
+          "不能说 SigLIP 完全不需要负样本或跨卡通信。"
+        ],
+        "followups": [
+          "逐对损失如何实现分块计算？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S013"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "VLM-005",
+      "category": "VLM",
+      "title": "BLIP 的 ITC、ITM、LM 三个目标各做什么？",
+      "level": "L1",
+      "tags": [
+        "BLIP",
+        "预训练目标"
+      ],
+      "answer": {
+        "quick": "BLIP 用图文对比 ITC 学整体语义空间，用图文匹配 ITM 学融合后的细粒度对应，用语言建模 LM 学基于图像生成描述。三种目标支持理解与生成任务，差别体现在编码交互和监督形式，而非三个名称的机械相加。",
+        "detail": [
+          "ITC 分别编码图像与文本后做对比学习。",
+          "ITM 通过跨模态交互判断图文是否匹配，可使用困难负例。",
+          "LM 用因果文本注意力预测后续文本，视觉信息作为条件。"
+        ],
+        "pitfalls": [
+          "ITM 是配对匹配，不是对比 softmax 的另一个名字。"
+        ],
+        "followups": [
+          "三种目标的 attention mask 有何不同？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S014"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S001",
+          "support": "reported_question",
+          "note": "面经明确问 BLIP 的三个损失；仅抽该主题。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "VLM-006",
+      "category": "VLM",
+      "title": "BLIP 的 CapFilt 为什么同时需要 captioner 和 filter？",
+      "level": "L2",
+      "tags": [
+        "BLIP",
+        "数据清洗"
+      ],
+      "answer": {
+        "quick": "网络图文对可能含无关文字，captioner 根据图像补充描述，filter 判断原始和生成描述是否匹配图像。生成和过滤共同提升训练信号质量；生成描述也会犯错，因此需要独立过滤和人工抽检，不能把合成数据视为可靠标签。",
+        "detail": [
+          "captioner 负责补充图像条件描述，filter 负责筛掉错配。",
+          "保留描述多样性与提高精确性之间需要权衡。",
+          "工程中进一步做去重、质量分层和域外抽检。"
+        ],
+        "pitfalls": [
+          "过滤器与生成器同源时可能共享错误偏好。"
+        ],
+        "followups": [
+          "如何测量过滤后的长尾覆盖损失？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S014"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S001",
+          "support": "reported_question",
+          "note": "面经同一道 BLIP 问题涉及数据清洗，此题展开 CapFilt。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "VLM-007",
+      "category": "VLM",
+      "title": "BLIP-2 的 Q-Former 为什么能连接冻结的视觉编码器和 LLM？",
+      "level": "L1",
+      "tags": [
+        "BLIP-2",
+        "Q-Former",
+        "可学习查询",
+        "两阶段预训练"
+      ],
+      "answer": {
+        "quick": "Q-Former 是带可学习查询的 Transformer：查询先自注意力交互，再跨注意力读取视觉特征，输出固定数量表示并投影为 LLM 软提示。BLIP-2 用两阶段训练对齐冻结骨干；原论文用 32 个查询，这不是所有实现的固定值。",
+        "detail": [
+          "设视觉特征为 N×d_v，查询为 M×d_q；cross-attention 的 Q 来自查询，K/V 来自视觉特征，输出为 M×d_q，再映射到 LLM 维度。输出查询数 M 不随输入 patch 数 N 直接增长。",
+          "原始 Q-Former 从 BERT-base 初始化共享自注意力层，每隔一个 Transformer block 插入视觉 cross-attention。查询会相互交互，不能把它理解为对每个 patch 独立做投影。",
+          "第一阶段用 ITC、ITM、ITG 学图文表示：ITC 隔离 query 与文本，ITM 允许两者双向交互；ITG 用混合掩码，query 之间双向可见且不看文本，文本可看全部 query 和已生成文本。query 子图不是 causal；第二阶段以 LLM 生成目标更新 Q-Former 与投影层。",
+          "冻结视觉骨干和 LLM 指其参数不更新；仍需让梯度经过冻结 LLM 回到连接器。把 LLM 前向包进 no_grad 会切断所需训练路径。",
+          "原始 BLIP-2 生成阶段的视觉查询未直接接收用户指令；InstructBLIP 把指令送入 Q-Former，实现指令相关特征提取。不能把这一改动倒填为所有 BLIP-2 的默认机制。"
+        ],
+        "pitfalls": [
+          "可学习 query 是模型参数向量，不等于用户问题文本、检测框或 LLM 每步的 query。",
+          "32 是原始 BLIP-2 实验设置；更多查询会改变瓶颈与 LLM 成本，不能当成架构必须值。"
+        ],
+        "followups": [
+          "ITC、ITM、ITG 的 query/text 可见关系为什么不同？",
+          "冻结 LLM 时，如何验证连接器仍有非零梯度？"
+        ],
+        "formula": "Z=QFormer(Q_learned,X)∈R^{M×d_q}; V_soft=Z·W_proj∈R^{M×d_LLM}"
+      },
+      "reference_ids": [
+        "MM-S015",
+        "MM-S068"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S001",
+          "support": "reported_question",
+          "note": "面经问 BLIP2 的改进，且明确提到 Q-Former。"
+        }
+      ],
+      "editorial": false,
+      "user_supplement_keys": [
+        "U00"
+      ]
+    },
+    {
+      "id": "VLM-008",
+      "category": "VLM",
+      "title": "Q-Former 与两层 MLP 连接器怎样选，MLP 已普遍淘汰 Q-Former 吗？",
+      "level": "L2",
+      "tags": [
+        "连接器",
+        "架构比较",
+        "Q-Former",
+        "MLP",
+        "Resampler",
+        "Token预算"
+      ],
+      "answer": {
+        "quick": "两层 MLP 逐 patch 映射，结构简单且不主动压成少量查询；Q-Former 先交互提取再压缩，减少 LLM token 负担。选型取决于局部细节、冻结策略和预算。公开论文与实现显示多种路径并存，不能据此宣称业界普遍淘汰 Q-Former。",
+        "detail": [
+          "LLaVA-1.5 的两层连接器为 Linear→GELU→Linear，N 个视觉 token 映射后仍是 N 个；连接器本身不新增跨 token 混合，视觉编码器此前已可通过注意力融合上下文。这保留 patch 粒度，不等于保证原始像素信息无损。",
+          "Q-Former 用 M 个查询汇聚 N 个视觉特征，增加查询自注意力与 cross-attention 成本，却可减小后续 LLM 的序列、prefill 与 KV 预算。比较应计入视觉编码、连接器和 LLM 的端到端训练/推理开销。",
+          "需要读小字、局部定位且 token 预算充足时，可先试逐 patch MLP；多图/视频或 LLM 输入预算紧张时，可试查询压缩。固定 M 可能形成细节瓶颈，但压缩不必然损害 OCR，必须在对应任务、分辨率与数据上消融。",
+          "MLP 是简洁的有效基线；BLIP-2 的两阶段表征学习服务于冻结骨干，InstructBLIP 用指令感知 Q-Former，MiniCPM-V 4.5 用 3D-Resampler 压缩图像/视频。实例说明设计路径并存，不能证明商业部署占比或普遍淘汰趋势。",
+          "Resampler 是更宽泛的特征重采样设计；MiniCPM 的可学习查询、位置编码和 cross-attention 不等于 BLIP-2 的 BERT 初始化、共享文本分支及 ITC/ITM/ITG 目标。不要把所有固定 token 压缩器都称为 Q-Former。"
+        ],
+        "pitfalls": [
+          "不同视觉骨干、数据和冻结策略的整模型成绩不能全部归因连接器，也不能外推成“MLP 一定更强”。",
+          "MLP 本身通常不压 token；若系统另有 pooling/pixel shuffle，压缩应归于那些操作。"
+        ],
+        "followups": [
+          "同一视觉骨干下，怎样分别控制视觉 token 数与总 FLOPs 做比较？",
+          "若查询压缩使 OCR 退化，你会调整查询数、切图、训练数据还是连接器？"
+        ],
+        "formula": "逐 token MLP: N×d_v→N×d_LLM；查询桥接: N×d_v→M×d_q→M×d_LLM"
+      },
+      "reference_ids": [
+        "MM-S015",
+        "MM-S017",
+        "MM-S068",
+        "MM-S069",
+        "MM-S070",
+        "MM-S076"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S001",
+          "support": "reported_question",
+          "note": "面经明确比较 BLIP2 Q-Former 与 LLaVA MLP 的利弊。"
+        }
+      ],
+      "editorial": false,
+      "user_supplement_keys": [
+        "U00",
+        "U01"
+      ]
+    },
+    {
+      "id": "VLM-009",
+      "category": "VLM",
+      "title": "原始 LLaVA 的两阶段训练分别更新哪些模块？",
+      "level": "L1",
+      "tags": [
+        "LLaVA",
+        "训练阶段"
+      ],
+      "answer": {
+        "quick": "原始 LLaVA 先冻结视觉编码器和 LLM，仅训练投影层做特征对齐；再保持视觉编码器冻结，更新投影层和 LLM 学多模态指令跟随。必须说明具体版本，因为后续 VLM 的视觉解冻和阶段划分可能不同。",
+        "detail": [
+          "第一阶段图文描述数据把视觉特征接入语言嵌入空间。",
+          "第二阶段用对话、详细描述和推理指令学习回答格式与任务。",
+          "两阶段职责不同，指令效果不能只靠增大连接器获得。"
+        ],
+        "pitfalls": [
+          "原论文说 end-to-end 不代表所有模块都解冻。"
+        ],
+        "followups": [
+          "域内视觉分布变化时是否应解冻视觉骨干？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S016"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "VLM-010",
+      "category": "VLM",
+      "title": "VLM 指令微调的 labels 应怎样掩码？",
+      "level": "L2",
+      "tags": [
+        "SFT",
+        "Loss Mask"
+      ],
+      "answer": {
+        "quick": "常见对话式 VLM 只对 assistant 的文本答案及结束标记计算自回归损失，用户问题、系统提示、视觉占位和 padding 用忽略标签。关键是处理视觉 token 展开后的序列对齐与因果移位，错位会造成无声的训练失败。",
+        "detail": [
+          "先生成最终多模态序列，再确保 labels 与实际 token 位置一致。",
+          "检查每个样本有效监督 token 数，防止答案全被屏蔽。",
+          "多轮历史是否监督应遵循数据配方，不能照搬纯文本模板。"
+        ],
+        "pitfalls": [
+          "attention mask 与 loss mask 控制不同事情。"
+        ],
+        "followups": [
+          "如何用单样本打印核对输入与目标？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S016"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "VLM-011",
+      "category": "VLM",
+      "title": "LLaVA-1.5 相比原始 LLaVA 的关键改进是什么？",
+      "level": "L1",
+      "tags": [
+        "LLaVA-1.5",
+        "数据"
+      ],
+      "answer": {
+        "quick": "LLaVA-1.5 通过两层 MLP 连接器、更高分辨率视觉输入，以及覆盖 VQA、OCR、区域问答的任务数据改善能力。答案格式提示也参与配方，面试时应把架构、分辨率、数据和监督分别解释，避免只背一个模型名。",
+        "detail": [
+          "连接器从线性映射扩展为 MLP。",
+          "CLIP 视觉骨干采用 336px 配置，提高可见细节。",
+          "增加学术任务数据和简短答案格式约束，减少任务输出冲突。"
+        ],
+        "pitfalls": [
+          "性能进步不意味着原始模型视觉骨干整体解冻。"
+        ],
+        "followups": [
+          "格式提示为什么会影响开放问答表现？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S017"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "VLM-012",
+      "category": "VLM",
+      "title": "Qwen2-VL 的动态分辨率解决了什么问题？",
+      "level": "L2",
+      "tags": [
+        "Qwen2-VL",
+        "视觉token"
+      ],
+      "answer": {
+        "quick": "固定尺寸缩放会损失小字并扭曲长宽比，动态分辨率让输入尺寸映射成可变长度视觉序列，再对局部 token 合并控制 LLM 成本。细节与成本的权衡仍存在，因此部署应限制像素和视觉 token 上限并按任务评估。",
+        "detail": [
+          "ViT 使用二维位置表达处理不同空间大小。",
+          "邻近 2×2 视觉 token 经合并减少进入 LLM 的序列长度。",
+          "图像越大通常 token 越多，不能只按图像张数估算显存。"
+        ],
+        "pitfalls": [
+          "动态分辨率不是无限分辨率，也不等于完全不缩放。"
+        ],
+        "followups": [
+          "OCR 与自然图片如何设置不同预算？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S018"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "VLM-013",
+      "category": "VLM",
+      "title": "M-RoPE 如何统一文本、图像和视频位置？",
+      "level": "L2",
+      "tags": [
+        "M-RoPE",
+        "位置编码"
+      ],
+      "answer": {
+        "quick": "Qwen2-VL 将旋转位置编码的维度分配给时间、高度和宽度。文本三者使用相同位置索引，图像固定时间并区分空间位置，视频还引入帧时间位置；它提供坐标结构，不会自动解决图文对齐或任意长度外推。",
+        "detail": [
+          "三组位置分别作用于对应的通道子空间。",
+          "混合模态输入需连续安排位置编号，保持边界可解释。",
+          "后续版本可改变时间编码定义，回答需说明版本。"
+        ],
+        "pitfalls": [
+          "Qwen2-VL 帧序号与 Qwen2.5-VL 绝对时间不能混写。"
+        ],
+        "followups": [
+          "多图与视频的时间位置为何应区分？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S018"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "VLM-014",
+      "category": "VLM",
+      "title": "Qwen2.5-VL 的视觉编码器和时间建模有哪些变化？",
+      "level": "L2",
+      "tags": [
+        "Qwen2.5-VL",
+        "窗口注意力"
+      ],
+      "answer": {
+        "quick": "Qwen2.5-VL 在视觉编码器多数层用窗口注意力，同时保留少量全局注意力；引入动态 FPS 采样和对绝对时间对齐的位置编码。这降低局部视觉计算并增强时间表达，但模型整体计算不因此变成纯线性。",
+        "detail": [
+          "窗口层在固定窗口大小下对 patch 数近似线性。",
+          "四层全局注意力仍建模跨窗口信息并产生全局成本。",
+          "合并视觉特征后送入语言模型，LLM 长度成本也需计算。"
+        ],
+        "pitfalls": [
+          "不要把整个 ViT 或整个 VLM 的复杂度都写成 O(n)。"
+        ],
+        "followups": [
+          "窗口大小与小目标识别如何权衡？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S019"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S007",
+          "support": "search_snippet",
+          "note": "搜索片段含 Qwen2.5-VL 结构问法；答案以作者技术报告校对。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "VLM-015",
+      "category": "VLM",
+      "title": "InternVL 的动态切图与全局缩略图各有什么作用？",
+      "level": "L2",
+      "tags": [
+        "InternVL",
+        "动态切图"
+      ],
+      "answer": {
+        "quick": "动态切图把高分辨率图像按合适长宽比分成多个固定大小 tile，保留局部细节；全局缩略图补充整体布局。输入代价随 tile 数增加，必须维护同一原图的 tile 顺序与数量，裁剪坐标也要能映射回原图。",
+        "detail": [
+          "官方示例用长宽比匹配网格，再裁成固定尺寸块。",
+          "缩略图帮助模型理解各局部块之间的整体关系。",
+          "max_num 限制切块预算；版本和实现可能使用不同规则。"
+        ],
+        "pitfalls": [
+          "不能把每个 tile 误当作一张独立原图。"
+        ],
+        "followups": [
+          "表格跨 tile 边界时如何减少结构损失？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S020"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "VLM-016",
+      "category": "VLM",
+      "title": "OCR/文档问答差，怎样判断是视觉瓶颈还是语言瓶颈？",
+      "level": "L2",
+      "tags": [
+        "OCR",
+        "DocVQA"
+      ],
+      "answer": {
+        "quick": "先用裁剪或提高分辨率检查字是否可辨，再把可靠 OCR 文本与布局作为对照输入。若文本对照能答而图片不能，优先检查视觉表示和接入；若两者都错，检查问题语义、布局关系、检索范围及监督。",
+        "detail": [
+          "分开报告文字识别、字段关联和推理准确率。",
+          "比较大小字、旋转、扫描噪声和多列排版切片。",
+          "核对预处理方向、归一化和裁剪是否损坏文本。"
+        ],
+        "pitfalls": [
+          "外部 OCR 同样有误差，不能直接当完美真值。"
+        ],
+        "followups": [
+          "图表数值读对但单位读错如何构造评测？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S021"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S006",
+          "support": "reported_question",
+          "note": "公开题目列表包含 document understanding/layout。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "VLM-017",
+      "category": "VLM",
+      "title": "单图 VLM 怎样扩展到多页文档问答？",
+      "level": "L3",
+      "tags": [
+        "多页文档",
+        "检索"
+      ],
+      "answer": {
+        "quick": "多页文档需要同时解决相关页定位与页面内读取。可先检索候选页，再结合页码、视觉与文本布局回答；长文档也可使用分层聚合。应保留答案所在页的证据，分别衡量检索召回和最终问答准确率。",
+        "detail": [
+          "多页直接拼接会增加 token、干扰页和位置混淆。",
+          "页级检索后做细粒度读取，评估跨页关系是否被截断。",
+          "训练样本需包含页标识、无答案页和跨页问题。"
+        ],
+        "pitfalls": [
+          "检索错页时不能靠生成答案掩盖错误。"
+        ],
+        "followups": [
+          "怎样处理答案跨两页的表格？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S022"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S006",
+          "support": "reported_question",
+          "note": "公开题目明确提出单图问答有效、多页文档失败的场景。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "VLM-018",
+      "category": "VLM",
+      "title": "视觉幻觉怎样定义、评测和缓解？",
+      "level": "L2",
+      "tags": [
+        "视觉幻觉",
+        "POPE"
+      ],
+      "answer": {
+        "quick": "视觉幻觉是回答中的对象、属性或关系不受图像支持。POPE 通过对象存在性问答衡量一部分幻觉，开放描述还需事实核对。缓解要覆盖数据、视觉证据、训练与解码，不能只依赖更保守的输出风格。",
+        "detail": [
+          "按对象、属性、关系分别建立标注和失败切片。",
+          "同时关注错误肯定和过度否定，避免只会回答不知道。",
+          "检查真实图像条件、语言先验和数据共现偏差。"
+        ],
+        "pitfalls": [
+          "POPE 分数不是所有视觉幻觉的完整度量。"
+        ],
+        "followups": [
+          "更短的描述为何可能降低幻觉指标却损失信息？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S023"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S006",
+          "support": "reported_question",
+          "note": "题目列表包含 VLM 生成事实错误图像描述的排查场景。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "VLM-019",
+      "category": "VLM",
+      "title": "多模态模型看起来不看图，如何排查？",
+      "level": "L3",
+      "tags": [
+        "图像依赖",
+        "消融"
+      ],
+      "answer": {
+        "quick": "用同一问题替换、遮挡和打乱图像，观察答案对视觉证据是否敏感，再检查视觉输入是否真正进入模型以及梯度是否到达连接器。若链路正常，再检验文本捷径和数据偏差；只看注意力热图不足以证明因果依赖。",
+        "detail": [
+          "先核对占位符、pixel_values、视觉 token 数和 mask。",
+          "对照只用文本、正确图像和错配图像的准确率。",
+          "检查连接器梯度、视觉特征变化和标签是否泄漏答案。"
+        ],
+        "pitfalls": [
+          "错配图像不改变答案也可能是问题本来不依赖图像。"
+        ],
+        "followups": [
+          "视觉对比解码为何可能降低语言先验干扰？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S024",
+        "MM-S026"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S006",
+          "support": "reported_question",
+          "note": "公开题目明确提出模型忽略图像只按文本描述的问题。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "VLM-020",
+      "category": "VLM",
+      "title": "VLM 能力如何评估，为什么不能只报一个榜单分数？",
+      "level": "L2",
+      "tags": [
+        "MMBench",
+        "评估"
+      ],
+      "answer": {
+        "quick": "多模态任务涵盖感知、OCR、空间关系、推理和指令遵循，一个平均分会隐藏弱项。应固定模型版本、输入预算和评测协议，报告任务切片、误差类型、延迟与成本，并用人工抽检确认自动评分可靠性。",
+        "detail": [
+          "选择题可测标准化能力，开放问答需更细事实标注。",
+          "控制答案格式、随机性、分辨率与测试集污染。",
+          "业务评估加入无答案、歧义图像和跨域样本。"
+        ],
+        "pitfalls": [
+          "不同提示或图像预算下的榜单分数不宜直接横比。"
+        ],
+        "followups": [
+          "模型裁判如何减少长度偏好与视觉遗漏？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S025"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "VLM-021",
+      "category": "VLM",
+      "title": "微调 VLM 时，视觉骨干、连接器和 LLM 该怎样冻结？",
+      "level": "L3",
+      "tags": [
+        "微调",
+        "冻结策略"
+      ],
+      "answer": {
+        "quick": "先判断差距来自视觉域、跨模态对齐还是任务指令，再选择更新模块。只训练连接器成本低，LLM LoRA 能调整任务行为，视觉解冻适合视觉分布明显变化。应用消融验证收益，并防止少量域数据破坏原有能力。",
+        "detail": [
+          "按参数组记录学习率、梯度与可训练参数数量。",
+          "先验证连接器和格式，再扩大更新范围。",
+          "加入通用图文与纯文本回归集测能力遗忘。"
+        ],
+        "pitfalls": [
+          "冻结参数不等于禁止该模块向前层传递梯度。"
+        ],
+        "followups": [
+          "新视觉骨干替换后能直接复用旧连接器吗？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S026"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S006",
+          "support": "reported_question",
+          "note": "公开题目列表包含 vision-language model fine-tuning。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "VLM-022",
+      "category": "VLM",
+      "title": "交错图文和多图输入如何保持图像与指代关系？",
+      "level": "L2",
+      "tags": [
+        "多图",
+        "Flamingo"
+      ],
+      "answer": {
+        "quick": "多图输入要保留图像边界、顺序和指代标记，让文本能引用对应图像。交错图文训练提供这种关联监督；推理时应核对占位符与视觉块一一对应，训练和测试的图数分布也会影响多图比较能力。",
+        "detail": [
+          "图像边界明确，页面或图片编号与原始数据保持一致。",
+          "训练应包含比较、跨图关联和局部引用任务。",
+          "token 压缩后仍要保存每张图的归属信息。"
+        ],
+        "pitfalls": [
+          "按一张图训练的模型不会自动可靠支持任意张图。"
+        ],
+        "followups": [
+          "交换两图顺序后正确答案应如何变化？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S027",
+        "MM-S020"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "VLM-023",
+      "category": "VLM",
+      "title": "Grounding 与普通图像问答有什么区别？",
+      "level": "L2",
+      "tags": [
+        "Grounding",
+        "坐标"
+      ],
+      "answer": {
+        "quick": "普通问答生成文本，grounding 还要把语言中的实体或短语绑定到图像区域，例如输出框坐标。它需要区域对应监督和坐标协议，评测应检查框的定位与语义；调整尺寸、裁剪或切图后必须正确反变换坐标。",
+        "detail": [
+          "明确输出坐标是像素、归一化数值还是离散位置 token。",
+          "同时核对类别/短语与边界框，不只检查输出格式。",
+          "用 IoU、召回和复杂空间关系切片衡量定位。"
+        ],
+        "pitfalls": [
+          "合法坐标并不代表框对应了正确实体。"
+        ],
+        "followups": [
+          "如何处理多个相同物体的指代表达？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S028"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "VLM-024",
+      "category": "VLM",
+      "title": "多模态预训练和 SFT 的数据配比怎样设计？",
+      "level": "L3",
+      "tags": [
+        "数据配比",
+        "能力平衡"
+      ],
+      "answer": {
+        "quick": "配比应围绕目标能力和数据质量选择，而非简单按原始样本量混合。自然图像、OCR、文档、区域问答和纯文本的 token 成本与难度不同，要先建立分任务评测，再通过受控采样与消融寻找能力和成本的平衡。",
+        "detail": [
+          "记录去重后样本数、视觉 token 数和有效答案 token 数。",
+          "低质量海量描述可能压过稀缺细粒度监督。",
+          "持续检查纯文本回归、视觉细节和域外泛化。"
+        ],
+        "pitfalls": [
+          "不能把单篇论文的配比当跨模型最优配方。"
+        ],
+        "followups": [
+          "如何区分数据质量收益与训练步数收益？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S029"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "VLM-025",
+      "category": "VLM",
+      "title": "多模态检索模型与生成式 VLM 问答怎样分工？",
+      "level": "L2",
+      "tags": [
+        "ColPali",
+        "检索",
+        "RAG"
+      ],
+      "answer": {
+        "quick": "检索模型把问题和视觉文档映射成可评分表示，负责找证据；生成式 VLM 结合检索页和问题生成答案。视觉多向量可保留页面局部信息，但索引与匹配成本更高；系统应分别衡量检索召回、答案正确和引用定位。",
+        "detail": [
+          "单向量适合紧凑索引，多向量支持局部匹配。",
+          "保留页面原图、页码与区域信息供读取和溯源。",
+          "用无关页和跨页题检验召回及证据充分性。"
+        ],
+        "pitfalls": [
+          "会生成图像描述不代表天然适合大规模向量检索。"
+        ],
+        "followups": [
+          "扫描文档为什么可能从视觉检索获益？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S030"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "VLM-026",
+      "category": "VLM",
+      "title": "以 LLaVA-1.5-7B 与 InternVL2.5-8B 为例，除骨干和训练之外有哪些差异？",
+      "level": "L2",
+      "tags": [
+        "LLaVA-1.5",
+        "InternVL2.5",
+        "动态切图",
+        "PixelShuffle",
+        "空间结构",
+        "Token预算",
+        "视频"
+      ],
+      "answer": {
+        "quick": "以 LLaVA-1.5-7B 与 InternVL2.5-8B 为例，前者通常将单图补方后送入 336px 编码器，保留 576 个 patch token；后者动态切成 448px 块，先空间重排压至每块 256 token，再加缩略图或按帧组织输入。",
+        "detail": [
+          "输入组织：本次 LLaVA-1.5-7B 配置为 image_aspect_ratio=pad、336px、14px patch；InternVL2.5 官方示例按长宽比选择网格切 448px tile，max_num=12 限局部块数，多块时另加全局 thumbnail，因此总块数可为 13。",
+          "连接器：前者保留去 CLS 后的 24×24=576 patch，经两层 MLP 映射；后者去 CLS 后将 32×32 网格按 ratio=0.5 重排为 16×16，邻接 2×2 特征进入通道，再经 LayerNorm 与两层 MLP，得到每块 256 token。",
+          "空间结构：InternVL 代码将 tile 按网格行优先排列并在末尾追加 thumbnail，pixel shuffle 保留邻域分组；LLM 最终接收的仍是一维 token 序列。跨 tile 表格/对象关系不能仅凭“保留二维结构”保证，需要全局视图与训练支持。",
+          "预算：InternVL 的视觉 token 约为 256×实际块数，不含边界/文本 token；12 个局部块加缩略图为 3328，而非整张原图固定 256。切图提高可见细节，也增加视觉编码、LLM prefill 与 KV 成本；比较应固定任务和实际输入预算。",
+          "多图/视频：InternVL2.5 quickstart 通过 num_patches_list 标记每张图/每帧的块数，并给出抽帧、Frame 编号示例；LLaVA-1.5 基础版以单图为主。不能将 LLaVA-NeXT/OneVision 的高分辨率或视频能力倒填到 1.5，也不能把抽帧接口等同专用时序编码。"
+        ],
+        "pitfalls": [
+          "本题版本、checkpoint、预处理与 token 数要一起报；不能以两个系列名概括所有后续版本。",
+          "InternVL 函数名是 pixel_shuffle，但 ratio=0.5 实际做空间缩小、通道增大的重排，不是图像超分辨率上采样。"
+        ],
+        "followups": [
+          "为什么 thumbnail 不计入 max_num=12，却必须计入视觉 token 与显存？",
+          "给定相同 OCR 任务预算，怎样消融 tile 数、分辨率与空间压缩率？"
+        ],
+        "formula": "LLaVA-1.5: (336/14)^2=576；InternVL2.5 每tile: (448/14)^2×0.5^2=256；总量=256×(n_tiles+1_{thumbnail且n_tiles>1})"
+      },
+      "reference_ids": [
+        "MM-S017",
+        "MM-S071",
+        "MM-S072",
+        "MM-S073",
+        "MM-S074",
+        "MM-S075",
+        "MM-S076"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "user_supplement_keys": [
+        "U08"
+      ]
+    },
+    {
+      "id": "OMM-001",
+      "category": "OMM",
+      "title": "视频 VLM 为什么不能简单无限堆叠视频帧？",
+      "level": "L2",
+      "tags": [
+        "视频",
+        "抽帧"
+      ],
+      "answer": {
+        "quick": "多帧输入增加视觉 token 与语言上下文开销，连续帧又常含大量重复信息。抽帧需要兼顾事件覆盖和细节，应根据任务比较均匀采样、变化采样或分段检索，并保留时间戳；盲目增帧可能既更慢又遗漏短事件。",
+        "detail": [
+          "按帧数、每帧 token 与文本长度估算整体序列。",
+          "均匀抽帧覆盖时间范围，关键帧策略可能偏向视觉变化。",
+          "图像视频联合训练需处理表示和输入协议的一致性。"
+        ],
+        "pitfalls": [
+          "抽帧序号不能代替真实时间，尤其对可变帧率视频。"
+        ],
+        "followups": [
+          "一分钟短视频和两小时视频如何设不同预算？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S031"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "OMM-002",
+      "category": "OMM",
+      "title": "视频时间位置编码为什么要考虑真实时间与 FPS？",
+      "level": "L2",
+      "tags": [
+        "视频",
+        "时间戳"
+      ],
+      "answer": {
+        "quick": "相同帧序号在不同采样率下代表不同真实时刻，只用帧号会混淆速度和事件间隔。Qwen2.5-VL 将时间位置与绝对时间关联并采用动态 FPS 采样，增强时间表达；仍需训练定位任务与一致的时间单位。",
+        "detail": [
+          "输入要记录原视频时刻，而非只记录取出的第几帧。",
+          "动态 FPS 可使模型看到不同采样密度的数据。",
+          "定位评测应检查时间范围、误差与短事件召回。"
+        ],
+        "pitfalls": [
+          "时间编码改进不能保证模型自动精确定位所有事件。"
+        ],
+        "followups": [
+          "视频被倍速播放时哪些标签需要调整？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S019"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "OMM-003",
+      "category": "OMM",
+      "title": "长视频理解怎样压缩视觉 token，又有什么代价？",
+      "level": "L3",
+      "tags": [
+        "视频压缩",
+        "时空建模"
+      ],
+      "answer": {
+        "quick": "可用空间池化、时空连接器、分段摘要或检索减少长视频输入。压缩降低成本，却可能抹掉短事件、细节和事件顺序，因此要按任务保留局部证据，并比较压缩前后定位与问答效果，不能只看最终文本是否流畅。",
+        "detail": [
+          "VideoLLaMA 2 的时空连接器强调空间与时间联合建模。",
+          "分段处理应携带时间边界，避免摘要覆盖真实证据。",
+          "细粒度动作题需要比主题总结题更高的保真预算。"
+        ],
+        "pitfalls": [
+          "平均所有帧特征会丢失部分顺序信息。"
+        ],
+        "followups": [
+          "怎样设计时间顺序交换的消融测试？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S032"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "OMM-004",
+      "category": "OMM",
+      "title": "视频 moment retrieval 与视频问答如何评估？",
+      "level": "L2",
+      "tags": [
+        "视频定位",
+        "tIoU"
+      ],
+      "answer": {
+        "quick": "视频问答通常评估答案，而 moment retrieval 还要输出与语言查询对应的起止时刻。可用时间区间交并比和阈值召回评价定位，且与显著性评分分开报告；答案正确并不说明模型找到正确片段。",
+        "detail": [
+          "Moment-DETR 把片段坐标与显著性作为不同预测目标。",
+          "tIoU 比较预测区间与真实区间的重叠。",
+          "按短片段、重复动作和多个正确片段分别检查。"
+        ],
+        "pitfalls": [
+          "不要把时间 IoU 当作逐帧分类准确率。"
+        ],
+        "followups": [
+          "有多个有效片段时怎样定义召回？"
+        ],
+        "formula": "I=max(0,min(e_p,e_g)−max(s_p,s_g))；tIoU=I/[(e_p−s_p)+(e_g−s_g)−I]，适用于两个非零时长区间。"
+      },
+      "reference_ids": [
+        "MM-S033"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "OMM-005",
+      "category": "OMM",
+      "title": "Whisper 的输入、架构和多任务接口是什么？",
+      "level": "L1",
+      "tags": [
+        "Whisper",
+        "ASR"
+      ],
+      "answer": {
+        "quick": "Whisper 将音频转成 log-Mel 频谱，经编码器提取表示，再由自回归文本解码器输出识别、翻译或时间戳等 token。原始模型以三十秒音频段训练，长音频需要分窗与时间对齐，不能把它当无延迟流式识别器。",
+        "detail": [
+          "任务与语言由特殊 token 指定。",
+          "跨窗口解码应处理重复、遗漏与上下文传播。",
+          "静音、音乐和噪声样本需独立评估错误转写。"
+        ],
+        "pitfalls": [
+          "转写保留源语言，翻译与转写并非同一任务。"
+        ],
+        "followups": [
+          "分窗边界落在词中间时怎样处理？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S034"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S005",
+          "support": "reported_topic",
+          "note": "社区备考集合明确讨论 Whisper 的 ASR 设计；不是公司面试认证。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "OMM-006",
+      "category": "OMM",
+      "title": "WER 怎样计算？为什么中文 ASR 常同时报 CER？",
+      "level": "L1",
+      "tags": [
+        "WER",
+        "CER",
+        "ASR评估"
+      ],
+      "answer": {
+        "quick": "WER 先在词级对齐预测与参考，用替换、删除、插入总数除以参考词数。中文分词规则会影响词级指标，CER 在字符级计算更便于比较；仍须统一标点、数字和大小写规范，并报告业务关键实体的错误率。",
+        "detail": [
+          "参考词数等于正确、替换与删除的数量之和。",
+          "corpus WER 应先汇总错误和参考词数，再相除。",
+          "插入可使 WER 超过百分之百，空参考要明确协议。"
+        ],
+        "pitfalls": [
+          "不要无条件平均每句 WER，短句会被过度加权。"
+        ],
+        "followups": [
+          "数字格式不同但含义相同如何归一化？"
+        ],
+        "formula": "WER = (S + D + I) / N_ref；CER 使用字符级对齐与参考字符数。"
+      },
+      "reference_ids": [
+        "MM-S035"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S005",
+          "support": "reported_topic",
+          "note": "社区 ASR 主题列出 WER；此题扩展指标计算和中文协议。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "OMM-007",
+      "category": "OMM",
+      "title": "CTC 与自回归语音解码有什么区别？",
+      "level": "L2",
+      "tags": [
+        "CTC",
+        "ASR"
+      ],
+      "answer": {
+        "quick": "CTC 对所有能折叠为目标文本的单调对齐路径求和，常以 blank 连接音频帧与文本，不显式逐步条件于已生成文本；自回归解码逐 token 依赖历史输出。两者在并行性、语言建模和对齐假设上有取舍。",
+        "detail": [
+          "CTC 对齐通常要求输入时间步足够覆盖目标及重复符号。",
+          "CTC 可配合外部语言模型解码，不能说完全没有语言信息。",
+          "自回归模型适合多任务接口，但存在串行解码成本。"
+        ],
+        "pitfalls": [
+          "相邻重复标签折叠与 blank 的处理顺序要明确。"
+        ],
+        "followups": [
+          "为什么重复字符会增加 CTC 的最小输入长度？"
+        ],
+        "formula": "L_CTC = -log Σ_{π:B(π)=y} Π_t p(π_t|x)，B 合并重复并移除 blank。"
+      },
+      "reference_ids": [
+        "MM-S036"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "OMM-008",
+      "category": "OMM",
+      "title": "音频连续特征与离散 codec token 分别适合什么？",
+      "level": "L2",
+      "tags": [
+        "EnCodec",
+        "音频表示"
+      ],
+      "answer": {
+        "quick": "连续音频特征常用于理解与对齐，离散 codec token 则把波形压缩成可生成的符号序列，适合语音语言模型。两者不等价：codec 强调重建质量，理解表征强调语义与任务信息，还要比较帧率、码本数量和时延。",
+        "detail": [
+          "残差向量量化逐层编码剩余误差，形成多个码本。",
+          "增加码本可提升重建细节，也增加生成预测负担。",
+          "评估应同时考虑可懂度、音色、失真与 token 预算。"
+        ],
+        "pitfalls": [
+          "离散音频 token 不是字符 token，也不天然只保留语义。"
+        ],
+        "followups": [
+          "为什么低比特率 codec 可能损害细节理解？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S037"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S005",
+          "support": "reported_topic",
+          "note": "社区多模态备考材料讨论神经 codec 表示。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "OMM-009",
+      "category": "OMM",
+      "title": "VALL-E 式零样本 TTS 为什么能利用短语音提示？",
+      "level": "L2",
+      "tags": [
+        "VALL-E",
+        "TTS"
+      ],
+      "answer": {
+        "quick": "VALL-E 把文本到语音建模为声学 codec token 生成，短参考语音提供说话人和声学条件，因此可在不为该说话人单独微调的情况下合成语音。效果仍依赖参考质量、语言覆盖和模型数据分布，需要分别评估内容与音色。",
+        "detail": [
+          "文本约束要说什么，音频提示提供说话人特征。",
+          "多个 codec 层需采用适合时延与质量的生成安排。",
+          "评测关注可懂度、说话人相似度与鲁棒性。"
+        ],
+        "pitfalls": [
+          "零样本不表示训练集中不存在类似声学条件。"
+        ],
+        "followups": [
+          "嘈杂提示会如何影响合成输出？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S038"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S005",
+          "support": "reported_topic",
+          "note": "社区集合提及 VALL-E 风格的 codec 语言模型 TTS。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "OMM-010",
+      "category": "OMM",
+      "title": "Qwen2-Audio 这类音频理解模型为什么不等于 ASR？",
+      "level": "L2",
+      "tags": [
+        "Qwen2-Audio",
+        "音频理解"
+      ],
+      "answer": {
+        "quick": "ASR 主要输出语音文字，音频理解还涉及声音事件、音乐、说话风格和依赖声学证据的问答。音频编码器接入 LLM 后需要覆盖这些目标的训练与评估；若只把转写文本送入 LLM，部分非语言信息会丢失。",
+        "detail": [
+          "分别评估语音内容、环境声音和声学属性。",
+          "文本提示与直接语音指令是不同输入交互形式。",
+          "用去除语音、替换背景声等对照检查真正的音频依赖。"
+        ],
+        "pitfalls": [
+          "不要把转写准确率当所有音频理解任务的上限。"
+        ],
+        "followups": [
+          "同一句话不同语气如何构造评测？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S039"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "OMM-011",
+      "category": "OMM",
+      "title": "Qwen2.5-Omni 的 Thinker-Talker 如何协作？",
+      "level": "L2",
+      "tags": [
+        "Omni",
+        "Thinker-Talker"
+      ],
+      "answer": {
+        "quick": "Thinker 处理多模态输入并生成文本与高层表示，Talker 利用这些表示和文本 token 生成流式语音 token。两者支持联合训练，音视频输入通过时间对齐位置表达关联；它不同于先完整生成文本再调用独立 TTS。",
+        "detail": [
+          "Thinker 使用音频与图像编码器接入文本解码主干。",
+          "Talker 接收连续表示与离散文本以兼顾语义和发音。",
+          "流式音频解码需要控制感受野、分块和首包延迟。"
+        ],
+        "pitfalls": [
+          "不要把 Omni 模型的全部输入或输出都说成离散 token。"
+        ],
+        "followups": [
+          "TMRoPE 对同步音视频输入有什么帮助？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S040"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "OMM-012",
+      "category": "OMM",
+      "title": "ASR→LLM→TTS 流水线与端到端语音对话怎样选？",
+      "level": "L3",
+      "tags": [
+        "语音对话",
+        "端到端"
+      ],
+      "answer": {
+        "quick": "流水线容易检查中间文本、接工具和单独替换组件，但转写可能丢失韵律并累积延迟。端到端语音模型可保留更多声学信息和实现多流对话，却需要更复杂的数据、控制与评测，选择应围绕实际交互任务验证。",
+        "detail": [
+          "比较同一任务的内容准确、打断恢复和声学表达。",
+          "流水线可并行和分块，延迟不是各阶段整段耗时的简单固定值。",
+          "多流建模可处理用户与模型同时说话的全双工情境。"
+        ],
+        "pitfalls": [
+          "端到端不等于必须舍弃文字接口或工具调用。"
+        ],
+        "followups": [
+          "客服对话和情感陪伴的选择标准为何不同？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S041"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S005",
+          "support": "reported_topic",
+          "note": "社区集合比较 STT→LLM→TTS 与 native speech-to-speech。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "OMM-013",
+      "category": "OMM",
+      "title": "流式语音系统的端到端延迟应怎样拆解？",
+      "level": "L3",
+      "tags": [
+        "流式语音",
+        "延迟"
+      ],
+      "answer": {
+        "quick": "用户可感知延迟包括采集分块、编码前视、识别或理解、模型生成、音频解码、传输与播放缓冲。理论 codec 帧延迟只占其中一部分；要记录首包、持续实时率和打断反应，再通过流式重叠优化关键路径。",
+        "detail": [
+          "区分算法前视、推理耗时和网络/播放器缓冲。",
+          "低帧率减少 token 负担，却可能增加最小输出块时长。",
+          "保持长对话实时率，同时测试尾延迟和设备负载。"
+        ],
+        "pitfalls": [
+          "不能用论文理论延迟直接承诺用户端端到端延迟。"
+        ],
+        "followups": [
+          "降低音频块大小为什么可能降低质量和吞吐？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S041"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "OMM-014",
+      "category": "OMM",
+      "title": "为什么唇读等视觉信息可以帮助噪声下的 ASR？",
+      "level": "L2",
+      "tags": [
+        "AV-HuBERT",
+        "音视频"
+      ],
+      "answer": {
+        "quick": "嘴部运动提供与语音相关的可见线索，在音频噪声或缺失时可补充声学证据。音视频表征必须同步，还要处理遮挡、侧脸和多个说话人；可视信息无法区分所有语音，因此不能认为视觉支路能替代可靠音频。",
+        "detail": [
+          "AV-HuBERT 通过多模态掩码与聚类目标学习联合表示。",
+          "预处理检查嘴部裁剪和音视频时钟一致性。",
+          "按噪声、遮挡、视角和不同说话人分组评估。"
+        ],
+        "pitfalls": [
+          "相似口型可对应不同声音，唇读本身存在歧义。"
+        ],
+        "followups": [
+          "音视频错位多少时应触发降级？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S042"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "OMM-015",
+      "category": "OMM",
+      "title": "Omni 模型怎样评估是否真的融合了声音与视觉？",
+      "level": "L3",
+      "tags": [
+        "OmniBench",
+        "联合证据"
+      ],
+      "answer": {
+        "quick": "要设计必须联合两种模态才可解答的样本，再分别移除或替换音频、视觉做对照，比较完整输入和单模态基线。单一模态能猜中的题不能证明融合；同步、矛盾线索和模态缺失也应独立评测并保留证据标注。",
+        "detail": [
+          "OmniBench 强调视觉、声音、文字共同识别和推理。",
+          "标明答案依赖的时间片段与模态来源。",
+          "衡量正确答案之外的证据一致性和不确定性处理。"
+        ],
+        "pitfalls": [
+          "多模态输入可被某个强模态捷径主导。"
+        ],
+        "followups": [
+          "声音与画面相矛盾时应输出什么？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S043"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "DST-001",
+      "category": "DST",
+      "title": "数据并行 DDP 每个 step 做了什么？",
+      "level": "L1",
+      "tags": [
+        "DDP",
+        "数据并行"
+      ],
+      "answer": {
+        "quick": "DDP 让各进程持有模型副本并处理各自数据，反向传播期间聚合梯度，各副本执行相同优化器更新。它不会自动分割数据集，也通常不切分模型状态；需要一致初始化、数据采样和 collective 顺序才能正确训练。",
+        "detail": [
+          "训练程序负责为各 rank 提供不同的数据子集。",
+          "梯度同步后，各 rank 用同一结果更新本地参数。",
+          "广播 buffers 与梯度归约是不同机制。"
+        ],
+        "pitfalls": [
+          "DDP 不会让每张卡只持有一部分模型参数。"
+        ],
+        "followups": [
+          "为什么单卡可训练，多卡却可能 OOM？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S050"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S002",
+          "support": "reported_question",
+          "note": "公开基础架构面经明确问对数据并行的理解。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "DST-002",
+      "category": "DST",
+      "title": "DDP 梯度累积如何保持与大 batch 等价？",
+      "level": "L2",
+      "tags": [
+        "梯度累积",
+        "Loss归一化"
+      ],
+      "answer": {
+        "quick": "等大小 microbatch 时，按累积步数缩放损失并只在最后同步，可得到同一有效 batch 的平均梯度。变长文本应按有效监督 token 总数加权，否则短序列被放大；优化器步数、调度器和梯度裁剪都要按更新边界处理。",
+        "detail": [
+          "DDP no_sync 需同时包住前向和反向过程。",
+          "每组累积结束后再裁剪、step 与清梯度。",
+          "dropout、BatchNorm 或随机性可能使其与整批计算不严格一致。"
+        ],
+        "pitfalls": [
+          "框架若已归一化损失，再除一次会使梯度过小。"
+        ],
+        "followups": [
+          "各 rank 有效 token 数不同时如何得到全局均值？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S050"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "DST-003",
+      "category": "DST",
+      "title": "大模型训练显存怎样估算和优化？以 7B Adam 为例",
+      "level": "L1",
+      "tags": [
+        "显存估算",
+        "Adam",
+        "Microbatch",
+        "GradientAccumulation",
+        "ZeRO",
+        "FlashAttention",
+        "Streaming"
+      ],
+      "answer": {
+        "quick": "先将显存拆为权重、梯度、优化器/主权重、激活与工作区；16字节每参数仅是特定混合精度Adam假设。再按瓶颈选小microbatch配累积、重计算、状态分片或offload。FlashAttention减少中间存储；数据流式加载主要解决磁盘/主存问题。",
+        "detail": [
+          "若低精度权重和梯度各2P bytes，FP32主权重4P、Adam一二阶状态合计8P，模型状态为16P；P=7×10^9对应112GB十进制，约104.3GiB。实现若用FP32梯度、无独立主权重或不同优化器须重算。峰值另含保留激活、算子工作区、通信桶与临时聚合；allocated、reserved和设备已用量也不是同一口径。",
+          "固定有效batch时，减小每卡microbatch并增加累积步数，逐个前向/反向释放计算图，通常可降低激活峰值；保持microbatch不变只增加累积步数不会自动省激活，也不减少底座权重或Adam状态。等大小样本时B_eff=B_micro×A×D；变长样本按有效监督token加权，避免重复归一化。FSDP no_sync等实现还可能保留完整梯度，必须实测峰值。",
+          "普通DDP复制模型状态；TP切分单层矩阵与计算，PP切分不同层，ZeRO在数据并行组内依次分片optimizer/master、gradients、parameters。分片范围和峰值不同，当前模块的参数all-gather、通信桶、PP在途microbatch均可能增加临时占用。CPU/NVMe offload迁移状态以换容量，受传输与主存/存储带宽限制；详见DST-004/013/015。",
+          "激活checkpointing用反向重算换保留激活；标准FlashAttention以分块和在线softmax避免完整S×S注意力矩阵驻留HBM，计算精确稠密注意力，浮点次序可有差异，算术复杂度仍约O(S²)。稀疏attention改变可见连接/算法，需单独评测质量，不应与FlashAttention混称；LoRA等减少可训练状态，长序列激活仍可很大。",
+          "数据集streaming按需读取数据，可减少整库下载/转换及主存常驻，并需设置分片、shuffle buffer和worker；它不自动压缩模型参数、optimizer或当前batch激活。先profile峰值出现于前向、反向还是step，再比较显存、有效token吞吐与任务质量；减长度、量化、冻结或稀疏化均需说明目标/精度变化。"
+        ],
+        "pitfalls": [
+          "仅加梯度累积就声称显存下降，或用16P状态账单冒充所有实现的峰值显存。",
+          "把数据流式加载、TP/PP、ZeRO和稀疏attention视为同一种省显存操作，忽略各自影响的对象及通信/质量成本。"
+        ],
+        "followups": [
+          "microbatch已经是1而权重与optimizer仍放不下时，应优先尝试哪些状态优化？",
+          "怎么用profiler与峰值allocated/reserved区分激活、参数聚合和optimizer.step的OOM？"
+        ],
+        "formula": "M_states=(2+2+4+4+4)P=16P bytes（指定dtype的Adam例）；M_peak还含activations/workspace/communication；B_eff=B_micro×A×D（等大小microbatch，D为数据并行度）"
+      },
+      "reference_ids": [
+        "MM-S052",
+        "MM-S050",
+        "MM-S053",
+        "MM-S055",
+        "MM-S057",
+        "MM-S060",
+        "CORE-S046",
+        "CORE-S057",
+        "MM-S077",
+        "MM-S078",
+        "MM-S079"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S003",
+          "support": "search_snippet",
+          "note": "牛客搜索片段明确问 7B 微调 Adam 混合精度内存倍数。"
+        }
+      ],
+      "editorial": false,
+      "article_supplement_keys": [
+        "Z29"
+      ]
+    },
+    {
+      "id": "DST-004",
+      "category": "DST",
+      "title": "ZeRO-1/2/3 各切分什么？理想状态显存是多少？",
+      "level": "L1",
+      "tags": [
+        "ZeRO",
+        "显存"
+      ],
+      "answer": {
+        "quick": "ZeRO 在数据并行组内依次切分优化器状态、梯度和参数，减少副本冗余。显存收益要按状态 dtype 和数据并行度计算，不能简单说每升一级都减半；第三阶段还需临时收集当前计算模块的参数，峰值仍有额外成本。",
+        "detail": [
+          "在 16P 假设下，Stage 1 为 4P+12P/D。",
+          "Stage 2 为 2P+14P/D，Stage 3 理想持久状态为 16P/D。",
+          "这些不含激活、通信桶与未分片参数，也不保证每 rank 峰值相同。"
+        ],
+        "pitfalls": [
+          "ZeRO 切状态冗余，与 TP 切单个矩阵计算不同。"
+        ],
+        "followups": [
+          "为什么 ZeRO-3 节省显存却可能更慢？"
+        ],
+        "formula": "D 为数据并行分片数；M1=4P+12P/D，M2=2P+14P/D，M3≈16P/D（沿用 DST-003 的 dtype 假设）。"
+      },
+      "reference_ids": [
+        "MM-S052",
+        "MM-S053"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S002",
+          "support": "reported_question",
+          "note": "面经明确问 DeepSpeed 各 ZeRO stage 的作用。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "DST-005",
+      "category": "DST",
+      "title": "FSDP 与 ZeRO-3 有什么联系和区别？",
+      "level": "L2",
+      "tags": [
+        "FSDP",
+        "ZeRO"
+      ],
+      "answer": {
+        "quick": "两者都可将参数、梯度和优化器状态分片，并在需要计算时收集参数、归约后保留局部梯度。区别主要在框架集成、分片表示、通信调度和配置接口；回答 FSDP 时要指明版本，FSDP2 的 fully_shard 与旧包装 API 不同。",
+        "detail": [
+          "FSDP2 按参数使用 DTensor 表示分片。",
+          "模块分组影响参数收集粒度、显存峰值和通信重叠。",
+          "reshard 策略以驻留内存换重复收集成本。"
+        ],
+        "pitfalls": [
+          "不能认为 FSDP 与 DeepSpeed 配置可直接互换。"
+        ],
+        "followups": [
+          "为什么只在根模块分片可能提高峰值显存？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S054"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S004",
+          "support": "reported_topic",
+          "note": "公开 Infra 题目集合讨论 FSDP 收集参数与分片梯度；公司/频率未采纳。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "DST-006",
+      "category": "DST",
+      "title": "Megatron 的 MLP 张量并行为什么先列切再行切？",
+      "level": "L2",
+      "tags": [
+        "张量并行",
+        "Megatron"
+      ],
+      "answer": {
+        "quick": "按矩阵乘法记号，第一层权重沿输出维度切分，各卡独立得到并激活部分中间特征；第二层沿输入维度切分，各卡得到输出的部分和，再归约求和。这样可避免在两次 GEMM 之间收集中间特征，具体通信依布局调整。",
+        "detail": [
+          "非线性通常可逐元素作用于各分片输出。",
+          "第二层局部乘积需要相加，不是简单拼接。",
+          "反向也有对应通信，SP 等方案可改变 collective 布局。"
+        ],
+        "pitfalls": [
+          "框架权重存储可能转置，必须明确所谓行和列。"
+        ],
+        "followups": [
+          "attention 中 QKV 与输出投影怎样对应切分？"
+        ],
+        "formula": "W1=[W1_1,…,W1_D]，H_i=φ(XW1_i)；W2 按对应输入维分块，Y=Σ_i H_i W2_i。"
+      },
+      "reference_ids": [
+        "MM-S055"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S003",
+          "support": "search_snippet",
+          "note": "牛客片段出现张量并行与 ZeRO 区别；此题延伸层内切分细节。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "DST-007",
+      "category": "DST",
+      "title": "流水线并行的 bubble 从哪里来，怎样降低？",
+      "level": "L2",
+      "tags": [
+        "流水线并行",
+        "Bubble"
+      ],
+      "answer": {
+        "quick": "流水线把不同层分配到不同阶段，启动和排空时部分卡在等待，形成 bubble。用多个 microbatch、合理前后向调度、虚拟阶段和负载平衡可降低浪费，但更多 microbatch、通信和激活驻留也有成本，不能只按层数平均切分。",
+        "detail": [
+          "GPipe 与 1F1B 的激活驻留和调度不同。",
+          "阶段耗时受层结构、输入长度和通信影响。",
+          "理想等时阶段的近似只用于直觉估算。"
+        ],
+        "pitfalls": [
+          "增大 microbatch 个数不一定增大每个 microbatch 的 batch size。"
+        ],
+        "followups": [
+          "视觉编码器放在首阶段为何易失衡？"
+        ],
+        "formula": "理想 fill-drain 且 p 个等时阶段、m 个 microbatch：bubble 占比约 (p−1)/(m+p−1)；实际依调度和负载而变。"
+      },
+      "reference_ids": [
+        "MM-S056"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S002",
+          "support": "reported_question",
+          "note": "面经明确问流水线并行理解。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "DST-008",
+      "category": "DST",
+      "title": "Megatron 的 Sequence Parallelism 与 TP 怎样配合？",
+      "level": "L2",
+      "tags": [
+        "序列并行",
+        "SP"
+      ],
+      "answer": {
+        "quick": "Megatron SP 将部分原来在 TP 各卡重复的 LayerNorm、Dropout 等操作沿序列维切分，降低激活驻留，并在进入需全序列或张量切分的区域时转换布局。它通常依赖 TP，不等于把所有长上下文 attention 任意分给各卡。",
+        "detail": [
+          "作用重点是 TP 之外重复的逐 token 操作。",
+          "布局转换通常使用 all-gather/reduce-scatter。",
+          "说明具体框架语义，其他文献也会用序列并行称不同方案。"
+        ],
+        "pitfalls": [
+          "SP 和 CP 名称相似，但在 Megatron 中切分范围不同。"
+        ],
+        "followups": [
+          "SP 为什么不需要切开一条序列的语义？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S057"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "DST-009",
+      "category": "DST",
+      "title": "Context Parallelism 如何训练更长上下文？",
+      "level": "L3",
+      "tags": [
+        "上下文并行",
+        "CP"
+      ],
+      "answer": {
+        "quick": "CP 把一条序列的 token 及各层激活分到多张卡，每卡处理局部 query，同时交换或收集 attention 所需的其他 key/value。它降低每卡激活压力，但要正确实现全局因果 mask、位置和通信，不能只在局部片段做独立 attention。",
+        "detail": [
+          "跨分片 attention 仍需访问允许范围的 KV。",
+          "因果场景可用交错分配改善不同位置的计算失衡。",
+          "结合 packing 时需要维护样本边界，禁止跨样本注意力。"
+        ],
+        "pitfalls": [
+          "将长文本切段分别前向不是等价 CP。"
+        ],
+        "followups": [
+          "CP 与重计算分别解决哪种显存占用？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S057",
+        "MM-S058"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "DST-010",
+      "category": "DST",
+      "title": "MoE 的专家并行有哪些通信与负载问题？",
+      "level": "L3",
+      "tags": [
+        "专家并行",
+        "MoE"
+      ],
+      "answer": {
+        "quick": "专家并行把不同专家放在不同卡，router 按 token 选择专家后进行分发，专家计算完成再汇集结果。瓶颈包括 token 不均衡、all-to-all 传输和小批 GEMM，需结合负载约束、分组计算与拓扑，稀疏激活不代表免费扩展。",
+        "detail": [
+          "记录每专家 token 分布与溢出/丢弃比例。",
+          "共享专家和稠密部分仍有独立的并行布局。",
+          "通信与计算要在同一时间线观察，避免只统计活跃参数。"
+        ],
+        "pitfalls": [
+          "EP 大小不总能独立乘到总卡数上，取决于分组映射。"
+        ],
+        "followups": [
+          "增加 top-k 为什么影响效果、显存和通信？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S058"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "DST-011",
+      "category": "DST",
+      "title": "AllReduce、ReduceScatter、AllGather 怎样对应？",
+      "level": "L1",
+      "tags": [
+        "Collective",
+        "Ring AllReduce"
+      ],
+      "answer": {
+        "quick": "AllReduce 让各 rank 得到全量归约结果；ReduceScatter 归约后每卡只保留一块；AllGather 再把各块分发给所有卡。先 ReduceScatter 再 AllGather 可实现 AllReduce，分片训练则可停在局部归约结果以节省驻留。",
+        "detail": [
+          "所有参与 rank 需按相容顺序调用相同 collective。",
+          "归约算子与 tensor shape/dtype 必须相容。",
+          "ring 分两阶段传输块，但 NCCL 会按情况选择不同算法。"
+        ],
+        "pitfalls": [
+          "AllGather 是拼接收集，不是求和归约。"
+        ],
+        "followups": [
+          "小消息为什么可能更适合低延迟算法？"
+        ],
+        "formula": "理想 ring、D 张卡、每卡归约数据大小 S：每卡发送量约 2(D−1)S/D，接收量相同；不含协议开销。"
+      },
+      "reference_ids": [
+        "MM-S059"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S004",
+          "support": "reported_topic",
+          "note": "Infra 题目集合列出 ring all-reduce 与 reduce-scatter/all-gather 等价关系。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "DST-012",
+      "category": "DST",
+      "title": "DDP 怎样重叠反向计算与梯度通信？",
+      "level": "L2",
+      "tags": [
+        "通信重叠",
+        "DDP Bucket"
+      ],
+      "answer": {
+        "quick": "DDP 把梯度组织为 bucket，某个 bucket 的梯度都就绪后即异步归约，让通信与后续反向计算重叠。bucket 大小、参数顺序和网络决定效果；过小增加启动开销，过大推迟通信，必须通过时间线观察真正被隐藏的部分。",
+        "detail": [
+          "autograd hook 标记梯度就绪，reducer 控制同步顺序。",
+          "各 rank 必须使用一致 bucket collective 顺序。",
+          "find_unused_parameters 会增加图遍历成本，应按模型需要选择。"
+        ],
+        "pitfalls": [
+          "异步 API 并不保证通信与计算实际并行。"
+        ],
+        "followups": [
+          "动态图中未使用视觉分支会怎样影响同步？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S051"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S004",
+          "support": "reported_topic",
+          "note": "Infra 集合列出 reducer/bucket/overlap 深挖题；这里概括原理。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "DST-013",
+      "category": "DST",
+      "title": "激活 checkpointing 为什么省显存，有哪些正确性条件？",
+      "level": "L2",
+      "tags": [
+        "激活重计算",
+        "Checkpointing"
+      ],
+      "answer": {
+        "quick": "激活 checkpointing 保存部分边界张量，反向时重新运行前向恢复所需中间值，以额外计算换显存。选择重算粒度需同时看峰值与 step 时间，并保证随机数、控制流和状态更新一致，否则可能改变梯度或产生重复副作用。",
+        "detail": [
+          "它省的是保留激活，不直接切分参数和 Adam 状态。",
+          "保留 RNG 可维持 dropout 一致性，但有开销。",
+          "PyTorch 可重入与非可重入版本行为不同，应显式选择。"
+        ],
+        "pitfalls": [
+          "带缓存更新或依赖全局状态的函数不能盲目重算。"
+        ],
+        "followups": [
+          "什么时候省显存反而能提升吞吐？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S060"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S003",
+          "support": "search_snippet",
+          "note": "牛客片段讨论反向重计算与 activation 显存。"
+        }
+      ],
+      "editorial": false,
+      "article_supplement_keys": [
+        "Z29"
+      ]
+    },
+    {
+      "id": "DST-014",
+      "category": "DST",
+      "title": "BF16 与 FP16 混合精度训练为什么表现不同？",
+      "level": "L1",
+      "tags": [
+        "BF16",
+        "FP16",
+        "AMP"
+      ],
+      "answer": {
+        "quick": "两者都占两字节，但 BF16 指数位更宽、尾数更少，动态范围更接近 FP32；FP16 更容易出现梯度下溢，常配合 loss scaling。混合精度会按算子选择 dtype，归约和优化器状态也需单独核对，不能只看模型权重类型。",
+        "detail": [
+          "autocast 选择算子执行精度，不是把所有运算强制成同一 dtype。",
+          "GradScaler 缩放损失，更新前解除缩放再裁剪。",
+          "BF16 不保证训练不会 NaN，输入、归一化和学习率仍可能有问题。"
+        ],
+        "pitfalls": [
+          "BF16 范围更大不等于每个数都比 FP16 更精确。"
+        ],
+        "followups": [
+          "loss scaling 与模型输出 logits 温度有何区别？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S061"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "DST-015",
+      "category": "DST",
+      "title": "CPU/NVMe Offload 适合哪些场景，为什么可能变慢？",
+      "level": "L2",
+      "tags": [
+        "Offload",
+        "ZeRO"
+      ],
+      "answer": {
+        "quick": "Offload 将部分参数、梯度或优化器状态迁出 GPU，利用 CPU 内存和 NVMe 扩大可训练规模，但数据搬运与 CPU 优化器会增加关键路径。适合显存无法容纳的任务，应测吞吐、主存占用与传输重叠，不能把节省显存等同于加速。",
+        "detail": [
+          "参数 offload 的阶段支持与优化器 offload 不同。",
+          "pinned memory 与预取能帮助传输，但会占主存资源。",
+          "考虑 PCIe、存储带宽、线程数与缓存命中。"
+        ],
+        "pitfalls": [
+          "状态可放下不代表当前模块的完整计算也能放下。"
+        ],
+        "followups": [
+          "怎样判断瓶颈在 CPUAdam 还是传输？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S053"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "article_supplement_keys": [
+        "Z29"
+      ]
+    },
+    {
+      "id": "DST-016",
+      "category": "DST",
+      "title": "分布式训练怎样做到可靠断点续训？",
+      "level": "L3",
+      "tags": [
+        "Checkpoint",
+        "恢复"
+      ],
+      "answer": {
+        "quick": "续训需要恢复参数之外的优化器、调度器、随机数、采样进度和训练计数，分片模型还需一致的分片元数据。保存必须保证所有 rank 的状态对应同一更新边界，并验证恢复后的下一步与连续训练一致，不能只保存 rank0 的权重。",
+        "detail": [
+          "保存模型与优化器 state_dict，并记录框架和并行配置。",
+          "考虑异步保存完成标记，避免把未写完检查点视为有效。",
+          "变化 world size 时需支持重分片并明确样本顺序语义。"
+        ],
+        "pitfalls": [
+          "能加载权重不代表优化器和数据进度已恢复。"
+        ],
+        "followups": [
+          "如何测试故障发生在保存过程中？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S062"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "DST-017",
+      "category": "DST",
+      "title": "DistributedSampler、set_epoch 和 drop_last 怎么用？",
+      "level": "L2",
+      "tags": [
+        "数据采样",
+        "DDP"
+      ],
+      "answer": {
+        "quick": "DistributedSampler 为各数据并行 rank 分配样本，shuffle 时每轮需调用 set_epoch 改变顺序。不能整除时可补齐或丢尾，影响覆盖和重复；Sampler 与 DataLoader 的 drop_last 含义不同，评估需清理重复样本。",
+        "detail": [
+          "各 rank 采用一致数据集大小与种子。",
+          "训练每轮开始前设置 epoch，而非只初始化一次。",
+          "按全局样本标识合并评测结果，清理补齐导致的重复。"
+        ],
+        "pitfalls": [
+          "DDP 本身不会替你调用 set_epoch 或切分数据。"
+        ],
+        "followups": [
+          "IterableDataset 如何避免 worker/rank 重复读取？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S063"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    },
+    {
+      "id": "DST-018",
+      "category": "DST",
+      "title": "训练挂在 NCCL collective 上，如何定位？",
+      "level": "L3",
+      "tags": [
+        "NCCL",
+        "故障诊断"
+      ],
+      "answer": {
+        "quick": "先收集所有 rank 日志与最早错误，确认有无某卡 OOM、异常退出或输入耗尽，再核对 collective 顺序、shape 和进程组。若程序一致，再用最小通信测试检查网络、拓扑和驱动；增加 timeout 只能延后报错，不能修复根因。",
+        "detail": [
+          "先区分真正网络故障与某 rank 未进入通信。",
+          "调试模式记录 collective 序号，必要时用监测 barrier 定位缺席 rank。",
+          "单机与多机最小复现可分离程序、硬件和网络问题。"
+        ],
+        "pitfalls": [
+          "其他 rank 的最后一个 NCCL 等待通常不一定是最早故障。"
+        ],
+        "followups": [
+          "动态视觉分支为何可能造成 collective 不一致？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S064",
+        "MM-S067"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S004",
+          "support": "reported_topic",
+          "note": "Infra 集合包含 NCCL group 冲突、FSDP 故障诊断，扩展为通用排查。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "DST-019",
+      "category": "DST",
+      "title": "MFU、HFU 与 GPU utilization 有什么区别？",
+      "level": "L2",
+      "tags": [
+        "MFU",
+        "性能指标"
+      ],
+      "answer": {
+        "quick": "GPU utilization 只反映设备是否忙，HFU 可包含重计算等实际执行 FLOPs，MFU 用完成训练所需的模型有效计算衡量理论峰值利用率。因此忙碌可能来自低效算子或通信等待，需要同时看 token 吞吐、精度和计算口径。",
+        "detail": [
+          "稠密 Transformer 的 6NT 近似忽略注意力及额外模块。",
+          "MFU 分子不把激活重计算算成额外有效模型工作。",
+          "峰值应匹配 dtype、稠密/稀疏口径和实际 GPU 数。"
+        ],
+        "pitfalls": [
+          "MoE 不能无条件按总参数量套 6NT。"
+        ],
+        "followups": [
+          "长序列下为什么 attention 项不能忽略？"
+        ],
+        "formula": "MFU = 模型有效 FLOPs/step ÷ (step_seconds × 集群理论峰值 FLOPs/s)；稠密近似 C≈6NT，仅在忽略额外项时成立。"
+      },
+      "reference_ids": [
+        "MM-S065"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "MM-S004",
+          "support": "reported_topic",
+          "note": "公开 Infra 集合列出 FLOPs 估算与 MFU/HFU/utilization 对比题。"
+        }
+      ],
+      "editorial": false
+    },
+    {
+      "id": "DST-020",
+      "category": "DST",
+      "title": "多模态训练吞吐波动，怎样做 profiling 与负载平衡？",
+      "level": "L3",
+      "tags": [
+        "多模态训练",
+        "Profiling",
+        "Packing"
+      ],
+      "answer": {
+        "quick": "动态图像分辨率、视频帧数和答案长度会让各 rank 工作量不同，快卡在同步点等待慢卡。应记录每卡视觉与文本 token、数据准备、算子和通信时间，再按估计成本分桶或 packing；仅平均样本张数难以平衡训练。",
+        "detail": [
+          "用 profiler 时间线分开数据解码、视觉编码、LLM 与通信。",
+          "packed 样本需保留边界 mask，避免跨样本注意力与标签串扰。",
+          "优化后复查最大卡显存、有效监督 token 吞吐和任务配比。"
+        ],
+        "pitfalls": [
+          "总 token 相同也不保证视觉编码开销相同。"
+        ],
+        "followups": [
+          "冻结视觉编码器时怎样判断预计算特征是否合适？"
+        ]
+      },
+      "reference_ids": [
+        "MM-S066",
+        "MM-S019"
+      ],
+      "community_evidence": [],
+      "editorial": true
+    }
+  ]
+}

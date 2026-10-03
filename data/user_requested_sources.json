@@ -1,0 +1,29 @@
+{
+  "sources": [
+    {
+      "id": "SUP-C001",
+      "title": "用户指定知乎文章689965833（网页未读取；30问由用户补贴）",
+      "url": "https://zhuanlan.zhihu.com/p/689965833",
+      "platform": "知乎",
+      "type": "community",
+      "access": "blocked",
+      "published_date": null,
+      "accessed_date": "2026-10-02",
+      "topics": ["用户补贴的Transformer核心30问；非网页直接读取"],
+      "notes": "2026-10-02直接访问返回403，官方公开移动路由未读取，精确URL/ID检索未取得可核验转载，Tabbit未启动。用户随后完整提供30题及答案文本，题库据该用户消息完成合并与独立纠错；网页标题、作者和版本仍未核验。本记录保持blocked，不用于community_evidence或技术答案引用；用户文本来源与30项映射单独保存在research/supplement-request-2026-10-02.json。"
+    },
+    {
+      "id": "SUP-P001",
+      "title": "LAPACK Users' Guide: Eigenvalues, Eigenvectors and Schur Factorization",
+      "url": "https://www.netlib.org/lapack/lug/node50.html",
+      "platform": "LAPACK 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": "1999-10-01",
+      "accessed_date": "2026-10-02",
+      "topics": ["Eigenvalues", "Hessenberg", "Schur", "NumericalAlgorithms"],
+      "notes": "已读数值算法分阶段说明：Hessenberg 约化、xHSEQR 求 Schur 形以及实2×2块/复三角对角的谱读取。仅支持计算方法概述，未运行LAPACK；2×2特征多项式算例另由Stanford特征值定义独立推导。"
+    }
+  ],
+  "questions": []
+}
