@@ -443,9 +443,18 @@
         "WD26-MEMIT",
         "WD26-MEND"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "知识蒸馏与模型编辑"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S015",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "知识蒸馏与模型编辑",
+      "company_tags": [
+        "腾讯"
+      ]
     }
   ]
 }

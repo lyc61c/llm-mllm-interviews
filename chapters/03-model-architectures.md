@@ -6,7 +6,7 @@
 
 - [架构范式与参数](#topic-1)
   - [TFM-004 · Encoder-only、Decoder-only 与 Encoder-Decoder 怎样选择？](#tfm-004)
-  - [TFM-014 · 输入 embedding 与输出 LM head 权重共享有什么利弊？](#tfm-014)
+  - [TFM-014 · LM head 如何产生 token 概率，输入输出权重共享有什么利弊？](#tfm-014)
   - [ARC-007 · Prefix LM 与 Causal LM 的 attention mask 有何区别，KV cache 有什么限制？](#arc-007)
   - [ARC-010 · 怎样由 config 估算 Transformer 参数量，12Ld² 为什么只是近似？](#arc-010)
   - [ARC-012 · 自回归与非自回归生成有什么区别，为什么并行输出可能牺牲质量？](#arc-012)
@@ -38,7 +38,7 @@
 <a id="tfm-004"></a>
 ### TFM-004 · Encoder-only、Decoder-only 与 Encoder-Decoder 怎样选择？
 
-**L1** · 腾讯
+**L1** · 腾讯 / 小红书
 
 #### 答案
 
@@ -65,9 +65,9 @@ Decoder-only 把各种任务统一成前缀后的 next-token 预测，可直接�
 - 条件 memory 的缓存与 decoder 历史 KV cache 的增长方式有何不同？
 
 <a id="tfm-014"></a>
-### TFM-014 · 输入 embedding 与输出 LM head 权重共享有什么利弊？
+### TFM-014 · LM head 如何产生 token 概率，输入输出权重共享有什么利弊？
 
-**L2**
+**L2** · 腾讯
 
 #### 答案
 
@@ -197,7 +197,7 @@ DARTS 用 softmax 权重将离散算子混合成可微结构，训练模型权�
 <a id="arc-001"></a>
 ### ARC-001 · BERT 的 MLM 与 NSP 怎么训练，15% 和 80/10/10 代表什么？
 
-**L1**
+**L1** · 小红书
 
 #### 答案
 

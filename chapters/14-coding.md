@@ -14,10 +14,12 @@
   - [COD-005 · 手写 InfoNCE：正样本标签与 in-batch negatives 如何组织？](#cod-005)
   - [COD-008 · 实现 DPO loss，怎样避免符号和序列概率错误？](#cod-008)
   - [COD-009 · 实现 GRPO 组内优势，标准差为零时怎么办？](#cod-009)
+  - [COD-019 · 手写 VAE 训练 loss：ELBO、重参数化、KL 闭式和 reduction 怎样对应？](#cod-019)
 - [采样与缓存实现](#topic-3)
   - [COD-003 · KV Cache 增量解码的因果 mask 为什么容易写错？](#cod-003)
   - [COD-006 · 实现 top-k / top-p 采样，截断边界怎么处理？](#cod-006)
   - [COD-014 · 手算并编码 MHA/GQA 的 KV Cache 显存。](#cod-014)
+  - [COD-020 · 手写 BucketBatchSampler：怎样减少 padding 并保证 epoch 无遗漏、无重复？](#cod-020)
 - [通用算法与数据结构](#topic-4)
   - [COD-010 · 数组第 k 大：堆与 Quickselect 怎样取舍？](#cod-010)
   - [COD-011 · 岛屿问题：DFS/BFS 的时间、空间与边界。](#cod-011)
@@ -26,6 +28,11 @@
   - [COD-015 · 手撕代码时怎样设计能揭露错误的测试？](#cod-015)
   - [COD-016 · 手写最长公共子序列：怎样定义状态、推导转移并压缩空间？](#cod-016)
   - [COD-017 · 手写两数之和：怎样用单遍哈希表返回两个不同元素的下标？](#cod-017)
+  - [COD-021 · 手写整数平方根：怎样用二分避免浮点误差与乘法溢出？](#cod-021)
+  - [COD-022 · 手写最长回文子串：区间 DP 和中心扩展怎样取舍？](#cod-022)
+  - [COD-023 · 手写全排列：回溯如何恢复现场，重复元素怎样去重？](#cod-023)
+  - [COD-024 · 反转单链表怎样原地改指针，如何证明不丢节点也不引入环？](#cod-024)
+  - [COD-025 · 手写股票最大利润：交易次数、手续费和冷冻期不同，解法怎样变化？](#cod-025)
 
 <a id="topic-1"></a>
 ## 模型算子与数值实现
@@ -229,6 +236,40 @@ A_i=\frac{r_i-\bar r}{\sqrt{\frac1G\sum_{j=1}^G(r_j-\bar r)^2}+\epsilon}
 
 - 奖励缩放和不同难度 prompt 会怎样影响更新？
 
+<a id="cod-019"></a>
+### COD-019 · 手写 VAE 训练 loss：ELBO、重参数化、KL 闭式和 reduction 怎样对应？
+
+**L2** · 腾讯
+
+#### 答案
+
+VAE定义生成模型 p(z)pθ(x|z)，用编码器 qφ(z|x) 近似通常不可解析的后验。对数似然等于 ELBO 加 qφ(z|x) 到真实后验的KL，因此最大化ELBO给出可训练的似然下界。训练时最小化负ELBO，即重建负对数似然与后验到先验的正KL之和；不能把最大化下界中的负KL直接作为要最小化的loss。
+
+常见编码器输出均值 μ 和 logvar=log σ²，后验为对角高斯、先验为 N(0,I)。重参数化用 z=μ+exp(logvar/2)⊙ε、ε∼N(0,I)，把随机性放在与参数无关的噪声里，让重建梯度经 z 回到编码器；直接 detach z 会切断这条路径。此设置下KL有闭式，无须对KL再做蒙特卡洛估计。
+
+重建项取决于观测似然：二值观测的Bernoulli解码器可输出 logits，使用 binary_cross_entropy_with_logits；若灰度值作为软标签，需说明采用了该重建代理目标。实值观测可用固定方差高斯，负对数似然是带方差系数和常数的平方误差；可学习方差时还要保留对数方差项，不能一律称普通MSE就是完整似然。参考 vae_loss 支持Bernoulli logits和单位方差Gaussian均值，Gaussian分支保留常数。
+
+归约要把每个样本的像素/观测维求和，也把每个样本的潜变量维求和，然后分别对batch取平均；这样两项具有相同的逐样本尺度。若重建项对所有像素取均值而KL仍按潜维求和，分辨率改变就会改变两项的相对权重。参考函数返回 total、reconstruction_nll、posterior_kl；默认 β=1 对应标准负ELBO，β≠1为加权变体。训练循环是编码、重参数化采样、解码、计算loss、zero_grad、backward、step，并分别监控重建与KL以识别后验坍塌。
+
+图像生成中的压缩自编码器可以加入感知损失和对抗训练，提高细节重建；这些属于特定视觉模型的扩展，不能说标准VAE必然包含LPIPS和GAN。混合精度时可将指数和归约放在FP32，仍须检查logvar异常导致的溢出；单纯转换精度并不保证任意logvar数值稳定。
+
+```math
+\begin{aligned}\mathrm{ELBO}(x)&=\mathbb E_{q_\phi(z\mid x)}[\log p_\theta(x\mid z)]-D_{\mathrm{KL}}(q_\phi(z\mid x)\Vert p(z))\\\log p_\theta(x)&=\mathrm{ELBO}(x)+D_{\mathrm{KL}}(q_\phi(z\mid x)\Vert p_\theta(z\mid x))\\K_i&=\tfrac12\sum_j(\mu_{ij}^{2}+e^{\ell_{ij}}-1-\ell_{ij}),\quad \ell=\log\sigma^2\\\mathcal L&=\tfrac1B\sum_i[-\log p_\theta(x_i\mid z_i)+\beta K_i]\end{aligned}
+```
+
+代码：[vae_reparameterize](../coding/torch_primitives.py#L130) · [vae_loss](../coding/torch_primitives.py#L145)
+
+#### 易错点
+
+- logvar表示log σ²，标准差应取exp(logvar/2)，不是exp(logvar)。
+- 标准ELBO的KL方向是近似后验到先验；重建项和KL使用不同归约会隐式改变权重。
+- 参考实现只给基础VAE目标，不包含图像生成系统的感知/GAN训练流程。
+
+#### 追问
+
+- 怎样通过KL和重建曲线判断posterior collapse，KL warmup会改变什么？
+- 若解码器预测可学习方差，高斯重建NLL怎样修改？
+
 <a id="topic-3"></a>
 ## 采样与缓存实现
 
@@ -297,6 +338,40 @@ KV Cache 存储字节数为 $`2BLT h_{\mathrm{kv}}d_hs`$：2 对应 K/V，B 为 
 
 - 同样显存预算下，把上下文翻倍会如何影响并发？
 
+<a id="cod-020"></a>
+### COD-020 · 手写 BucketBatchSampler：怎样减少 padding 并保证 epoch 无遗漏、无重复？
+
+**L2** · 腾讯
+
+#### 答案
+
+先确认练习契约：输入每条样本的长度、batch_size、局部桶大小、seed和drop_last，输出一批批样本索引；采样器不读取样本，不负责padding。批内长度相近时，补到最长序列所浪费的token通常更少。图文/视频数据可把长度替换为估计token数或计算成本，但单个长度值未必准确代表动态分辨率和时序计算开销。
+
+参考 BucketBatchSampler 先按长度稳定排序，把相邻索引划入大小为 batch_size×bucket_multiplier 的局部桶；每个epoch用局部随机数生成器按seed+epoch在桶内洗牌，再切成批，并洗牌批次顺序。桶太大接近随机组批，padding收益减弱；桶太小则每轮批次成员变化较少，要在计算效率与训练随机性之间选择。它是独立参考实现，PyTorch并没有要求所有bucket sampler都采用这一算法。
+
+桶大小设为batch_size的整数倍，只有最后一个桶可能产生非满批，避免每个桶都丢一个尾巴。drop_last=False时，原始索引只经历排序、无放回洗牌和不重叠切片，因此每个epoch恰好覆盖N条样本；drop_last=True时只删除最后非满批，总保留floor(N/B)×B条且不重复。启用局部洗牌后，每轮被丢的样本可能不同；不洗牌时可能一直丢长度排序尾部，应检查是否造成偏置。
+
+实现 __iter__ 返回索引列表、__len__ 返回批次数，set_epoch改变随机种子；同seed和epoch重复迭代得到相同批次。DataLoader接入用 batch_sampler=实例，collate_fn再读取样本并做padding、mask和标签归约，不同时设置batch_size、shuffle、sampler、drop_last。初始化排序O(N log N)、每轮组批O(N)，参考实现保留全部索引与批次，辅助空间O(N)。
+
+验证以集合不变量为主：索引合法、不重复、样本覆盖与drop_last计数正确，空数据和N<B不出错，同epoch可复现、不同epoch改变排列；再用短长序列混合数据检查padding预算。参考实现是单进程版本，不能直接让所有DDP rank各跑一份，否则会重复训练全量数据；分布式需要额外设计rank分片、批次数一致和尾批策略。
+
+```math
+\mathrm{padding}(\mathcal B)=|\mathcal B|\max_{i\in\mathcal B}L_i-\sum_{i\in\mathcal B}L_i,\qquad N_{\mathrm{batch}}=\begin{cases}\lfloor N/B\rfloor,&\mathrm{drop\_last}\\\lceil N/B\rceil,&\text{otherwise}\end{cases}
+```
+
+代码：[BucketBatchSampler](../coding/reference.py#L239)
+
+#### 易错点
+
+- 返回一批索引的对象应接到batch_sampler；传给sampler会把索引列表当作单条样本key。
+- 桶尺寸不对齐batch_size又逐桶drop_last，会丢掉多个桶的尾部样本。
+- set_epoch只控制本采样器的随机次序，不自动管理worker的数据增强随机性或分布式分片。
+
+#### 追问
+
+- DDP怎样保证各rank样本不重叠且更新步数一致？
+- 如果按总token预算而非固定样本数组批，__len__和梯度归约如何定义？
+
 <a id="topic-4"></a>
 ## 通用算法与数据结构
 
@@ -322,7 +397,7 @@ Quickselect 通常原地执行，平均时间为 $`O(n)`$，坏 pivot 可使最�
 <a id="cod-011"></a>
 ### COD-011 · 岛屿问题：DFS/BFS 的时间、空间与边界。
 
-**L1**
+**L1** · 字节跳动
 
 #### 答案
 
@@ -463,6 +538,170 @@ D_{i,j}=\begin{cases}0,&i=0\text{ or }j=0\\D_{i-1,j-1}+1,&a_i=b_j\\\max(D_{i-1,j
 - 如果数组已排序，双指针怎样移动，怎样证明不会漏掉答案？
 - 如果要求返回所有合法下标对，如何处理大量重复值和输出规模？
 
+<a id="cod-021"></a>
+### COD-021 · 手写整数平方根：怎样用二分避免浮点误差与乘法溢出？
+
+**L1** · 小红书
+
+#### 答案
+
+明确返回非负整数n的平方根向下取整，即最大满足r²≤n的整数，不是浮点近似值。0和1直接返回；其他值可在[1,n//2+1]上二分，因为正整数平方随r单调增长。中点满足条件时继续向右找更大合法值，否则向左缩小，循环结束返回high，保证r²≤n<(r+1)²。
+
+判断可以写mid≤n//mid，以整数除法避免固定宽度语言中mid*mid溢出；mid始终至少为1，不会除零。中点在固定宽度语言用low+(high-low)//2避免low+high溢出。Python整数可自动扩展，但仍应解释跨语言的溢出风险。不要先sqrt再int：浮点数对大整数会丢失精度，在完全平方数邻近尤其容易错一个。
+
+参考 integer_sqrt 不调用math.isqrt或浮点幂，二分迭代次数O(log n)，使用常数个整数变量；若考虑Python任意精度大整数，除法和变量存储有额外位复杂度，不应把每步大整数运算都说成严格O(1)。输入负数或非整数时明确报错。测试用math.isqrt作独立oracle，覆盖0/1、完全平方数、平方数±1以及远超过64位的整数，并同时检查答案的平方区间不变量。
+
+```math
+r=\max\{k\in\mathbb Z_{\ge0}:k^2\le n\},\qquad r^2\le n\lt (r+1)^2,\qquad m^2\le n\iff m\le\lfloor n/m\rfloor\ (m\gt 0)
+```
+
+代码：[integer_sqrt](../coding/reference.py#L290)
+
+#### 易错点
+
+- 返回round(sqrt(n))会四舍五入，题目要求向下取整。
+- 二分更新边界不排除mid，会在相邻整数边界无限循环。
+- math.isqrt可用于测试oracle，不能冒充手写二分实现。
+
+#### 追问
+
+- 如果改用整数Newton迭代，怎样选初值并处理停止条件？
+- 固定宽度语言为什么还要避免中点的low+high溢出？
+
+<a id="cod-022"></a>
+### COD-022 · 手写最长回文子串：区间 DP 和中心扩展怎样取舍？
+
+**L2** · 小红书
+
+#### 答案
+
+回文子串必须连续，不能跳过中间字符；最长回文子序列是另一题。先确认返回长度还是实际子串、同长答案的选择规则。参考函数返回实际子串，多个最长结果时取最靠左的出现位置，并把空字符串作为额外练习边界。
+
+区间DP定义P[i][j]表示s[i..j]是否为回文。两端字符相等，且区间长度≤2或内部P[i+1][j-1]为真时，整个区间为回文。按区间长度从小到大枚举，或i从大到小、j从i向右遍历，保证内部状态已计算；每个真状态更新最大长度和起点。时间O(n²)、布尔表空间O(n²)，初始化单字符为真；长度2时不能访问不存在的内部状态。
+
+只需要一个最长子串时可用中心扩展：对每个位置分别以(i,i)检查奇数长度、以(i,i+1)检查偶数长度，只要左右字符相同就向外扩张，记录最佳边界。参考 longest_palindromic_substring 用该方法，最坏时间O(n²)、额外工作空间O(1)，最终切片返回字符串需要O(L)空间。省掉DP表的同时，仍覆盖所有回文，因为每个回文都有唯一的单字符或字符间隙中心。
+
+测试不能只比较babad的某一个答案，除非实现已约定tie规则。参考测试穷举短字符串的全部连续子串，以正反相同判定回文、按长度和最早起点得到独立oracle，覆盖奇数、偶数、重复字符、空串和无长回文。若长度很大且需要最坏线性时间，可追问Manacher；需讲清奇偶统一处理、镜像半径和右边界，不能只报算法名称。
+
+```math
+P_{i,j}=(s_i=s_j)\land\big((j-i\le1)\lor P_{i+1,j-1}\big),\qquad 0\le i\le j\lt n
+```
+
+代码：[longest_palindromic_substring](../coding/reference.py#L307)
+
+#### 易错点
+
+- 最长回文子串需要连续；用最长回文子序列的max转移会解错题。
+- 只遍历单字符中心会漏掉abba等偶数长度回文。
+- 区间DP按错误顺序遍历，会读到尚未计算的内部状态。
+
+#### 追问
+
+- 为什么中心扩展可覆盖所有回文，最坏O(n²)输入是什么？
+- Manacher中当前点在最右回文区间内时，镜像半径怎样初始化？
+
+<a id="cod-023"></a>
+### COD-023 · 手写全排列：回溯如何恢复现场，重复元素怎样去重？
+
+**L2** · 字节跳动
+
+#### 答案
+
+先确认输入是否含重复值，要求按元素下标区分排列还是只返回不同数值序列。若所有元素互异，维护当前path和used数组，每一层从尚未使用的元素中选择一个；path长度达到n时得到完整排列。选择后标记used、追加到path，递归结束必须pop并清除标记，恢复当前层的状态；保存答案时要复制path，否则所有结果可能指向同一个可变列表。
+
+若有重复值且要求唯一排列，可先对输入副本排序，再用同层去重：遍历下标i时，若该元素已用过则跳过；若它与前一个元素相同且前一个元素当前未使用，也跳过。后一个条件表示同一递归层的相同值只开启一个分支。若前一个相同元素已经在path中，则允许选择当前元素，从而正常生成[1,1,2]等包含多个1的排列；不能无条件跳过所有相邻相等元素。
+
+参考 unique_permutations 接受元素间可以排序和比较相等的输入，返回不同排列组成的列表，保留原输入，输出次序按排序后的遍历确定。空输入定义为只有一个排列——空排列，因此返回[[]]；这使回溯终止条件和0!=1一致。混合不可排序类型会在排序时报告TypeError，不承诺任意Python对象都能使用。
+
+无重复值时共有n!个长度n的结果，复制并输出它们本身就需要O(n×n!)时间，参考回溯的最坏时间也为O(n×n!)，排序另需O(n log n)。含重复值时，唯一输出数U=n!/∏c_j!，保存答案需要O(nU)空间；递归栈、used、path和排序副本的额外工作空间是O(n)，要把输出存储与工作空间分别说明。
+
+测试用itertools.permutations枚举短输入，再把元组结果去重作为独立oracle；验证结果集合一致、没有重复序列、每个结果的元素多重集与输入相同、输入未被修改，各答案列表互不别名。覆盖空输入、全相同、部分重复和互异元素。若面试要求原地交换版本，也须说明每层交换前后均要恢复，以及重复值在当前层如何去重。
+
+```math
+U=\frac{n!}{\prod_j c_j!},\qquad \mathrm{skip}(i)=\mathrm{used}_i\lor(i\gt 0\land a_i=a_{i-1}\land\neg\mathrm{used}_{i-1}),\qquad 0!=1
+```
+
+代码：[unique_permutations](../coding/reference.py#L321)
+
+#### 易错点
+
+- 递归返回不pop或不清除used，会污染后续分支，遗漏或产生错误结果。
+- 直接把path对象追加到答案列表，会让结果共享同一个可变对象。
+- 同层去重判断依赖排序和前一个同值元素是否已使用，不能无条件跳过重复值。
+
+#### 追问
+
+- 如何用原地交换代替used数组，并对重复元素进行同层去重？
+- 如果只需逐个消费排列，如何改为生成器以减少答案存储？
+
+<a id="cod-024"></a>
+### COD-024 · 反转单链表怎样原地改指针，如何证明不丢节点也不引入环？
+
+**L1** · 腾讯
+
+#### 答案
+
+输入为单链表头节点，输出反转后的新头；要求修改原节点的next关系，保持每个节点的身份和值。空链表返回None，单节点返回自身。先明确输入是否保证无环，环形链表没有以None结束的普通线性反转语义；参考 reverse_linked_list 在修改任何指针前用快慢指针检查环，发现环就报ValueError，且不修改原结构。
+
+迭代反转维护previous和current：开始previous=None、current=head。每轮必须先保存following=current.next，再令current.next=previous，随后把previous移到当前节点、current移到following。current为空时，previous就是原尾节点，也是反转后的新头。先保存following是关键，否则改写next后会失去剩余未处理链表的入口。
+
+循环不变量是previous指向已处理前缀的反向链，current指向尚未处理的原顺序后缀，两个部分的节点集合不重叠且并集始终是全部原节点。每轮把后缀第一个节点移到反向前缀，不创建或丢弃节点；前缀末尾为原头且next为None，因此没有新增环。结合输入无环或预检通过，current沿保存的原后继有限前进，最终终止。
+
+三指针反转时间O(n)、辅助空间O(1)，快慢指针预检也为O(n)时间和O(1)空间，因此参考实现的总复杂度不变。递归版本也能反转，但递归栈占O(n)，Python长链表可能触及递归深度限制，不能把递归写成常数空间。
+
+测试除了值序列反向，还必须检查节点对象按原身份的逆序出现，原头成为尾且next为空，遍历不重复遇到节点；再次反转应恢复原身份顺序。值重复的输入可揭露只反转值或重建新节点的伪实现，带环和自环输入则验证预检拒绝且原next关系保持。
+
+```math
+(v_0\to v_1\to\cdots\to v_{n-1}\to\varnothing)\longmapsto(v_{n-1}\to\cdots\to v_1\to v_0\to\varnothing),\qquad T(n)=O(n),\ S(n)=O(1)
+```
+
+代码：[ListNode](../coding/reference.py#L348) · [reverse_linked_list](../coding/reference.py#L353)
+
+#### 易错点
+
+- 没有先保存旧next就改指针，会失去尚未处理后缀。
+- 仅反转值或创建新节点不能满足原地修改节点连接的契约。
+- 返回旧head或忘记让旧head.next为None，分别会返回尾节点或产生错误连接。
+
+#### 追问
+
+- 如何只反转指定区间或每k个节点反转一次？
+- 快慢指针为什么可判断有环，递归版为什么占O(n)额外空间？
+
+<a id="cod-025"></a>
+### COD-025 · 手写股票最大利润：交易次数、手续费和冷冻期不同，解法怎样变化？
+
+**L2** · 腾讯
+
+#### 答案
+
+先问清最多交易几次、是否只持有一股、能否不交易、是否有手续费或冷冻期，再定义状态。只说“股票最大利润”不能确定具体版本。本题参考 max_stock_profit 明确采用至多一次买入、在更晚一天卖出、允许不交易；这只是标准练习契约，不把面经未说明的交易次数补成事实。
+
+单次交易遍历每天价格，维护此前最低买入价lowest和已知最佳利润best。对当天作为卖出日，先比较price-lowest，再更新lowest，这样候选买入日始终在卖出日之前。任意最优交易若在当天卖出，最好的买入价必是此前最低价；遍历所有卖出日就不会漏最优解。best从0开始，因此空输入、单元素、价格持平或不断下跌都返回0。时间O(n)、辅助空间O(1)，支持流式遍历且不改变输入。
+
+不限次数、没有费用或冷冻期、至多持有一股时，可以累加每对相邻日价格的正增量；每段上涨区间等价于在最低点买、最高点卖。但只做一次交易不能累加多段上涨：例如[1,3,1,3]单次利润2、多次利润4。若至多k次交易，可用“第j次买入后的持有收益”和“第j次卖出后的空仓收益”状态，第j次买入依赖第j-1次卖出，第j次卖出依赖第j次买入；按天推进，时间O(nk)、滚动空间O(k)，初始化不可达状态为负无穷并允许零次交易。
+
+手续费版本通常在卖出时只扣一次fee，用hold和cash两状态，从前一天状态计算新状态；也可等价改为买入时扣费，但不能两边各扣一次。一个完整冷冻日意味着昨天卖出后今天不能买入，此时可保留rest/hold/sold三状态，或让当天买入引用前两天可空仓收益，不能沿用没有冷冻期的cash前一天转移。状态更新必须明确是否允许同日操作，并保存需要的旧值，避免新旧状态混用。
+
+单次版本测试用所有买卖日i<j的价格差和0作为穷举oracle，覆盖空、单元素、上涨、下跌、重复低点与多个上涨波段；这样可揭露使用全局max-min却忽略时间先后，或者把多次交易利润误当单次交易答案的问题。若要求输出交易日，维护最低价下标和最佳下标对，再约定同利润的选择规则。
+
+```math
+P=\max\big(\{0\}\cup\{p_j-p_i:0\le i\lt j\lt n\}\big),\qquad m_t=\min_{0\le i\le t}p_i,\qquad P_t=\max(P_{t-1},p_t-m_{t-1})\ (t\ge1)
+```
+
+代码：[max_stock_profit](../coding/reference.py#L368)
+
+#### 易错点
+
+- 全局最大价减最小价可能先卖后买，违反时间顺序。
+- 累加所有正增量只适用于相应的不限次数无费用/冷冻期版本。
+- 手续费、冷冻期和交易次数限制都会改变状态，不能只换一个初始化值就套用同一代码。
+
+#### 追问
+
+- 最多两次交易怎样写四个状态，并控制更新顺序？
+- 手续费和一个冷冻日同时存在时，怎样定义可买入的空仓状态？
+
 ## 参考资料
 
 - [PyTorch CrossEntropyLoss](https://docs.pytorch.org/docs/2.14/generated/torch.nn.CrossEntropyLoss.html)
@@ -485,3 +724,15 @@ D_{i,j}=\begin{cases}0,&i=0\text{ or }j=0\\D_{i-1,j-1}+1,&a_i=b_j\\\max(D_{i-1,j
 - [LeetCode 1143：Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/)
 - [LeetCode 1：Two Sum](https://leetcode.com/problems/two-sum/)
 - [PyTorch nn.Linear：仿射变换、权重与输入输出形状](https://docs.pytorch.org/docs/stable/generated/torch.nn.Linear.html)
+- [Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114)
+- [PyTorch examples：VAE MNIST训练示例](https://github.com/pytorch/examples/blob/main/vae/main.py)
+- [Latent Diffusion官方感知与对抗自编码器loss](https://raw.githubusercontent.com/CompVis/latent-diffusion/main/ldm/modules/losses/contperceptual.py)
+- [PyTorch torch.utils.data 文档](https://docs.pytorch.org/docs/2.14/data.html)
+- [PyTorch官方Sampler与BatchSampler实现](https://github.com/pytorch/pytorch/blob/main/torch/utils/data/sampler.py)
+- [LeetCode 69：Sqrt(x)](https://leetcode.com/problems/sqrtx/)
+- [LeetCode 5：Longest Palindromic Substring](https://leetcode.com/problems/longest-palindromic-substring/)
+- [LeetCode 46：Permutations](https://leetcode.com/problems/permutations/)
+- [LeetCode 47：Permutations II](https://leetcode.com/problems/permutations-ii/)
+- [Algorithms 4th edition：Bags, Queues, Stacks与单链表节点](https://algs4.cs.princeton.edu/13stacks/)
+- [WPI CS2223：Stocks动态规划课程解答](https://web.cs.wpi.edu/~cs2223/b05/HW/HW6/SolutionsHW6/)
+- [University of Washington CSE421：Dynamic Programming交易手续费题](https://courses.cs.washington.edu/courses/cse421/25wi/files/homework/homework5_problems.pdf)

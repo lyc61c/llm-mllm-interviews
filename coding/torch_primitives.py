@@ -125,3 +125,48 @@ def dpo_loss(policy_chosen, policy_rejected, reference_chosen, reference_rejecte
     margin = ((policy_chosen - policy_rejected)
               - (reference_chosen.detach() - reference_rejected.detach()))
     return -F.logsigmoid(beta * margin).mean()
+
+
+def vae_reparameterize(mean, logvar, noise=None):
+    """Draw diagonal Gaussian latent samples; optional noise enables testing."""
+    if mean.shape != logvar.shape or mean.ndim < 2 or not mean.numel():
+        raise ValueError("nonempty matching [batch, latent...] shapes required")
+    if not mean.is_floating_point() or not logvar.is_floating_point() or mean.device != logvar.device:
+        raise ValueError("floating tensors on one device required")
+    dtype = torch.float64 if mean.dtype == torch.float64 or logvar.dtype == torch.float64 else torch.float32
+    mean, logvar = mean.to(dtype), logvar.to(dtype)
+    if noise is None:
+        noise = torch.randn_like(mean)
+    elif noise.shape != mean.shape or noise.device != mean.device or not noise.is_floating_point():
+        raise ValueError("noise must match latent shape and device")
+    return mean + (0.5 * logvar).exp() * noise.to(dtype)
+
+
+def vae_loss(reconstruction, target, mean, logvar, likelihood="bernoulli", beta=1.0):
+    """Negative ELBO: sum event dimensions per example, then mean batch.
+
+    Bernoulli reconstruction is logits; unit_gaussian reconstruction is mean.
+    Returns (total, reconstruction_nll, posterior_kl) as differentiable scalars.
+    """
+    if reconstruction.shape != target.shape or reconstruction.ndim < 2 or not reconstruction.numel():
+        raise ValueError("nonempty matching [batch, observation...] shapes required")
+    if mean.shape != logvar.shape or mean.ndim < 2 or not mean.numel() or len(mean) != len(target):
+        raise ValueError("matching [batch, latent...] shapes required")
+    tensors = (reconstruction, target, mean, logvar)
+    if any(not value.is_floating_point() or value.device != reconstruction.device for value in tensors):
+        raise ValueError("floating tensors on one device required")
+    if not math.isfinite(beta) or beta < 0:
+        raise ValueError("beta must be finite and nonnegative")
+    dtype = torch.float64 if any(value.dtype == torch.float64 for value in tensors) else torch.float32
+    reconstruction, target, mean, logvar = (value.to(dtype) for value in tensors)
+    if likelihood == "bernoulli":
+        if ((target < 0) | (target > 1)).any():
+            raise ValueError("Bernoulli targets must lie in [0,1]")
+        element_nll = F.binary_cross_entropy_with_logits(reconstruction, target, reduction="none")
+    elif likelihood == "unit_gaussian":
+        element_nll = 0.5 * ((reconstruction - target).square() + math.log(2 * math.pi))
+    else:
+        raise ValueError("unknown observation likelihood")
+    reconstruction_nll = element_nll.flatten(1).sum(1).mean()
+    posterior_kl = 0.5 * (mean.square() + logvar.exp() - 1 - logvar).flatten(1).sum(1).mean()
+    return reconstruction_nll + beta * posterior_kl, reconstruction_nll, posterior_kl

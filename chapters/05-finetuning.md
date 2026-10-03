@@ -33,6 +33,9 @@
 - [知识蒸馏与模型编辑](#topic-4)
   - [FT-022 · 知识蒸馏中的 logits、隐藏层和生成答案监督各有什么作用？](#ft-022)
   - [FT-024 · 模型编辑与继续训练、RAG 有何区别？ROME、MEMIT 与 MEND 如何修改知识？](#ft-024)
+  - [FT-025 · OPD 的原理和优化目标是什么，与 SFT、RL 怎样选择？](#ft-025)
+  - [FT-026 · 拿不到教师 logits 时还能做 OPD 吗，只有文本反馈有哪些限制？](#ft-026)
+  - [FT-027 · 教师与学生词表不同，跨 tokenizer 的 OPD 怎样定义对齐和损失？](#ft-027)
 
 <a id="topic-1"></a>
 ## 指令数据与训练目标
@@ -239,7 +242,7 @@ LoRA 给线性层加低秩更新，合适时可合并回权重；Adapter 加任�
 <a id="ft-005"></a>
 ### FT-005 · LoRA 的低秩更新公式及可训练参数量是什么？
 
-**L1**
+**L1** · 腾讯
 
 #### 答案
 
@@ -248,6 +251,8 @@ LoRA 冻结 $`W_0\in\mathbb R^{d_{\rm out}\times d_{\rm in}}`$，学习 $`\Delta
 前向为 $`W_0x+(\alpha/r)BAx`$，梯度能经过冻结底座传播到需要训练的模块。标准浮点部署可合并增量，免去额外小投影；需要多适配器切换时则未必合并。LoRA 主要节省权重梯度与优化器状态，长序列激活仍可能主导显存。
 
 合并要求底座与 adapter 的 checkpoint、目标层、缩放和 dtype 对齐，并在 eval 模式关闭 adapter dropout。浮点权重 $`W_{\mathrm{merged}}=W_0+sBA`$ 免去额外低秩分支，通常减少内核调用；但不会把大模型权重变成“小 adapter 大小”。低精度舍入使结果未必逐 bit 相同，应比对 logits 与任务结果。保留未合并 adapter 有利于共享底座、多租户切换和回滚；merge_and_unload 后应保留独立原件。量化底座的合并受量化后端支持限制，不能把浮点增量直接加到整数码，必要时反量化合并并重新校准量化。
+
+若给定一个 $`3\times3`$ 权重矩阵，不能只凭形状判断实际秩：$`W_0`$ 可为0到3秩，需看其独立行列或奇异值。LoRA约束的是增量，$`\mathrm{rank}(BA)\le\min(r,3)`$；即便设置r=1，$`W_0+BA`$ 仍可能为满秩3。默认零B初始化时增量秩为0，训练后也只保证秩上界，不保证恰好等于r。
 
 ```math
 \begin{aligned}\Delta W&=\frac{\alpha}{r}BA\\N_{\rm train}&=r(d_{\rm in}+d_{\rm out})\\\mathrm{rank}(\Delta W)&\le r\end{aligned}
@@ -268,11 +273,12 @@ LoRA 冻结 $`W_0\in\mathbb R^{d_{\rm out}\times d_{\rm in}}`$，学习 $`\Delta
 - 如何估算同时对 Q/K/V/O 与 FFN 加 LoRA 的参数量？
 - 量化底座合并 LoRA 有什么精度风险？
 - 多租户共享一个底座时，为什么离线合并每个 adapter 可能增加总权重内存？
+- 3×3的底座权重、初始增量和训练后增量，秩分别有哪些上界？
 
 <a id="ft-006"></a>
 ### FT-006 · LoRA 怎样初始化，r、alpha 与 dropout 各控制什么？
 
-**L2**
+**L2** · 腾讯
 
 #### 答案
 
@@ -281,6 +287,8 @@ LoRA 冻结 $`W_0\in\mathbb R^{d_{\rm out}\times d_{\rm in}}`$，学习 $`\Delta
 令 $`G=\partial L/\partial\Delta W`$，有 $`\partial L/\partial A=sB^\top G`$、$`\partial L/\partial B=sGA^\top`$。初始 B 为零时，纯低秩分支的 A 梯度为零，B 通常先更新，随后 A 获得梯度；A/B 同时为零则纯 BA 路径无法启动，零 A 加随机 B 是可启动但轨迹不同的方案。PiSSA、EVA、LoftQ 等使用权重、激活或量化信息，要核对是否改动底座及是否保持初始函数；`init_lora_weights=False` 通常随机初始化 A/B，不再是 no-op。
 
 $`r`$ 控制秩上界与参数量，标准 $`s=\alpha/r`$ 控制分支尺度，rsLoRA 使用 $`\alpha/\sqrt r`$。固定 alpha 改 rank 同时改变容量和缩放，alpha 也不等于学习率。普通 Linear 的 dropout 施加在低秩分支输入，训练时正则、eval 时关闭，底座分支保留。应联合消融 rank、alpha、dropout、目标模块与学习率，没有通用最佳 rank 或 alpha:rank 比例。
+
+PEFT普通Linear的默认调用是 `kaiming_uniform_(A, a=sqrt(5))`，配合默认fan-in约定，其均匀边界为 $`1/\sqrt{d_{\rm in}}`$。它借用了Kaiming函数来实现与 `nn.Linear` 一致的初始化，并不等于给ReLU网络使用方差 $`2/d_{\rm in}`$ 的He配方；初始化函数名称、传入gain/负斜率参数和实际方差应一起核对。
 
 ```math
 \begin{aligned}\Delta W&=sBA,\quad\mathrm{rank}(\Delta W)\le r\\s_{\rm standard}&=\frac{\alpha}{r},\quad s_{\rm rsLoRA}=\frac{\alpha}{\sqrt r}\\G&=\frac{\partial L}{\partial\Delta W}\\\frac{\partial L}{\partial A}&=sB^\top G,\quad\frac{\partial L}{\partial B}=sGA^\top\end{aligned}
@@ -326,7 +334,7 @@ LoRA 调参需要一起考虑更新容量、分支尺度、正则与适配位置
 <a id="ft-008"></a>
 ### FT-008 · LoRA 与 QLoRA 有何区别，NF4、双重量化与分页优化器做什么？
 
-**L2**
+**L2** · 字节跳动
 
 #### 答案
 
@@ -358,7 +366,7 @@ h=\mathrm{Dequantize}(Q(W_0))x+sBAx
 <a id="ft-009"></a>
 ### FT-009 · Adapter、Prompt-Tuning 与 Prefix-Tuning 有何差别？
 
-**L2**
+**L2** · 腾讯
 
 #### 答案
 
@@ -534,7 +542,7 @@ p(c\mid x)=\frac{\sum_{w\in\mathcal V_c}p_\theta(w\mid\mathrm{template}(x))}{\su
 <a id="ft-012"></a>
 ### FT-012 · 微调后的灾难性遗忘怎样发现和缓解？
 
-**L2**
+**L2** · 阿里巴巴 / 腾讯
 
 #### 答案
 
@@ -625,13 +633,15 @@ SFT loss 降低只表示更贴合训练目标，不能证明事实性或真实�
 <a id="ft-022"></a>
 ### FT-022 · 知识蒸馏中的 logits、隐藏层和生成答案监督各有什么作用？
 
-**L2**
+**L2** · 字节跳动
 
 #### 答案
 
 logits蒸馏让学生拟合教师的软概率分布，温度提高时能显露非最大类之间的关系；常用KL或soft-target交叉熵，加T²使大温度下的梯度尺度更可比。对语言模型逐token做logits蒸馏，需要同一位置的上下文和可对齐词表；不同tokenizer不能直接按词表下标对KL。生成答案蒸馏把教师采样或搜索的回复作为学生SFT数据，兼容不同tokenizer，但丢掉完整分布，并继承教师错误、风格与覆盖偏差。
 
 隐藏层/attention蒸馏用层映射和投影对齐中间表示，PKD、TinyBERT在BERT压缩中采用此类信号，不能简单要求不同深度学生逐层等形状相等。实际还需混合真实标签、过滤教师答案、覆盖学生可能访问的前缀，并独立评测质量/幻觉与成本。蒸馏不保证学生超过教师，也不保证所有知识能在更小容量中保留。
+
+蒸馏不固定发生在某一个训练阶段：可以用教师分布训练更小基础模型，也可以在指令、领域或对齐后训练中传递特定能力；OPD则让学生当前rollout决定教师反馈的状态。需说明教师目标、学生输入分布、监督接口及蒸馏后是否继续SFT/RL，不能仅以“在SFT后运行过”定义蒸馏。
 
 ```math
 \begin{aligned}p_T&=\mathrm{softmax}(z_T/T),\quad p_S=\mathrm{softmax}(z_S/T)\\\mathcal L&=(1-\lambda)\mathcal L_{\rm hard}+\lambda T^2D_{\rm KL}(p_T\Vert p_S)\\\mathcal L_{\rm hidden}&=\sum_\ell\lVert H_S^{(\ell)}P_\ell-H_T^{(m(\ell))}\rVert_F^2\end{aligned}
@@ -650,7 +660,7 @@ logits蒸馏让学生拟合教师的软概率分布，温度提高时能显露�
 <a id="ft-024"></a>
 ### FT-024 · 模型编辑与继续训练、RAG 有何区别？ROME、MEMIT 与 MEND 如何修改知识？
 
-**L2**
+**L2** · 腾讯
 
 #### 答案
 
@@ -674,6 +684,90 @@ ROME 把特定 MLP 的事实关联视为 key—value 映射，用带保留约束
 - 怎样构造 locality 测试而不只测编辑样例？
 - 为什么批量编辑需要关注累计遗忘和更新顺序？
 
+<a id="ft-025"></a>
+### FT-025 · OPD 的原理和优化目标是什么，与 SFT、RL 怎样选择？
+
+**L3** · 字节跳动
+
+#### 答案
+
+On-Policy Distillation让学生自己生成rollout，再让冻结教师评价学生实际访问的前缀，解决只在标准答案或教师轨迹上训练、上线却遇到自己错误前缀的分布偏移。OPD规定的是反馈发生在学生状态上，并不唯一规定KL方向或优化器。
+
+以GKD为例，固定本轮学生采样结果，在相同prompt与前缀上计算教师/学生next-token分布，最小化逐步散度；采样本身不反传，只更新学生，prompt和padding不参与回答loss。可用forward KL、reverse KL或JSD，并混合固定数据；forward KL偏覆盖教师多种模式，reverse KL偏选择教师高概率模式，但学生容量和任务会改变实际效果。策略梯度式reverse-KL实现还可用学生所选token的教师log-prob构造稠密反馈，不能与完整分布GKD的梯度路径混写。
+
+SFT通常对给定答案做交叉熵，适合建立新知识、格式与任务基础；教师答案SFT也是序列蒸馏，但固定答案不等于OPD。RL按验证器、环境或偏好奖励优化结果，适合可检验目标；OPD利用教师行为提供更细反馈，适合已有可靠教师、希望低成本学生保留其能力的情况。三者可以组合，不能保证OPD始终胜过RL或学生必然超过教师；关键是教师质量、学生覆盖、在线查询成本与独立评测。
+
+```math
+\begin{aligned}s_t&=(x,y_{\lt t}),\quad y\sim\pi_{\mathrm{roll}}(\cdot\mid x)\\ \mathcal L_{\mathrm{OPD}}(\theta)&=\mathbb E_{x,y}\left[\frac1{|y|}\sum_t D\big(p_T(\cdot\mid s_t),p_S^\theta(\cdot\mid s_t)\big)\right]\\ D_{\mathrm{F}}&=D_{\mathrm{KL}}(p_T\Vert p_S),\quad D_{\mathrm{R}}=D_{\mathrm{KL}}(p_S\Vert p_T)\end{aligned}
+```
+
+#### 易错点
+
+- 公式描述GKD式固定rollout状态上的分布匹配；π_roll在本轮更新时固定，不将采样步骤当可微。
+- 学生rollout不是训练标签，监督来自教师；直接用自己的输出做正例不能自动称为蒸馏。
+
+#### 追问
+
+- 学生与教师初始差距很大时，为什么可能先做SFT再提高on-policy比例？
+- 为什么OPD也应测幻觉、任务正确率和输出多样性，而不只看蒸馏loss？
+
+<a id="ft-026"></a>
+### FT-026 · 拿不到教师 logits 时还能做 OPD 吗，只有文本反馈有哪些限制？
+
+**L3** · 字节跳动
+
+#### 答案
+
+先区分“没有完整logits”与“完全没有概率”。若接口能在相同前缀下给学生所选token打log-prob，同词表时可用$`\log p_S(a_t\mid s_t)-\log p_T(a_t\mid s_t)`$采样估计reverse KL，无须取全部词表；但仅返回教师自己生成token的概率，未必能评价学生任意续写，不能直接替代这种评分接口。
+
+这个差值可以无偏估计KL的数值，但固定已采样token后直接对差值backward，不能得到正确的KL梯度，因为遗漏了采样分布随学生参数变化的导数。需采用策略梯度类surrogate或有依据的重要性采样；公式的无偏性要求动作确实从对应学生分布采样，温度或top-p改变分布时须重新限定目标。
+
+只有文本时，仍可让学生生成轨迹，在其访问的前缀上请教师给下一步或下一段正确续写，再对这些专家标签做学生交叉熵，迭代刷新状态并聚合数据。这属于on-policy专家纠正，兼容文本监督；若教师能按真实条件分布反复采样，CE可作为该条件分布交叉熵的Monte Carlo估计，教师贪心单答则只提供硬标签。API必须支持保留该前缀，教师若重新解题、改写历史，已不是同状态的next-token监督。
+
+也可让教师评分/比较学生答案，结合可执行验证器训练序列奖励或偏好目标；这属于教师反馈的RL/偏好学习，评分不是教师生成概率，更不等价完整逐token KL。只收集教师对原prompt的完整答案是SeqKD；直接把学生原答案当正确标签没有教师信息。应过滤教师错误、截断和泄露样本，保留独立任务评测，同时控制多次教师查询成本。
+
+```math
+\begin{aligned}\hat d_t&=\log p_S(a_t\mid s_t)-\log p_T(a_t\mid s_t),\quad a_t\sim p_S(\cdot\mid s_t)\\ \mathbb E_{a_t}[\hat d_t]&=D_{\mathrm{KL}}(p_S\Vert p_T)\\ \mathcal L_{\mathrm{label}}&=\mathbb E_{s\sim d_{\mathrm{roll}},\ z\sim q_T(\cdot\mid s)}[-\log p_S(z\mid s)]\end{aligned}
+```
+
+#### 易错点
+
+- 单个reverse-KL采样项可以为负，非负性约束期望；旧rollout多轮更新需处理策略滞后。
+- 只有文本样本通常无法精确恢复教师词表分布或直接计算reverse KL；教师评分不能伪装成log-prob。
+
+#### 追问
+
+- 教师不能续写assistant前缀时，应该如何调整任务接口和监督目标？
+- 教师仅给top-k或生成样本的log-prob，怎样判断它是否足够评价学生轨迹？
+
+<a id="ft-027"></a>
+### FT-027 · 教师与学生词表不同，跨 tokenizer 的 OPD 怎样定义对齐和损失？
+
+**L3** · 字节跳动
+
+#### 答案
+
+词表下标与序列位置都可能不一致，不能直接逐维KL或把双方第$`t`$个token视为相同文本。先把学生rollout还原为共同文本，用各自tokenizer处理；按原文UTF-8字节偏移合并覆盖相同span的tokens，处理BOS/EOS、零宽特殊符号、空格与decode清理，保证比较的是相同已完成前缀。
+
+若需要规范概率目标，可在具备完整next-token分布、候选token可确定下一输出字节的共同边界上，将概率汇总到“下一个字节/EOS/其余特殊输出”等共同、互斥且完备的类别，再对归一化的$`q_T,q_S`$做KL或JSD。下式$`m_i`$把每个模型的token唯一映射到公共类别，因而概率和为1。它只匹配粗粒度事件，丢掉字节后的语义，不能宣称等价完整文本分布KL；应配合文本监督。
+
+也可采用GOLD的span与词汇匹配方案：已匹配词汇比较对应概率，不匹配部分采用排序质量损失。但合并span沿途log-prob相加只精确给出所选token路径概率，不是所有同文路径的总概率；公开GOLD合并向量也可能非归一化，不能直接代入普通KL。只有top-k时须明确剩余概率质量与OTHER桶；仅重归一化是在截断条件分布上比较。拿不到概率则退回教师文本纠正/序列蒸馏，而非虚构跨词表logits。
+
+```math
+\begin{aligned}q_i(b\mid u)&=\sum_{v\in V_i:\,m_i(v;u)=b}p_i(v\mid u),\quad i\in\{T,S\}\\ \sum_{b\in\mathcal B}q_i(b\mid u)&=1\\ \mathcal L_{\mathrm{coarse}}&=\mathbb E_{u\sim d_{\mathrm{roll}}}\left[\sum_{b\in\mathcal B}q_T(b\mid u)\log\frac{q_T(b\mid u)}{q_S(b\mid u)}\right]\end{aligned}
+```
+
+#### 易错点
+
+- 首字节汇总是明确可定义的粗粒度目标，并非冒称已有命名算法；映射条件不满足时不能套公式。
+- 不同top-k集合的OTHER桶不自动表示相同文本事件；尾部质量未知时不能声称估计了完整KL。
+- 候选span概率需要说明枚举路径与结束事件；单条规范tokenization路径得分不能直接等同总文本概率。
+
+#### 追问
+
+- 为什么UTF-8字节对齐能修正位置问题，却仍不能自动解决词表概率比较？
+- 怎样用中文、emoji、前导空格和不同BOS设置验证对齐覆盖率及概率和？
+
 ## 参考资料
 
 - [TRL SFT Trainer](https://huggingface.co/docs/trl/sft_trainer)
@@ -689,6 +783,7 @@ ROME 把特定 MLP 的事实关联视为 key—value 映射，用带保留约束
 - [PEFT: Quantization](https://huggingface.co/docs/peft/developer_guides/quantization)
 - [PEFT LoRA — initialization and LoraConfig](https://huggingface.co/docs/peft/main/en/package_reference/lora)
 - [PEFT official implementation: LoRA layer](https://raw.githubusercontent.com/huggingface/peft/main/src/peft/tuners/lora/layer.py)
+- [PEFT LoRA Linear 初始化官方实现](https://github.com/huggingface/peft/blob/main/src/peft/tuners/lora/layer.py)
 - [QLoRA: Efficient Finetuning of Quantized LLMs](https://arxiv.org/pdf/2305.14314)
 - [PEFT: Prompt tuning](https://huggingface.co/docs/peft/main/en/package_reference/prompt_tuning)
 - [Self-Instruct: Aligning Language Models with Self-Generated Instructions](https://arxiv.org/abs/2212.10560)
@@ -717,6 +812,13 @@ ROME 把特定 MLP 的事实关联视为 key—value 映射，用带保留约束
 - [Locating and Editing Factual Associations in GPT](https://rome.baulab.info/)
 - [Mass Editing Memory in a Transformer](https://memit.baulab.info/)
 - [Fast Model Editing at Scale](https://arxiv.org/abs/2110.11309)
+- [On-policy Distillation of Language Models: Learning from Self-Generated Mistakes](https://arxiv.org/html/2306.13649)
+- [TRL Distillation Trainer](https://huggingface.co/docs/trl/distillation_trainer)
+- [Thinking Machines Lab: On-Policy Distillation](https://thinkingmachines.ai/blog/on-policy-distillation/)
+- [A Reduction of Imitation Learning and Structured Prediction to No-Regret Online Learning](https://proceedings.mlr.press/v15/ross11a.html)
+- [Sequence-Level Knowledge Distillation](https://aclanthology.org/D16-1139/)
+- [TRL General Online Logit Distillation (GOLD) Trainer](https://huggingface.co/docs/trl/gold_trainer)
+- [Unlocking On-Policy Distillation for Any Model Family](https://huggingfaceh4-on-policy-distillation.hf.space/)
 - [Attention Is All You Need](https://arxiv.org/pdf/1706.03762)
 - [TRL Reducing Memory Usage — packing and padding-free](https://huggingface.co/docs/trl/main/en/reducing_memory_usage)
 - [PyTorch SDPA — masks, shapes and GQA](https://docs.pytorch.org/docs/2.14/generated/torch.nn.functional.scaled_dot_product_attention.html)

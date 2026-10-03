@@ -1317,10 +1317,18 @@
           "source_id": "APP-S007",
           "support": "reported_question",
           "note": "正文明确问 RLHF 为什么需要 KL penalty。"
+        },
+        {
+          "source_id": "XHS26-S013",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
-      "topic": "RLHF 与 PPO"
+      "topic": "RLHF 与 PPO",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "ALN-006",
@@ -1409,10 +1417,18 @@
           "source_id": "APP-S001",
           "support": "search_snippet",
           "note": "搜索摘要报告 PPO/DPO trade-off 问题。"
+        },
+        {
+          "source_id": "XHS26-S013",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
-      "topic": "RLHF 与 PPO"
+      "topic": "RLHF 与 PPO",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "ALN-009",
@@ -1481,12 +1497,28 @@
           "source_id": "XHS26-S005",
           "support": "reported_question",
           "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S012",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S013",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S014",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
       "topic": "GRPO 与在线优化",
       "company_tags": [
-        "小红书"
+        "小红书",
+        "字节跳动"
       ]
     },
     {
@@ -1560,9 +1592,18 @@
       "reference_ids": [
         "APP-S110"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "GRPO 与在线优化"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S014",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "GRPO 与在线优化",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "ALN-014",
@@ -1625,12 +1666,23 @@
           "source_id": "XHS26-S005",
           "support": "reported_question",
           "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S012",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S013",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
       "topic": "奖励与对齐策略",
       "company_tags": [
-        "小红书"
+        "小红书",
+        "字节跳动"
       ]
     },
     {
@@ -1813,10 +1865,18 @@
           "source_id": "APP-S009",
           "support": "reported_question",
           "note": "正文明确问 RAG 理解与一般工作流程。"
+        },
+        {
+          "source_id": "XHS26-S009",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
-      "topic": "文档切分与索引"
+      "topic": "文档切分与索引",
+      "company_tags": [
+        "腾讯"
+      ]
     },
     {
       "id": "RAG-002",
@@ -2296,45 +2356,75 @@
           "source_id": "XHS26-S007",
           "support": "reported_question",
           "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S009",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S013",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
       "topic": "提示、推理与规划",
       "company_tags": [
-        "米哈游"
+        "米哈游",
+        "腾讯",
+        "字节跳动"
       ]
     },
     {
       "id": "AGT-002",
       "category": "AGT",
-      "title": "如何让 function calling 更可靠？",
+      "title": "如何让 function calling 更可靠，图像 crop 坐标错误怎样处理？",
       "level": "L2",
       "tags": [
         "function calling",
-        "schema"
+        "schema",
+        "图像crop",
+        "坐标映射",
+        "执行校验"
       ],
       "answer": {
         "pitfalls": [
-          "schema 合法不代表账号、时间、金额或权限在业务上有效。"
+          "schema 合法不代表账号、时间、金额或权限在业务上有效。",
+          "坐标映射公式只对应缩放加padding；旋转、裁剪等操作需组合完整预处理变换。",
+          "库不抛异常不代表边界语义正确；取整前正面积也不保证取整后仍有面积。"
         ],
         "followups": [
-          "工具显示成功后，怎样验证实体状态确实改变？"
+          "工具显示成功后，怎样验证实体状态确实改变？",
+          "模型给出原图坐标，但工具对缩略图裁剪，怎样用变换记录定位错误？"
         ],
-        "body": "可靠 function calling 需要明确工具用途、参数 schema 与错误语义，并在执行端验证类型、权限和业务约束。清晰的工具名与描述、具体字段、枚举和必要约束能减少歧义，但合法 JSON 只是第一步，账号、时间或金额等参数仍可能在业务上无效。\n\n流式参数需完整接收后再验证，不能执行尚未完成的片段。工具应返回简洁结构结果、稳定 ID 与可行动的错误，使用分页和字段投影控制大结果。工具选择、参数正确、操作成功及目标完成应分别判断，再将真实结果交给模型继续决策。\n\nFunction calling流程是向模型提供工具schema，模型选择工具并生成结构化参数，宿主校验权限/参数后执行，tool结果作为下一轮条件回传。模型学习调用来自示范或交互训练，而schema约束主要保证结构，不能保证参数语义、对象存在或操作授权。"
+        "body": "可靠 function calling 需要明确工具用途、参数 schema 与错误语义，并在执行端验证类型、权限和业务约束。清晰的工具名与描述、具体字段、枚举和必要约束能减少歧义，但合法 JSON 只是第一步，账号、时间或金额等参数仍可能在业务上无效。\n\n流式参数需完整接收后再验证，不能执行尚未完成的片段。工具应返回简洁结构结果、稳定 ID 与可行动的错误，使用分页和字段投影控制大结果。工具选择、参数正确、操作成功及目标完成应分别判断，再将真实结果交给模型继续决策。\n\nFunction calling流程是向模型提供工具schema，模型选择工具并生成结构化参数，宿主校验权限/参数后执行，tool结果作为下一轮条件回传。模型学习调用来自示范或交互训练，而schema约束主要保证结构，不能保证参数语义、对象存在或操作授权。\n\n图像 crop 工具还要约定 image/frame ID、坐标基准、单位与框格式，例如转向后的原图像素坐标 (left, top, right, bottom)，不能混淆原图、resize 后画面、归一化坐标和宽高格式。服务端独立验证四个值的类型、有限性（拒绝 NaN/Inf）、边界、顺序与取整后正面积，并限制输出像素量。若模型观察的是缩放加 padding 的图片，要保存实际缩放比与偏移，将两个角映射回原图再校验，其中 s_x/s_y 是实际缩放比，p_x/p_y 是左侧/上侧 padding，W/H 是原图宽高；EXIF 转向和后续裁剪也要纳入同一变换链。\n\n无效框返回结构错误、真实图片尺寸和合法坐标约束，要求基于当前图像重新定位，限制重试次数；重复失败退回全图或更可靠定位工具。不要凭模型声称坐标正确执行，也不要静默夹紧或交换坐标掩盖错误；若接口明确允许裁切到边界，应返回实际执行框。隔离图像处理异常并保留原图，区分参数错误、资源限制和程序故障。结构合法与框住目标是不同问题，执行后还需检查裁剪内容是否提供所需证据。",
+        "formula": "\\begin{aligned}x_{\\mathrm{orig}}&=(x_{\\mathrm{model}}-p_x)/s_x,\\qquad y_{\\mathrm{orig}}=(y_{\\mathrm{model}}-p_y)/s_y\\\\ 0&\\le x_1<x_2\\le W,\\qquad 0\\le y_1<y_2\\le H\\end{aligned}"
       },
       "reference_ids": [
         "APP-S137",
-        "JUN26-P046"
+        "JUN26-P046",
+        "XHS26-R2AG01",
+        "XHS26-R2AG02",
+        "XHS26-R2AG03"
       ],
       "community_evidence": [
         {
           "source_id": "APP-S012",
           "support": "search_snippet",
           "note": "搜索摘要提到工具 schema、渐进工具加载与结果验证。"
+        },
+        {
+          "source_id": "XHS26-S014",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
-      "topic": "工具调用与协议"
+      "topic": "工具调用与协议",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "AGT-003",
@@ -2427,10 +2517,18 @@
           "source_id": "APP-S002",
           "support": "search_snippet",
           "note": "摘要明确问多 Agent 通信机制和状态共享。"
+        },
+        {
+          "source_id": "XHS26-S013",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
-      "topic": "多 Agent 协同与训练"
+      "topic": "多 Agent 协同与训练",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "AGT-006",
@@ -2515,26 +2613,43 @@
       "level": "L2",
       "tags": [
         "Agent评测",
-        "trajectory"
+        "trajectory",
+        "Harness",
+        "Benchmark",
+        "环境控制"
       ],
       "answer": {
         "pitfalls": [
-          "一次成功不足以代表稳定性，特别是随机采样与动态环境。"
+          "一次成功不足以代表稳定性，特别是随机采样与动态环境。",
+          "容器相同不代表外部网络、账号、缓存和任务初始状态也相同。",
+          "评测harness与Agent运行外壳可以复用组件，但不能只把一个数据集文件称为完整benchmark。"
         ],
         "followups": [
-          "若最终目标达成但调用了禁止工具，怎么评分？"
+          "若最终目标达成但调用了禁止工具，怎么评分？",
+          "参考正确解也失败时，应暂停模型结论并怎样定位harness或环境问题？"
         ],
-        "body": "Agent 通常需要完成环境中的任务，而非只写出正确文字。应预先定义客观成功条件，检查环境结果，并分别评测工具选择与参数、轨迹效率和故障恢复；最终回答正确也可能掩盖越权或实际未执行操作，模型自报完成不能作为依据。\n\n在可重置环境中多次运行并保存中间状态，区分决策失败、工具故障和评测环境故障。记录模型、工具与提示版本，以及 token、步骤和延迟，定位长轨迹的失败位置。随机采样与动态环境下，一次成功尤其不足以代表稳定性。\n\n验收前先声明目标状态、允许副作用、成本/延迟和权限约束，再由环境检查而非Agent自报完成判断成功。AgentBench/WebArena/GAIA等只能覆盖某些任务，业务验收须用真实动作空间与失败恢复案例建立回归集。"
+        "body": "Agent 通常需要完成环境中的任务，而非只写出正确文字。应预先定义客观成功条件，检查环境结果，并分别评测工具选择与参数、轨迹效率和故障恢复；最终回答正确也可能掩盖越权或实际未执行操作，模型自报完成不能作为依据。\n\n在可重置环境中多次运行并保存中间状态，区分决策失败、工具故障和评测环境故障。记录模型、工具与提示版本，以及 token、步骤和延迟，定位长轨迹的失败位置。随机采样与动态环境下，一次成功尤其不足以代表稳定性。\n\n验收前先声明目标状态、允许副作用、成本/延迟和权限约束，再由环境检查而非Agent自报完成判断成功。AgentBench/WebArena/GAIA等只能覆盖某些任务，业务验收须用真实动作空间与失败恢复案例建立回归集。\n\nBenchmark 是用于比较能力的任务集合与评分协议，包括样本、初始条件、成功定义和预算；harness 是执行这些协议的程序。Agent runtime harness 常指提供工具、状态和执行循环的运行外壳，评测 harness 则负责初始化/重置环境、运行候选、收集轨迹和评分，两者可以集成但职责不同。换了运行外壳、工具集合或预算，即使同一模型也不是同一完整系统。\n\n评测需固定环境快照、依赖与工具版本、账号权限、数据时间、随机种子、检索库和网络策略，并声明缓存冷热、步骤/token/时间预算及重试规则。容器隔离有助复现，但外部网页变化与服务故障仍需控制或单列；每次任务后重置副作用，避免前一运行修改后续测试。参考成功轨迹或gold答案也应过同一harness自检，排除评测器坏了。按失败原因分组，保留完整日志和环境验收结果，多次运行比较成功率及方差。",
+        "formula": ""
       },
       "reference_ids": [
         "APP-S133",
         "JUN26-P041",
         "JUN26-P042",
-        "JUN26-P043"
+        "JUN26-P043",
+        "XHS26-R2AG05"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "可靠性与评测"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S014",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "可靠性与评测",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "AGT-009",
@@ -2558,9 +2673,18 @@
         "APP-S136",
         "JUN26-P030"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "可靠性与评测"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S013",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "可靠性与评测",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "AGT-010",
@@ -2614,9 +2738,18 @@
       "reference_ids": [
         "APP-S150"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "评测协议与基准"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S013",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "评测协议与基准",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "EVA-002",
@@ -2963,9 +3096,18 @@
       "reference_ids": [
         "APP-S153"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "评测协议与基准"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S013",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "评测协议与基准",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "EVA-014",

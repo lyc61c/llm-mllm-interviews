@@ -38,7 +38,7 @@
 <a id="inf-001"></a>
 ### INF-001 · KV cache 缓存什么，为什么通常不缓存历史 Q？
 
-**L1**
+**L1** · 腾讯
 
 #### 答案
 
@@ -91,7 +91,7 @@ M_{\rm KV}\approx2BLTH_{\rm kv}d_hs
 <a id="inf-003"></a>
 ### INF-003 · MHA、MQA 与 GQA 的结构、KV 显存及速度有何差异？
 
-**L1**
+**L1** · 腾讯
 
 #### 答案
 
@@ -400,7 +400,7 @@ p'(i\mid s)=\frac{\mathbf1\{i\in A(s)\}\exp(z_i)}{\sum_{j\in A(s)}\exp(z_j)},\qq
 <a id="inf-005"></a>
 ### INF-005 · FlashAttention 的核心思想是什么，会改变注意力结果吗？
 
-**L2**
+**L2** · 腾讯
 
 #### 答案
 

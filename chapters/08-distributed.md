@@ -34,6 +34,7 @@
   - [DST-018 · 训练挂在 NCCL collective 上，如何定位？](#dst-018)
   - [DST-019 · MFU、HFU 与 GPU utilization 有什么区别？](#dst-019)
   - [DST-020 · 多模态训练吞吐波动，怎样做 profiling 与负载平衡？](#dst-020)
+  - [DST-027 · DataLoader、Sampler、BatchSampler 和 collate_fn 分别负责什么？](#dst-027)
 
 <a id="topic-1"></a>
 ## 训练显存与状态分片
@@ -77,7 +78,7 @@
 <a id="dst-004"></a>
 ### DST-004 · ZeRO-1/2/3 各切分什么？理想状态显存是多少？
 
-**L1**
+**L1** · 腾讯
 
 #### 答案
 
@@ -616,6 +617,36 @@ GPU utilization 只反映设备是否忙；HFU 可包含重计算等实际执行
 
 - 冻结视觉编码器时怎样判断预计算特征是否合适？
 
+<a id="dst-027"></a>
+### DST-027 · DataLoader、Sampler、BatchSampler 和 collate_fn 分别负责什么？
+
+**L1** · 腾讯
+
+#### 答案
+
+对map-style数据集，Dataset按key返回样本；通常接到sampler参数的采样器逐次给出key，接到batch_sampler参数的对象逐次给出一批key；collate_fn在自动组批模式下接收已经读取的样本列表并整理成训练batch；DataLoader把这些环节组合起来，管理迭代、worker、预取和可选内存pinning。职责可概括为“选哪些样本 → 读样本 → 拼成批次”，不要把采样顺序与张量padding混成同一层。
+
+普通固定batch_size会让DataLoader用BatchSampler包装逐条索引的sampler；自定义长度分桶或token预算组批时，可直接提供batch_sampler。此时由它决定批次，不能再同时传batch_size、shuffle、sampler和drop_last。Sampler是协议名称，继承Sampler的类也可以返回索引列表；关键是返回单位以及传入DataLoader的哪个参数，不能只凭类名判断。
+
+collate_fn适合对变长文本padding、构造attention_mask和labels、保留原始长度、组合图像/视频元数据。自动组批被关闭时，它接收单个样本而非样本列表，不能无条件按批处理。数据读取不稳定时，应分别测I/O、解码、组批、CPU到GPU传输与模型计算，再决定增加worker还是优化缓存和padding。
+
+对map-style多进程加载，主进程生成采样索引，worker执行数据读取、变换及collate；worker多不代表样本会自动按DDP rank划分。IterableDataset由自身迭代定义顺序，不能直接套用map-style的sampler/batch_sampler；多个worker各持副本时需显式分片避免重复数据。复现要同时控制采样器epoch种子和worker中的数据增强随机性；Windows使用spawn时，供worker使用的collate_fn应为可序列化的顶层定义。
+
+```math
+\mathcal B=\mathrm{collate}([\mathrm{dataset}[i]\mid i\in\mathcal I]),\qquad \mathcal I\sim\mathrm{batch\_sampler}
+```
+
+#### 易错点
+
+- collate_fn操作的是样本或样本列表，而不是默认由它决定全局采样顺序。
+- 增加num_workers不会替代rank分片；IterableDataset多worker副本若不分片会重复读取。
+- 自定义batch_sampler后再设置一组互斥的组批参数，会触发接口错误或混乱的职责设计。
+
+#### 追问
+
+- 数据加载长期比模型计算慢，怎样用profiler分离瓶颈？
+- persistent_workers下如何让每个epoch的数据增强随机性符合复现要求？
+
 ## 参考资料
 
 - [PyTorch DistributedDataParallel 文档](https://docs.pytorch.org/docs/2.14/generated/torch.nn.parallel.DistributedDataParallel.html)
@@ -655,3 +686,4 @@ GPU utilization 只反映设备是否忙；HFU 可包含重计算等实际执行
 - [PyTorch：CUDA semantics](https://docs.pytorch.org/docs/main/notes/cuda.html)
 - [NVIDIA NCCL：Performance and tuning](https://docs.nvidia.com/deeplearning/nccl/archives/nccl_2307/user-guide/docs/troubleshooting/performance_and_tuning.html)
 - [Colossal-AI：2.5D Tensor Parallelism](https://colossalai.org/docs/features/2p5D_tensor_parallel/)
+- [PyTorch官方Sampler与BatchSampler实现](https://github.com/pytorch/pytorch/blob/main/torch/utils/data/sampler.py)

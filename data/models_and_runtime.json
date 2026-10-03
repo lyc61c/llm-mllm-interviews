@@ -728,6 +728,11 @@
           "source_id": "XHS26-S001",
           "support": "reported_question",
           "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S013",
+          "support": "reported_topic",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,

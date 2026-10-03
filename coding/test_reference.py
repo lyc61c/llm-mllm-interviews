@@ -154,6 +154,172 @@ class ReferenceTests(unittest.TestCase):
     def test_kv_cache_units(self):
         self.assertEqual(kv_cache_bytes(1,4096,32,8,128,2), 536870912)
 
+    def test_bucket_sampler_coverage_and_length(self):
+        rng = random.Random(23)
+        for count in range(42):
+            lengths = [rng.randrange(101) for _ in range(count)]
+            for batch_size in (1, 3, 8):
+                for drop_last in (False, True):
+                    sampler = BucketBatchSampler(lengths, batch_size, drop_last=drop_last, seed=9)
+                    batches = list(sampler)
+                    indices = [i for batch in batches for i in batch]
+                    self.assertEqual(len(batches), len(sampler))
+                    self.assertEqual(len(indices), len(set(indices)))
+                    self.assertTrue(set(indices) <= set(range(count)))
+                    self.assertTrue(all(0 < len(batch) <= batch_size for batch in batches))
+                    if drop_last:
+                        self.assertEqual(len(indices), count // batch_size * batch_size)
+                        self.assertTrue(all(len(batch) == batch_size for batch in batches))
+                    else:
+                        self.assertEqual(sorted(indices), list(range(count)))
+
+    def test_bucket_sampler_epoch_reproducibility(self):
+        a = BucketBatchSampler(range(60), 3, seed=8)
+        b = BucketBatchSampler(range(60), 3, seed=8)
+        original = list(a)
+        self.assertEqual(original, list(a))
+        self.assertEqual(original, list(b))
+        a.set_epoch(1); b.set_epoch(1)
+        self.assertEqual(list(a), list(b))
+        self.assertNotEqual(original, list(a))
+        self.assertNotEqual(original, list(BucketBatchSampler(range(60), 3, seed=18)))
+
+    def test_bucket_sampler_empty_ties_and_order(self):
+        self.assertEqual(list(BucketBatchSampler([], 5)), [])
+        self.assertEqual(list(BucketBatchSampler([8, 2, 2, 10, 0], 2, shuffle=False)),
+                         [[4, 1], [2, 0], [3]])
+        self.assertEqual(list(BucketBatchSampler([7], 2, drop_last=True)), [])
+        lengths = [2, 1]
+        sampler = BucketBatchSampler(lengths, 2, shuffle=False)
+        lengths[:] = []
+        self.assertEqual(list(sampler), [[1, 0]])
+
+    def test_bucket_sampler_padding_budget(self):
+        lengths = [1] * 64 + [100] * 64
+        sampler = BucketBatchSampler(lengths, 8, bucket_multiplier=4, seed=13)
+        padded = sum(max(lengths[i] for i in batch) * len(batch) for batch in sampler)
+        shuffled = list(range(len(lengths)))
+        random.Random(13).shuffle(shuffled)
+        random_padded = sum(max(lengths[i] for i in shuffled[start:start+8]) * 8
+                            for start in range(0, len(lengths), 8))
+        self.assertEqual(padded, sum(lengths))
+        self.assertLess(padded, random_padded)
+
+    def test_bucket_sampler_invalid_parameters(self):
+        for args in (([1], 0), ([1], True), ([-1], 2), ([float('nan')], 2),
+                     ([float('inf')], 2), (['3'], 2)):
+            with self.assertRaises(ValueError):
+                BucketBatchSampler(*args)
+        for kwargs in ({'bucket_multiplier': 0}, {'seed': 1.5}):
+            with self.assertRaises(ValueError):
+                BucketBatchSampler([1], 2, **kwargs)
+        for epoch in (-1, 1.5, True):
+            with self.assertRaises(ValueError):
+                BucketBatchSampler([1], 2).set_epoch(epoch)
+
+    def test_integer_sqrt_exact_boundaries_and_large_values(self):
+        values = list(range(500))
+        rng = random.Random(24)
+        for bits in (8, 64, 256, 1024):
+            for _ in range(20):
+                root = rng.getrandbits(bits)
+                values.extend((root * root, root * root + 1, max(0, root * root - 1)))
+        for value in values:
+            actual = integer_sqrt(value)
+            self.assertEqual(actual, math.isqrt(value))
+            self.assertLessEqual(actual * actual, value)
+            self.assertGreater((actual + 1) * (actual + 1), value)
+        for value in (-1, 1.5, True):
+            with self.assertRaises(ValueError):
+                integer_sqrt(value)
+
+    def test_longest_palindrome_against_exhaustive_substrings(self):
+        def brute(text):
+            best = ''
+            for i in range(len(text)):
+                for j in range(i + 1, len(text) + 1):
+                    candidate = text[i:j]
+                    if candidate == candidate[::-1] and len(candidate) > len(best):
+                        best = candidate
+            return best
+        self.assertEqual(longest_palindromic_substring('babad'), 'bab')
+        self.assertEqual(longest_palindromic_substring('cbbd'), 'bb')
+        self.assertEqual(longest_palindromic_substring(''), '')
+        self.assertEqual(longest_palindromic_substring('aaaaa'), 'aaaaa')
+        rng = random.Random(25)
+        for _ in range(250):
+            text = ''.join(rng.choice('abc') for _ in range(rng.randrange(12)))
+            self.assertEqual(longest_palindromic_substring(text), brute(text))
+
+    def test_unique_permutations_against_itertools(self):
+        from itertools import permutations
+        from collections import Counter
+        self.assertEqual(unique_permutations([]), [[]])
+        self.assertEqual(unique_permutations([1, 1, 2]), [[1, 1, 2], [1, 2, 1], [2, 1, 1]])
+        rng = random.Random(26)
+        for _ in range(100):
+            values = [rng.randrange(-2, 3) for _ in range(rng.randrange(7))]
+            original = values.copy()
+            actual = unique_permutations(values)
+            tuples = [tuple(row) for row in actual]
+            self.assertEqual(set(tuples), set(permutations(values)))
+            self.assertEqual(len(tuples), len(set(tuples)))
+            self.assertEqual(values, original)
+            self.assertTrue(all(Counter(row) == Counter(values) for row in actual))
+            if len(actual) > 1 and values:
+                previous = actual[1].copy()
+                actual[0][0] = 'changed'
+                self.assertEqual(actual[1], previous)
+        with self.assertRaises(TypeError):
+            unique_permutations([1, 'a'])
+
+    def test_reverse_linked_list_identity_termination_and_cycles(self):
+        for count in range(20):
+            nodes = [ListNode(index % 3) for index in range(count)]
+            for before, after in zip(nodes, nodes[1:]):
+                before.next = after
+            head = reverse_linked_list(nodes[0] if nodes else None)
+            traversed, seen = [], set()
+            while head is not None:
+                self.assertNotIn(id(head), seen)
+                seen.add(id(head))
+                traversed.append(head)
+                head = head.next
+            self.assertEqual(traversed, nodes[::-1])
+            if nodes:
+                self.assertIsNone(nodes[0].next)
+                original_head = reverse_linked_list(nodes[-1])
+                self.assertIs(original_head, nodes[0])
+                for before, after in zip(nodes, nodes[1:]):
+                    self.assertIs(before.next, after)
+        nodes = [ListNode(i) for i in range(4)]
+        for before, after in zip(nodes, nodes[1:]):
+            before.next = after
+        nodes[-1].next = nodes[1]
+        original_next = [node.next for node in nodes]
+        with self.assertRaises(ValueError):
+            reverse_linked_list(nodes[0])
+        self.assertEqual([node.next for node in nodes], original_next)
+        single = ListNode(3)
+        single.next = single
+        with self.assertRaises(ValueError):
+            reverse_linked_list(single)
+        self.assertIs(single.next, single)
+
+    def test_single_transaction_stock_profit_against_all_pairs(self):
+        for prices, expected in (([], 0), ([4], 0), ([7, 6, 4, 3, 1], 0),
+                                 ([7, 1, 5, 3, 6, 4], 5), ([1, 2, 3, 4], 3)):
+            self.assertEqual(max_stock_profit(prices), expected)
+        rng = random.Random(27)
+        for _ in range(250):
+            prices = [rng.randrange(30) for _ in range(rng.randrange(20))]
+            expected = max([0] + [prices[j] - prices[i] for i in range(len(prices))
+                                  for j in range(i + 1, len(prices))])
+            original = prices.copy()
+            self.assertEqual(max_stock_profit(prices), expected)
+            self.assertEqual(max_stock_profit(iter(prices)), expected)
+            self.assertEqual(prices, original)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -8,7 +8,7 @@
   - [AGT-001 · ReAct、固定工作流和 Agent 有什么区别？](#agt-001)
   - [AGT-011 · CoT、Self-Consistency、ToT、GoT 与计划执行分别怎样提高推理和规划？](#agt-011)
 - [工具调用与协议](#topic-2)
-  - [AGT-002 · 如何让 function calling 更可靠？](#agt-002)
+  - [AGT-002 · 如何让 function calling 更可靠，图像 crop 坐标错误怎样处理？](#agt-002)
   - [AGT-006 · MCP 与模型 function calling 是什么关系？](#agt-006)
   - [AGT-013 · A2A 与 MCP 有什么区别，A2A 通信怎样避免 Agent 递归对话？](#agt-013)
 - [记忆与上下文](#topic-3)
@@ -35,7 +35,7 @@
 <a id="agt-001"></a>
 ### AGT-001 · ReAct、固定工作流和 Agent 有什么区别？
 
-**L1** · 米哈游
+**L1** · 米哈游 / 腾讯 / 字节跳动
 
 #### 答案
 
@@ -56,7 +56,7 @@
 <a id="agt-011"></a>
 ### AGT-011 · CoT、Self-Consistency、ToT、GoT 与计划执行分别怎样提高推理和规划？
 
-**L2**
+**L2** · 腾讯
 
 #### 答案
 
@@ -82,9 +82,9 @@ Plan-and-Execute先产生任务分解，再由执行器完成步骤，并按观�
 ## 工具调用与协议
 
 <a id="agt-002"></a>
-### AGT-002 · 如何让 function calling 更可靠？
+### AGT-002 · 如何让 function calling 更可靠，图像 crop 坐标错误怎样处理？
 
-**L2**
+**L2** · 字节跳动
 
 #### 答案
 
@@ -94,13 +94,24 @@ Plan-and-Execute先产生任务分解，再由执行器完成步骤，并按观�
 
 Function calling流程是向模型提供工具schema，模型选择工具并生成结构化参数，宿主校验权限/参数后执行，tool结果作为下一轮条件回传。模型学习调用来自示范或交互训练，而schema约束主要保证结构，不能保证参数语义、对象存在或操作授权。
 
+图像 crop 工具还要约定 image/frame ID、坐标基准、单位与框格式，例如转向后的原图像素坐标 (left, top, right, bottom)，不能混淆原图、resize 后画面、归一化坐标和宽高格式。服务端独立验证四个值的类型、有限性（拒绝 NaN/Inf）、边界、顺序与取整后正面积，并限制输出像素量。若模型观察的是缩放加 padding 的图片，要保存实际缩放比与偏移，将两个角映射回原图再校验，其中 s_x/s_y 是实际缩放比，p_x/p_y 是左侧/上侧 padding，W/H 是原图宽高；EXIF 转向和后续裁剪也要纳入同一变换链。
+
+无效框返回结构错误、真实图片尺寸和合法坐标约束，要求基于当前图像重新定位，限制重试次数；重复失败退回全图或更可靠定位工具。不要凭模型声称坐标正确执行，也不要静默夹紧或交换坐标掩盖错误；若接口明确允许裁切到边界，应返回实际执行框。隔离图像处理异常并保留原图，区分参数错误、资源限制和程序故障。结构合法与框住目标是不同问题，执行后还需检查裁剪内容是否提供所需证据。
+
+```math
+\begin{aligned}x_{\mathrm{orig}}&=(x_{\mathrm{model}}-p_x)/s_x,\qquad y_{\mathrm{orig}}=(y_{\mathrm{model}}-p_y)/s_y\\ 0&\le x_1\lt x_2\le W,\qquad 0\le y_1\lt y_2\le H\end{aligned}
+```
+
 #### 易错点
 
 - schema 合法不代表账号、时间、金额或权限在业务上有效。
+- 坐标映射公式只对应缩放加padding；旋转、裁剪等操作需组合完整预处理变换。
+- 库不抛异常不代表边界语义正确；取整前正面积也不保证取整后仍有面积。
 
 #### 追问
 
 - 工具显示成功后，怎样验证实体状态确实改变？
+- 模型给出原图坐标，但工具对缩略图裁剪，怎样用变换记录定位错误？
 
 <a id="agt-006"></a>
 ### AGT-006 · MCP 与模型 function calling 是什么关系？
@@ -218,7 +229,7 @@ A2A用于不同系统中的Agent互操作，主要抽象包括AgentCard发现能
 <a id="agt-005"></a>
 ### AGT-005 · 多 Agent 的通信与共享状态如何设计？
 
-**L3**
+**L3** · 字节跳动
 
 #### 答案
 
@@ -281,7 +292,7 @@ A2A用于不同系统中的Agent互操作，主要抽象包括AgentCard发现能
 <a id="agt-015"></a>
 ### AGT-015 · 怎样训练 Agent 的工具使用能力，SFT、轨迹偏好与在线 RL 数据如何组织？
 
-**L2**
+**L2** · 字节跳动
 
 #### 答案
 
@@ -291,13 +302,19 @@ Agent训练样本是带状态和环境反馈的决策轨迹，至少包括用户
 
 保留失败和恢复轨迹，验证工具调用可执行性，过滤无效/危险行为，按任务和环境划分训练评测避免泄漏。只收集成功终点而缺失中间观察，模型可能学会终点叙述却不会行动；不同工具版本和schema也须一致或明确迁移。
 
+动作空间应从任务覆盖、当前状态可执行性和轨迹数据出发，定义有限动作类型及参数 schema，再按状态提供合法候选。语义动作如搜索、读取、比较、选项设置与结束，通常比任意键鼠或无约束代码更易学习和验收；WebShop 区分搜索与状态相关的按钮选择，并在 RL 中由搜索模型提供候选。动作过少会使任务不可达，过多则扩大分支、增加无效探索，稀疏终局奖励下难以判断哪一步有效。
+
+可用示范暖启动、候选检索、合法动作 mask、分层技能和课程任务降低探索难度，但要测候选召回、错误屏蔽与必要动作覆盖，不能把最优动作排除后只报有效调用率。动作集合扩大时，与原集合做同预算成功率、探索步数、无效动作和成本对照；无合法动作时应有重新观察、停止或求助路径。
+
 #### 易错点
 
 - 工具返回内容不能直接赋予新权限，轨迹奖励也不能跳过执行端权限校验。
+- 缩小动作空间可能让目标不可达，合法调用率提高不能替代任务成功。
 
 #### 追问
 
 - Agent在新版本API上频繁填错参数，应改数据、schema还是约束解码？
+- 候选召回器漏掉关键动作，怎样区分是策略错误还是动作接口限制？
 
 <a id="agt-018"></a>
 ### AGT-018 · 游戏 VLM 的端到端策略与“大小脑”分层控制怎样比较和选择？
@@ -397,7 +414,7 @@ Prompt injection 可能藏在外部网页、邮件、文档或工具结果中，
 <a id="agt-008"></a>
 ### AGT-008 · Agent 应怎样评测，为什么不能只看最终回答？
 
-**L2**
+**L2** · 字节跳动
 
 #### 答案
 
@@ -407,18 +424,25 @@ Agent 通常需要完成环境中的任务，而非只写出正确文字。应�
 
 验收前先声明目标状态、允许副作用、成本/延迟和权限约束，再由环境检查而非Agent自报完成判断成功。AgentBench/WebArena/GAIA等只能覆盖某些任务，业务验收须用真实动作空间与失败恢复案例建立回归集。
 
+Benchmark 是用于比较能力的任务集合与评分协议，包括样本、初始条件、成功定义和预算；harness 是执行这些协议的程序。Agent runtime harness 常指提供工具、状态和执行循环的运行外壳，评测 harness 则负责初始化/重置环境、运行候选、收集轨迹和评分，两者可以集成但职责不同。换了运行外壳、工具集合或预算，即使同一模型也不是同一完整系统。
+
+评测需固定环境快照、依赖与工具版本、账号权限、数据时间、随机种子、检索库和网络策略，并声明缓存冷热、步骤/token/时间预算及重试规则。容器隔离有助复现，但外部网页变化与服务故障仍需控制或单列；每次任务后重置副作用，避免前一运行修改后续测试。参考成功轨迹或gold答案也应过同一harness自检，排除评测器坏了。按失败原因分组，保留完整日志和环境验收结果，多次运行比较成功率及方差。
+
 #### 易错点
 
 - 一次成功不足以代表稳定性，特别是随机采样与动态环境。
+- 容器相同不代表外部网络、账号、缓存和任务初始状态也相同。
+- 评测harness与Agent运行外壳可以复用组件，但不能只把一个数据集文件称为完整benchmark。
 
 #### 追问
 
 - 若最终目标达成但调用了禁止工具，怎么评分？
+- 参考正确解也失败时，应暂停模型结论并怎样定位harness或环境问题？
 
 <a id="agt-009"></a>
 ### AGT-009 · 如何防止 Agent 死循环和无效规划？
 
-**L2**
+**L2** · 字节跳动
 
 #### 答案
 
@@ -463,6 +487,9 @@ A2A委派需要继承根任务和父任务路径，检测同一目标在Agent之
 - [LangGraph Python reference](https://reference.langchain.com/python/langgraph/overview)
 - [Writing effective tools for agents — Anthropic](https://www.anthropic.com/engineering/writing-tools-for-agents)
 - [WebGPT: Browser-assisted question-answering with human feedback](https://arxiv.org/abs/2112.09332)
+- [Pillow Concepts：坐标系统与图像方向](https://pillow.readthedocs.io/en/stable/handbook/concepts.html)
+- [Pillow Image.crop 官方实现](https://pillow.readthedocs.io/en/stable/_modules/PIL/Image.html)
+- [Python json 编解码官方文档](https://docs.python.org/3/library/json.html)
 - [Making retries safe with idempotent APIs — AWS Builders' Library](https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/)
 - [Persistence — LangGraph](https://docs.langchain.com/oss/python/langgraph/persistence)
 - [Memory overview — LangChain](https://docs.langchain.com/oss/python/concepts/memory)
@@ -475,6 +502,7 @@ A2A委派需要继承根任务和父任务路径，检测同一目标在Agent之
 - [AgentBench](https://arxiv.org/abs/2308.03688)
 - [WebArena official repository](https://github.com/web-arena-x/webarena)
 - [GAIA: a benchmark for General AI Assistants](https://arxiv.org/abs/2311.12983)
+- [SWE-bench 官方评测 Quick Start](https://www.swebench.com/SWE-bench/guides/quickstart/)
 - [Building effective agents — Anthropic](https://www.anthropic.com/engineering/building-effective-agents)
 - [A2A Protocol Specification](https://a2a-protocol.org/latest/specification/)
 - [Effective context engineering — Anthropic](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
@@ -486,6 +514,7 @@ A2A委派需要继承根任务和父任务路径，检测同一目标在Agent之
 - [Do As I Can, Not As I Say: Grounding Language in Robotic Affordances](https://arxiv.org/abs/2204.01691)
 - [RT-2: Vision-Language-Action Models](https://arxiv.org/abs/2307.15818)
 - [A Reduction of Imitation Learning and Structured Prediction to No-Regret Online Learning](https://arxiv.org/abs/1011.0686)
+- [WebShop: Towards Scalable Real-World Web Interaction with Grounded Language Agents](https://arxiv.org/html/2207.01206)
 - [Scaling Instructable Agents Across Many Simulated Worlds](https://arxiv.org/abs/2404.10179)
 - [Voyager: An Open-Ended Embodied Agent with Large Language Models](https://arxiv.org/abs/2305.16291)
 - [MineDojo: Building Open-Ended Embodied Agents with Internet-Scale Knowledge](https://arxiv.org/abs/2206.08853)

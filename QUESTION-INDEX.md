@@ -17,7 +17,7 @@
 | BAS-011 | NLP、数学与深度学习基础 | 深度学习与优化基础 | L2 | [SGD、Momentum、AdaGrad、RMSProp 与 Adam 的更新规则怎样理解？](chapters/01-fundamentals.md#bas-011) |
 | BAS-012 | NLP、数学与深度学习基础 | 深度学习与优化基础 | L1 | [反向传播怎样使用链式法则？线性层、MSE 与 Softmax 交叉熵如何求梯度？](chapters/01-fundamentals.md#bas-012) |
 | BAS-013 | NLP、数学与深度学习基础 | 深度学习与优化基础 | L2 | [过拟合、欠拟合与数据泄露怎样区分，L1/L2、早停和 Dropout 分别做什么？](chapters/01-fundamentals.md#bas-013) |
-| BAS-014 | NLP、数学与深度学习基础 | 深度学习与优化基础 | L2 | [Xavier、He 初始化与 embedding 乘 √d_model 的目的是什么？](chapters/01-fundamentals.md#bas-014) |
+| BAS-014 | NLP、数学与深度学习基础 | 深度学习与优化基础 | L2 | [Xavier、He 初始化与 embedding 乘 √d_model 的目的是什么？](chapters/01-fundamentals.md#bas-014) · 腾讯 |
 | BAS-015 | NLP、数学与深度学习基础 | 分词与文本表示 | L2 | [TF-IDF 与 TextRank 如何提取关键词，各有哪些局限？](chapters/01-fundamentals.md#bas-015) |
 | BAS-016 | NLP、数学与深度学习基础 | 深度学习与优化基础 | L2 | [分类为什么通常用交叉熵而非 MSE？MSE 在数学上可行吗？](chapters/01-fundamentals.md#bas-016) · 字节跳动 |
 | PRE-002 | NLP、数学与深度学习基础 | 分词与文本表示 | L1 | [BPE、WordPiece、Unigram 与 SentencePiece 分别是什么？](chapters/01-fundamentals.md#pre-002) · 腾讯 |
@@ -25,26 +25,26 @@
 | TFM-013 | NLP、数学与深度学习基础 | 数学、概率与统计 | L1 | [交叉熵、KL 散度与 perplexity 的关系和实现注意点是什么？](chapters/01-fundamentals.md#tfm-013) |
 | TFM-017 | NLP、数学与深度学习基础 | 数学、概率与统计 | L1 | [熵衡量什么？离散熵、条件熵与模型输出熵怎样区分？](chapters/01-fundamentals.md#tfm-017) |
 | TFM-018 | NLP、数学与深度学习基础 | 数学、概率与统计 | L2 | [矩阵的秩与特征值如何计算，和奇异值有什么关系？](chapters/01-fundamentals.md#tfm-018) |
-| TFM-001 | Transformer、Attention 与位置编码 | 注意力机制与掩码 | L1 | [缩放点积注意力如何计算，为什么除以 √d_k？](chapters/02-transformer.md#tfm-001) |
+| TFM-001 | Transformer、Attention 与位置编码 | 注意力机制与掩码 | L1 | [缩放点积注意力如何计算，为什么除以 √d_k？](chapters/02-transformer.md#tfm-001) · 小红书 |
 | TFM-002 | Transformer、Attention 与位置编码 | 注意力机制与掩码 | L1 | [多头注意力与单头注意力有什么区别？](chapters/02-transformer.md#tfm-002) |
 | TFM-003 | Transformer、Attention 与位置编码 | 注意力机制与掩码 | L1 | [掩码注意力如何实现？causal、padding 与 loss mask 有何区别？](chapters/02-transformer.md#tfm-003) |
 | TFM-005 | Transformer、Attention 与位置编码 | 归一化、FFN 与残差 | L1 | [Transformer 为什么常用 LayerNorm，而不是 BatchNorm？](chapters/02-transformer.md#tfm-005) |
 | TFM-006 | Transformer、Attention 与位置编码 | 归一化、FFN 与残差 | L2 | [RMSNorm 与 LayerNorm 的公式和性质有什么区别？](chapters/02-transformer.md#tfm-006) |
 | TFM-007 | Transformer、Attention 与位置编码 | 归一化、FFN 与残差 | L2 | [Pre-Norm 与 Post-Norm 如何影响训练稳定性？](chapters/02-transformer.md#tfm-007) |
-| TFM-008 | Transformer、Attention 与位置编码 | 位置编码与长上下文 | L2 | [RoPE 如何表达相对位置，怎样与 KV cache 正确配合？](chapters/02-transformer.md#tfm-008) |
+| TFM-008 | Transformer、Attention 与位置编码 | 位置编码与长上下文 | L2 | [RoPE 如何表达相对位置，怎样与 KV cache 正确配合？](chapters/02-transformer.md#tfm-008) · 腾讯 |
 | TFM-009 | Transformer、Attention 与位置编码 | 位置编码与长上下文 | L2 | [为什么不能只把 max_position_embeddings 改大来扩展上下文？](chapters/02-transformer.md#tfm-009) |
 | TFM-010 | Transformer、Attention 与位置编码 | 归一化、FFN 与残差 | L2 | [FFN 提供什么作用？SwiGLU 为什么常调整中间维度？](chapters/02-transformer.md#tfm-010) |
 | TFM-011 | Transformer、Attention 与位置编码 | 复杂度与实现机制 | L2 | [Transformer 一层的时间、空间复杂度如何估算？](chapters/02-transformer.md#tfm-011) · 腾讯 |
-| TFM-012 | Transformer、Attention 与位置编码 | 归一化、FFN 与残差 | L1 | [残差连接为什么能帮助深层模型训练？](chapters/02-transformer.md#tfm-012) |
-| TFM-016 | Transformer、Attention 与位置编码 | 注意力机制与掩码 | L1 | [Cross-attention 与 self-attention 有何区别，Q/K/V 从哪里来？](chapters/02-transformer.md#tfm-016) |
+| TFM-012 | Transformer、Attention 与位置编码 | 归一化、FFN 与残差 | L1 | [残差连接为什么能帮助深层模型训练？](chapters/02-transformer.md#tfm-012) · 小红书 |
+| TFM-016 | Transformer、Attention 与位置编码 | 注意力机制与掩码 | L1 | [Cross-attention 与 self-attention 有何区别，Q/K/V 从哪里来？](chapters/02-transformer.md#tfm-016) · 腾讯 |
 | TFM-019 | Transformer、Attention 与位置编码 | 位置编码与长上下文 | L1 | [Transformer 为什么需要位置编码？绝对、相对、RoPE 与 ALiBi 怎样比较？](chapters/02-transformer.md#tfm-019) |
 | TFM-020 | Transformer、Attention 与位置编码 | 归一化、FFN 与残差 | L1 | [Dropout 如何正则化？原始 Transformer 把它放在哪里？](chapters/02-transformer.md#tfm-020) |
 | TFM-021 | Transformer、Attention 与位置编码 | 注意力机制与掩码 | L2 | [Attention 权重如何学到？权重较大就能解释模型决策吗？](chapters/02-transformer.md#tfm-021) |
-| TFM-022 | Transformer、Attention 与位置编码 | 复杂度与实现机制 | L1 | [Transformer 为什么适合建模长距离依赖？O(1) 路径意味着什么？](chapters/02-transformer.md#tfm-022) |
+| TFM-022 | Transformer、Attention 与位置编码 | 复杂度与实现机制 | L1 | [Transformer 为什么适合建模长距离依赖？O(1) 路径意味着什么？](chapters/02-transformer.md#tfm-022) · 腾讯 |
 | TFM-023 | Transformer、Attention 与位置编码 | 注意力机制与掩码 | L2 | [所谓 Negative Attention 是什么？低权重、负 logit 与负输出有何区别？](chapters/02-transformer.md#tfm-023) |
 | TFM-024 | Transformer、Attention 与位置编码 | 位置编码与长上下文 | L2 | [递归、乘性、卷积与复数位置表示怎样提供顺序信息？](chapters/02-transformer.md#tfm-024) |
 | TFM-025 | Transformer、Attention 与位置编码 | 位置编码与长上下文 | L2 | [Shaw、Transformer-XL、T5、DeBERTa 与 TUPE 如何建模位置信息？](chapters/02-transformer.md#tfm-025) |
-| ARC-001 | 模型架构、MoE 与模型家族 | 预训练模型与家族对比 | L1 | [BERT 的 MLM 与 NSP 怎么训练，15% 和 80/10/10 代表什么？](chapters/03-model-architectures.md#arc-001) |
+| ARC-001 | 模型架构、MoE 与模型家族 | 预训练模型与家族对比 | L1 | [BERT 的 MLM 与 NSP 怎么训练，15% 和 80/10/10 代表什么？](chapters/03-model-architectures.md#arc-001) · 小红书 |
 | ARC-002 | 模型架构、MoE 与模型家族 | 预训练模型与家族对比 | L2 | [BERT 的 token、segment、position embedding 为何相加？512 是数学上限吗？](chapters/03-model-architectures.md#arc-002) |
 | ARC-003 | 模型架构、MoE 与模型家族 | 预训练模型与家族对比 | L2 | [RoBERTa、ALBERT 与 SpanBERT 分别改进了 BERT 的什么？](chapters/03-model-architectures.md#arc-003) |
 | ARC-004 | 模型架构、MoE 与模型家族 | 预训练模型与家族对比 | L2 | [XLNet 的排列语言建模和双流注意力是什么，是否把输入词序打乱？](chapters/03-model-architectures.md#arc-004) |
@@ -64,8 +64,8 @@
 | ARC-023 | 模型架构、MoE 与模型家族 | MoE 路由、训练与压缩 | L3 | [DeepSeek-V3 的负载平衡、MTP 和 FP8 分别解决什么问题？](chapters/03-model-architectures.md#arc-023) |
 | ARC-024 | 模型架构、MoE 与模型家族 | 推理模型与 MLA | L2 | [DeepSeek-R1-Zero、R1 与蒸馏模型的训练流程分别是什么？](chapters/03-model-architectures.md#arc-024) |
 | ARC-025 | 模型架构、MoE 与模型家族 | 预训练模型与家族对比 | L2 | [原始 Qwen3 文本模型相较 Qwen2.5 有哪些结构和后训练变化？](chapters/03-model-architectures.md#arc-025) |
-| TFM-004 | 模型架构、MoE 与模型家族 | 架构范式与参数 | L1 | [Encoder-only、Decoder-only 与 Encoder-Decoder 怎样选择？](chapters/03-model-architectures.md#tfm-004) · 腾讯 |
-| TFM-014 | 模型架构、MoE 与模型家族 | 架构范式与参数 | L2 | [输入 embedding 与输出 LM head 权重共享有什么利弊？](chapters/03-model-architectures.md#tfm-014) |
+| TFM-004 | 模型架构、MoE 与模型家族 | 架构范式与参数 | L1 | [Encoder-only、Decoder-only 与 Encoder-Decoder 怎样选择？](chapters/03-model-architectures.md#tfm-004) · 腾讯 / 小红书 |
+| TFM-014 | 模型架构、MoE 与模型家族 | 架构范式与参数 | L2 | [LM head 如何产生 token 概率，输入输出权重共享有什么利弊？](chapters/03-model-architectures.md#tfm-014) · 腾讯 |
 | TFM-015 | 模型架构、MoE 与模型家族 | MoE 路由、训练与压缩 | L2 | [MoE 与 Dense 的参数量和计算量应怎样比较？](chapters/03-model-architectures.md#tfm-015) |
 | PRE-001 | 预训练、语料与优化 | 语言建模与规模规律 | L1 | [自回归预训练的 next-token loss 怎样计算？](chapters/04-pretraining.md#pre-001) |
 | PRE-004 | 预训练、语料与优化 | 语言建模与规模规律 | L2 | [Scaling Law 描述的是什么，能直接预测下游能力吗？](chapters/04-pretraining.md#pre-004) |
@@ -74,7 +74,7 @@
 | PRE-007 | 预训练、语料与优化 | 语料清洗与数据配比 | L2 | [精确去重与近似去重有哪些方法和边界？](chapters/04-pretraining.md#pre-007) |
 | PRE-008 | 预训练、语料与优化 | 语料清洗与数据配比 | L2 | [怎样检测与减少 benchmark contamination？](chapters/04-pretraining.md#pre-008) |
 | PRE-009 | 预训练、语料与优化 | 语料清洗与数据配比 | L2 | [代码、网页、多语言等预训练数据如何配比？](chapters/04-pretraining.md#pre-009) |
-| PRE-011 | 预训练、语料与优化 | 继续预训练与域适配 | L1 | [继续预训练与 SFT 的数据和目标有什么区别？](chapters/04-pretraining.md#pre-011) |
+| PRE-011 | 预训练、语料与优化 | 继续预训练与域适配 | L1 | [继续预训练与 SFT 的数据和目标有什么区别？](chapters/04-pretraining.md#pre-011) · 字节跳动 / 腾讯 |
 | PRE-012 | 预训练、语料与优化 | 训练精度与优化 | L2 | [AdamW 与 Adam 加 L2 正则为什么不等价？](chapters/04-pretraining.md#pre-012) |
 | PRE-013 | 预训练、语料与优化 | 训练精度与优化 | L1 | [FP16 与 BF16 的差异是什么，混合精度为何有用？](chapters/04-pretraining.md#pre-013) |
 | PRE-014 | 预训练、语料与优化 | 训练精度与优化 | L2 | [warmup、学习率衰减和梯度裁剪各解决什么问题？](chapters/04-pretraining.md#pre-014) |
@@ -86,14 +86,14 @@
 | FT-002 | SFT、PEFT、蒸馏与模型编辑 | 指令数据与训练目标 | L1 | [SFT 怎样只对回答部分计算 loss？](chapters/05-finetuning.md#ft-002) |
 | FT-003 | SFT、PEFT、蒸馏与模型编辑 | 指令数据与训练目标 | L2 | [chat template 错配会导致哪些问题？](chapters/05-finetuning.md#ft-003) |
 | FT-004 | SFT、PEFT、蒸馏与模型编辑 | LoRA 与其他 PEFT | L1 | [全参数微调、LoRA、Adapter 和 Prefix-Tuning 怎样选择？](chapters/05-finetuning.md#ft-004) |
-| FT-005 | SFT、PEFT、蒸馏与模型编辑 | LoRA 与其他 PEFT | L1 | [LoRA 的低秩更新公式及可训练参数量是什么？](chapters/05-finetuning.md#ft-005) |
-| FT-006 | SFT、PEFT、蒸馏与模型编辑 | LoRA 与其他 PEFT | L2 | [LoRA 怎样初始化，r、alpha 与 dropout 各控制什么？](chapters/05-finetuning.md#ft-006) |
+| FT-005 | SFT、PEFT、蒸馏与模型编辑 | LoRA 与其他 PEFT | L1 | [LoRA 的低秩更新公式及可训练参数量是什么？](chapters/05-finetuning.md#ft-005) · 腾讯 |
+| FT-006 | SFT、PEFT、蒸馏与模型编辑 | LoRA 与其他 PEFT | L2 | [LoRA 怎样初始化，r、alpha 与 dropout 各控制什么？](chapters/05-finetuning.md#ft-006) · 腾讯 |
 | FT-007 | SFT、PEFT、蒸馏与模型编辑 | LoRA 与其他 PEFT | L2 | [LoRA 的 rank、alpha、dropout 和 target_modules 应怎么调？](chapters/05-finetuning.md#ft-007) |
-| FT-008 | SFT、PEFT、蒸馏与模型编辑 | LoRA 与其他 PEFT | L2 | [LoRA 与 QLoRA 有何区别，NF4、双重量化与分页优化器做什么？](chapters/05-finetuning.md#ft-008) |
-| FT-009 | SFT、PEFT、蒸馏与模型编辑 | LoRA 与其他 PEFT | L2 | [Adapter、Prompt-Tuning 与 Prefix-Tuning 有何差别？](chapters/05-finetuning.md#ft-009) |
+| FT-008 | SFT、PEFT、蒸馏与模型编辑 | LoRA 与其他 PEFT | L2 | [LoRA 与 QLoRA 有何区别，NF4、双重量化与分页优化器做什么？](chapters/05-finetuning.md#ft-008) · 字节跳动 |
+| FT-009 | SFT、PEFT、蒸馏与模型编辑 | LoRA 与其他 PEFT | L2 | [Adapter、Prompt-Tuning 与 Prefix-Tuning 有何差别？](chapters/05-finetuning.md#ft-009) · 腾讯 |
 | FT-010 | SFT、PEFT、蒸馏与模型编辑 | 指令数据与训练目标 | L2 | [SFT 数据量越大越好吗，怎样构建高质量指令集？](chapters/05-finetuning.md#ft-010) · 字节跳动 |
 | FT-011 | SFT、PEFT、蒸馏与模型编辑 | 指令数据与训练目标 | L2 | [用模型生成 SFT 数据怎样避免错误与同质化？](chapters/05-finetuning.md#ft-011) |
-| FT-012 | SFT、PEFT、蒸馏与模型编辑 | 训练技巧与排错 | L2 | [微调后的灾难性遗忘怎样发现和缓解？](chapters/05-finetuning.md#ft-012) |
+| FT-012 | SFT、PEFT、蒸馏与模型编辑 | 训练技巧与排错 | L2 | [微调后的灾难性遗忘怎样发现和缓解？](chapters/05-finetuning.md#ft-012) · 阿里巴巴 / 腾讯 |
 | FT-013 | SFT、PEFT、蒸馏与模型编辑 | 训练技巧与排错 | L2 | [梯度累积等价于大 batch 吗？变长样本怎么归一化？](chapters/05-finetuning.md#ft-013) |
 | FT-014 | SFT、PEFT、蒸馏与模型编辑 | 训练技巧与排错 | L2 | [gradient checkpointing 节省什么，为何会变慢？](chapters/05-finetuning.md#ft-014) |
 | FT-015 | SFT、PEFT、蒸馏与模型编辑 | 训练技巧与排错 | L2 | [SFT loss 下降但任务效果变差，应该怎样排查？](chapters/05-finetuning.md#ft-015) |
@@ -103,25 +103,28 @@
 | FT-019 | SFT、PEFT、蒸馏与模型编辑 | LoRA 与其他 PEFT | L2 | [AdaLoRA 如何自适应分配低秩预算，与固定 rank LoRA 有何区别？](chapters/05-finetuning.md#ft-019) |
 | FT-020 | SFT、PEFT、蒸馏与模型编辑 | LoRA 与其他 PEFT | L2 | [AdapterFusion 和 AdapterDrop 如何组合知识或降低 adapter 开销？](chapters/05-finetuning.md#ft-020) |
 | FT-021 | SFT、PEFT、蒸馏与模型编辑 | LoRA 与其他 PEFT | L2 | [MAM Adapter、UniPELT 等组合 PEFT 方法为什么要混合不同模块？](chapters/05-finetuning.md#ft-021) |
-| FT-022 | SFT、PEFT、蒸馏与模型编辑 | 知识蒸馏与模型编辑 | L2 | [知识蒸馏中的 logits、隐藏层和生成答案监督各有什么作用？](chapters/05-finetuning.md#ft-022) |
+| FT-022 | SFT、PEFT、蒸馏与模型编辑 | 知识蒸馏与模型编辑 | L2 | [知识蒸馏中的 logits、隐藏层和生成答案监督各有什么作用？](chapters/05-finetuning.md#ft-022) · 字节跳动 |
 | FT-023 | SFT、PEFT、蒸馏与模型编辑 | LoRA 与其他 PEFT | L2 | [Prompt learning 中 template、verbalizer 与连续提示分别是什么？](chapters/05-finetuning.md#ft-023) |
-| FT-024 | SFT、PEFT、蒸馏与模型编辑 | 知识蒸馏与模型编辑 | L2 | [模型编辑与继续训练、RAG 有何区别？ROME、MEMIT 与 MEND 如何修改知识？](chapters/05-finetuning.md#ft-024) |
+| FT-024 | SFT、PEFT、蒸馏与模型编辑 | 知识蒸馏与模型编辑 | L2 | [模型编辑与继续训练、RAG 有何区别？ROME、MEMIT 与 MEND 如何修改知识？](chapters/05-finetuning.md#ft-024) · 腾讯 |
+| FT-025 | SFT、PEFT、蒸馏与模型编辑 | 知识蒸馏与模型编辑 | L3 | [OPD 的原理和优化目标是什么，与 SFT、RL 怎样选择？](chapters/05-finetuning.md#ft-025) · 字节跳动 |
+| FT-026 | SFT、PEFT、蒸馏与模型编辑 | 知识蒸馏与模型编辑 | L3 | [拿不到教师 logits 时还能做 OPD 吗，只有文本反馈有哪些限制？](chapters/05-finetuning.md#ft-026) · 字节跳动 |
+| FT-027 | SFT、PEFT、蒸馏与模型编辑 | 知识蒸馏与模型编辑 | L3 | [教师与学生词表不同，跨 tokenizer 的 OPD 怎样定义对齐和损失？](chapters/05-finetuning.md#ft-027) · 字节跳动 |
 | PRE-010 | SFT、PEFT、蒸馏与模型编辑 | 指令数据与训练目标 | L2 | [SFT 数据 packing 怎样提高效率并保持跨样本隔离？](chapters/05-finetuning.md#pre-010) |
 | ALN-001 | 强化学习、RLHF 与偏好优化 | RLHF 与 PPO | L1 | [SFT、RLHF 与 DPO 分别解决什么问题？](chapters/06-alignment.md#aln-001) · 字节跳动 |
 | ALN-002 | 强化学习、RLHF 与偏好优化 | 奖励与对齐策略 | L2 | [奖励模型如何用成对偏好训练？](chapters/06-alignment.md#aln-002) |
 | ALN-003 | 强化学习、RLHF 与偏好优化 | RLHF 与 PPO | L2 | [PPO 的概率比、clip 和 min 分别起什么作用？](chapters/06-alignment.md#aln-003) |
 | ALN-004 | 强化学习、RLHF 与偏好优化 | RLHF 与 PPO | L2 | [GAE 如何计算，λ 与 γ 如何影响优势估计？](chapters/06-alignment.md#aln-004) · 字节跳动 / 小红书 |
-| ALN-005 | 强化学习、RLHF 与偏好优化 | RLHF 与 PPO | L2 | [RLHF 的 KL 惩罚与 PPO 新旧策略约束有什么区别？](chapters/06-alignment.md#aln-005) |
+| ALN-005 | 强化学习、RLHF 与偏好优化 | RLHF 与 PPO | L2 | [RLHF 的 KL 惩罚与 PPO 新旧策略约束有什么区别？](chapters/06-alignment.md#aln-005) · 字节跳动 |
 | ALN-006 | 强化学习、RLHF 与偏好优化 | DPO 与偏好数据 | L3 | [DPO 的损失如何从 KL 正则化 RLHF 目标推出？](chapters/06-alignment.md#aln-006) |
 | ALN-007 | 强化学习、RLHF 与偏好优化 | DPO 与偏好数据 | L2 | [DPO 的 β 和参考模型如何理解与调参？](chapters/06-alignment.md#aln-007) |
-| ALN-008 | 强化学习、RLHF 与偏好优化 | RLHF 与 PPO | L2 | [PPO 与 DPO 在工程上如何选型？](chapters/06-alignment.md#aln-008) |
+| ALN-008 | 强化学习、RLHF 与偏好优化 | RLHF 与 PPO | L2 | [PPO 与 DPO 在工程上如何选型？](chapters/06-alignment.md#aln-008) · 字节跳动 |
 | ALN-009 | 强化学习、RLHF 与偏好优化 | DPO 与偏好数据 | L2 | [如何把点赞、点踩和日志变成高质量偏好数据？](chapters/06-alignment.md#aln-009) |
-| ALN-010 | 强化学习、RLHF 与偏好优化 | GRPO 与在线优化 | L2 | [GRPO 与 PPO 怎样计算优势，reward 和 advantage 有什么区别？](chapters/06-alignment.md#aln-010) · 小红书 |
+| ALN-010 | 强化学习、RLHF 与偏好优化 | GRPO 与在线优化 | L2 | [GRPO 与 PPO 怎样计算优势，reward 和 advantage 有什么区别？](chapters/06-alignment.md#aln-010) · 小红书 / 字节跳动 |
 | ALN-011 | 强化学习、RLHF 与偏好优化 | GRPO 与在线优化 | L3 | [GRPO 组内标准差归一化带来哪些问题？](chapters/06-alignment.md#aln-011) |
 | ALN-012 | 强化学习、RLHF 与偏好优化 | GRPO 与在线优化 | L3 | [GRPO 的长度偏差与 Dr. GRPO 有什么关系？](chapters/06-alignment.md#aln-012) |
-| ALN-013 | 强化学习、RLHF 与偏好优化 | GRPO 与在线优化 | L2 | [RLVR 的可验证奖励如何设计？](chapters/06-alignment.md#aln-013) |
+| ALN-013 | 强化学习、RLHF 与偏好优化 | GRPO 与在线优化 | L2 | [RLVR 的可验证奖励如何设计？](chapters/06-alignment.md#aln-013) · 字节跳动 |
 | ALN-014 | 强化学习、RLHF 与偏好优化 | GRPO 与在线优化 | L2 | [ORM 与 PRM 的区别和信用分配难点是什么？](chapters/06-alignment.md#aln-014) |
-| ALN-015 | 强化学习、RLHF 与偏好优化 | 奖励与对齐策略 | L2 | [如何识别和缓解 reward hacking？](chapters/06-alignment.md#aln-015) · 小红书 |
+| ALN-015 | 强化学习、RLHF 与偏好优化 | 奖励与对齐策略 | L2 | [如何识别和缓解 reward hacking？](chapters/06-alignment.md#aln-015) · 小红书 / 字节跳动 |
 | ALN-016 | 强化学习、RLHF 与偏好优化 | 奖励与对齐策略 | L2 | [后训练为什么会出现对齐税或遗忘？](chapters/06-alignment.md#aln-016) |
 | ALN-017 | 强化学习、RLHF 与偏好优化 | 奖励与对齐策略 | L2 | [RLAIF 和 Constitutional AI 如何工作？](chapters/06-alignment.md#aln-017) |
 | ALN-018 | 强化学习、RLHF 与偏好优化 | DPO 与偏好数据 | L3 | [IPO 等 DPO 变种主要试图解决什么问题？](chapters/06-alignment.md#aln-018) |
@@ -136,8 +139,8 @@
 | ALN-027 | 强化学习、RLHF 与偏好优化 | GRPO 与在线优化 | L3 | [GSPO 与 GRPO 的 importance ratio、clip 和梯度单位有什么区别？](chapters/06-alignment.md#aln-027) |
 | ALN-028 | 强化学习、RLHF 与偏好优化 | GRPO 与在线优化 | L3 | [DAPO 相比原始 GRPO 改了什么，四个核心设计分别解决什么问题？](chapters/06-alignment.md#aln-028) |
 | ALN-029 | 强化学习、RLHF 与偏好优化 | GRPO 与在线优化 | L3 | [在 verl 中支持 DAPO，需要改哪些配置或训练模块？](chapters/06-alignment.md#aln-029) |
-| ALN-030 | 强化学习、RLHF 与偏好优化 | GRPO 与在线优化 | L2 | [GRPO 数据必须标注 Thought 吗，完整训练数据与 rollout 怎样组织？](chapters/06-alignment.md#aln-030) · 小红书 |
-| ALN-031 | 强化学习、RLHF 与偏好优化 | GRPO 与在线优化 | L3 | [GRPO 不收敛或训练奖励升高但能力退化，怎样排查和调参？](chapters/06-alignment.md#aln-031) · 小红书 |
+| ALN-030 | 强化学习、RLHF 与偏好优化 | GRPO 与在线优化 | L2 | [GRPO 数据必须标注 Thought 吗，完整训练数据与 rollout 怎样组织？](chapters/06-alignment.md#aln-030) · 小红书 / 字节跳动 |
+| ALN-031 | 强化学习、RLHF 与偏好优化 | GRPO 与在线优化 | L3 | [GRPO 不收敛或训练奖励升高但能力退化，怎样排查和调参？](chapters/06-alignment.md#aln-031) · 小红书 / 字节跳动 |
 | ALN-032 | 强化学习、RLHF 与偏好优化 | GRPO 与在线优化 | L3 | [正负样本不对称设计有哪些方式，和 PPO/DAPO 的不对称 clip 有何区别？](chapters/06-alignment.md#aln-032) |
 | ALN-033 | 强化学习、RLHF 与偏好优化 | 奖励与对齐策略 | L3 | [提升 RAG 回答质量时怎样选 DPO 或 GRPO，奖励怎样设计？](chapters/06-alignment.md#aln-033) |
 | ALN-034 | 强化学习、RLHF 与偏好优化 | 强化学习基础 | L2 | [on-policy、off-policy、importance sampling、TRPO 与 PPO 怎样联系？](chapters/06-alignment.md#aln-034) |
@@ -147,11 +150,11 @@
 | ALN-038 | 强化学习、RLHF 与偏好优化 | 强化学习基础 | L2 | [稀疏奖励怎样改善，reward shaping、课程学习与 ICM 有什么风险？](chapters/06-alignment.md#aln-038) |
 | ALN-039 | 强化学习、RLHF 与偏好优化 | 强化学习基础 | L2 | [行为克隆、DAgger、IRL 与 GAIL 有何区别，怎样对应 Agent 训练？](chapters/06-alignment.md#aln-039) |
 | ALN-040 | 强化学习、RLHF 与偏好优化 | GRPO 与在线优化 | L3 | [Flow-GRPO 怎样训练图像生成模型，如何把 ODE 转成保持边缘分布的 SDE？](chapters/06-alignment.md#aln-040) · 小红书 |
-| INF-001 | 推理、解码、量化与服务引擎 | KV Cache 与服务调度 | L1 | [KV cache 缓存什么，为什么通常不缓存历史 Q？](chapters/07-inference.md#inf-001) |
+| INF-001 | 推理、解码、量化与服务引擎 | KV Cache 与服务调度 | L1 | [KV cache 缓存什么，为什么通常不缓存历史 Q？](chapters/07-inference.md#inf-001) · 腾讯 |
 | INF-002 | 推理、解码、量化与服务引擎 | KV Cache 与服务调度 | L2 | [怎样估算推理权重、KV cache 与总显存？](chapters/07-inference.md#inf-002) |
-| INF-003 | 推理、解码、量化与服务引擎 | KV Cache 与服务调度 | L1 | [MHA、MQA 与 GQA 的结构、KV 显存及速度有何差异？](chapters/07-inference.md#inf-003) |
+| INF-003 | 推理、解码、量化与服务引擎 | KV Cache 与服务调度 | L1 | [MHA、MQA 与 GQA 的结构、KV 显存及速度有何差异？](chapters/07-inference.md#inf-003) · 腾讯 |
 | INF-004 | 推理、解码、量化与服务引擎 | KV Cache 与服务调度 | L2 | [prefill 与 decode 各在做什么，瓶颈为何不同？](chapters/07-inference.md#inf-004) |
-| INF-005 | 推理、解码、量化与服务引擎 | 注意力与算子加速 | L2 | [FlashAttention 的核心思想是什么，会改变注意力结果吗？](chapters/07-inference.md#inf-005) |
+| INF-005 | 推理、解码、量化与服务引擎 | 注意力与算子加速 | L2 | [FlashAttention 的核心思想是什么，会改变注意力结果吗？](chapters/07-inference.md#inf-005) · 腾讯 |
 | INF-006 | 推理、解码、量化与服务引擎 | KV Cache 与服务调度 | L2 | [PagedAttention 与 FlashAttention 解决的问题有何不同？](chapters/07-inference.md#inf-006) |
 | INF-007 | 推理、解码、量化与服务引擎 | KV Cache 与服务调度 | L2 | [continuous batching 与普通 dynamic batching 有何区别？](chapters/07-inference.md#inf-007) |
 | INF-008 | 推理、解码、量化与服务引擎 | 解码与采样策略 | L1 | [temperature、top-k 与 top-p 如何影响生成？](chapters/07-inference.md#inf-008) |
@@ -173,7 +176,7 @@
 | DST-001 | 分布式训练、并行与显存 | 并行策略与通信 | L1 | [数据并行 DDP 每个 step 做了什么？](chapters/08-distributed.md#dst-001) |
 | DST-002 | 分布式训练、并行与显存 | 并行策略与通信 | L2 | [DDP 梯度累积如何保持与大 batch 等价？](chapters/08-distributed.md#dst-002) |
 | DST-003 | 分布式训练、并行与显存 | 训练显存与状态分片 | L1 | [大模型训练显存怎样估算和优化？以 7B Adam 为例](chapters/08-distributed.md#dst-003) |
-| DST-004 | 分布式训练、并行与显存 | 训练显存与状态分片 | L1 | [ZeRO-1/2/3 各切分什么？理想状态显存是多少？](chapters/08-distributed.md#dst-004) |
+| DST-004 | 分布式训练、并行与显存 | 训练显存与状态分片 | L1 | [ZeRO-1/2/3 各切分什么？理想状态显存是多少？](chapters/08-distributed.md#dst-004) · 腾讯 |
 | DST-005 | 分布式训练、并行与显存 | 训练显存与状态分片 | L2 | [FSDP 与 ZeRO-3 有什么联系和区别？](chapters/08-distributed.md#dst-005) |
 | DST-006 | 分布式训练、并行与显存 | 并行策略与通信 | L2 | [Megatron 的 MLP 张量并行为什么先列切再行切？](chapters/08-distributed.md#dst-006) |
 | DST-007 | 分布式训练、并行与显存 | 并行策略与通信 | L2 | [流水线并行的 bubble 从哪里来，怎样降低？](chapters/08-distributed.md#dst-007) |
@@ -196,7 +199,8 @@
 | DST-024 | 分布式训练、并行与显存 | 精度与激活优化 | L2 | [TF32 与 FP32、FP16、BF16 有何区别，TF32 会把模型存成19位吗？](chapters/08-distributed.md#dst-024) |
 | DST-025 | 分布式训练、并行与显存 | 并行策略与通信 | L2 | [怎样检查 GPU/NVLink/网络拓扑，区分算力不足和通信瓶颈？](chapters/08-distributed.md#dst-025) |
 | DST-026 | 分布式训练、并行与显存 | 并行策略与通信 | L3 | [2D、2.5D、3D 张量并行与 DP×TP×PP 的“3D 并行”有什么区别？](chapters/08-distributed.md#dst-026) |
-| RAG-001 | RAG、检索、重排与图检索 | 文档切分与索引 | L1 | [一个可落地的 RAG 系统有哪些环节？](chapters/09-rag.md#rag-001) |
+| DST-027 | 分布式训练、并行与显存 | 训练故障与可靠性 | L1 | [DataLoader、Sampler、BatchSampler 和 collate_fn 分别负责什么？](chapters/08-distributed.md#dst-027) · 腾讯 |
+| RAG-001 | RAG、检索、重排与图检索 | 文档切分与索引 | L1 | [一个可落地的 RAG 系统有哪些环节？](chapters/09-rag.md#rag-001) · 腾讯 |
 | RAG-002 | RAG、检索、重排与图检索 | 文档切分与索引 | L1 | [RAG、微调与 Prompt/CoT 如何选择？VQA 中有何取舍？](chapters/09-rag.md#rag-002) · 字节跳动 |
 | RAG-003 | RAG、检索、重排与图检索 | 文档切分与索引 | L2 | [chunk 大小、overlap 与父子、链式、树式索引怎样设计？](chapters/09-rag.md#rag-003) |
 | RAG-004 | RAG、检索、重排与图检索 | 召回、融合与重排 | L2 | [embedding 模型与相似度应如何选？](chapters/09-rag.md#rag-004) |
@@ -215,26 +219,26 @@
 | RAG-017 | RAG、检索、重排与图检索 | 文档切分与索引 | L2 | [IVF_FLAT、IVF_PQ 与 HNSW 如何检索，nlist/nprobe 和 PQ 有何权衡？](chapters/09-rag.md#rag-017) |
 | RAG-018 | RAG、检索、重排与图检索 | 评测、权限与多模态 RAG | L2 | [RAGFlow、Haystack、LlamaIndex 与 DSPy 怎样分工和选型？](chapters/09-rag.md#rag-018) |
 | RAG-019 | RAG、检索、重排与图检索 | 召回、融合与重排 | L3 | [怎样训练 embedding/retriever，hard negatives、ICT、SEED 与 REALM 分别解决什么？](chapters/09-rag.md#rag-019) |
-| AGT-001 | Agent、规划、工具与多智能体 | 提示、推理与规划 | L1 | [ReAct、固定工作流和 Agent 有什么区别？](chapters/10-agents.md#agt-001) · 米哈游 |
-| AGT-002 | Agent、规划、工具与多智能体 | 工具调用与协议 | L2 | [如何让 function calling 更可靠？](chapters/10-agents.md#agt-002) |
+| AGT-001 | Agent、规划、工具与多智能体 | 提示、推理与规划 | L1 | [ReAct、固定工作流和 Agent 有什么区别？](chapters/10-agents.md#agt-001) · 米哈游 / 腾讯 / 字节跳动 |
+| AGT-002 | Agent、规划、工具与多智能体 | 工具调用与协议 | L2 | [如何让 function calling 更可靠，图像 crop 坐标错误怎样处理？](chapters/10-agents.md#agt-002) · 字节跳动 |
 | AGT-003 | Agent、规划、工具与多智能体 | 可靠性与评测 | L2 | [Agent 工具超时、重试与幂等怎么设计？](chapters/10-agents.md#agt-003) |
 | AGT-004 | Agent、规划、工具与多智能体 | 记忆与上下文 | L2 | [短期记忆、长期记忆与 checkpoint 分别是什么？](chapters/10-agents.md#agt-004) |
-| AGT-005 | Agent、规划、工具与多智能体 | 多 Agent 协同与训练 | L3 | [多 Agent 的通信与共享状态如何设计？](chapters/10-agents.md#agt-005) |
+| AGT-005 | Agent、规划、工具与多智能体 | 多 Agent 协同与训练 | L3 | [多 Agent 的通信与共享状态如何设计？](chapters/10-agents.md#agt-005) · 字节跳动 |
 | AGT-006 | Agent、规划、工具与多智能体 | 工具调用与协议 | L2 | [MCP 与模型 function calling 是什么关系？](chapters/10-agents.md#agt-006) · 米哈游 |
 | AGT-007 | Agent、规划、工具与多智能体 | 可靠性与评测 | L3 | [如何防御工具结果和检索材料中的 prompt injection？](chapters/10-agents.md#agt-007) · 米哈游 |
-| AGT-008 | Agent、规划、工具与多智能体 | 可靠性与评测 | L2 | [Agent 应怎样评测，为什么不能只看最终回答？](chapters/10-agents.md#agt-008) |
-| AGT-009 | Agent、规划、工具与多智能体 | 可靠性与评测 | L2 | [如何防止 Agent 死循环和无效规划？](chapters/10-agents.md#agt-009) |
+| AGT-008 | Agent、规划、工具与多智能体 | 可靠性与评测 | L2 | [Agent 应怎样评测，为什么不能只看最终回答？](chapters/10-agents.md#agt-008) · 字节跳动 |
+| AGT-009 | Agent、规划、工具与多智能体 | 可靠性与评测 | L2 | [如何防止 Agent 死循环和无效规划？](chapters/10-agents.md#agt-009) · 字节跳动 |
 | AGT-010 | Agent、规划、工具与多智能体 | 记忆与上下文 | L2 | [上下文工程怎样降低长任务成本而保持信息？](chapters/10-agents.md#agt-010) |
-| AGT-011 | Agent、规划、工具与多智能体 | 提示、推理与规划 | L2 | [CoT、Self-Consistency、ToT、GoT 与计划执行分别怎样提高推理和规划？](chapters/10-agents.md#agt-011) |
+| AGT-011 | Agent、规划、工具与多智能体 | 提示、推理与规划 | L2 | [CoT、Self-Consistency、ToT、GoT 与计划执行分别怎样提高推理和规划？](chapters/10-agents.md#agt-011) · 腾讯 |
 | AGT-012 | Agent、规划、工具与多智能体 | 多 Agent 协同与训练 | L2 | [LangChain/LangGraph、LlamaIndex 与多 Agent 框架怎样选型？](chapters/10-agents.md#agt-012) |
 | AGT-013 | Agent、规划、工具与多智能体 | 工具调用与协议 | L2 | [A2A 与 MCP 有什么区别，A2A 通信怎样避免 Agent 递归对话？](chapters/10-agents.md#agt-013) |
 | AGT-014 | Agent、规划、工具与多智能体 | 多 Agent 协同与训练 | L2 | [具身 Agent、VLA 与软件工具 Agent 有什么区别？](chapters/10-agents.md#agt-014) |
-| AGT-015 | Agent、规划、工具与多智能体 | 多 Agent 协同与训练 | L2 | [怎样训练 Agent 的工具使用能力，SFT、轨迹偏好与在线 RL 数据如何组织？](chapters/10-agents.md#agt-015) |
+| AGT-015 | Agent、规划、工具与多智能体 | 多 Agent 协同与训练 | L2 | [怎样训练 Agent 的工具使用能力，SFT、轨迹偏好与在线 RL 数据如何组织？](chapters/10-agents.md#agt-015) · 字节跳动 |
 | AGT-016 | Agent、规划、工具与多智能体 | 可靠性与评测 | L3 | [多 Agent 策略冲突或子 Agent 检索错误，怎样隔离、验证和恢复？](chapters/10-agents.md#agt-016) |
 | AGT-017 | Agent、规划、工具与多智能体 | 记忆与上下文 | L3 | [怎样提升多模态 Agent 的视觉长程交互能力？](chapters/10-agents.md#agt-017) · 阿里巴巴 |
 | AGT-018 | Agent、规划、工具与多智能体 | 多 Agent 协同与训练 | L3 | [游戏 VLM 的端到端策略与“大小脑”分层控制怎样比较和选择？](chapters/10-agents.md#agt-018) · 阿里巴巴 |
 | AGT-019 | Agent、规划、工具与多智能体 | 多 Agent 协同与训练 | L3 | [游戏环境与交互训练数据怎样获取、扩展，怎样判断继续 scaling 是否值得？](chapters/10-agents.md#agt-019) · 阿里巴巴 |
-| EVA-001 | 评测、幻觉、安全与鲁棒性 | 评测协议与基准 | L2 | [如何避免训练数据污染评测集？](chapters/11-evaluation.md#eva-001) |
+| EVA-001 | 评测、幻觉、安全与鲁棒性 | 评测协议与基准 | L2 | [如何避免训练数据污染评测集？](chapters/11-evaluation.md#eva-001) · 字节跳动 |
 | EVA-002 | 评测、幻觉、安全与鲁棒性 | 指标与统计检验 | L1 | [怎样评价文本生成质量？BLEU/ROUGE、PPL与人工评测如何组合？](chapters/11-evaluation.md#eva-002) |
 | EVA-003 | 评测、幻觉、安全与鲁棒性 | 幻觉与可信度 | L2 | [LLM-as-a-Judge 有哪些偏差，如何校准？](chapters/11-evaluation.md#eva-003) |
 | EVA-004 | 评测、幻觉、安全与鲁棒性 | 指标与统计检验 | L2 | [两个模型只差一个百分点，怎样判断提升可靠？](chapters/11-evaluation.md#eva-004) |
@@ -246,7 +250,7 @@
 | EVA-010 | 评测、幻觉、安全与鲁棒性 | 安全与鲁棒性 | L2 | [训练数据泄露与 RAG 越权泄露如何区分？](chapters/11-evaluation.md#eva-010) |
 | EVA-011 | 评测、幻觉、安全与鲁棒性 | 评测协议与基准 | L2 | [MLLM 评测如何区分感知、OCR 与推理错误？](chapters/11-evaluation.md#eva-011) |
 | EVA-012 | 评测、幻觉、安全与鲁棒性 | 安全与鲁棒性 | L2 | [怎样评估 prompt 扰动、多语言和分布外鲁棒性？](chapters/11-evaluation.md#eva-012) |
-| EVA-013 | 评测、幻觉、安全与鲁棒性 | 评测协议与基准 | L2 | [如何验证 prompt 优化确实有效？](chapters/11-evaluation.md#eva-013) |
+| EVA-013 | 评测、幻觉、安全与鲁棒性 | 评测协议与基准 | L2 | [如何验证 prompt 优化确实有效？](chapters/11-evaluation.md#eva-013) · 字节跳动 |
 | EVA-014 | 评测、幻觉、安全与鲁棒性 | 指标与统计检验 | L3 | [代码生成的 pass@k 是什么，如何避免错误估计？](chapters/11-evaluation.md#eva-014) |
 | EVA-015 | 评测、幻觉、安全与鲁棒性 | 评测协议与基准 | L2 | [线上如何监控、验收并回归 LLM/Agent 系统？](chapters/11-evaluation.md#eva-015) |
 | EVA-016 | 评测、幻觉、安全与鲁棒性 | 评测协议与基准 | L2 | [MMLU、BIG-bench/BBH、GSM8K 与 HumanEval 分别测什么，怎样读榜单？](chapters/11-evaluation.md#eva-016) |
@@ -264,15 +268,15 @@
 | VLM-010 | 视觉语言模型与图文多模态 | 视觉连接器与训练 | L2 | [VLM 指令微调的 labels 应怎样掩码？](chapters/12-vision-language.md#vlm-010) |
 | VLM-011 | 视觉语言模型与图文多模态 | 模型结构与版本对比 | L1 | [LLaVA-1.5 相比原始 LLaVA 的关键改进是什么？](chapters/12-vision-language.md#vlm-011) |
 | VLM-012 | 视觉语言模型与图文多模态 | 动态分辨率与位置编码 | L2 | [Qwen2-VL 如何实现动态分辨率，哪些参数控制视觉 token 预算？](chapters/12-vision-language.md#vlm-012) · 字节跳动 |
-| VLM-013 | 视觉语言模型与图文多模态 | 动态分辨率与位置编码 | L2 | [M-RoPE 如何统一文本、图像和视频位置？](chapters/12-vision-language.md#vlm-013) |
-| VLM-014 | 视觉语言模型与图文多模态 | 模型结构与版本对比 | L2 | [Qwen2.5-VL 的视觉编码器和时间建模有哪些变化？](chapters/12-vision-language.md#vlm-014) · 字节跳动 / 小红书 |
+| VLM-013 | 视觉语言模型与图文多模态 | 动态分辨率与位置编码 | L2 | [M-RoPE 如何统一文本、图像和视频位置？](chapters/12-vision-language.md#vlm-013) · 腾讯 |
+| VLM-014 | 视觉语言模型与图文多模态 | 模型结构与版本对比 | L2 | [Qwen2.5-VL 的视觉编码器和时间建模有哪些变化？](chapters/12-vision-language.md#vlm-014) · 字节跳动 / 小红书 / 腾讯 |
 | VLM-015 | 视觉语言模型与图文多模态 | 动态分辨率与位置编码 | L2 | [InternVL 的动态切图与全局缩略图各有什么作用？](chapters/12-vision-language.md#vlm-015) |
 | VLM-016 | 视觉语言模型与图文多模态 | 感知、文档与视觉评测 | L2 | [OCR/文档问答差，怎样判断是视觉瓶颈还是语言瓶颈？](chapters/12-vision-language.md#vlm-016) |
 | VLM-017 | 视觉语言模型与图文多模态 | 感知、文档与视觉评测 | L3 | [单图 VLM 怎样扩展到多页文档问答？](chapters/12-vision-language.md#vlm-017) |
 | VLM-018 | 视觉语言模型与图文多模态 | 感知、文档与视觉评测 | L2 | [视觉幻觉怎样定义、评测和缓解？](chapters/12-vision-language.md#vlm-018) · 商汤 |
-| VLM-019 | 视觉语言模型与图文多模态 | 感知、文档与视觉评测 | L3 | [多模态模型看起来不看图，如何排查？](chapters/12-vision-language.md#vlm-019) |
-| VLM-020 | 视觉语言模型与图文多模态 | 感知、文档与视觉评测 | L2 | [VLM 能力如何评估，为什么不能只报一个榜单分数？](chapters/12-vision-language.md#vlm-020) |
-| VLM-021 | 视觉语言模型与图文多模态 | 视觉连接器与训练 | L3 | [微调 VLM 时，视觉骨干、连接器和 LLM 该怎样冻结？](chapters/12-vision-language.md#vlm-021) · 腾讯 / 小红书 |
+| VLM-019 | 视觉语言模型与图文多模态 | 感知、文档与视觉评测 | L3 | [怎样验证 VLM 真正依赖图像，而非商品记忆、文本捷径或测试泄漏？](chapters/12-vision-language.md#vlm-019) · 字节跳动 |
+| VLM-020 | 视觉语言模型与图文多模态 | 感知、文档与视觉评测 | L2 | [VLM 能力如何评估，为什么不能只报一个榜单分数？](chapters/12-vision-language.md#vlm-020) · 字节跳动 |
+| VLM-021 | 视觉语言模型与图文多模态 | 视觉连接器与训练 | L3 | [微调 VLM 时，视觉骨干、连接器和 LLM 该怎样冻结？](chapters/12-vision-language.md#vlm-021) · 腾讯 / 小红书 / 字节跳动 |
 | VLM-022 | 视觉语言模型与图文多模态 | 感知、文档与视觉评测 | L2 | [交错图文和多图输入如何保持图像与指代关系？](chapters/12-vision-language.md#vlm-022) |
 | VLM-023 | 视觉语言模型与图文多模态 | 感知、文档与视觉评测 | L2 | [Grounding 与普通图像问答有什么区别？](chapters/12-vision-language.md#vlm-023) |
 | VLM-024 | 视觉语言模型与图文多模态 | 视觉连接器与训练 | L3 | [多模态预训练和 SFT 的数据配比怎样设计？](chapters/12-vision-language.md#vlm-024) · 腾讯 / 字节跳动 / 小红书 |
@@ -284,11 +288,20 @@
 | VLM-030 | 视觉语言模型与图文多模态 | 动态分辨率与位置编码 | L3 | [Interleaved M-RoPE 怎样改善频率分配？与文本 Qwen3 的 RoPE 有何区别？](chapters/12-vision-language.md#vlm-030) · 字节跳动 |
 | VLM-031 | 视觉语言模型与图文多模态 | 模型结构与版本对比 | L3 | [Qwen3-VL 的 DeepStack 如何注入多层视觉特征，是否把视觉 token 翻倍？](chapters/12-vision-language.md#vlm-031) |
 | VLM-032 | 视觉语言模型与图文多模态 | 动态分辨率与位置编码 | L2 | [Qwen3-VL 为什么用文本时间戳表示视频时间，采样后怎样保证对齐？](chapters/12-vision-language.md#vlm-032) · 字节跳动 |
-| VLM-033 | 视觉语言模型与图文多模态 | 图文表示与预训练 | L1 | [ViT 如何将图像变成序列，patch 共享映射会不会丢失位置？](chapters/12-vision-language.md#vlm-033) · 腾讯 |
+| VLM-033 | 视觉语言模型与图文多模态 | 图文表示与预训练 | L1 | [ViT 如何将图像变成序列，patch 共享映射会不会丢失位置？](chapters/12-vision-language.md#vlm-033) · 腾讯 / 小红书 |
 | VLM-034 | 视觉语言模型与图文多模态 | 模型结构与版本对比 | L2 | [ViT 与 CNN 作为图像编码器，分别有哪些优势和代价？](chapters/12-vision-language.md#vlm-034) · 腾讯 |
 | VLM-035 | 视觉语言模型与图文多模态 | 视觉连接器与训练 | L3 | [游戏交互训练怎样迁移到通用多模态能力，怎样证明发生了泛化？](chapters/12-vision-language.md#vlm-035) · 阿里巴巴 |
-| VLM-036 | 视觉语言模型与图文多模态 | 图文表示与预训练 | L2 | [DDPM 的前向加噪、训练目标和反向去噪怎样实现？](chapters/12-vision-language.md#vlm-036) · 小红书 |
+| VLM-036 | 视觉语言模型与图文多模态 | 视觉生成与扩散模型 | L2 | [DDPM 的前向加噪、训练目标和反向去噪怎样实现？](chapters/12-vision-language.md#vlm-036) · 小红书 / 腾讯 |
 | VLM-037 | 视觉语言模型与图文多模态 | 图文表示与预训练 | L1 | [多模态大模型有哪些常见架构，如何介绍自己熟悉的 MLLM？](chapters/12-vision-language.md#vlm-037) · 小红书 |
+| VLM-038 | 视觉语言模型与图文多模态 | 视觉生成与扩散模型 | L2 | [DDPM 与 DDIM 有什么区别，DDIM 如何跨步采样？](chapters/12-vision-language.md#vlm-038) · 腾讯 |
+| VLM-039 | 视觉语言模型与图文多模态 | 视觉生成与扩散模型 | L2 | [Flow Matching 怎样训练和推理，与 DDPM 的区别是什么？](chapters/12-vision-language.md#vlm-039) · 腾讯 |
+| VLM-040 | 视觉语言模型与图文多模态 | 视觉生成与扩散模型 | L2 | [CFG 的公式与训练方式是什么，怎样缓解生成图像过饱和？](chapters/12-vision-language.md#vlm-040) · 腾讯 |
+| VLM-041 | 视觉语言模型与图文多模态 | 视觉生成与扩散模型 | L2 | [MMDiT 与 FLUX.1 的图文交互结构有什么差异？](chapters/12-vision-language.md#vlm-041) · 腾讯 |
+| VLM-042 | 视觉语言模型与图文多模态 | 视觉生成与扩散模型 | L2 | [DiT 怎样用 AdaLN 注入条件，AdaLN-Zero 如何初始化？](chapters/12-vision-language.md#vlm-042) · 腾讯 |
+| VLM-043 | 视觉语言模型与图文多模态 | 模型结构与版本对比 | L2 | [SAM、SAM2 与 SAM3 的架构和提示分割能力有什么区别？](chapters/12-vision-language.md#vlm-043) · 腾讯 |
+| VLM-044 | 视觉语言模型与图文多模态 | 视觉连接器与训练 | L2 | [SAM3 怎样分阶段训练，如何构建文本概念与实例掩码数据？](chapters/12-vision-language.md#vlm-044) · 腾讯 |
+| VLM-045 | 视觉语言模型与图文多模态 | 视觉连接器与训练 | L2 | [零售多模态指令数据的原始图文怎样清洗，商品属性如何核验？](chapters/12-vision-language.md#vlm-045) · 字节跳动 |
+| VLM-046 | 视觉语言模型与图文多模态 | 视觉生成与扩散模型 | L2 | [VQ-VAE 的 codebook 怎样训练，为什么离散 latent 不一定比连续 VAE 更快？](chapters/12-vision-language.md#vlm-046) · 腾讯 |
 | OMM-001 | 视频、语音与 Omni | 视频采样与时序 | L2 | [视频 VLM 怎样构建与训练，帧数和 token 预算如何控制？](chapters/13-video-audio-omni.md#omm-001) · 腾讯 |
 | OMM-002 | 视频、语音与 Omni | 视频采样与时序 | L2 | [视频时间位置编码为什么要考虑真实时间与 FPS？](chapters/13-video-audio-omni.md#omm-002) |
 | OMM-003 | 视频、语音与 Omni | 视频采样与时序 | L3 | [长视频理解怎样压缩视觉 token，又有什么代价？](chapters/13-video-audio-omni.md#omm-003) |
@@ -305,6 +318,8 @@
 | OMM-014 | 视频、语音与 Omni | 语音识别与编码 | L2 | [为什么唇读等视觉信息可以帮助噪声下的 ASR？](chapters/13-video-audio-omni.md#omm-014) |
 | OMM-015 | 视频、语音与 Omni | Omni 融合与评测 | L3 | [Omni 模型怎样评估是否真的融合了声音与视觉？](chapters/13-video-audio-omni.md#omm-015) |
 | OMM-016 | 视频、语音与 Omni | Omni 融合与评测 | L2 | [ImageBind 如何用图像桥接多个模态，音频又如何编码？](chapters/13-video-audio-omni.md#omm-016) · 腾讯 |
+| OMM-017 | 视频、语音与 Omni | 视频采样与时序 | L3 | [开放场景下如何跟踪多个视频实例，并处理遮挡和镜头切换？](chapters/13-video-audio-omni.md#omm-017) · 腾讯 |
+| OMM-018 | 视频、语音与 Omni | 语音生成与流式 | L3 | [实时视频通话 AI 如何主动响应、判断轮次并处理用户打断？](chapters/13-video-audio-omni.md#omm-018) · 字节跳动 |
 | COD-001 | 手撕代码与算法 | 模型算子与数值实现 | L1 | [手写稳定 Softmax 与交叉熵，为什么要减最大值？](chapters/14-coding.md#cod-001) |
 | COD-002 | 手撕代码与算法 | 模型算子与数值实现 | L1 | [手撕 Multi-Head Attention：形状、缩放与 mask 怎么写？](chapters/14-coding.md#cod-002) · 字节跳动 / 腾讯 |
 | COD-003 | 手撕代码与算法 | 采样与缓存实现 | L2 | [KV Cache 增量解码的因果 mask 为什么容易写错？](chapters/14-coding.md#cod-003) |
@@ -315,7 +330,7 @@
 | COD-008 | 手撕代码与算法 | 损失函数与训练代码 | L2 | [实现 DPO loss，怎样避免符号和序列概率错误？](chapters/14-coding.md#cod-008) |
 | COD-009 | 手撕代码与算法 | 损失函数与训练代码 | L2 | [实现 GRPO 组内优势，标准差为零时怎么办？](chapters/14-coding.md#cod-009) |
 | COD-010 | 手撕代码与算法 | 通用算法与数据结构 | L1 | [数组第 k 大：堆与 Quickselect 怎样取舍？](chapters/14-coding.md#cod-010) |
-| COD-011 | 手撕代码与算法 | 通用算法与数据结构 | L1 | [岛屿问题：DFS/BFS 的时间、空间与边界。](chapters/14-coding.md#cod-011) |
+| COD-011 | 手撕代码与算法 | 通用算法与数据结构 | L1 | [岛屿问题：DFS/BFS 的时间、空间与边界。](chapters/14-coding.md#cod-011) · 字节跳动 |
 | COD-012 | 手撕代码与算法 | 通用算法与数据结构 | L1 | [手写编辑距离，并压缩到 O(min(m,n)) 空间。](chapters/14-coding.md#cod-012) |
 | COD-013 | 手撕代码与算法 | 通用算法与数据结构 | L1 | [实现 O(1) 的 LRU Cache，更新已有 key 怎么处理？](chapters/14-coding.md#cod-013) |
 | COD-014 | 手撕代码与算法 | 采样与缓存实现 | L2 | [手算并编码 MHA/GQA 的 KV Cache 显存。](chapters/14-coding.md#cod-014) |
@@ -323,6 +338,13 @@
 | COD-016 | 手撕代码与算法 | 通用算法与数据结构 | L2 | [手写最长公共子序列：怎样定义状态、推导转移并压缩空间？](chapters/14-coding.md#cod-016) · 字节跳动 |
 | COD-017 | 手撕代码与算法 | 通用算法与数据结构 | L1 | [手写两数之和：怎样用单遍哈希表返回两个不同元素的下标？](chapters/14-coding.md#cod-017) · 腾讯 |
 | COD-018 | 手撕代码与算法 | 模型算子与数值实现 | L2 | [用 PyTorch 实现两层 MLP，图像输入应该怎样组织？](chapters/14-coding.md#cod-018) · 字节跳动 |
+| COD-019 | 手撕代码与算法 | 损失函数与训练代码 | L2 | [手写 VAE 训练 loss：ELBO、重参数化、KL 闭式和 reduction 怎样对应？](chapters/14-coding.md#cod-019) · 腾讯 |
+| COD-020 | 手撕代码与算法 | 采样与缓存实现 | L2 | [手写 BucketBatchSampler：怎样减少 padding 并保证 epoch 无遗漏、无重复？](chapters/14-coding.md#cod-020) · 腾讯 |
+| COD-021 | 手撕代码与算法 | 通用算法与数据结构 | L1 | [手写整数平方根：怎样用二分避免浮点误差与乘法溢出？](chapters/14-coding.md#cod-021) · 小红书 |
+| COD-022 | 手撕代码与算法 | 通用算法与数据结构 | L2 | [手写最长回文子串：区间 DP 和中心扩展怎样取舍？](chapters/14-coding.md#cod-022) · 小红书 |
+| COD-023 | 手撕代码与算法 | 通用算法与数据结构 | L2 | [手写全排列：回溯如何恢复现场，重复元素怎样去重？](chapters/14-coding.md#cod-023) · 字节跳动 |
+| COD-024 | 手撕代码与算法 | 通用算法与数据结构 | L1 | [反转单链表怎样原地改指针，如何证明不丢节点也不引入环？](chapters/14-coding.md#cod-024) · 腾讯 |
+| COD-025 | 手撕代码与算法 | 通用算法与数据结构 | L2 | [手写股票最大利润：交易次数、手续费和冷冻期不同，解法怎样变化？](chapters/14-coding.md#cod-025) · 腾讯 |
 | SYS-001 | 系统设计、性能与可靠性 | 系统设计与资源预算 | L2 | [设计企业文档问答系统，先明确哪些约束？](chapters/15-system-design.md#sys-001) |
 | SYS-002 | 系统设计、性能与可靠性 | 性能、缓存与并发 | L2 | [LLM 服务 P95 延迟突然升高，如何定位？](chapters/15-system-design.md#sys-002) |
 | SYS-003 | 系统设计、性能与可靠性 | 性能、缓存与并发 | L2 | [如何测吞吐、并发、TTFT、TPOT，并避免错误比较？](chapters/15-system-design.md#sys-003) |
@@ -342,13 +364,13 @@
 | SYS-017 | 系统设计、性能与可靠性 | 权限、容错与可观测性 | L3 | [个人多模态记忆怎样存储、检索、更新并处理相互矛盾的信息？](chapters/15-system-design.md#sys-017) |
 | SYS-018 | 系统设计、性能与可靠性 | 性能、缓存与并发 | L2 | [FastAPI 与 vLLM 怎样分工，如何避免 worker 数量导致模型重复加载？](chapters/15-system-design.md#sys-018) |
 | SYS-019 | 系统设计、性能与可靠性 | 系统设计与资源预算 | L3 | [企业 Agent 中 BFF、编排器、Tool Server 与 Worker 如何拆分？](chapters/15-system-design.md#sys-019) · 米哈游 |
-| PRJ-001 | 项目、论文与工程实践 | 项目贡献与实验设计 | L1 | [两分钟介绍 LLM/MLLM 项目，怎样讲清价值？](chapters/16-project.md#prj-001) · 字节跳动 |
-| PRJ-002 | 项目、论文与工程实践 | 项目贡献与实验设计 | L1 | [面试官追问“哪部分是你做的”，怎样给出可核验回答？](chapters/16-project.md#prj-002) · 字节跳动 |
-| PRJ-003 | 项目、论文与工程实践 | 项目贡献与实验设计 | L2 | [为什么选这个模型，而不是更大的模型？](chapters/16-project.md#prj-003) |
-| PRJ-004 | 项目、论文与工程实践 | 项目贡献与实验设计 | L2 | [如何证明项目提升来自你的改动，而不是数据/算力增加？](chapters/16-project.md#prj-004) |
-| PRJ-005 | 项目、论文与工程实践 | 调试、数据与复现 | L2 | [项目最困难的 bug，怎样避免答成“调参故事”？](chapters/16-project.md#prj-005) |
-| PRJ-006 | 项目、论文与工程实践 | 论文、视野与工程习惯 | L2 | [介绍一篇论文，面试官最可能在哪些地方深挖？](chapters/16-project.md#prj-006) |
-| PRJ-007 | 项目、论文与工程实践 | 调试、数据与复现 | L2 | [你会怎样把 badcase 转成下一轮训练数据？](chapters/16-project.md#prj-007) |
+| PRJ-001 | 项目、论文与工程实践 | 项目贡献与实验设计 | L1 | [两分钟介绍 LLM/MLLM 项目，怎样讲清价值？](chapters/16-project.md#prj-001) · 字节跳动 / 腾讯 / 小红书 |
+| PRJ-002 | 项目、论文与工程实践 | 项目贡献与实验设计 | L1 | [面试官追问“哪部分是你做的”，怎样给出可核验回答？](chapters/16-project.md#prj-002) · 字节跳动 / 腾讯 / 小红书 / 阿里巴巴 |
+| PRJ-003 | 项目、论文与工程实践 | 项目贡献与实验设计 | L2 | [为什么选这个模型，而不是更大的模型？](chapters/16-project.md#prj-003) · 腾讯 / 字节跳动 |
+| PRJ-004 | 项目、论文与工程实践 | 项目贡献与实验设计 | L2 | [如何证明项目提升来自你的改动，而不是数据/算力增加？](chapters/16-project.md#prj-004) · 小红书 / 阿里巴巴 / 字节跳动 |
+| PRJ-005 | 项目、论文与工程实践 | 调试、数据与复现 | L2 | [项目最困难的 bug，怎样避免答成“调参故事”？](chapters/16-project.md#prj-005) · 腾讯 |
+| PRJ-006 | 项目、论文与工程实践 | 论文、视野与工程习惯 | L2 | [介绍一篇论文，面试官最可能在哪些地方深挖？](chapters/16-project.md#prj-006) · 阿里巴巴 / 腾讯 / 小红书 / 字节跳动 |
+| PRJ-007 | 项目、论文与工程实践 | 调试、数据与复现 | L2 | [你会怎样把 badcase 转成下一轮训练数据？](chapters/16-project.md#prj-007) · 字节跳动 |
 | PRJ-008 | 项目、论文与工程实践 | 调试、数据与复现 | L2 | [训练/评测实验怎样做到别人能复现？](chapters/16-project.md#prj-008) |
 | PRJ-009 | 项目、论文与工程实践 | 论文、视野与工程习惯 | L1 | [遇到不会的模型或面试追问，怎样回答？](chapters/16-project.md#prj-009) |
 | PRJ-010 | 项目、论文与工程实践 | 论文、视野与工程习惯 | L1 | [技术方案有分歧时，如何推进决策？](chapters/16-project.md#prj-010) |

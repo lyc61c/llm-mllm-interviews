@@ -34,7 +34,7 @@
 <a id="tfm-001"></a>
 ### TFM-001 · 缩放点积注意力如何计算，为什么除以 √d_k？
 
-**L1**
+**L1** · 小红书
 
 #### 答案
 
@@ -119,7 +119,7 @@ Attention mask 在 softmax 前排除不可见的 key：允许连接加 0，禁�
 <a id="tfm-016"></a>
 ### TFM-016 · Cross-attention 与 self-attention 有何区别，Q/K/V 从哪里来？
 
-**L1**
+**L1** · 腾讯
 
 #### 答案
 
@@ -207,7 +207,7 @@ Logit 是归一化前的分数，可以为负，如 $`\mathrm{softmax}([-2,-1])\
 <a id="tfm-008"></a>
 ### TFM-008 · RoPE 如何表达相对位置，怎样与 KV cache 正确配合？
 
-**L2**
+**L2** · 腾讯
 
 #### 答案
 
@@ -216,6 +216,8 @@ RoPE 按位置旋转 $`Q/K`$ 的成对分量，使点积显式出现相对位置
 令 $`q'_m=R_mq_m`$、$`k'_n=R_nk_n`$，由 $`R_m^\top R_n=R_{n-m}`$ 可得 $`(q'_m)^\top k'_n=q_m^\top R_{n-m}k_n`$。这是位置依赖呈相对差，内容向量仍受上下文影响。单对分量 $`(a,b)`$ 变为 $`(a\cos\phi-b\sin\phi,a\sin\phi+b\cos\phi)`$；相邻维配对与前半/后半配对可通过置换关联，已有 checkpoint 却不能未经权重转换便替换配对约定。
 
 Transformers v4.57.1 的 `LlamaAttention` 先旋转当前 Q/K，再写入缓存，因此历史已旋转 K 不应再次旋转。新 token 须使用正确逻辑位置的 cos/sin，分块 decode、左 padding 与 packed 样本都要核对 `position_ids`。`cache_position` 管缓存槽位，RoPE 的 `position_ids` 管相位，两者接口含义不同。滑动窗口移除旧缓存不代表逻辑时间归零；若改变频率或位置缩放策略，必须核验历史 K 的一致性，并重算或使用明确支持该变化的缓存实现。
+
+RoPE作用于attention的Q/K，保留单向量范数却改变相位与跨位置内积，因此不能把“范数不变”解释成对注意力语义完全无影响。可以在固定的二维通道对上旋转、其余通道保持恒等映射；分块矩阵仍正交，旋转部分提供相对位置，未旋转部分保留内容内积。但哪些频率参与、旋转比例与配对规则应在训练和推理间一致，不能临时删除低频而断言无损。低频相位在短距离变化较小，在长距离仍可能重要，需用位置敏感任务和不同上下文长度消融验证。
 
 ```math
 \begin{aligned}\theta_j&=\mathrm{base}^{-2j/d_r}\\R(\phi)&=\begin{pmatrix}\cos\phi&-\sin\phi\\\sin\phi&\cos\phi\end{pmatrix}\\q'_m&=R_mq_m,\quad k'_n=R_nk_n\\(q'_m)^\top k'_n&=q_m^\top R_{n-m}k_n\end{aligned}
@@ -230,6 +232,7 @@ Transformers v4.57.1 的 `LlamaAttention` 先旋转当前 Q/K，再写入缓存�
 
 - 用整段 prefill 与逐 token cache decode 比较 logits 时，哪些位置和数值条件必须一致？
 - RoPE 的 base、旋转维度、缩放方案改变后，现有 KV cache 能否复用？
+- 只旋转部分维度为何仍保持范数，推理时改变旋转子空间有什么风险？
 
 <a id="tfm-009"></a>
 ### TFM-009 · 为什么不能只把 max_position_embeddings 改大来扩展上下文？
@@ -451,7 +454,7 @@ Position-wise 表示同一层各 token 使用相同参数，不直接混合不�
 <a id="tfm-012"></a>
 ### TFM-012 · 残差连接为什么能帮助深层模型训练？
 
-**L1**
+**L1** · 小红书
 
 #### 答案
 
@@ -535,7 +538,7 @@ Dropout 在训练时随机置零激活，inverted dropout 把保留值除以保�
 <a id="tfm-022"></a>
 ### TFM-022 · Transformer 为什么适合建模长距离依赖？O(1) 路径意味着什么？
 
-**L1**
+**L1** · 腾讯
 
 #### 答案
 
@@ -578,6 +581,7 @@ Dropout 在训练时随机置零激活，inverted dropout 把保留值除以保�
 - [DeepNet: Scaling Transformers to 1,000 Layers](https://arxiv.org/abs/2203.00555)
 - [RoFormer: Enhanced Transformer with Rotary Position Embedding](https://arxiv.org/pdf/2104.09864)
 - [Transformers v4.57.1 official Llama implementation](https://raw.githubusercontent.com/huggingface/transformers/v4.57.1/src/transformers/models/llama/modeling_llama.py)
+- [RoFormer / RoPE](https://arxiv.org/abs/2104.09864)
 - [Extending Context Window of Large Language Models via Positional Interpolation](https://arxiv.org/pdf/2306.15595)
 - [GLU Variants Improve Transformer](https://arxiv.org/pdf/2002.05202)
 - [FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness](https://arxiv.org/pdf/2205.14135)

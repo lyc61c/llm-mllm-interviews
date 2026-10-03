@@ -88,6 +88,63 @@ class TorchTests(unittest.TestCase):
         self.assertGreater(pr.grad.item(),0)
         self.assertIsNone(ref.grad)
 
+    def test_vae_reparameterization_gradients(self):
+        mean = torch.tensor([[0.5, -0.2]], dtype=torch.float64, requires_grad=True)
+        logvar = torch.tensor([[0.0, 1.0]], dtype=torch.float64, requires_grad=True)
+        noise = torch.tensor([[2.0, -3.0]], dtype=torch.float64)
+        sampled = ops.vae_reparameterize(mean, logvar, noise)
+        torch.testing.assert_close(sampled, mean + noise * (0.5 * logvar).exp())
+        sampled.sum().backward()
+        torch.testing.assert_close(mean.grad, torch.ones_like(mean))
+        torch.testing.assert_close(logvar.grad, 0.5 * noise * (0.5 * logvar.detach()).exp())
+        with self.assertRaises(ValueError):
+            ops.vae_reparameterize(mean, logvar, torch.zeros(1, 3))
+
+    def test_vae_elbo_against_distributions_and_reduction(self):
+        logits = torch.tensor([[0.2, -0.8, 0.0], [-2.0, 1.3, 0.4]], dtype=torch.float64, requires_grad=True)
+        target = torch.tensor([[0., 1., 0.], [1., 1., 0.]], dtype=torch.float64)
+        mean = torch.tensor([[0.3, -0.5], [0., 1.]], dtype=torch.float64, requires_grad=True)
+        logvar = torch.tensor([[0.1, -0.4], [0., 0.5]], dtype=torch.float64, requires_grad=True)
+        total, reconstruction, kl = ops.vae_loss(logits, target, mean, logvar)
+        expected_rec = -torch.distributions.Bernoulli(logits=logits).log_prob(target).sum(1).mean()
+        posterior = torch.distributions.Normal(mean, (0.5 * logvar).exp())
+        prior = torch.distributions.Normal(torch.zeros_like(mean), torch.ones_like(mean))
+        expected_kl = torch.distributions.kl_divergence(posterior, prior).sum(1).mean()
+        torch.testing.assert_close(reconstruction, expected_rec)
+        torch.testing.assert_close(kl, expected_kl)
+        torch.testing.assert_close(total, expected_rec + expected_kl)
+        duplicated = [value.repeat(2, 1) for value in (logits, target, mean, logvar)]
+        torch.testing.assert_close(ops.vae_loss(*duplicated)[0], total)
+        torch.testing.assert_close(ops.vae_loss(logits, target, mean, logvar, beta=2)[0], total + kl)
+        total.backward()
+        for value in (logits, mean, logvar):
+            self.assertTrue(torch.isfinite(value.grad).all())
+        gaussian = ops.vae_loss(logits.detach(), target, mean.detach(), logvar.detach(), likelihood='unit_gaussian')
+        expected_gaussian = -torch.distributions.Normal(logits.detach(), 1.).log_prob(target).sum(1).mean()
+        torch.testing.assert_close(gaussian[1], expected_gaussian)
+        with self.assertRaises(ValueError):
+            ops.vae_loss(logits, target + 2, mean, logvar)
+        with self.assertRaises(ValueError):
+            ops.vae_loss(logits, target, mean, logvar, beta=-1)
+
+    def test_bucket_batch_sampler_dataloader_contract(self):
+        from reference import BucketBatchSampler
+        dataset = [torch.arange(n) for n in (5, 1, 3, 2, 4)]
+        sampler = BucketBatchSampler([len(value) for value in dataset], 2, shuffle=False)
+        def collate(samples):
+            lengths = torch.tensor([len(value) for value in samples])
+            return torch.nn.utils.rnn.pad_sequence(samples, batch_first=True, padding_value=-1), lengths
+        loader = torch.utils.data.DataLoader(dataset, batch_sampler=sampler, collate_fn=collate)
+        batches = list(loader)
+        self.assertEqual(len(batches), len(sampler))
+        self.assertEqual(sorted(length for _, lengths in batches for length in lengths.tolist()), [1, 2, 3, 4, 5])
+        for values, lengths in batches:
+            self.assertEqual(values.shape[1], lengths.max().item())
+            for row, length in zip(values, lengths):
+                length = int(length.item())
+                torch.testing.assert_close(row[:length], torch.arange(length))
+                self.assertTrue((row[length:] == -1).all())
+
 
 if __name__ == "__main__":
     unittest.main()

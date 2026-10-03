@@ -376,7 +376,7 @@ GAE 把多个 TD 残差按 $`(\gamma\lambda)^l`$ 衰减求和，可在序列末�
 <a id="aln-005"></a>
 ### ALN-005 · RLHF 的 KL 惩罚与 PPO 新旧策略约束有什么区别？
 
-**L2**
+**L2** · 字节跳动
 
 #### 答案
 
@@ -397,7 +397,7 @@ RLHF 的参考策略 KL 惩罚用于约束模型相对行为锚点的漂移，�
 <a id="aln-008"></a>
 ### ALN-008 · PPO 与 DPO 在工程上如何选型？
 
-**L2**
+**L2** · 字节跳动
 
 #### 答案
 
@@ -577,7 +577,7 @@ DPO 变种主要调整偏好概率映射、正则化或数据使用方式。IPO 
 <a id="aln-010"></a>
 ### ALN-010 · GRPO 与 PPO 怎样计算优势，reward 和 advantage 有什么区别？
 
-**L2** · 小红书
+**L2** · 小红书 / 字节跳动
 
 #### 答案
 
@@ -642,7 +642,7 @@ Dr. GRPO 讨论移除回答长度和组内标准差归一化，并采用常数�
 <a id="aln-013"></a>
 ### ALN-013 · RLVR 的可验证奖励如何设计？
 
-**L2**
+**L2** · 字节跳动
 
 #### 答案
 
@@ -753,7 +753,7 @@ J\propto\frac{\sum_{i,t}m_{i,t}\min(\rho_{i,t}\hat A_i,\mathrm{clip}(\rho_{i,t},
 <a id="aln-030"></a>
 ### ALN-030 · GRPO 数据必须标注 Thought 吗，完整训练数据与 rollout 怎样组织？
 
-**L2** · 小红书
+**L2** · 小红书 / 字节跳动
 
 #### 答案
 
@@ -774,7 +774,7 @@ GRPO 的训练基本输入是prompt及奖励计算所需的任务元数据，不
 <a id="aln-031"></a>
 ### ALN-031 · GRPO 不收敛或训练奖励升高但能力退化，怎样排查和调参？
 
-**L3** · 小红书
+**L3** · 小红书 / 字节跳动
 
 #### 答案
 
@@ -784,6 +784,8 @@ GRPO 的训练基本输入是prompt及奖励计算所需的任务元数据，不
 
 用能产生正负结果的少量任务先跑通，再单变量调整学习率、每批更新次数、clip、KL、G、采样温度和回答预算；设稳定SFT基线与冻结评测集。若验证持续退化应回滚checkpoint并定位机制，盲目延长训练通常放大奖励偏差。
 
+熵坍缩是策略概率过快集中到少数续写，导致同题采样近乎相同、探索不足；它不同于低温解码造成的采样多样性下降。用固定温度的原始分布熵、组内重复率、非零优势比例与留出正确率共同诊断。降低学习率/更新轮数、调整clip或KL、恢复合理采样和难度分布，必要时采用受控熵正则；DAPO的Clip-Higher是一种缓解方案，不能盲目提高上界。OPD中reverse KL的mode-seeking及低熵教师也可能降低多样性，可对比forward KL/JSD、混合数据和温度；不能把随机输出变多当作能力恢复。
+
 #### 易错点
 
 - 策略梯度loss接近0可能是零优势、clip饱和或梯度错误，不等于已经收敛。
@@ -791,6 +793,7 @@ GRPO 的训练基本输入是prompt及奖励计算所需的任务元数据，不
 #### 追问
 
 - 组内奖励有方差但ratio始终1且权重不变，如何定位未更新问题？
+- 怎样区分策略本身的熵下降、低温解码和奖励驱动的模式坍缩？
 
 <a id="aln-032"></a>
 ### ALN-032 · 正负样本不对称设计有哪些方式，和 PPO/DAPO 的不对称 clip 有何区别？
@@ -881,7 +884,7 @@ Rectified Flow取$`x_t=(1-t)x_0+t\epsilon`$，这里0是数据、1是噪声，�
 <a id="aln-015"></a>
 ### ALN-015 · 如何识别和缓解 reward hacking？
 
-**L2** · 小红书
+**L2** · 小红书 / 字节跳动
 
 #### 答案
 
@@ -1018,6 +1021,8 @@ DPO适合已有同一问题、同一证据上下文下的可靠chosen/rejected�
 - [DAPO: An Open-Source LLM Reinforcement Learning System at Scale](https://arxiv.org/html/2503.14476v2)
 - [verl DAPO recipe](https://verl.readthedocs.io/en/latest/algo/dapo.html)
 - [verl GRPO documentation](https://verl.readthedocs.io/en/latest/algo/grpo.html)
+- [DAPO: An Open-Source LLM Reinforcement Learning System at Scale](https://arxiv.org/html/2503.14476)
+- [On-policy Distillation of Language Models: Learning from Self-Generated Mistakes](https://arxiv.org/html/2306.13649)
 - [Trust Region Policy Optimization](https://arxiv.org/abs/1502.05477)
 - [Spinning Up: Deep Deterministic Policy Gradient](https://spinningup.openai.com/en/latest/algorithms/ddpg.html)
 - [Deep Reinforcement Learning with Double Q-learning](https://arxiv.org/abs/1509.06461)

@@ -11,8 +11,14 @@
 | [two_sum](reference.py#L150) | 两数之和：单遍哈希表、返回不同元素的下标 | Python 标准库 |
 | [longest_common_subsequence](reference.py#L161) | 最长公共子序列长度：滚动行动态规划 | Python 标准库 |
 | [MLP](torch_primitives.py#L12) / [ImageMLP](torch_primitives.py#L25) | 两层 MLP、逐 token 投影、固定尺寸图像分类 | 可选 PyTorch |
-| [test_reference.py](test_reference.py) | 16 组边界、不变量和独立算法对照测试 | Python 标准库 |
-| [test_torch_primitives.py](test_torch_primitives.py) | 8 组前向、mask、梯度和冻结测试 | 无 PyTorch 时明确 skip |
+| [BucketBatchSampler](reference.py#L239) | 长度分桶、局部洗牌、epoch 种子与批次索引 | Python 标准库 |
+| [vae_reparameterize](torch_primitives.py#L130) / [vae_loss](torch_primitives.py#L145) | 对角高斯重参数化、重建 NLL 与 KL，逐样本求和再 batch 平均 | 可选 PyTorch |
+| [integer_sqrt](reference.py#L290) / [longest_palindromic_substring](reference.py#L307) | 整数二分平方根、中心扩展回文子串 | Python 标准库 |
+| [unique_permutations](reference.py#L321) | 全排列：回溯恢复现场、重复元素同层去重 | Python 标准库 |
+| [ListNode](reference.py#L348) / [reverse_linked_list](reference.py#L353) | 单链表原地反转，修改指针前检查环 | Python 标准库 |
+| [max_stock_profit](reference.py#L368) | 至多一次买卖：历史最低价与最佳收益 | Python 标准库 |
+| [test_reference.py](test_reference.py) | 26 组边界、不变量和独立算法对照测试 | Python 标准库 |
+| [test_torch_primitives.py](test_torch_primitives.py) | 11 组前向、mask、梯度、冻结及数据加载测试 | 无 PyTorch 时明确 skip |
 
 重要约定：
 
@@ -23,5 +29,7 @@
 - DPO 标量接口接收回答的**序列 log probability**，不是单个 token 概率；标准目标使用求和。
 - LRU/采样实现是单进程教学代码；没有线上并发、分布式锁或安全隔离。
 - KV 估算不含权重、激活、页表、量化 scale、分配碎片和工作区。
+- BucketBatchSampler 是单进程批次采样器，返回索引列表；分布式还需明确 rank 分片和批次数对齐。
+- VAE 默认输入 Bernoulli 重建 logits；`unit_gaussian` 分支输入均值、采用固定单位方差。感知损失与对抗训练不属于这个标准 ELBO 示例。
 
 建议练习顺序：Softmax/CE → Attention/mask → RoPE → LoRA/InfoNCE → DPO/GRPO → TopK/岛屿/DP/LRU。

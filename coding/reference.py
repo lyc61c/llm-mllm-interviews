@@ -234,3 +234,142 @@ def kv_cache_bytes(batch, sequence, layers, kv_heads, head_dim, bytes_per_elemen
     if any(x < 0 for x in (batch, sequence, layers, kv_heads, head_dim, bytes_per_element)):
         raise ValueError("dimensions must be nonnegative")
     return 2 * batch * sequence * layers * kv_heads * head_dim * bytes_per_element
+
+
+class BucketBatchSampler:
+    """Single-process, no-replacement length buckets yielding index lists.
+
+    Pass to DataLoader(batch_sampler=...), not to its sampler argument.
+    Buckets contain batch_size * bucket_multiplier adjacent sorted lengths.
+    """
+    def __init__(self, lengths, batch_size, bucket_multiplier=4,
+                 shuffle=True, drop_last=False, seed=0):
+        for name, value in (("batch_size", batch_size),
+                            ("bucket_multiplier", bucket_multiplier)):
+            if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+                raise ValueError(name + " must be a positive integer")
+        if isinstance(seed, bool) or not isinstance(seed, int):
+            raise ValueError("seed must be an integer")
+        self.lengths = tuple(lengths)
+        if any(isinstance(n, bool) or not isinstance(n, (int, float))
+               or n < 0 or (isinstance(n, float) and not math.isfinite(n)) for n in self.lengths):
+            raise ValueError("lengths must be finite nonnegative numbers")
+        self.batch_size = batch_size
+        self.bucket_size = batch_size * bucket_multiplier
+        self.shuffle, self.drop_last, self.seed = shuffle, drop_last, seed
+        self.epoch = 0
+        self.sorted_indices = tuple(sorted(range(len(self.lengths)),
+                                           key=self.lengths.__getitem__))
+
+    def set_epoch(self, epoch):
+        if isinstance(epoch, bool) or not isinstance(epoch, int) or epoch < 0:
+            raise ValueError("epoch must be a nonnegative integer")
+        self.epoch = epoch
+
+    def __len__(self):
+        n = len(self.lengths)
+        return n // self.batch_size if self.drop_last else (n + self.batch_size - 1) // self.batch_size
+
+    def __iter__(self):
+        # Fresh local RNG: repeated iteration of one epoch is reproducible.
+        rng = random.Random(self.seed + self.epoch)
+        batches = []
+        for offset in range(0, len(self.sorted_indices), self.bucket_size):
+            bucket = list(self.sorted_indices[offset:offset + self.bucket_size])
+            if self.shuffle:
+                rng.shuffle(bucket)
+            for start in range(0, len(bucket), self.batch_size):
+                batch = bucket[start:start + self.batch_size]
+                if len(batch) == self.batch_size or not self.drop_last:
+                    batches.append(batch)
+        if self.shuffle:
+            rng.shuffle(batches)
+        yield from batches
+
+
+def integer_sqrt(value):
+    """Return floor(sqrt(value)) with integer binary search."""
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise ValueError("a nonnegative integer is required")
+    if value < 2:
+        return value
+    low, high = 1, value // 2 + 1
+    while low <= high:
+        middle = (low + high) // 2
+        # Division avoids relying on fixed-width multiplication not overflowing.
+        if middle <= value // middle:
+            low = middle + 1
+        else:
+            high = middle - 1
+    return high
+
+
+def longest_palindromic_substring(text):
+    """Center expansion; ties return the occurrence with the earliest start."""
+    start, length = 0, 0
+    for center in range(len(text)):
+        for left, right in ((center, center), (center, center + 1)):
+            while left >= 0 and right < len(text) and text[left] == text[right]:
+                candidate = right - left + 1
+                if candidate > length or (candidate == length and left < start):
+                    start, length = left, candidate
+                left -= 1
+                right += 1
+    return text[start:start + length]
+
+
+def unique_permutations(values):
+    """Return all distinct permutations of sortable values, without mutation.
+
+    Empty input has one permutation: the empty list.
+    """
+    ordered = sorted(values)
+    used = [False] * len(ordered)
+    path, result = [], []
+
+    def visit():
+        if len(path) == len(ordered):
+            result.append(path.copy())
+            return
+        for index, value in enumerate(ordered):
+            # Equal unused siblings produce the same branch at this depth.
+            if used[index] or (index > 0 and value == ordered[index - 1] and not used[index - 1]):
+                continue
+            used[index] = True
+            path.append(value)
+            visit()
+            path.pop()
+            used[index] = False
+
+    visit()
+    return result
+
+
+class ListNode:
+    def __init__(self, value, next=None):
+        self.value, self.next = value, next
+
+
+def reverse_linked_list(head):
+    """Reverse acyclic nodes in place; reject a cycle before changing links."""
+    slow = fast = head
+    while fast is not None and fast.next is not None:
+        slow, fast = slow.next, fast.next.next
+        if slow is fast:
+            raise ValueError("cyclic linked list")
+    previous, current = None, head
+    while current is not None:
+        following = current.next
+        current.next = previous
+        previous, current = current, following
+    return previous
+
+
+def max_stock_profit(prices):
+    """At most one buy followed by a later sell; declining input returns 0."""
+    lowest, best = None, 0
+    for price in prices:
+        if lowest is not None:
+            best = max(best, price - lowest)
+        lowest = price if lowest is None else min(lowest, price)
+    return best

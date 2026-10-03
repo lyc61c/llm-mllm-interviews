@@ -602,10 +602,11 @@
         "位置编码"
       ],
       "company_tags": [
-        "腾讯"
+        "腾讯",
+        "小红书"
       ],
       "answer": {
-        "body": "原始 ViT 把 H×W×C 图像划分为 N 个不重叠的 P×P patch，将每块按固定顺序展平为 P²C 维向量，再用同一个可训练矩阵映射到 D 维。所有 patch 共享映射参数，不是每块各训练一层；这一步等价于 kernel_size=stride=P 的卷积。随后加入 CLS token 和位置向量，经过多层 Pre-LN、自注意力、FFN 与残差连接，用 CLS 的最终表示做分类。它主要沿用 Transformer Encoder，图像理解通常使用双向注意力，不需要文本生成时的因果 mask。\n\n切 patch 本身并没有打乱块内像素的固定顺序，但展平后的序列索引不会自动成为注意力的位置条件。不加位置信息且不引入其他位置相关结构时，自注意力对 patch 排列具有置换等变性，CLS 的聚合无法稳定区分跨 patch 的上下左右关系。原始 ViT 加可学习一维位置表；提高分辨率时通常先将旧表还原成二维网格再插值。现代视觉编码器也可使用二维 RoPE 或相对位置偏置。\n\n共享映射与位置丢失是两件事。若投影维度不足，线性映射可能丢失块内细节；位置编码解决的是跨块空间关系，也不会恢复缩放时已消失的小字和纹理。",
+        "body": "原始 ViT 把 H×W×C 图像划分为 N 个不重叠的 P×P patch，将每块按固定顺序展平为 P²C 维向量，再用同一个可训练矩阵映射到 D 维。所有 patch 共享映射参数，不是每块各训练一层；这一步等价于 kernel_size=stride=P 的卷积。随后加入 CLS token 和位置向量，经过多层 Pre-LN、自注意力、FFN 与残差连接，用 CLS 的最终表示做分类。它主要沿用 Transformer Encoder，图像理解通常使用双向注意力，不需要文本生成时的因果 mask。\n\n切 patch 本身并没有打乱块内像素的固定顺序，但展平后的序列索引不会自动成为注意力的位置条件。不加位置信息且不引入其他位置相关结构时，自注意力对 patch 排列具有置换等变性，CLS 的聚合无法稳定区分跨 patch 的上下左右关系。原始 ViT 加可学习一维位置表；提高分辨率时通常先将旧表还原成二维网格再插值。现代视觉编码器也可使用二维 RoPE 或相对位置偏置。\n\n共享映射与位置丢失是两件事。若投影维度不足，线性映射可能丢失块内细节；位置编码解决的是跨块空间关系，也不会恢复缩放时已消失的小字和纹理。\n\n用于分类时，原始ViT可取可学习CLS token的最终表示接分类头；部分实现使用全局平均池化，必须说明具体版本。文本分类可从BERT的CLS表示或合适的池化表示接线性分类头。两者都能用监督交叉熵更新，区别主要在图像patch投影与文本词嵌入、位置表示和预训练目标，不是“图像分类不能用Transformer”。去掉语言生成头改接分类头时还须明确标签空间和数据监督。",
         "formula": "\\begin{aligned}\nN&=\\frac{HW}{P^2},\\qquad E\\in\\mathbb R^{P^2C\\times D}\\\\\nz_0&=[x_{\\mathrm{CLS}};x_p^1E;\\cdots;x_p^NE]+E_{\\mathrm{pos}}\\\\\nz'_\\ell&=z_{\\ell-1}+\\mathrm{MSA}(\\mathrm{LN}(z_{\\ell-1}))\\\\\nz_\\ell&=z'_\\ell+\\mathrm{MLP}(\\mathrm{LN}(z'_\\ell))\n\\end{aligned}",
         "pitfalls": [
           "共享 patch 投影不会让每个位置拥有相同特征，输入内容和位置向量仍不同。",
@@ -625,6 +626,11 @@
           "source_id": "XHS26-S002",
           "support": "reported_question",
           "note": "笔记明确问 ViT 结构、patch 后的位置和线性映射共享，合并为一题。"
+        },
+        {
+          "source_id": "XHS26-S010",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
@@ -877,7 +883,7 @@
     },
     {
       "category": "VLM",
-      "topic": "图文表示与预训练",
+      "topic": "视觉生成与扩散模型",
       "level": "L2",
       "title": "DDPM 的前向加噪、训练目标和反向去噪怎样实现？",
       "tags": [
@@ -887,7 +893,8 @@
         "噪声预测"
       ],
       "company_tags": [
-        "小红书"
+        "小红书",
+        "腾讯"
       ],
       "answer": {
         "body": "DDPM定义固定的前向高斯加噪链，再学习反向生成链。设每步噪声方差为$\\beta_t$、$\\alpha_t=1-\\beta_t$、$\\bar\\alpha_t=\\prod_{s=1}^t\\alpha_s$，则可以从干净图像直接采样任意$x_t$，无需训练时逐步运行全部前向链。每次随机选时间$t$和高斯噪声$\\epsilon$，让网络预测加入的噪声；常用简化目标是噪声预测MSE，它来自变分目标的重参数化与重新加权，不能说未经加权的MSE与完整ELBO完全相等。\n\n反向时从$x_T\\sim\\mathcal N(0,I)$开始，循环$t=T,\\ldots,1$。网络输入当前$x_t$与时间编码，输出$\\epsilon_\\theta$；先用它估计$x_0$，再将估计值代入可解析的$q(x_{t-1}\\mid x_t,x_0)$后验均值，得到下式$\\mu_\\theta$。注意$q(x_{t-1}\\mid x_t)$本身一般不能直接解析得到，训练中可解析的是额外给定$x_0$的后验。\n\n采样用$x_{t-1}=\\mu_\\theta+\\sigma_t z$。固定方差的经典选项包括$\\beta_t$或后验方差$\\tilde\\beta_t=\\beta_t(1-\\bar\\alpha_{t-1})/(1-\\bar\\alpha_t)$，也有学习方差的扩展；不能把这些设置混用。原算法在$t=1$时令$z=0$，最后展示预测均值。实现需核对0-based代码下标与1..T数学下标、同一个噪声日程和训练时的prediction type，不能把epsilon、x0或v预测输出直接互换。\n\n图文生成可把文本条件$c$输入去噪网络，但预测目标依然取决于图像生成参数化，与VQA的回答token交叉熵不同。标准DDPM的反向链是随机采样；Flow Matching常学习连续速度、用ODE积分。两者可在score/SDE视角联系，但不能把DDPM噪声预测均值公式直接当成Flow-GRPO的速度更新式。",
@@ -910,6 +917,16 @@
           "source_id": "XHS26-S005",
           "support": "reported_question",
           "note": "已读完整笔记文字正文，作者明确记录问题；公司为笔记自述的小红书。"
+        },
+        {
+          "source_id": "XHS26-S008",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S015",
+          "support": "reported_topic",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
@@ -1075,6 +1092,11 @@
           "source_id": "XHS26-S001",
           "support": "reported_question",
           "note": "已读完整文字正文，明确报告字节面试要求手写最长公共子序列；未从未读配图推断额外题目。"
+        },
+        {
+          "source_id": "XHS26-S013",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,

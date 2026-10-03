@@ -1341,6 +1341,11 @@
           "source_id": "CORE-S010",
           "support": "search_snippet",
           "note": "代码备考仓库摘要列出注意力和 Pretrain/SFT 训练损失；题库按主题整理，不是公司真题证据。"
+        },
+        {
+          "source_id": "XHS26-S010",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
@@ -1350,7 +1355,10 @@
         "Z11",
         "Z27"
       ],
-      "topic": "注意力机制与掩码"
+      "topic": "注意力机制与掩码",
+      "company_tags": [
+        "小红书"
+      ]
     },
     {
       "id": "TFM-002",
@@ -1467,6 +1475,21 @@
           "source_id": "XHS26-S002",
           "support": "reported_question",
           "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S009",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S010",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S015",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
@@ -1475,7 +1498,8 @@
       ],
       "topic": "架构范式与参数",
       "company_tags": [
-        "腾讯"
+        "腾讯",
+        "小红书"
       ]
     },
     {
@@ -1606,7 +1630,7 @@
         "PositionIDs"
       ],
       "answer": {
-        "body": "RoPE 按位置旋转 $Q/K$ 的成对分量，使点积显式出现相对位置差，并保持向量范数；通常不旋转 $V$。旋转子空间为偶数维 $d_r$，第 $j$ 对频率 $\\theta_j=\\mathrm{base}^{-2j/d_r}$，位置 $m$ 使用二维旋转 $R(m\\theta_j)$。不同频率覆盖不同距离尺度，部分模型只旋转 head 的部分维度。\n\n令 $q'_m=R_mq_m$、$k'_n=R_nk_n$，由 $R_m^\\top R_n=R_{n-m}$ 可得 $(q'_m)^\\top k'_n=q_m^\\top R_{n-m}k_n$。这是位置依赖呈相对差，内容向量仍受上下文影响。单对分量 $(a,b)$ 变为 $(a\\cos\\phi-b\\sin\\phi,a\\sin\\phi+b\\cos\\phi)$；相邻维配对与前半/后半配对可通过置换关联，已有 checkpoint 却不能未经权重转换便替换配对约定。\n\nTransformers v4.57.1 的 `LlamaAttention` 先旋转当前 Q/K，再写入缓存，因此历史已旋转 K 不应再次旋转。新 token 须使用正确逻辑位置的 cos/sin，分块 decode、左 padding 与 packed 样本都要核对 `position_ids`。`cache_position` 管缓存槽位，RoPE 的 `position_ids` 管相位，两者接口含义不同。滑动窗口移除旧缓存不代表逻辑时间归零；若改变频率或位置缩放策略，必须核验历史 K 的一致性，并重算或使用明确支持该变化的缓存实现。",
+        "body": "RoPE 按位置旋转 $Q/K$ 的成对分量，使点积显式出现相对位置差，并保持向量范数；通常不旋转 $V$。旋转子空间为偶数维 $d_r$，第 $j$ 对频率 $\\theta_j=\\mathrm{base}^{-2j/d_r}$，位置 $m$ 使用二维旋转 $R(m\\theta_j)$。不同频率覆盖不同距离尺度，部分模型只旋转 head 的部分维度。\n\n令 $q'_m=R_mq_m$、$k'_n=R_nk_n$，由 $R_m^\\top R_n=R_{n-m}$ 可得 $(q'_m)^\\top k'_n=q_m^\\top R_{n-m}k_n$。这是位置依赖呈相对差，内容向量仍受上下文影响。单对分量 $(a,b)$ 变为 $(a\\cos\\phi-b\\sin\\phi,a\\sin\\phi+b\\cos\\phi)$；相邻维配对与前半/后半配对可通过置换关联，已有 checkpoint 却不能未经权重转换便替换配对约定。\n\nTransformers v4.57.1 的 `LlamaAttention` 先旋转当前 Q/K，再写入缓存，因此历史已旋转 K 不应再次旋转。新 token 须使用正确逻辑位置的 cos/sin，分块 decode、左 padding 与 packed 样本都要核对 `position_ids`。`cache_position` 管缓存槽位，RoPE 的 `position_ids` 管相位，两者接口含义不同。滑动窗口移除旧缓存不代表逻辑时间归零；若改变频率或位置缩放策略，必须核验历史 K 的一致性，并重算或使用明确支持该变化的缓存实现。\n\nRoPE作用于attention的Q/K，保留单向量范数却改变相位与跨位置内积，因此不能把“范数不变”解释成对注意力语义完全无影响。可以在固定的二维通道对上旋转、其余通道保持恒等映射；分块矩阵仍正交，旋转部分提供相对位置，未旋转部分保留内容内积。但哪些频率参与、旋转比例与配对规则应在训练和推理间一致，不能临时删除低频而断言无损。低频相位在短距离变化较小，在长距离仍可能重要，需用位置敏感任务和不同上下文长度消融验证。",
         "formula": "\\begin{aligned}\\theta_j&=\\mathrm{base}^{-2j/d_r}\\\\R(\\phi)&=\\begin{pmatrix}\\cos\\phi&-\\sin\\phi\\\\\\sin\\phi&\\cos\\phi\\end{pmatrix}\\\\q'_m&=R_mq_m,\\quad k'_n=R_nk_n\\\\(q'_m)^\\top k'_n&=q_m^\\top R_{n-m}k_n\\end{aligned}",
         "pitfalls": [
           "直接把位置向量加到 embedding 来描述 RoPE，或对缓存 K 重复应用旋转。",
@@ -1614,26 +1638,36 @@
         ],
         "followups": [
           "用整段 prefill 与逐 token cache decode 比较 logits 时，哪些位置和数值条件必须一致？",
-          "RoPE 的 base、旋转维度、缩放方案改变后，现有 KV cache 能否复用？"
+          "RoPE 的 base、旋转维度、缩放方案改变后，现有 KV cache 能否复用？",
+          "只旋转部分维度为何仍保持范数，推理时改变旋转子空间有什么风险？"
         ]
       },
       "reference_ids": [
         "CORE-S025",
         "CORE-S075",
-        "CORE-S080"
+        "CORE-S080",
+        "ENG-P04"
       ],
       "community_evidence": [
         {
           "source_id": "CORE-S005",
           "support": "search_snippet",
           "note": "正文抓取失败，搜索摘要明确出现相关问题主题，保留摘要级证据。"
+        },
+        {
+          "source_id": "XHS26-S015",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
       "user_supplement_keys": [
         "U13"
       ],
-      "topic": "位置编码与长上下文"
+      "topic": "位置编码与长上下文",
+      "company_tags": [
+        "腾讯"
+      ]
     },
     {
       "id": "TFM-009",
@@ -1781,13 +1815,22 @@
         "CORE-S023",
         "CORE-S031"
       ],
-      "community_evidence": [],
-      "editorial": true,
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S010",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        }
+      ],
+      "editorial": false,
       "article_supplement_keys": [
         "Z09",
         "Z17"
       ],
-      "topic": "归一化、FFN 与残差"
+      "topic": "归一化、FFN 与残差",
+      "company_tags": [
+        "小红书"
+      ]
     },
     {
       "id": "TFM-013",
@@ -1836,7 +1879,7 @@
     {
       "id": "TFM-014",
       "category": "ARC",
-      "title": "输入 embedding 与输出 LM head 权重共享有什么利弊？",
+      "title": "LM head 如何产生 token 概率，输入输出权重共享有什么利弊？",
       "level": "L2",
       "tags": [
         "WeightTying",
@@ -1861,13 +1904,22 @@
         "CORE-S032",
         "CORE-S086"
       ],
-      "community_evidence": [],
-      "editorial": true,
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S009",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        }
+      ],
+      "editorial": false,
       "article_supplement_keys": [
         "Z10",
         "Z21"
       ],
-      "topic": "架构范式与参数"
+      "topic": "架构范式与参数",
+      "company_tags": [
+        "腾讯"
+      ]
     },
     {
       "id": "TFM-015",
@@ -1938,15 +1990,24 @@
         "CORE-S074",
         "WD26-ADDITIVE"
       ],
-      "community_evidence": [],
-      "editorial": true,
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S008",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        }
+      ],
+      "editorial": false,
       "user_supplement_keys": [
         "U02"
       ],
       "article_supplement_keys": [
         "Z14"
       ],
-      "topic": "注意力机制与掩码"
+      "topic": "注意力机制与掩码",
+      "company_tags": [
+        "腾讯"
+      ]
     },
     {
       "id": "TFM-017",
@@ -2440,9 +2501,24 @@
         "CORE-S040",
         "CORE-S044"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "继续预训练与域适配"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S014",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S015",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "继续预训练与域适配",
+      "company_tags": [
+        "字节跳动",
+        "腾讯"
+      ]
     },
     {
       "id": "PRE-012",
@@ -2747,7 +2823,7 @@
         "公式"
       ],
       "answer": {
-        "body": "LoRA 冻结 $W_0\\in\\mathbb R^{d_{\\rm out}\\times d_{\\rm in}}$，学习 $\\Delta W=(\\alpha/r)BA$，其中 $A\\in\\mathbb R^{r\\times d_{\\rm in}}$、$B\\in\\mathbb R^{d_{\\rm out}\\times r}$。更新秩至多为 $r$，可训练参数为 $r(d_{\\rm in}+d_{\\rm out})$，不要求底座或整个模型低秩。\n\n前向为 $W_0x+(\\alpha/r)BAx$，梯度能经过冻结底座传播到需要训练的模块。标准浮点部署可合并增量，免去额外小投影；需要多适配器切换时则未必合并。LoRA 主要节省权重梯度与优化器状态，长序列激活仍可能主导显存。\n\n合并要求底座与 adapter 的 checkpoint、目标层、缩放和 dtype 对齐，并在 eval 模式关闭 adapter dropout。浮点权重 $W_{\\mathrm{merged}}=W_0+sBA$ 免去额外低秩分支，通常减少内核调用；但不会把大模型权重变成“小 adapter 大小”。低精度舍入使结果未必逐 bit 相同，应比对 logits 与任务结果。保留未合并 adapter 有利于共享底座、多租户切换和回滚；merge_and_unload 后应保留独立原件。量化底座的合并受量化后端支持限制，不能把浮点增量直接加到整数码，必要时反量化合并并重新校准量化。",
+        "body": "LoRA 冻结 $W_0\\in\\mathbb R^{d_{\\rm out}\\times d_{\\rm in}}$，学习 $\\Delta W=(\\alpha/r)BA$，其中 $A\\in\\mathbb R^{r\\times d_{\\rm in}}$、$B\\in\\mathbb R^{d_{\\rm out}\\times r}$。更新秩至多为 $r$，可训练参数为 $r(d_{\\rm in}+d_{\\rm out})$，不要求底座或整个模型低秩。\n\n前向为 $W_0x+(\\alpha/r)BAx$，梯度能经过冻结底座传播到需要训练的模块。标准浮点部署可合并增量，免去额外小投影；需要多适配器切换时则未必合并。LoRA 主要节省权重梯度与优化器状态，长序列激活仍可能主导显存。\n\n合并要求底座与 adapter 的 checkpoint、目标层、缩放和 dtype 对齐，并在 eval 模式关闭 adapter dropout。浮点权重 $W_{\\mathrm{merged}}=W_0+sBA$ 免去额外低秩分支，通常减少内核调用；但不会把大模型权重变成“小 adapter 大小”。低精度舍入使结果未必逐 bit 相同，应比对 logits 与任务结果。保留未合并 adapter 有利于共享底座、多租户切换和回滚；merge_and_unload 后应保留独立原件。量化底座的合并受量化后端支持限制，不能把浮点增量直接加到整数码，必要时反量化合并并重新校准量化。\n\n若给定一个 $3\\times3$ 权重矩阵，不能只凭形状判断实际秩：$W_0$ 可为0到3秩，需看其独立行列或奇异值。LoRA约束的是增量，$\\mathrm{rank}(BA)\\le\\min(r,3)$；即便设置r=1，$W_0+BA$ 仍可能为满秩3。默认零B初始化时增量秩为0，训练后也只保证秩上界，不保证恰好等于r。",
         "formula": "\\begin{aligned}\\Delta W&=\\frac{\\alpha}{r}BA\\\\N_{\\rm train}&=r(d_{\\rm in}+d_{\\rm out})\\\\\\mathrm{rank}(\\Delta W)&\\le r\\end{aligned}",
         "pitfalls": [
           "把 LoRA 说成对原模型权重做截断 SVD。",
@@ -2757,7 +2833,8 @@
         "followups": [
           "如何估算同时对 Q/K/V/O 与 FFN 加 LoRA 的参数量？",
           "量化底座合并 LoRA 有什么精度风险？",
-          "多租户共享一个底座时，为什么离线合并每个 adapter 可能增加总权重内存？"
+          "多租户共享一个底座时，为什么离线合并每个 adapter 可能增加总权重内存？",
+          "3×3的底座权重、初始增量和训练后增量，秩分别有哪些上界？"
         ]
       },
       "reference_ids": [
@@ -2770,6 +2847,11 @@
           "source_id": "CORE-S002",
           "support": "reported_question",
           "note": "公开帖子列出架构、LoRA、量化原理；仅保留问题主题，未采纳社区答案。"
+        },
+        {
+          "source_id": "XHS26-S009",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
@@ -2783,6 +2865,9 @@
           "alt": "LoRA 冻结主权重与低秩增量分支",
           "caption": "常用初始化使增量起始为零；图中采用列向量约定。"
         }
+      ],
+      "company_tags": [
+        "腾讯"
       ]
     },
     {
@@ -2799,7 +2884,7 @@
         "rsLoRA"
       ],
       "answer": {
-        "body": "原始 LoRA 使用随机高斯 $A$、零 $B$，使初始 $\\Delta W=sBA=0$。PEFT 普通 Linear 默认采用 Kaiming-uniform A、零 B，Gaussian 选项也使用零 B；Embedding 等模块可能有不同约定，其他初始化则应按方法确认。\n\n令 $G=\\partial L/\\partial\\Delta W$，有 $\\partial L/\\partial A=sB^\\top G$、$\\partial L/\\partial B=sGA^\\top$。初始 B 为零时，纯低秩分支的 A 梯度为零，B 通常先更新，随后 A 获得梯度；A/B 同时为零则纯 BA 路径无法启动，零 A 加随机 B 是可启动但轨迹不同的方案。PiSSA、EVA、LoftQ 等使用权重、激活或量化信息，要核对是否改动底座及是否保持初始函数；`init_lora_weights=False` 通常随机初始化 A/B，不再是 no-op。\n\n$r$ 控制秩上界与参数量，标准 $s=\\alpha/r$ 控制分支尺度，rsLoRA 使用 $\\alpha/\\sqrt r$。固定 alpha 改 rank 同时改变容量和缩放，alpha 也不等于学习率。普通 Linear 的 dropout 施加在低秩分支输入，训练时正则、eval 时关闭，底座分支保留。应联合消融 rank、alpha、dropout、目标模块与学习率，没有通用最佳 rank 或 alpha:rank 比例。",
+        "body": "原始 LoRA 使用随机高斯 $A$、零 $B$，使初始 $\\Delta W=sBA=0$。PEFT 普通 Linear 默认采用 Kaiming-uniform A、零 B，Gaussian 选项也使用零 B；Embedding 等模块可能有不同约定，其他初始化则应按方法确认。\n\n令 $G=\\partial L/\\partial\\Delta W$，有 $\\partial L/\\partial A=sB^\\top G$、$\\partial L/\\partial B=sGA^\\top$。初始 B 为零时，纯低秩分支的 A 梯度为零，B 通常先更新，随后 A 获得梯度；A/B 同时为零则纯 BA 路径无法启动，零 A 加随机 B 是可启动但轨迹不同的方案。PiSSA、EVA、LoftQ 等使用权重、激活或量化信息，要核对是否改动底座及是否保持初始函数；`init_lora_weights=False` 通常随机初始化 A/B，不再是 no-op。\n\n$r$ 控制秩上界与参数量，标准 $s=\\alpha/r$ 控制分支尺度，rsLoRA 使用 $\\alpha/\\sqrt r$。固定 alpha 改 rank 同时改变容量和缩放，alpha 也不等于学习率。普通 Linear 的 dropout 施加在低秩分支输入，训练时正则、eval 时关闭，底座分支保留。应联合消融 rank、alpha、dropout、目标模块与学习率，没有通用最佳 rank 或 alpha:rank 比例。\n\nPEFT普通Linear的默认调用是 `kaiming_uniform_(A, a=sqrt(5))`，配合默认fan-in约定，其均匀边界为 $1/\\sqrt{d_{\\rm in}}$。它借用了Kaiming函数来实现与 `nn.Linear` 一致的初始化，并不等于给ReLU网络使用方差 $2/d_{\\rm in}$ 的He配方；初始化函数名称、传入gain/负斜率参数和实际方差应一起核对。",
         "formula": "\\begin{aligned}\\Delta W&=sBA,\\quad\\mathrm{rank}(\\Delta W)\\le r\\\\s_{\\rm standard}&=\\frac{\\alpha}{r},\\quad s_{\\rm rsLoRA}=\\frac{\\alpha}{\\sqrt r}\\\\G&=\\frac{\\partial L}{\\partial\\Delta W}\\\\\\frac{\\partial L}{\\partial A}&=sB^\\top G,\\quad\\frac{\\partial L}{\\partial B}=sGA^\\top\\end{aligned}",
         "pitfalls": [
           "把原论文高斯初始化、PEFT Linear 默认和所有新初始化变体说成完全相同。",
@@ -2813,20 +2898,29 @@
       "reference_ids": [
         "CORE-S046",
         "CORE-S070",
-        "CORE-S071"
+        "CORE-S071",
+        "XHS26-R2ROOT-PEFT"
       ],
       "community_evidence": [
         {
           "source_id": "CORE-S003",
           "support": "reported_question",
           "note": "二次汇编题目列表出现相应提问；原始公司面经未逐条核验。"
+        },
+        {
+          "source_id": "XHS26-S009",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
       "user_supplement_keys": [
         "U10"
       ],
-      "topic": "LoRA 与其他 PEFT"
+      "topic": "LoRA 与其他 PEFT",
+      "company_tags": [
+        "腾讯"
+      ]
     },
     {
       "id": "FT-007",
@@ -2908,13 +3002,21 @@
           "source_id": "CORE-S006",
           "support": "search_snippet",
           "note": "仅搜索摘要可见 RMSNorm/SwiGLU/QLoRA；正文未读到，不能核验提问完整上下文。"
+        },
+        {
+          "source_id": "XHS26-S013",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
       "user_supplement_keys": [
         "U11"
       ],
-      "topic": "LoRA 与其他 PEFT"
+      "topic": "LoRA 与其他 PEFT",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "FT-009",
@@ -2942,9 +3044,18 @@
         "CORE-S049",
         "CORE-S069"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "LoRA 与其他 PEFT"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S009",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "LoRA 与其他 PEFT",
+      "company_tags": [
+        "腾讯"
+      ]
     },
     {
       "id": "FT-010",
@@ -2976,6 +3087,11 @@
           "source_id": "XHS26-S004",
           "support": "reported_question",
           "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S012",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
@@ -3038,9 +3154,24 @@
         "CORE-S040",
         "CORE-S046"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "训练技巧与排错"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S011",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S015",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "训练技巧与排错",
+      "company_tags": [
+        "阿里巴巴",
+        "腾讯"
+      ]
     },
     {
       "id": "FT-013",
@@ -3155,8 +3286,14 @@
         "CORE-S055",
         "CORE-S056"
       ],
-      "community_evidence": [],
-      "editorial": true,
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S015",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        }
+      ],
+      "editorial": false,
       "topic": "KV Cache 与服务调度",
       "figures": [
         {
@@ -3164,6 +3301,9 @@
           "alt": "自回归解码的 KV Cache 追加与复用",
           "caption": "第 4 个位置新增 Q/K/V，复用已有 K/V，并输出第 5 个 token 的概率分布。"
         }
+      ],
+      "company_tags": [
+        "腾讯"
       ]
     },
     {
@@ -3241,13 +3381,21 @@
           "source_id": "CORE-S005",
           "support": "search_snippet",
           "note": "正文抓取失败，搜索摘要明确出现相关问题主题，保留摘要级证据。"
+        },
+        {
+          "source_id": "XHS26-S015",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
       "user_supplement_keys": [
         "U03"
       ],
-      "topic": "KV Cache 与服务调度"
+      "topic": "KV Cache 与服务调度",
+      "company_tags": [
+        "腾讯"
+      ]
     },
     {
       "id": "INF-004",
@@ -3310,10 +3458,18 @@
           "source_id": "CORE-S001",
           "support": "reported_question",
           "note": "公开面经题目列表直接出现这一主题；题目已改写，答案独立整理，公司归属未独立认证。"
+        },
+        {
+          "source_id": "XHS26-S015",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
         }
       ],
       "editorial": false,
-      "topic": "注意力与算子加速"
+      "topic": "注意力与算子加速",
+      "company_tags": [
+        "腾讯"
+      ]
     },
     {
       "id": "INF-006",
@@ -3731,12 +3887,21 @@
       "reference_ids": [
         "CORE-S020"
       ],
-      "community_evidence": [],
-      "editorial": true,
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S009",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        }
+      ],
+      "editorial": false,
       "article_supplement_keys": [
         "Z23"
       ],
-      "topic": "复杂度与实现机制"
+      "topic": "复杂度与实现机制",
+      "company_tags": [
+        "腾讯"
+      ]
     },
     {
       "id": "TFM-023",

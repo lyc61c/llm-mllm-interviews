@@ -1529,9 +1529,18 @@
         "WD26-LLAMA1",
         "CORE-S020"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "深度学习与优化基础"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S009",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "深度学习与优化基础",
+      "company_tags": [
+        "腾讯"
+      ]
     },
     {
       "id": "ARC-001",
@@ -1558,9 +1567,18 @@
       "reference_ids": [
         "WD26-BERT"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "预训练模型与家族对比"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S010",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "预训练模型与家族对比",
+      "company_tags": [
+        "小红书"
+      ]
     },
     {
       "id": "ARC-002",
@@ -2141,7 +2159,7 @@
         "soft targets"
       ],
       "answer": {
-        "body": "logits蒸馏让学生拟合教师的软概率分布，温度提高时能显露非最大类之间的关系；常用KL或soft-target交叉熵，加T²使大温度下的梯度尺度更可比。对语言模型逐token做logits蒸馏，需要同一位置的上下文和可对齐词表；不同tokenizer不能直接按词表下标对KL。生成答案蒸馏把教师采样或搜索的回复作为学生SFT数据，兼容不同tokenizer，但丢掉完整分布，并继承教师错误、风格与覆盖偏差。\n\n隐藏层/attention蒸馏用层映射和投影对齐中间表示，PKD、TinyBERT在BERT压缩中采用此类信号，不能简单要求不同深度学生逐层等形状相等。实际还需混合真实标签、过滤教师答案、覆盖学生可能访问的前缀，并独立评测质量/幻觉与成本。蒸馏不保证学生超过教师，也不保证所有知识能在更小容量中保留。",
+        "body": "logits蒸馏让学生拟合教师的软概率分布，温度提高时能显露非最大类之间的关系；常用KL或soft-target交叉熵，加T²使大温度下的梯度尺度更可比。对语言模型逐token做logits蒸馏，需要同一位置的上下文和可对齐词表；不同tokenizer不能直接按词表下标对KL。生成答案蒸馏把教师采样或搜索的回复作为学生SFT数据，兼容不同tokenizer，但丢掉完整分布，并继承教师错误、风格与覆盖偏差。\n\n隐藏层/attention蒸馏用层映射和投影对齐中间表示，PKD、TinyBERT在BERT压缩中采用此类信号，不能简单要求不同深度学生逐层等形状相等。实际还需混合真实标签、过滤教师答案、覆盖学生可能访问的前缀，并独立评测质量/幻觉与成本。蒸馏不保证学生超过教师，也不保证所有知识能在更小容量中保留。\n\n蒸馏不固定发生在某一个训练阶段：可以用教师分布训练更小基础模型，也可以在指令、领域或对齐后训练中传递特定能力；OPD则让学生当前rollout决定教师反馈的状态。需说明教师目标、学生输入分布、监督接口及蒸馏后是否继续SFT/RL，不能仅以“在SFT后运行过”定义蒸馏。",
         "formula": "\\begin{aligned}p_T&=\\mathrm{softmax}(z_T/T),\\quad p_S=\\mathrm{softmax}(z_S/T)\\\\\\mathcal L&=(1-\\lambda)\\mathcal L_{\\rm hard}+\\lambda T^2D_{\\rm KL}(p_T\\Vert p_S)\\\\\\mathcal L_{\\rm hidden}&=\\sum_\\ell\\lVert H_S^{(\\ell)}P_\\ell-H_T^{(m(\\ell))}\\rVert_F^2\\end{aligned}",
         "pitfalls": [
           "不同tokenizer的词表下标未经对齐就直接算KL。",
@@ -2158,9 +2176,23 @@
         "WD26-PKD",
         "WD26-TINY"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "知识蒸馏与模型编辑"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S014",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S012",
+          "support": "reported_question",
+          "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "知识蒸馏与模型编辑",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "FT-023",

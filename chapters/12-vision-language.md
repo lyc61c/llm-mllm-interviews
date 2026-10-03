@@ -12,7 +12,6 @@
   - [VLM-005 · BLIP 的 ITC、ITM、LM 三个目标各做什么？](#vlm-005)
   - [VLM-006 · BLIP 的 CapFilt 为什么同时需要 captioner 和 filter？](#vlm-006)
   - [VLM-033 · ViT 如何将图像变成序列，patch 共享映射会不会丢失位置？](#vlm-033)
-  - [VLM-036 · DDPM 的前向加噪、训练目标和反向去噪怎样实现？](#vlm-036)
   - [VLM-037 · 多模态大模型有哪些常见架构，如何介绍自己熟悉的 MLLM？](#vlm-037)
 - [视觉连接器与训练](#topic-2)
   - [VLM-007 · BLIP-2 的 Q-Former 为什么能连接冻结的视觉编码器和 LLM？](#vlm-007)
@@ -23,6 +22,8 @@
   - [VLM-024 · 多模态预训练和 SFT 的数据配比怎样设计？](#vlm-024)
   - [VLM-028 · Qwen3-VL 四阶段预训练分别训练什么模块、数据和目标？](#vlm-028)
   - [VLM-035 · 游戏交互训练怎样迁移到通用多模态能力，怎样证明发生了泛化？](#vlm-035)
+  - [VLM-044 · SAM3 怎样分阶段训练，如何构建文本概念与实例掩码数据？](#vlm-044)
+  - [VLM-045 · 零售多模态指令数据的原始图文怎样清洗，商品属性如何核验？](#vlm-045)
 - [动态分辨率与位置编码](#topic-3)
   - [VLM-012 · Qwen2-VL 如何实现动态分辨率，哪些参数控制视觉 token 预算？](#vlm-012)
   - [VLM-013 · M-RoPE 如何统一文本、图像和视频位置？](#vlm-013)
@@ -37,11 +38,20 @@
   - [VLM-027 · Qwen3-VL 的基本模块与相较 Qwen2.5-VL 的结构变化是什么？](#vlm-027)
   - [VLM-031 · Qwen3-VL 的 DeepStack 如何注入多层视觉特征，是否把视觉 token 翻倍？](#vlm-031)
   - [VLM-034 · ViT 与 CNN 作为图像编码器，分别有哪些优势和代价？](#vlm-034)
-- [感知、文档与视觉评测](#topic-5)
+  - [VLM-043 · SAM、SAM2 与 SAM3 的架构和提示分割能力有什么区别？](#vlm-043)
+- [视觉生成与扩散模型](#topic-5)
+  - [VLM-036 · DDPM 的前向加噪、训练目标和反向去噪怎样实现？](#vlm-036)
+  - [VLM-038 · DDPM 与 DDIM 有什么区别，DDIM 如何跨步采样？](#vlm-038)
+  - [VLM-039 · Flow Matching 怎样训练和推理，与 DDPM 的区别是什么？](#vlm-039)
+  - [VLM-040 · CFG 的公式与训练方式是什么，怎样缓解生成图像过饱和？](#vlm-040)
+  - [VLM-041 · MMDiT 与 FLUX.1 的图文交互结构有什么差异？](#vlm-041)
+  - [VLM-042 · DiT 怎样用 AdaLN 注入条件，AdaLN-Zero 如何初始化？](#vlm-042)
+  - [VLM-046 · VQ-VAE 的 codebook 怎样训练，为什么离散 latent 不一定比连续 VAE 更快？](#vlm-046)
+- [感知、文档与视觉评测](#topic-6)
   - [VLM-016 · OCR/文档问答差，怎样判断是视觉瓶颈还是语言瓶颈？](#vlm-016)
   - [VLM-017 · 单图 VLM 怎样扩展到多页文档问答？](#vlm-017)
   - [VLM-018 · 视觉幻觉怎样定义、评测和缓解？](#vlm-018)
-  - [VLM-019 · 多模态模型看起来不看图，如何排查？](#vlm-019)
+  - [VLM-019 · 怎样验证 VLM 真正依赖图像，而非商品记忆、文本捷径或测试泄漏？](#vlm-019)
   - [VLM-020 · VLM 能力如何评估，为什么不能只报一个榜单分数？](#vlm-020)
   - [VLM-022 · 交错图文和多图输入如何保持图像与指代关系？](#vlm-022)
   - [VLM-023 · Grounding 与普通图像问答有什么区别？](#vlm-023)
@@ -171,7 +181,7 @@ BLIP 的三个目标分别负责整体匹配、细粒度对应和条件生成：
 <a id="vlm-033"></a>
 ### VLM-033 · ViT 如何将图像变成序列，patch 共享映射会不会丢失位置？
 
-**L1** · 腾讯
+**L1** · 腾讯 / 小红书
 
 #### 答案
 
@@ -180,6 +190,8 @@ BLIP 的三个目标分别负责整体匹配、细粒度对应和条件生成：
 切 patch 本身并没有打乱块内像素的固定顺序，但展平后的序列索引不会自动成为注意力的位置条件。不加位置信息且不引入其他位置相关结构时，自注意力对 patch 排列具有置换等变性，CLS 的聚合无法稳定区分跨 patch 的上下左右关系。原始 ViT 加可学习一维位置表；提高分辨率时通常先将旧表还原成二维网格再插值。现代视觉编码器也可使用二维 RoPE 或相对位置偏置。
 
 共享映射与位置丢失是两件事。若投影维度不足，线性映射可能丢失块内细节；位置编码解决的是跨块空间关系，也不会恢复缩放时已消失的小字和纹理。
+
+用于分类时，原始ViT可取可学习CLS token的最终表示接分类头；部分实现使用全局平均池化，必须说明具体版本。文本分类可从BERT的CLS表示或合适的池化表示接线性分类头。两者都能用监督交叉熵更新，区别主要在图像patch投影与文本词嵌入、位置表示和预训练目标，不是“图像分类不能用Transformer”。去掉语言生成头改接分类头时还须明确标签空间和数据监督。
 
 ```math
 \begin{aligned} N&=\frac{HW}{P^2},\qquad E\in\mathbb R^{P^2C\times D}\\ z_0&=[x_{\mathrm{CLS}};x_p^1E;\cdots;x_p^NE]+E_{\mathrm{pos}}\\ z'_\ell&=z_{\ell-1}+\mathrm{MSA}(\mathrm{LN}(z_{\ell-1}))\\ z_\ell&=z'_\ell+\mathrm{MLP}(\mathrm{LN}(z'_\ell)) \end{aligned}
@@ -194,35 +206,6 @@ BLIP 的三个目标分别负责整体匹配、细粒度对应和条件生成：
 
 - 224×224 图像按 patch16 划分有多少 token，CLS 是否要额外计入？
 - 交换两块图像内容时，怎样区分连同位置向量一起交换和固定位置交换内容？
-
-<a id="vlm-036"></a>
-### VLM-036 · DDPM 的前向加噪、训练目标和反向去噪怎样实现？
-
-**L2** · 小红书
-
-#### 答案
-
-DDPM定义固定的前向高斯加噪链，再学习反向生成链。设每步噪声方差为$`\beta_t`$、$`\alpha_t=1-\beta_t`$、$`\bar\alpha_t=\prod_{s=1}^t\alpha_s`$，则可以从干净图像直接采样任意$`x_t`$，无需训练时逐步运行全部前向链。每次随机选时间$`t`$和高斯噪声$`\epsilon`$，让网络预测加入的噪声；常用简化目标是噪声预测MSE，它来自变分目标的重参数化与重新加权，不能说未经加权的MSE与完整ELBO完全相等。
-
-反向时从$`x_T\sim\mathcal N(0,I)`$开始，循环$`t=T,\ldots,1`$。网络输入当前$`x_t`$与时间编码，输出$`\epsilon_\theta`$；先用它估计$`x_0`$，再将估计值代入可解析的$`q(x_{t-1}\mid x_t,x_0)`$后验均值，得到下式$`\mu_\theta`$。注意$`q(x_{t-1}\mid x_t)`$本身一般不能直接解析得到，训练中可解析的是额外给定$`x_0`$的后验。
-
-采样用$`x_{t-1}=\mu_\theta+\sigma_t z`$。固定方差的经典选项包括$`\beta_t`$或后验方差$`\tilde\beta_t=\beta_t(1-\bar\alpha_{t-1})/(1-\bar\alpha_t)`$，也有学习方差的扩展；不能把这些设置混用。原算法在$`t=1`$时令$`z=0`$，最后展示预测均值。实现需核对0-based代码下标与1..T数学下标、同一个噪声日程和训练时的prediction type，不能把epsilon、x0或v预测输出直接互换。
-
-图文生成可把文本条件$`c`$输入去噪网络，但预测目标依然取决于图像生成参数化，与VQA的回答token交叉熵不同。标准DDPM的反向链是随机采样；Flow Matching常学习连续速度、用ODE积分。两者可在score/SDE视角联系，但不能把DDPM噪声预测均值公式直接当成Flow-GRPO的速度更新式。
-
-```math
-\begin{aligned}q(x_t\mid x_{t-1})&=\mathcal N(\sqrt{\alpha_t}x_{t-1},\beta_t I),\quad \bar\alpha_t=\prod_{s=1}^t\alpha_s\\ x_t&=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\,\epsilon,\quad \epsilon\sim\mathcal N(0,I)\\ \mathcal L_{\mathrm{simple}}&=\mathbb E_{x_0,t,\epsilon}\left[\|\epsilon-\epsilon_\theta(x_t,t)\|_2^2\right]\\ \hat x_0&=\frac{x_t-\sqrt{1-\bar\alpha_t}\epsilon_\theta(x_t,t)}{\sqrt{\bar\alpha_t}}\\ \mu_\theta(x_t,t)&=\frac1{\sqrt{\alpha_t}}\left(x_t-\frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(x_t,t)\right)\\ \tilde\beta_t&=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t,\quad \bar\alpha_0=1\\ x_{t-1}&=\mu_\theta(x_t,t)+\sigma_t z,\quad z\sim\mathcal N(0,I)\ (t\gt 1),\quad z=0\ (t=1)\end{aligned}
-```
-
-#### 易错点
-
-- 反向去噪不是把当前噪声简单减掉；缩放系数、累计噪声日程和方差都来自所选参数化。
-- 少步采样、DDIM或其他solver需要各自的更新式，不能直接在原DDPM循环跳过时间步而保持原系数不变。
-
-#### 追问
-
-- 为什么训练可以随机采样一个时间步，而生成需要多步迭代？
-- 如果网络输出改成x0或v prediction，scheduler需要怎样转换？
 
 <a id="vlm-037"></a>
 ### VLM-037 · 多模态大模型有哪些常见架构，如何介绍自己熟悉的 MLLM？
@@ -358,7 +341,7 @@ MiniGPT-4复用带ViT与Q-Former的BLIP-2视觉部分，以可训练线性层接
 <a id="vlm-021"></a>
 ### VLM-021 · 微调 VLM 时，视觉骨干、连接器和 LLM 该怎样冻结？
 
-**L3** · 腾讯 / 小红书
+**L3** · 腾讯 / 小红书 / 字节跳动
 
 #### 答案
 
@@ -366,13 +349,19 @@ MiniGPT-4复用带ViT与Q-Former的BLIP-2视觉部分，以可训练线性层接
 
 先验证连接器和格式，再扩大更新范围，并按参数组记录学习率、梯度和可训练参数数目，用消融验证收益。加入通用图文与纯文本回归集测遗忘，防止少量域数据破坏原有能力。冻结参数不等于切断向前层传递的梯度。
 
+冻结 Vision Encoder、只更新 projector 和 LLM 的假设是视觉表征已足以覆盖目标商品，主要差距在跨模态接入、指令遵循和答案表达。冻结能减少视觉模块的参数梯度与优化器状态开销，并降低少量领域数据扰动预训练视觉表征的风险；它不保证组合模型的通用能力保持不变，LLM 和连接器仍可过拟合或遗忘。原始 LLaVA 的指令阶段采用这一更新范围，但不能据此断言所有 VLM 都该冻结视觉骨干。
+
+先比较仅连接器、连接器加 LLM 适配和部分解冻视觉层的方案，固定数据与预算，并看细粒度属性、OCR、域外商品和纯文本回归。若可靠文本描述能解题、视觉特征却区分不了目标差异，只训 LLM 很可能学到商品先验；应先改善分辨率或视觉数据，再验证解冻收益。没有可训练的上游模块时，冻结视觉骨干可避免保存其反向激活；若上游适配器仍要训练，则不能随意用 no_grad 切断梯度。
+
 #### 易错点
 
 - 冻结参数不等于禁止该模块向前层传递梯度。
+- 冻结视觉骨干只保护其参数，不能保证整个 VLM 不遗忘。
 
 #### 追问
 
 - 新视觉骨干替换后能直接复用旧连接器吗？
+- 什么证据说明继续训练连接器已不足，需要改视觉表征？
 
 <a id="vlm-024"></a>
 ### VLM-024 · 多模态预训练和 SFT 的数据配比怎样设计？
@@ -452,6 +441,54 @@ MiniGPT-4复用带ViT与Q-Former的BLIP-2视觉部分，以可训练线性层接
 - 加入游戏动作数据后 OCR 变差，应怎样调整训练配比或参数更新范围？
 - 怎样设计实验区分视觉表示提升与游戏专用技能记忆？
 
+<a id="vlm-044"></a>
+### VLM-044 · SAM3 怎样分阶段训练，如何构建文本概念与实例掩码数据？
+
+**L2** · 腾讯
+
+#### 答案
+
+SAM3 的训练分四步：先用图文对预训练 Perception Encoder；再用大规模图像、短语与掩码三元组训练检测器及图文编码器，并兼顾视觉提示分割；随后用更高质量且验证过实例完整性的数据微调检测器，加入正负示例交互和 presence 监督；最后冻结视觉骨干，用视频数据训练跟踪器，学习掩码传播、遮挡与记忆利用。阶段数相同不表示模块和数据相同，不能套用生成式 VLM 的两阶段 LLaVA 流程。
+
+文本数据不是把类别名直接贴到任意掩码上。数据引擎先提出能落到视觉对象上的名词短语，再生成候选实例掩码，并分别验证‘每个掩码是否正确、是否匹配短语’和‘所有匹配实例是否都找到了’。第一种检查控制误检和边界质量，第二种防止漏标被当成负例；不合格样本由人工增删或修正。
+
+流程从人工验证逐步引入 AI 验证器、难负例和领域扩展，再扩展到视频掩码轨迹。近义词、上下位概念与否定短语需保持标注一致，难负例也须确认确实不存在。验收时分别看概念存在性、分割质量与实例覆盖率，并用独立人工样本复核，避免同一个模型生成、验证、评测造成循环偏差。
+
+#### 易错点
+
+- 掩码质量验证与实例穷尽性验证是两个不同任务。
+- 空掩码只有在确认概念不存在时才是有效负例，不能把漏标自动当负例。
+- 训练模型的四阶段与数据引擎的四阶段不是同一条时间轴。
+
+#### 追问
+
+- 为什么高质量微调阶段不直接保留全部合成数据？
+- 如何处理‘独木舟’同时属于‘船’造成的概念层级标注？
+
+<a id="vlm-045"></a>
+### VLM-045 · 零售多模态指令数据的原始图文怎样清洗，商品属性如何核验？
+
+**L2** · 字节跳动
+
+#### 答案
+
+先定义任务需要哪些证据，再建立原图、商品 ID、视角、标题/详情、属性及指令答案的对应记录。图片端检查解码、方向、清晰度、分辨率和裁剪完整性，过滤空图、重复宣传图和无法识别主体的样本；多张商品图不能只因 SKU 相同就当作像素重复，不同视角可能提供互补证据。文本端清理 HTML、促销模板和乱码，规范单位、枚举值及同义词，保留可追踪的原始字段，处理过期或冲突属性。
+
+图文质量要逐字段核验：颜色、形状、图案等可见属性与图像匹配，材质、容量或兼容性未必能从图中判断，应注明依赖详情文本或构造无法判断的答案。不能把所有目录属性都作为纯视觉标签，也不能让商品标题、文件名或元数据直接暴露目标答案。BLIP 的 CapFilt 提供生成描述再过滤图文噪声的思路，但模型筛选分数仍需抽审，细粒度差异和长尾商品不能仅按一个 CLIP 阈值删除。
+
+按商品家族、来源、时间和近重复图像组划分训练评测，防止同一商品的换背景图或改写标题跨入测试。生成指令后核验答案可由输入证据支持、模板与 loss mask 正确，按任务、属性和长尾难度配比；保留错配、缺失属性和相似商品难例。以抽检通过率、重复率、图文一致性及独立任务效果验收，比较相同训练预算下清洗前后效果。
+
+#### 易错点
+
+- 商品目录里有该属性，不等于输入图片可支持该属性。
+- 跨集合去重不能只看文件 hash；同一商品的不同实拍视角也不应一概删掉。
+- 模型打分过滤可能偏向常见商品或粗粒度语义，需检查长尾和细粒度误删。
+
+#### 追问
+
+- 商品标题写红色，图片是蓝色，怎样处理样本和指令答案？
+- 清洗后长尾品类减少，怎样判断是噪声剔除还是覆盖损失？
+
 <a id="topic-3"></a>
 ## 动态分辨率与位置编码
 
@@ -485,7 +522,7 @@ patch、空间 merge 和时间 patch 是 checkpoint 的不同配置，不应当�
 <a id="vlm-013"></a>
 ### VLM-013 · M-RoPE 如何统一文本、图像和视频位置？
 
-**L2**
+**L2** · 腾讯
 
 #### 答案
 
@@ -626,7 +663,7 @@ LLaVA-1.5 在原始 LLaVA 基础上，将线性连接器改为两层 MLP，采�
 <a id="vlm-014"></a>
 ### VLM-014 · Qwen2.5-VL 的视觉编码器和时间建模有哪些变化？
 
-**L2** · 字节跳动 / 小红书
+**L2** · 字节跳动 / 小红书 / 腾讯
 
 #### 答案
 
@@ -747,7 +784,235 @@ CNN 通过局部连接、卷积权重共享和多层下采样引入空间归纳�
 - 如何用相同预训练和增广区分架构收益与训练配方收益？
 - 在固定 LLM 视觉 token 预算下，如何比较高分辨率编码和后续压缩？
 
+<a id="vlm-043"></a>
+### VLM-043 · SAM、SAM2 与 SAM3 的架构和提示分割能力有什么区别？
+
+**L2** · 腾讯
+
+#### 答案
+
+SAM 主要解决图像的提示分割：MAE 预训练的 ViT 提取可复用图像特征，提示编码器处理点、框或掩码，轻量解码器输出目标掩码。SAM2 将图像视为单帧视频，采用分层 Hiera 特征，并增加记忆编码器、记忆库和 memory attention；当前帧关注历史空间特征与对象指针，逐帧传播掩码，支持遮挡时判断对象是否存在。SAM2 也能处理多个对象，不能把多实例能力完全归功于 SAM3。
+
+SAM3 进一步支持概念分割：给出短名词短语或正负图像示例，找出所有匹配实例，而非仅根据位置选中一个对象。它采用对齐的 Perception Encoder 图文编码器，共享视觉骨干的 DETR 式检测器和记忆跟踪器分别负责发现实例与维持身份。图像特征先与提示融合，再由对象查询预测框和掩码；全局 presence token 判断概念是否存在，与局部查询分数结合，减少相似描述的误检。
+
+选择时看任务需要位置提示、视频传播还是按概念搜索全部实例。SAM3 本体面向短概念提示，复杂关系和长指令可由 MLLM 拆解后调用，不能将分割模型等同于能回答任意问题的生成式 VLM。
+
+```math
+s_i=p(P\ \mathrm{present}\mid I)\,p(q_i\ \mathrm{matches}\mid P\ \mathrm{present},I)
+```
+
+#### 易错点
+
+- SAM2 支持多对象跟踪；SAM3 的关键增量是按概念主动发现所有匹配实例。
+- SAM 原论文有探索性文本提示实验，但它与 SAM3 的成熟概念分割能力和标准接口不能等同。
+- presence 分数与查询分数相乘是模型的评分设计，不保证输出概率已经校准。
+
+#### 追问
+
+- 为什么检测需要身份无关，而跟踪需要保留身份？
+- presence token 如何帮助处理‘红衣球员’与‘白衣球员’这类难负例？
+
 <a id="topic-5"></a>
+## 视觉生成与扩散模型
+
+<a id="vlm-036"></a>
+### VLM-036 · DDPM 的前向加噪、训练目标和反向去噪怎样实现？
+
+**L2** · 小红书 / 腾讯
+
+#### 答案
+
+DDPM定义固定的前向高斯加噪链，再学习反向生成链。设每步噪声方差为$`\beta_t`$、$`\alpha_t=1-\beta_t`$、$`\bar\alpha_t=\prod_{s=1}^t\alpha_s`$，则可以从干净图像直接采样任意$`x_t`$，无需训练时逐步运行全部前向链。每次随机选时间$`t`$和高斯噪声$`\epsilon`$，让网络预测加入的噪声；常用简化目标是噪声预测MSE，它来自变分目标的重参数化与重新加权，不能说未经加权的MSE与完整ELBO完全相等。
+
+反向时从$`x_T\sim\mathcal N(0,I)`$开始，循环$`t=T,\ldots,1`$。网络输入当前$`x_t`$与时间编码，输出$`\epsilon_\theta`$；先用它估计$`x_0`$，再将估计值代入可解析的$`q(x_{t-1}\mid x_t,x_0)`$后验均值，得到下式$`\mu_\theta`$。注意$`q(x_{t-1}\mid x_t)`$本身一般不能直接解析得到，训练中可解析的是额外给定$`x_0`$的后验。
+
+采样用$`x_{t-1}=\mu_\theta+\sigma_t z`$。固定方差的经典选项包括$`\beta_t`$或后验方差$`\tilde\beta_t=\beta_t(1-\bar\alpha_{t-1})/(1-\bar\alpha_t)`$，也有学习方差的扩展；不能把这些设置混用。原算法在$`t=1`$时令$`z=0`$，最后展示预测均值。实现需核对0-based代码下标与1..T数学下标、同一个噪声日程和训练时的prediction type，不能把epsilon、x0或v预测输出直接互换。
+
+图文生成可把文本条件$`c`$输入去噪网络，但预测目标依然取决于图像生成参数化，与VQA的回答token交叉熵不同。标准DDPM的反向链是随机采样；Flow Matching常学习连续速度、用ODE积分。两者可在score/SDE视角联系，但不能把DDPM噪声预测均值公式直接当成Flow-GRPO的速度更新式。
+
+```math
+\begin{aligned}q(x_t\mid x_{t-1})&=\mathcal N(\sqrt{\alpha_t}x_{t-1},\beta_t I),\quad \bar\alpha_t=\prod_{s=1}^t\alpha_s\\ x_t&=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\,\epsilon,\quad \epsilon\sim\mathcal N(0,I)\\ \mathcal L_{\mathrm{simple}}&=\mathbb E_{x_0,t,\epsilon}\left[\|\epsilon-\epsilon_\theta(x_t,t)\|_2^2\right]\\ \hat x_0&=\frac{x_t-\sqrt{1-\bar\alpha_t}\epsilon_\theta(x_t,t)}{\sqrt{\bar\alpha_t}}\\ \mu_\theta(x_t,t)&=\frac1{\sqrt{\alpha_t}}\left(x_t-\frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(x_t,t)\right)\\ \tilde\beta_t&=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t,\quad \bar\alpha_0=1\\ x_{t-1}&=\mu_\theta(x_t,t)+\sigma_t z,\quad z\sim\mathcal N(0,I)\ (t\gt 1),\quad z=0\ (t=1)\end{aligned}
+```
+
+#### 易错点
+
+- 反向去噪不是把当前噪声简单减掉；缩放系数、累计噪声日程和方差都来自所选参数化。
+- 少步采样、DDIM或其他solver需要各自的更新式，不能直接在原DDPM循环跳过时间步而保持原系数不变。
+
+#### 追问
+
+- 为什么训练可以随机采样一个时间步，而生成需要多步迭代？
+- 如果网络输出改成x0或v prediction，scheduler需要怎样转换？
+
+<a id="vlm-038"></a>
+### VLM-038 · DDPM 与 DDIM 有什么区别，DDIM 如何跨步采样？
+
+**L2** · 腾讯
+
+#### 答案
+
+DDPM从马尔可夫前向加噪链学习随机反向链；DDIM重新构造具有相同单时刻加噪边缘的非马尔可夫过程，可复用DDPM的去噪网络和常用噪声MSE训练，无须为每种采样步数重训。这里的“非马尔可夫”主要指其理论前向构造，不代表生成时必须保存全部历史。
+
+采样先用当前噪声预测恢复$`\hat x_0`$，再把它与预测噪声按目标时间$`s<t`$的累计系数组合，并加入可选随机噪声。下式中$`\eta`$控制随机性：$`\eta=0`$时给定初始噪声的整条生成轨迹确定；仍需随机初始噪声来获得多样图像。$`\eta=1`$且采用原相邻时间步时，对应使用后验方差的DDPM更新，不能推广成“所有DDPM方差设置都完全一致”。
+
+速度收益来自选择较短时间子序列、减少网络调用，并按跨步$`s,t`$重算系数。直接跳过原DDPM循环却保留相邻步系数是错误的。少步会产生数值/模型误差，需结合质量和延迟选步数；确定性也不意味着不同步数下输出像素完全相同。
+
+```math
+\begin{aligned}\hat x_0&=\frac{x_t-\sqrt{1-\bar\alpha_t}\,\epsilon_\theta(x_t,t)}{\sqrt{\bar\alpha_t}}\\ \sigma_{t\to s}&=\eta\sqrt{\frac{1-\bar\alpha_s}{1-\bar\alpha_t}}\sqrt{1-\frac{\bar\alpha_t}{\bar\alpha_s}}\\ x_s&=\sqrt{\bar\alpha_s}\hat x_0+\sqrt{1-\bar\alpha_s-\sigma_{t\to s}^{2}}\,\epsilon_\theta(x_t,t)+\sigma_{t\to s}z,\quad z\sim\mathcal N(0,I),\quad 0\le s\lt t\end{aligned}
+```
+
+#### 易错点
+
+- DDIM论文的alpha_t已经是累计系数，不能再按DDPM单步alpha_t解释；实现应统一为bar alpha。
+- 最后到s=0取bar alpha_0=1，噪声项归零；epsilon/x0/v预测须先按scheduler约定转换。
+
+#### 追问
+
+- 固定初始噪声时，为什么改变采样步数仍可能改变图像？
+- 如何校验eta=0和相邻步eta=1两种边界？
+
+<a id="vlm-039"></a>
+### VLM-039 · Flow Matching 怎样训练和推理，与 DDPM 的区别是什么？
+
+**L2** · 腾讯
+
+#### 答案
+
+Flow Matching直接回归能输运概率分布的连续速度场，条件路径回归让训练无需求解ODE。以常用线性路径为例，约定$`t=0`$是数据、$`t=1`$是噪声：独立采样图像或其latent $`x_0`$、高斯噪声$`\epsilon`$与时间$`t`$，构造$`x_t=(1-t)x_0+t\epsilon`$，让网络预测目标速度$`\epsilon-x_0`$。文本条件作为网络输入，损失是速度MSE；实际时间采样及加权会影响不同噪声区间的训练。
+
+同一个$`x_t`$可能来自不同端点对，最优回归器学习的是条件平均速度，而非猜出唯一原图。推理从高斯噪声开始，解$`\mathrm d x_t/\mathrm d t=v_\theta(x_t,t,c)`$并从1积分到0；正步长$`h`$的Euler更新是$`x_{t-h}=x_t-hv_\theta`$。初始噪声提供多样性，ODE本身给定初值后确定。
+
+经典DDPM主要预测加噪链中的噪声、按反向高斯转移采样；Flow Matching学习路径速度、常用ODE solver。两者并非完全互斥：FM可使用扩散概率路径，扩散也可用概率流ODE/DDIM采样。线性条件路径不保证学到的边缘轨迹处处直线，更不保证任意模型一步生成就高质量；少步效果还取决于轨迹曲率、solver、训练与蒸馏。
+
+```math
+\begin{aligned}x_t&=(1-t)x_0+t\epsilon,\quad \epsilon\sim\mathcal N(0,I),\quad 0\le t\le1\\ \mathcal L_{\mathrm{CFM}}&=\mathbb E_{x_0,\epsilon,t,c}\left[\left\|v_\theta(x_t,t,c)-(\epsilon-x_0)\right\|_2^2\right]\\ v^*(x,t,c)&=\mathbb E[\epsilon-x_0\mid x_t=x,t,c]\\ x_{t-h}&=x_t-hv_\theta(x_t,t,c),\quad h\gt 0\end{aligned}
+```
+
+#### 易错点
+
+- 部分论文采用0噪声/1数据的相反时间方向，速度目标和采样符号必须一起反转。
+- Rectified Flow线性插值速度与扩散常用的v-prediction不是同一公式；Flow Matching本体不需要GRPO或奖励模型。
+
+#### 追问
+
+- 为什么训练只需随机一个时间点，生成却仍要多步积分？
+- 时间采样分布改变后，如何比较训练loss与最终图像质量？
+
+<a id="vlm-040"></a>
+### VLM-040 · CFG 的公式与训练方式是什么，怎样缓解生成图像过饱和？
+
+**L2** · 腾讯
+
+#### 答案
+
+Classifier-Free Guidance训练时以一定概率把条件替换成空条件，让同一网络同时学习条件和无条件预测；推理将两者组合，不需要额外分类器。用常见guidance_scale约定，$`s=0`$为无条件，$`s=1`$为普通条件预测，$`s>1`$沿条件差向量外推。原论文写$`(1+w)\epsilon_c-w\epsilon_u`$，对应$`s=1+w`$，应先说明约定。
+
+过大的尺度会放大预测幅度和模型误差，可能带来过曝、色彩过饱和、细节失真及多样性下降。优先降低或调度guidance，检查prediction type、训练/推理噪声日程与latent归一化；再尝试guidance rescale：逐样本计算条件预测与CFG预测的标准差，把后者幅度缩回，再用$`\rho`$混合原结果，避免缩放过强使图像变平。零标准差要加稳定项。
+
+图像空间预测可考虑dynamic thresholding，对估计干净图像按分位数限幅并归一化；latent不具有像素的固定范围，不能直接沿用像素裁剪。增加步数主要减少积分误差，无法消除强guidance造成的外推偏移。DiT只是骨干结构，不改变上述权衡；guidance蒸馏模型则须遵守自身接口，不能自动套两次前向的CFG。
+
+```math
+\begin{aligned}f_{\mathrm{cfg}}&=f_u+s(f_c-f_u)\\ f_{\mathrm{rescaled}}&=f_{\mathrm{cfg}}\frac{\mathrm{std}(f_c)}{\mathrm{std}(f_{\mathrm{cfg}})+\delta}\\ f_{\mathrm{final}}&=\rho f_{\mathrm{rescaled}}+(1-\rho)f_{\mathrm{cfg}},\quad 0\le\rho\le1\end{aligned}
+```
+
+#### 易错点
+
+- f_c和f_u必须来自同一时间、状态与预测参数化；负面prompt分支不严格等于空条件的无条件分支。
+- rescale是经验性控制手段，会改变guided预测；不能声称它保持原生成分布或普遍提高所有指标。
+
+#### 追问
+
+- 条件分支与无条件分支能否合并成一个batch，代价是什么？
+- 为什么仅增加采样steps未必改善过饱和？
+
+<a id="vlm-041"></a>
+### VLM-041 · MMDiT 与 FLUX.1 的图文交互结构有什么差异？
+
+**L2** · 腾讯
+
+#### 答案
+
+MMDiT指SD3论文中的多模态生成骨干。图像latent patches和文本序列投影到相同hidden维度，但各自保留QKV、输出投影、MLP与调制参数；在注意力计算时拼接两种模态的Q/K/V，做联合、非因果注意力，结果再拆回两条流。因此图像可读文本，文本表示也会接收图像信息；不同于只让图像query读取固定文本KV的单向cross-attention。
+
+FLUX.1基础骨干结合双流块与单流块。前部DoubleStreamBlock仍各自投影/调制图像和文本，并进行联合注意力；随后把tokens拼接，进入SingleStreamBlock，共用投影和调制，attention与MLP并行计算后融合；最终只取图像tokens预测生成速度。不能说FLUX全程双流，或把单流理解为不再融合文本。
+
+官方FLUX.1代码还使用QK RMSNorm、多轴RoPE和由时间、pooled文本等组成的调制向量；这些细节应按版本核对。双流能保留模态各自参数空间，单流能共享后续计算路径，但参数量、效率和质量还取决于层数/维度与实现。结构比较也不能代替训练目标比较：SD3和FLUX.1均处于flow/rectified-flow生成语境，不能把MMDiT简单等同DDPM、FLUX等同“另一种注意力”。
+
+```math
+\begin{aligned}Q&=[Q_{\mathrm{text}};Q_{\mathrm{image}}],\quad K=[K_{\mathrm{text}};K_{\mathrm{image}}],\quad V=[V_{\mathrm{text}};V_{\mathrm{image}}]\\ H&=\mathrm{softmax}(QK^\top/\sqrt{d_h})V\\ [H_{\mathrm{text}};H_{\mathrm{image}}]&=H\\ X_{\mathrm{single}}&=[X_{\mathrm{text}};X_{\mathrm{image}}]\end{aligned}
+```
+
+#### 易错点
+
+- 分号表示沿token维拼接；这里公式省略多头拆分、位置旋转与QK归一化，不能据此直接写完整FLUX实现。
+- 比较限定SD3论文MMDiT与FLUX.1基础结构；不同产品版本、蒸馏权重或后续FLUX.2不能混用结论。
+
+#### 追问
+
+- 双流独立参数为什么仍能让两种模态互相注意？
+- 单流并行attention/MLP与标准串行Transformer残差结构有何不同？
+
+<a id="vlm-042"></a>
+### VLM-042 · DiT 怎样用 AdaLN 注入条件，AdaLN-Zero 如何初始化？
+
+**L2** · 腾讯
+
+#### 答案
+
+DiT把带噪图像latent划分成patch tokens，用Transformer替代生成骨干中的U-Net，最后投影并恢复latent形状；时间和类别/文本条件告诉网络当前噪声程度与生成目标。AdaLN在逐token LayerNorm后，用条件向量经MLP生成逐通道scale与shift，并沿token维广播，实现条件相关的特征缩放和平移。它不同于LayerNorm固定学习的仿射参数，也不会显式预测图像均值方差。
+
+原始DiT的AdaLN-Zero还为attention和MLP两个残差支路各生成gate，合计两组shift/scale/gate，共$`6D`$维。官方实现把调制MLP最后线性层的权重和偏置初始化为零，使初始scale、shift、gate全为零：$`(1+\mathrm{scale})`$仍为1，归一化特征并未被清零；gate为零才使整个残差块初始化为恒等映射。输出head另做零初始化，因此“每个块是恒等”不表示整个生成网络初始输出等于输入。
+
+该设计以较小额外计算注入条件，并控制深层残差初期的扰动，便于训练。原论文中它优于测试的其他条件注入方式，但不能外推成任何文本生成场景都不需cross-attention；长文本的细粒度语义通常仍需序列级图文交互。
+
+```math
+\begin{aligned}(\beta_a,\gamma_a,g_a,\beta_m,\gamma_m,g_m)&=\mathrm{MLP}(c)\\ \mathrm{AdaLN}(x;c)&=(1+\gamma(c))\odot\mathrm{LN}(x)+\beta(c)\\ x'&=x+g_a\odot\mathrm{Attention}((1+\gamma_a)\odot\mathrm{LN}(x)+\beta_a)\\ x''&=x'+g_m\odot\mathrm{MLP}_{\mathrm{block}}((1+\gamma_m)\odot\mathrm{LN}(x')+\beta_m)\end{aligned}
+```
+
+#### 易错点
+
+- Zero指调制输出/gate的初始化，不能把所有Transformer权重都初始化为零。
+- gate是逐通道条件输出，可正可负；原始DiT没有强制用sigmoid将其限制到0至1。
+
+#### 追问
+
+- gate为零时残差支路参数的梯度怎样变化，训练如何逐步打开支路？
+- 普通AdaLN与AdaLN-Zero的恒等初始化差别来自哪一项？
+
+<a id="vlm-046"></a>
+### VLM-046 · VQ-VAE 的 codebook 怎样训练，为什么离散 latent 不一定比连续 VAE 更快？
+
+**L2** · 腾讯
+
+#### 答案
+
+VQ-VAE先用encoder产生连续向量$`z_e`$，逐位置选codebook中最近的$`e_k`$作为离散索引，再把查表向量送入decoder重建。code是学到的局部特征，不必对应词、音素或动作。
+
+argmin不可微，straight-through前向查表，反向把重建梯度送给encoder。三项loss负责重建、codebook靠近冻结encoder输出、encoder承诺靠近冻结code；重建更新encoder/decoder，codebook项只更新embedding，commitment只更新encoder。ST是有偏代理梯度，并非argmin的精确导数。
+
+EMA替代codebook梯度loss：累计各code命中数与被分配向量之和，做滑动平均，用和/计数更新中心；保留重建和commitment。须平滑小计数、同步多卡统计，验证时不更新，不能同时用optimizer和EMA重复改码本。
+
+效率取决于token数、码率及先验/decoder。N个索引定长存储需N⌈log₂K⌉位，仍需编码或生成latent再解码；查找也有成本。同样下采样的连续VAE也能压缩，离散化不保证更短AR序列或更快生成。
+
+更大码本/更高token率增加容量，也增加数据覆盖与建模成本。监控重建/量化误差、死码率和usage perplexity；少数code独占是codebook collapse，可检查初始化、commitment权重、EMA衰减并重置长期死码。高perplexity不保证质量。
+
+```math
+\begin{aligned}k&=\mathrm{argmin}_{j}\|z_e-e_j\|_2^2,\quad z_{\mathrm{ST}}=z_e+\mathrm{sg}(e_k-z_e)\\ \mathcal L&=\mathcal L_{\mathrm{rec}}+\|\mathrm{sg}(z_e)-e_k\|_2^2+\beta\|z_e-\mathrm{sg}(e_k)\|_2^2\\ \mathcal L_{\mathrm{rec}}&=-\log p_\theta(x\mid z_{\mathrm{ST}})\\ C_k&\leftarrow\gamma C_k+(1-\gamma)n_k,\quad M_k\leftarrow\gamma M_k+(1-\gamma)\sum_{i:k_i=k}z_{e,i}\\ e_k&\leftarrow M_k/\widetilde C_k\\ \mathrm{PPL}_{\mathrm{usage}}&=\exp\left(-\sum_{k=1}^{K}\hat p_k\log\hat p_k\right)\end{aligned}
+```
+
+#### 易错点
+
+- sg前向为恒等、反向为零；codebook梯度项使用原查表向量，而非已经阻断embedding梯度的z_ST。
+- usage perplexity计算的是码本命中频率的有效类别数，不是语言模型预测NLL的perplexity，也不能代替重建评测。
+- 原始均匀离散先验下每位置KL为常数log K，训练tokenizer后仍需学习生成latent的prior；不要把重建器直接当完整生成流程。
+
+#### 追问
+
+- EMA统计为何要多卡同步，长期零命中的code应如何处理？
+- 把K翻倍或下采样倍率提高，码率、重建与生成成本分别怎样变化？
+- 为什么decoder忽视latent的posterior collapse与只用少数code的codebook collapse不能混同？
+
+<a id="topic-6"></a>
 ## 感知、文档与视觉评测
 
 <a id="vlm-016"></a>
@@ -808,9 +1073,9 @@ CNN 通过局部连接、卷积权重共享和多层下采样引入空间归纳�
 - 更短的描述为何可能降低幻觉指标却损失信息？
 
 <a id="vlm-019"></a>
-### VLM-019 · 多模态模型看起来不看图，如何排查？
+### VLM-019 · 怎样验证 VLM 真正依赖图像，而非商品记忆、文本捷径或测试泄漏？
 
-**L3**
+**L3** · 字节跳动
 
 #### 答案
 
@@ -818,18 +1083,24 @@ CNN 通过局部连接、卷积权重共享和多层下采样引入空间归纳�
 
 链路正常后，继续检查连接器梯度、视觉特征变化、标签泄漏、文本捷径和数据偏差。只看注意力热图不足以证明因果依赖；错配图像不改变答案，也可能是该问题本来不依赖图像。
 
+若零售项目被质疑测试泄漏或记住商品，先审计训练、验证和测试的 SKU、商品家族、图片近重复及改写标题重叠，做按商品家族和时间隔离的测试，并加入模型训练后新采集的商品实拍。未知底座语料无法完全审计，应分别说明自己能排除的领域微调泄漏与底座污染边界。
+
+在确实需要图片的题上构造配对对照：相同问题配同类但关键属性不同的真实图片，人工重标正确答案，检查模型是否随颜色、结构或数量等证据改变回答；另比较保留图片但去掉品牌、标题等捷径，以及保留文本但移除目标视觉区域的表现。整图遮挡可能造成分布偏移，应与局部干预、新实拍和正常输入共同看。未见商品和属性新组合上稳定提升，比熟悉商品准确率更有说服力；注意力热图、单次换图或无污染声明都不能独自证明视觉理解。
+
 #### 易错点
 
 - 错配图像不改变答案也可能是问题本来不依赖图像。
+- 没有观察到污染，只能说明已做检测范围内未发现，不能证明未知预训练语料不存在泄漏。
 
 #### 追问
 
 - 视觉对比解码为何可能降低语言先验干扰？
+- 遮挡后变差怎样排除只是输入分布偏移？
 
 <a id="vlm-020"></a>
 ### VLM-020 · VLM 能力如何评估，为什么不能只报一个榜单分数？
 
-**L2**
+**L2** · 字节跳动
 
 #### 答案
 
@@ -837,13 +1108,24 @@ CNN 通过局部连接、卷积权重共享和多层下采样引入空间归纳�
 
 选择题适合标准化评测，开放问答需要细粒度事实标注；控制答案格式、随机性、分辨率和测试集污染。业务评估还应加入无答案、歧义图像与跨域样本，不同提示或图像预算下的成绩不宜直接横比。
 
+零售图文匹配先明确任务：二分类匹配应固定正负例及阈值，报告 precision、recall、F1，类别不平衡时不能只报 accuracy；检索任务应明确候选商品库、相关集合和近重复处理，报告图到文、文到图的 Recall@K 或排名指标。只有类别标签相同不代表细粒度商品匹配正确，应加入同类不同颜色、款式和属性的难负例。
+
+商品属性抽取先规定字段、单位、同义词和允许答案，区分显式可见、需读取详情和无法判断的属性。单标签字段可报准确率，字段-值集合可报 precision/recall/F1；同时给每字段分数与 macro/micro 汇总、整条商品全部字段正确率，单列缺失值、误填和不可见属性幻觉。固定答案解析并人工抽审，按商品家族、新商品和长尾属性切片；置信区间应以商品为单位重采样，避免同商品多视角假装独立样本。
+
+```math
+\begin{aligned} P&=\frac{TP}{TP+FP},\qquad R=\frac{TP}{TP+FN}\\ F_1&=\frac{2PR}{P+R},\qquad \mathrm{Acc}=\frac{TP+TN}{TP+TN+FP+FN}\end{aligned}
+```
+
 #### 易错点
 
 - 不同提示或图像预算下的榜单分数不宜直接横比。
+- 图文匹配二分类准确率、候选库检索命中率与属性抽取准确率的分母不同。
+- Precision、Recall 或 F1 的分母为零时，应预先规定统计和聚合规则，而非静默忽略该字段。
 
 #### 追问
 
 - 模型裁判如何减少长度偏好与视觉遗漏？
+- 属性值有多个合法同义表述时，如何制定可复现的评分规则？
 
 <a id="vlm-022"></a>
 ### VLM-022 · 交错图文和多图输入如何保持图像与指代关系？
@@ -928,7 +1210,10 @@ CNN 通过局部连接、卷积权重共享和多层下采样引入空间归纳�
 - [Evaluating Object Hallucination in Large Vision-Language Models](https://arxiv.org/abs/2305.10355)
 - [Mitigating Object Hallucinations in Large Vision-Language Models through Visual Contrastive Decoding](https://arxiv.org/abs/2311.16922)
 - [LLaVA 官方仓库](https://github.com/haotian-liu/LLaVA)
+- [DataComp: In search of the next generation of multimodal datasets](https://arxiv.org/html/2304.14108)
+- [Eyes Wide Shut? Exploring the Visual Shortcomings of Multimodal LLMs](https://arxiv.org/html/2401.06209)
 - [MMBench: Is Your Multi-modal Model an All-around Player?](https://arxiv.org/abs/2307.06281)
+- [scikit-learn precision_recall_fscore_support 官方文档](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_recall_fscore_support.html)
 - [Kosmos-2: Grounding Multimodal Large Language Models to the World](https://arxiv.org/abs/2306.14824)
 - [Cambrian-1: A Fully Open, Vision-Centric Exploration of Multimodal LLMs](https://arxiv.org/abs/2406.16860)
 - [Qwen3-VL Technical Report](https://arxiv.org/html/2511.21631v1)
@@ -951,3 +1236,20 @@ CNN 通过局部连接、卷积权重共享和多层下采样引入空间归纳�
 - [MineDojo: Building Open-Ended Embodied Agents with Internet-Scale Knowledge](https://arxiv.org/abs/2206.08853)
 - [Denoising Diffusion Probabilistic Models](https://arxiv.org/pdf/2006.11239)
 - [DDPM original diffusion utilities](https://github.com/hojonathanho/diffusion/blob/master/diffusion_tf/diffusion_utils_2.py)
+- [Denoising Diffusion Implicit Models](https://arxiv.org/html/2010.02502)
+- [DDIM official generalized sampling](https://github.com/ermongroup/ddim/blob/main/functions/denoising.py)
+- [Flow Matching for Generative Modeling](https://arxiv.org/html/2210.02747)
+- [Scaling Rectified Flow Transformers for High-Resolution Image Synthesis](https://arxiv.org/html/2403.03206)
+- [Classifier-Free Diffusion Guidance](https://arxiv.org/html/2207.12598)
+- [Common Diffusion Noise Schedules and Sample Steps are Flawed](https://arxiv.org/html/2305.08891)
+- [FLUX.1 official backbone implementation](https://github.com/black-forest-labs/flux/blob/main/src/flux/model.py)
+- [FLUX.1 official double-stream and single-stream blocks](https://github.com/black-forest-labs/flux/blob/main/src/flux/modules/layers.py)
+- [Scalable Diffusion Models with Transformers](https://arxiv.org/html/2212.09748)
+- [DiT official model and initialization](https://github.com/facebookresearch/DiT/blob/main/models.py)
+- [Segment Anything](https://arxiv.org/html/2304.02643)
+- [SAM 2: Segment Anything in Images and Videos](https://arxiv.org/html/2408.00714v2)
+- [SAM 3: Segment Anything with Concepts（v2）](https://arxiv.org/html/2511.16719v2)
+- [Meta SAM 3 官方仓库](https://github.com/facebookresearch/sam3)
+- [Meta SAM 2 官方仓库 README](https://github.com/facebookresearch/sam2/blob/main/README.md)
+- [Neural Discrete Representation Learning](https://arxiv.org/html/1711.00937)
+- [DeepMind Sonnet VectorQuantizer and VectorQuantizerEMA](https://github.com/google-deepmind/sonnet/blob/v2/sonnet/src/nets/vqvae.py)
