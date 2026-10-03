@@ -373,3 +373,270 @@ def max_stock_profit(prices):
             best = max(best, price - lowest)
         lowest = price if lowest is None else min(lowest, price)
     return best
+
+
+def _gqa_shape4(value, name):
+    """Validate nonempty, rectangular [B,H,T,D] numeric nested sequences."""
+    if not value or not value[0] or not value[0][0] or not value[0][0][0]:
+        raise ValueError(f"{name} must be nonempty [B,H,T,D]")
+    shape = (len(value), len(value[0]), len(value[0][0]), len(value[0][0][0]))
+    for batch in value:
+        if len(batch) != shape[1]:
+            raise ValueError(f"{name} has ragged heads")
+        for head in batch:
+            if len(head) != shape[2] or any(len(row) != shape[3] for row in head):
+                raise ValueError(f"{name} has ragged tokens/features")
+            if any(not math.isfinite(item) for row in head for item in row):
+                raise ValueError(f"{name} must be finite")
+    return shape
+
+
+def grouped_query_attention(q, k, v, allowed=None, causal=False, query_offset=0):
+    """GQA [B,Hq,Tq,D] x [B,Hkv,Tk,D], consecutive equal-size head groups.
+
+    Returns [B,Hq,Tq,D]. Mask is bool [Tq,Tk] or exact [B,Hq,Tq,Tk],
+    True=allowed; unlike the torch version, arbitrary broadcasting is not used.
+    No projections, dropout, RoPE or cache allocation are included.
+    """
+    b, hq, tq, d = _gqa_shape4(q, "q")
+    bk, hkv, tk, dk = _gqa_shape4(k, "k")
+    if _gqa_shape4(v, "v") != (bk, hkv, tk, dk) or b != bk or d != dk or hq % hkv:
+        raise ValueError("GQA requires matching batch/features and Hq divisible by Hkv")
+    if isinstance(query_offset, bool) or not isinstance(query_offset, int) or query_offset < 0:
+        raise ValueError("query_offset must be a nonnegative integer")
+    per_head = False
+    if allowed is not None:
+        shared = (len(allowed) == tq and all(len(row) == tk and
+                  all(isinstance(item, bool) for item in row) for row in allowed))
+        if not shared:
+            try:
+                per_head = (len(allowed) == b and all(len(batch) == hq and
+                            all(len(head) == tq and all(len(row) == tk and
+                                all(isinstance(item, bool) for item in row) for row in head)
+                                for head in batch) for batch in allowed))
+            except (TypeError, IndexError):
+                per_head = False
+            if not per_head:
+                raise ValueError("allowed must be bool [Tq,Tk] or [B,Hq,Tq,Tk]")
+    group_size = hq // hkv
+    result = []
+    for batch in range(b):
+        heads = []
+        for head in range(hq):
+            mask = allowed[batch][head] if per_head else allowed
+            if causal:
+                mask = [[j <= query_offset + i and (mask is None or mask[i][j])
+                         for j in range(tk)] for i in range(tq)]
+            kv_head = head // group_size
+            heads.append(attention(q[batch][head], k[batch][kv_head], v[batch][kv_head], mask))
+        result.append(heads)
+    return result
+
+
+def max_stock_profit_two_transactions(prices):
+    """At most two nonoverlapping buy/sell pairs; state updates use the old day.
+
+    Finite signed numeric prices are accepted. Only one position is held.
+    There is no transaction fee or cooldown in this arithmetic reference.
+    Empty input returns 0 and the iterable is consumed once.
+    """
+    hold1 = hold2 = -math.inf
+    cash1 = cash2 = 0
+    for price in prices:
+        if not math.isfinite(price):
+            raise ValueError("prices must be finite")
+        old_hold1, old_cash1, old_hold2, old_cash2 = hold1, cash1, hold2, cash2
+        hold1 = max(old_hold1, -price)
+        cash1 = max(old_cash1, old_hold1 + price)
+        hold2 = max(old_hold2, old_cash1 - price)
+        cash2 = max(old_cash2, old_hold2 + price)
+    return cash2
+
+
+def variation_keep_indices(previous, current, visual_mask, keep_visual):
+    """Single-sample V2Drop score/index core, returning original-order indices.
+
+    Hidden states are numeric [N,D] lists; all nonvisual tokens survive. Scores
+    use Python floating-point precision, not the torch version's FP32 cast.
+    This is not a model, position/mask gather or per-layer KV implementation.
+    """
+    if len(previous) != len(current) or len(visual_mask) != len(current):
+        raise ValueError("hidden states and mask must have the same N")
+    if any(not isinstance(value, bool) for value in visual_mask):
+        raise ValueError("visual_mask must contain booleans")
+    if isinstance(keep_visual, bool) or not isinstance(keep_visual, int):
+        raise TypeError("keep_visual must be an integer")
+    if current:
+        _matrix(previous, "previous")
+        _matrix(current, "current")
+        if len(previous[0]) != len(current[0]):
+            raise ValueError("hidden states must have the same D")
+    visual = [index for index, flag in enumerate(visual_mask) if flag]
+    if not 0 <= keep_visual <= len(visual):
+        raise ValueError("visual budget is out of range")
+    scores = {}
+    for index in visual:
+        delta = [float(after) - float(before) for before, after in zip(previous[index], current[index])]
+        score = math.hypot(*delta)
+        if not math.isfinite(score):
+            raise ValueError("visual variation scores must be finite")
+        scores[index] = score
+    ranking = sorted(visual, key=lambda index: (-scores[index], index))
+    keep = set(ranking[:keep_visual])
+    return [index for index, flag in enumerate(visual_mask) if not flag or index in keep]
+
+
+def float_sqrt(value, abs_tol=0.0, rel_tol=1e-12, max_iterations=128):
+    """Approximate sqrt of a finite nonnegative int/float, without sqrt/pow.
+
+    Scale by powers of two, then bisect a bounded mantissa. Stop when the
+    half-width is <= abs_tol + rel_tol*estimate or floating-point stagnates.
+    Requested tolerances below floating-point resolution cannot be promised.
+    """
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise TypeError("value must be an int or float")
+    try:
+        value = float(value)
+    except OverflowError as error:
+        raise ValueError("value must be representable as a finite float") from error
+    if not math.isfinite(value) or value < 0:
+        raise ValueError("value must be finite and nonnegative")
+    if (not math.isfinite(abs_tol) or not math.isfinite(rel_tol) or
+            abs_tol < 0 or rel_tol < 0 or abs_tol + rel_tol == 0):
+        raise ValueError("finite nonnegative tolerances, at least one positive, required")
+    if isinstance(max_iterations, bool) or not isinstance(max_iterations, int) or max_iterations <= 0:
+        raise ValueError("max_iterations must be a positive integer")
+    if value == 0:
+        return 0.0
+    mantissa, exponent = math.frexp(value)
+    if exponent % 2:
+        mantissa *= 2.0
+        exponent -= 1
+    scale = exponent // 2
+    low, high = 0.5, 2.0
+    for _ in range(max_iterations):
+        middle = (low + high) / 2.0
+        estimate = math.ldexp(middle, scale)
+        half_width = math.ldexp((high - low) / 2.0, scale)
+        if (half_width <= abs_tol + rel_tol * estimate or middle == low or
+                middle == high or middle * middle == mantissa):
+            return estimate
+        if middle * middle < mantissa:
+            low = middle
+        else:
+            high = middle
+    raise RuntimeError("square-root bisection did not converge within max_iterations")
+
+
+def longest_increasing_matrix_path(matrix):
+    """Longest strictly increasing four-neighbor path via topological BFS.
+
+    Four-neighbor moves only, without diagonals or boundary wrapping.
+    Values must be finite; each step must be strictly increasing.
+    Empty rectangular input returns 0. No recursive stack is used.
+    """
+    from collections import deque
+    if not matrix:
+        return 0
+    columns = len(matrix[0])
+    if any(len(row) != columns for row in matrix):
+        raise ValueError("matrix must be rectangular")
+    if columns == 0:
+        return 0
+    if any(not math.isfinite(value) for row in matrix for value in row):
+        raise ValueError("matrix values must be finite")
+    rows = len(matrix)
+    directions = ((1, 0), (-1, 0), (0, 1), (0, -1))
+    indegree = [[0] * columns for _ in range(rows)]
+    frontier = deque()
+    for row in range(rows):
+        for column in range(columns):
+            indegree[row][column] = sum(
+                0 <= row + dr < rows and 0 <= column + dc < columns and
+                matrix[row + dr][column + dc] < matrix[row][column]
+                for dr, dc in directions)
+            if indegree[row][column] == 0:
+                frontier.append((row, column))
+    length = 0
+    while frontier:
+        length += 1
+        for _ in range(len(frontier)):
+            row, column = frontier.popleft()
+            for dr, dc in directions:
+                nr, nc = row + dr, column + dc
+                if 0 <= nr < rows and 0 <= nc < columns and matrix[nr][nc] > matrix[row][column]:
+                    indegree[nr][nc] -= 1
+                    if indegree[nr][nc] == 0:
+                        frontier.append((nr, nc))
+    return length
+
+
+def moe_top_k_router(logits, k=2, renormalize=True):
+    """Top-k score/index core for [T,E] finite logits, no expert execution.
+
+    Return (expert_indices, weights), both [T,k]. Ties choose lower expert id.
+    With renormalize=True, selected weights sum to 1; otherwise retain the
+    full softmax gate values. This omits capacity, dispatch and auxiliary loss.
+    """
+    _matrix(logits, "logits")
+    experts = len(logits[0])
+    if isinstance(k, bool) or not isinstance(k, int) or not 1 <= k <= experts:
+        raise ValueError("k must be an integer in [1,E]")
+    if not isinstance(renormalize, bool):
+        raise TypeError("renormalize must be boolean")
+    if any(not math.isfinite(value) for row in logits for value in row):
+        raise ValueError("router logits must be finite")
+    indices, weights = [], []
+    for row in logits:
+        chosen = sorted(range(experts), key=lambda expert: (-row[expert], expert))[:k]
+        if renormalize:
+            gate = softmax([row[expert] for expert in chosen])
+        else:
+            probabilities = softmax(row)
+            gate = [probabilities[expert] for expert in chosen]
+        indices.append(chosen)
+        weights.append(gate)
+    return indices, weights
+
+
+def layer_norm_last_dim(x, gamma=None, beta=None, epsilon=1e-5):
+    """LayerNorm on last D of a nonempty rectangular nested numeric sequence.
+
+    Population (biased) variance, epsilon inside sqrt, optional [D] affine.
+    Supports vectors and arbitrary leading dimensions; returns fresh lists.
+    """
+    if not math.isfinite(epsilon) or epsilon <= 0:
+        raise ValueError("epsilon must be finite and positive")
+    def shape(value):
+        if not isinstance(value, (list, tuple)) or not value:
+            raise ValueError("x must have nonempty rectangular dimensions")
+        if all(not isinstance(item, (list, tuple)) for item in value):
+            if any(not math.isfinite(item) for item in value):
+                raise ValueError("x must be finite")
+            return (len(value),)
+        shapes = [shape(item) for item in value]
+        if any(child != shapes[0] for child in shapes):
+            raise ValueError("x must be rectangular")
+        return (len(value),) + shapes[0]
+    dimensions = shape(x)
+    features = dimensions[-1]
+    gamma = [1.] * features if gamma is None else gamma
+    beta = [0.] * features if beta is None else beta
+    if (len(gamma) != features or len(beta) != features or
+            any(not math.isfinite(value) for value in gamma) or
+            any(not math.isfinite(value) for value in beta)):
+        raise ValueError("gamma/beta must be finite [D]")
+    def normalize(value, depth):
+        if depth > 1:
+            return [normalize(child, depth - 1) for child in value]
+        mean = math.fsum(float(item) / features for item in value)
+        try:
+            variance = math.fsum((float(item) - mean) ** 2 for item in value) / features
+        except OverflowError as error:
+            raise ValueError("normalization moments overflowed") from error
+        if not math.isfinite(variance):
+            raise ValueError("normalization moments must be finite")
+        denominator = math.sqrt(variance + epsilon)
+        return [((float(item) - mean) / denominator) * scale + offset
+                for item, scale, offset in zip(value, gamma, beta)]
+    return normalize(x, len(dimensions))

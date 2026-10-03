@@ -1346,6 +1346,11 @@
           "source_id": "XHS26-S010",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
@@ -1357,7 +1362,8 @@
       ],
       "topic": "注意力机制与掩码",
       "company_tags": [
-        "小红书"
+        "小红书",
+        "阿里巴巴"
       ]
     },
     {
@@ -1576,10 +1582,18 @@
           "source_id": "CORE-S006",
           "support": "search_snippet",
           "note": "仅搜索摘要可见 RMSNorm/SwiGLU/QLoRA；正文未读到，不能核验提问完整上下文。"
+        },
+        {
+          "source_id": "XHS26-S020",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
-      "topic": "归一化、FFN 与残差"
+      "topic": "归一化、FFN 与残差",
+      "company_tags": [
+        "百度"
+      ]
     },
     {
       "id": "TFM-007",
@@ -1868,13 +1882,21 @@
           "source_id": "CORE-S010",
           "support": "search_snippet",
           "note": "代码备考仓库摘要列出注意力和 Pretrain/SFT 训练损失；题库按主题整理，不是公司真题证据。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "user_supplement_keys": [
         "U05"
       ],
-      "topic": "数学、概率与统计"
+      "topic": "数学、概率与统计",
+      "company_tags": [
+        "阿里巴巴"
+      ]
     },
     {
       "id": "TFM-014",
@@ -1950,6 +1972,11 @@
           "source_id": "CORE-S005",
           "support": "search_snippet",
           "note": "正文抓取失败，搜索摘要明确出现相关问题主题，保留摘要级证据。"
+        },
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
@@ -1960,6 +1987,9 @@
           "alt": "MoE 单 token 的 Top-2 专家路由",
           "caption": "示例为 4 个专家中激活 2 个；真实系统还需要处理负载、容量与通信。"
         }
+      ],
+      "company_tags": [
+        "阿里巴巴"
       ]
     },
     {
@@ -1995,6 +2025,11 @@
           "source_id": "XHS26-S008",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
@@ -2006,7 +2041,8 @@
       ],
       "topic": "注意力机制与掩码",
       "company_tags": [
-        "腾讯"
+        "腾讯",
+        "深势科技"
       ]
     },
     {
@@ -2158,13 +2194,21 @@
           "source_id": "CORE-S008",
           "support": "search_snippet",
           "note": "知乎搜索摘要讨论预训练与微调 loss/label shift；属于技术问答主题，非公司面经，正文安全验证受阻。"
+        },
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "article_supplement_keys": [
         "Z22"
       ],
-      "topic": "语言建模与规模规律"
+      "topic": "语言建模与规模规律",
+      "company_tags": [
+        "阿里巴巴"
+      ]
     },
     {
       "id": "PRE-002",
@@ -2256,7 +2300,7 @@
         "Loss"
       ],
       "answer": {
-        "body": "Scaling Law 是模型损失随参数、训练数据与计算规模变化的经验规律，常以 held-out loss 为因变量，以参数量 $N$、训练 token 数 $D$ 和 FLOPs $C$ 为资源变量。它能帮助小实验外推和算力分配，但系数依赖实验范围、数据、架构与优化，并不保证全部下游指标或新能力服从同一曲线。\n\n应在若干规模和训练长度上拟合，再保留额外规模验证预测，不能只报告拟合优度。数据质量、重复曝光、多语言配比和优化未收敛都可能改变曲线。预算还应包含推理成本，训练计算最优不一定是模型生命周期成本最优。",
+        "body": "Scaling Law 是模型损失随参数、训练数据与计算规模变化的经验规律，常以 held-out loss 为因变量，以参数量 $N$、训练 token 数 $D$ 和 FLOPs $C$ 为资源变量。它能帮助小实验外推和算力分配，但系数依赖实验范围、数据、架构与优化，并不保证全部下游指标或新能力服从同一曲线。\n\n应在若干规模和训练长度上拟合，再保留额外规模验证预测，不能只报告拟合优度。数据质量、重复曝光、多语言配比和优化未收敛都可能改变曲线。预算还应包含推理成本，训练计算最优不一定是模型生命周期成本最优。\n\n面试问“除了数据和参数还能scaling什么”时，可讨论训练计算/优化步数，以及推理时的思考token、候选采样、搜索、检索和工具预算。但增加推理预算不是自动获得与预训练相同的scaling law：必须固定任务、数据和模型，比较正确率/成功率与延迟、token和总费用的曲线，控制裁判与选择器能力，区分pass@k上限与实际可选出答案的pass@1。冗长错误推理、相关候选或不可靠验证器会造成收益递减；所述是可检验方向，不是保证提升的公式。",
         "pitfalls": [
           "把经验幂律解释成任何规模都成立的理论定理。",
           "把训练 loss 曲线直接换成准确率或安全性曲线。"
@@ -2268,17 +2312,26 @@
       },
       "reference_ids": [
         "CORE-S033",
-        "CORE-S034"
+        "CORE-S034",
+        "ZH26-P05"
       ],
       "community_evidence": [
         {
           "source_id": "CORE-S011",
           "support": "search_snippet",
           "note": "搜索摘要出现 tokenizer、Scaling Law、去重；只保留题库主题，未核验其大厂或高频说法。"
+        },
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
-      "topic": "语言建模与规模规律"
+      "topic": "语言建模与规模规律",
+      "company_tags": [
+        "阿里巴巴"
+      ]
     },
     {
       "id": "PRE-005",
@@ -2320,7 +2373,7 @@
         "清洗"
       ],
       "answer": {
-        "body": "预训练清洗先确定目标语料分布，再完成解析、语言识别、质量过滤、去重、评测污染与敏感信息处理，并保留数据血缘和抽样审计。HTML 正文提取应去除导航、乱码和模板，再做语言与文档级检查。\n\n规则和模型打分可以互补，对高低评分及不同语言、领域都应抽检。去重后重新统计唯一 token、来源配比与重复曝光，记录规则版本；用保留率、领域覆盖、小模型实验和固定验证集衡量改动。过强过滤可能删除少数语言或专业内容，不能仅为降低训练 loss 调整清洗策略。",
+        "body": "预训练清洗先确定目标语料分布，再完成解析、语言识别、质量过滤、去重、评测污染与敏感信息处理，并保留数据血缘和抽样审计。HTML 正文提取应去除导航、乱码和模板，再做语言与文档级检查。\n\n规则和模型打分可以互补，对高低评分及不同语言、领域都应抽检。去重后重新统计唯一 token、来源配比与重复曝光，记录规则版本；用保留率、领域覆盖、小模型实验和固定验证集衡量改动。过强过滤可能删除少数语言或专业内容，不能仅为降低训练 loss 调整清洗策略。\n\n数据pipeline吞吐高只说明处理快，不证明标签可信。应把规则/模型/人工责任分开，保留样本来源、处理版本与去重/过滤决策；对模型伪标注按语言、领域、难度及置信度分层盲审，报告错误率和覆盖率。多模态还检查图文配对、时间戳与坐标变换、OCR/公式失真及不可见信息幻觉，并在划分数据集之前按实体或近重复簇隔离，防止衍生样本跨训练测试集。用固定留出集比较过滤前后收益，不能让同一个Teacher既生成标签又作为唯一验收者。",
         "pitfalls": [
           "高 perplexity 文本全是低质量，低 perplexity 文本全是高质量。",
           "使用黑箱过滤器却无法追踪被删除的领域。"
@@ -2333,9 +2386,18 @@
       "reference_ids": [
         "CORE-S036"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "语料清洗与数据配比"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        }
+      ],
+      "editorial": false,
+      "topic": "语料清洗与数据配比",
+      "company_tags": [
+        "阿里巴巴"
+      ]
     },
     {
       "id": "PRE-007",
@@ -2807,10 +2869,18 @@
           "source_id": "CORE-S001",
           "support": "reported_question",
           "note": "公开面经题目列表直接出现这一主题；题目已改写，答案独立整理，公司归属未独立认证。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
-      "topic": "LoRA 与其他 PEFT"
+      "topic": "LoRA 与其他 PEFT",
+      "company_tags": [
+        "深势科技"
+      ]
     },
     {
       "id": "FT-005",
@@ -2852,6 +2922,11 @@
           "source_id": "XHS26-S009",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S020",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
@@ -2867,7 +2942,8 @@
         }
       ],
       "company_tags": [
-        "腾讯"
+        "腾讯",
+        "百度"
       ]
     },
     {
@@ -2911,6 +2987,16 @@
           "source_id": "XHS26-S009",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S018",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S020",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
@@ -2919,7 +3005,9 @@
       ],
       "topic": "LoRA 与其他 PEFT",
       "company_tags": [
-        "腾讯"
+        "腾讯",
+        "快手",
+        "百度"
       ]
     },
     {
@@ -2935,7 +3023,7 @@
         "rsLoRA"
       ],
       "answer": {
-        "body": "LoRA 调参需要一起考虑更新容量、分支尺度、正则与适配位置。Rank 的参数预算线性增长，更新秩仅满足 $\\mathrm{rank}(\\Delta W)\\le r$，实际容量收益可能饱和或过拟合；比较时控制数据、有效 token、目标模块和学习率，并看验证指标、参数量与吞吐。\n\n标准缩放为 $s=\\alpha/r$，`use_rslora=True` 为 $\\alpha/\\sqrt r$。固定 alpha 增大 rank 会减小标准分支尺度，固定 alpha/r 也不能保证优化轨迹相同，因此可在同一缩放家族内分别消融容量与尺度。普通 Linear 分支是 $sBA\\mathrm{Dropout}(x)$，它不删除底座权重，eval 时关闭；小数据可检查正则收益，过大 dropout 也会欠拟合，且它与全模型 attention/hidden dropout 配置不同。\n\n`target_modules` 决定更新位置，可比较 attention 投影、MLP 或 `all-linear`，并核对输出层排除、embedding/LM head 保存及额外 trainable bias。常见 Q/V 实验不意味着 LoRA 只支持 Q/V。记录 PEFT 版本、初始化、缩放变体、优化器和成本；库默认不是数据相关实验中的最优值。",
+        "body": "LoRA 调参需要一起考虑更新容量、分支尺度、正则与适配位置。Rank 的参数预算线性增长，更新秩仅满足 $\\mathrm{rank}(\\Delta W)\\le r$，实际容量收益可能饱和或过拟合；比较时控制数据、有效 token、目标模块和学习率，并看验证指标、参数量与吞吐。\n\n标准缩放为 $s=\\alpha/r$，`use_rslora=True` 为 $\\alpha/\\sqrt r$。固定 alpha 增大 rank 会减小标准分支尺度，固定 alpha/r 也不能保证优化轨迹相同，因此可在同一缩放家族内分别消融容量与尺度。普通 Linear 分支是 $sBA\\mathrm{Dropout}(x)$，它不删除底座权重，eval 时关闭；小数据可检查正则收益，过大 dropout 也会欠拟合，且它与全模型 attention/hidden dropout 配置不同。\n\n`target_modules` 决定更新位置，可比较 attention 投影、MLP 或 `all-linear`，并核对输出层排除、embedding/LM head 保存及额外 trainable bias。常见 Q/V 实验不意味着 LoRA 只支持 Q/V。记录 PEFT 版本、初始化、缩放变体、优化器和成本；库默认不是数据相关实验中的最优值。\n\nLoRA主要减少可训练权重、梯度、优化器状态及相关通信，不会跳过底座的前向计算；为把梯度传到更早的可训练分支，通常还要计算冻结层的输入梯度并保存或重算必要激活。相比全参可能减少权重梯度计算，但新增低秩矩阵乘法、算子调度、量化解码和小batch利用率也影响耗时，因此不能按可训练参数比例推算加速倍数。应在同卡型、精度、有效batch、序列/帧数及checkpoint配置下实测有效tokens/s、step延迟和峰值显存，区分训练吞吐与合并权重后的推理延迟。",
         "formula": "\\begin{aligned}h&=W_0x+sBA\\mathrm{Dropout}(x)\\\\N_{\\rm train}&\\approx r(d_{\\rm in}+d_{\\rm out})\\\\s_{\\rm standard}&=\\alpha/r,\\quad s_{\\rm rsLoRA}=\\alpha/\\sqrt r\\end{aligned}",
         "pitfalls": [
           "给所有模型套 $r=8$、$\\alpha=2r$ 等万能值，或声称 dropout 在推理时继续增强多样性。",
@@ -2950,20 +3038,41 @@
         "CORE-S046",
         "CORE-S047",
         "CORE-S070",
-        "CORE-S071"
+        "CORE-S071",
+        "ENG-P05"
       ],
       "community_evidence": [
         {
           "source_id": "CORE-S003",
           "support": "reported_question",
           "note": "二次汇编题目列表出现相应提问；原始公司面经未逐条核验。"
+        },
+        {
+          "source_id": "XHS26-S018",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S020",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "user_supplement_keys": [
         "U10"
       ],
-      "topic": "LoRA 与其他 PEFT"
+      "topic": "LoRA 与其他 PEFT",
+      "company_tags": [
+        "快手",
+        "百度",
+        "深势科技"
+      ]
     },
     {
       "id": "FT-008",
@@ -3092,12 +3201,29 @@
           "source_id": "XHS26-S012",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "topic": "指令数据与训练目标",
       "company_tags": [
-        "字节跳动"
+        "字节跳动",
+        "阿里巴巴",
+        "深势科技"
       ]
     },
     {
@@ -3374,7 +3500,8 @@
       "reference_ids": [
         "CORE-S055",
         "CORE-S056",
-        "CORE-S074"
+        "CORE-S074",
+        "R3-ALN-GQA"
       ],
       "community_evidence": [
         {
@@ -3386,6 +3513,11 @@
           "source_id": "XHS26-S015",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S019",
+          "support": "reported_question",
+          "note": "正文明确报告GQA手写与结构；结构/缓存解释与已有题合并，完整手写答案归COD-002。 主代理已读完整正文；作者披露含AI生成内容，此证据仅表示公开帖子提及该题，不担保真实面试发生。 作者声明含AI生成内容，无法据此认证真实面试。"
         }
       ],
       "editorial": false,
@@ -3394,7 +3526,8 @@
       ],
       "topic": "KV Cache 与服务调度",
       "company_tags": [
-        "腾讯"
+        "腾讯",
+        "阶跃星辰"
       ]
     },
     {

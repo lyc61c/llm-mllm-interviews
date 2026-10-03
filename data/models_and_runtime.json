@@ -733,12 +733,18 @@
           "source_id": "XHS26-S013",
           "support": "reported_topic",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "topic": "模型结构与版本对比",
       "company_tags": [
-        "字节跳动"
+        "字节跳动",
+        "深势科技"
       ]
     },
     {

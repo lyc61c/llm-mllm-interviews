@@ -91,7 +91,7 @@ M_{\rm KV}\approx2BLTH_{\rm kv}d_hs
 <a id="inf-003"></a>
 ### INF-003 · MHA、MQA 与 GQA 的结构、KV 显存及速度有何差异？
 
-**L1** · 腾讯
+**L1** · 腾讯 / 阶跃星辰
 
 #### 答案
 
@@ -608,6 +608,7 @@ XW=(XS^{-1})(SW)
 - [vLLM: Automatic Prefix Caching](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/)
 - [vLLM: Quickstart](https://docs.vllm.ai/en/latest/getting_started/quickstart/)
 - [PyTorch SDPA — masks, shapes and GQA](https://docs.pytorch.org/docs/2.14/generated/torch.nn.functional.scaled_dot_product_attention.html)
+- [GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints](https://arxiv.org/html/2305.13245v3)
 - [FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness](https://arxiv.org/pdf/2205.14135)
 - [Orca: A Distributed Serving System for Transformer-Based Generative Models](https://www.usenix.org/conference/osdi22/presentation/yu)
 - [Attention Is All You Need](https://arxiv.org/pdf/1706.03762)

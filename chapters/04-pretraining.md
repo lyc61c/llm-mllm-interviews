@@ -30,7 +30,7 @@
 <a id="pre-001"></a>
 ### PRE-001 · 自回归预训练的 next-token loss 怎样计算？
 
-**L1**
+**L1** · 阿里巴巴
 
 #### 答案
 
@@ -57,13 +57,15 @@ Padding、无效跨样本边界及配方不监督的 prompt 目标通过 loss ma
 <a id="pre-004"></a>
 ### PRE-004 · Scaling Law 描述的是什么，能直接预测下游能力吗？
 
-**L2**
+**L2** · 阿里巴巴
 
 #### 答案
 
 Scaling Law 是模型损失随参数、训练数据与计算规模变化的经验规律，常以 held-out loss 为因变量，以参数量 $`N`$、训练 token 数 $`D`$ 和 FLOPs $`C`$ 为资源变量。它能帮助小实验外推和算力分配，但系数依赖实验范围、数据、架构与优化，并不保证全部下游指标或新能力服从同一曲线。
 
 应在若干规模和训练长度上拟合，再保留额外规模验证预测，不能只报告拟合优度。数据质量、重复曝光、多语言配比和优化未收敛都可能改变曲线。预算还应包含推理成本，训练计算最优不一定是模型生命周期成本最优。
+
+面试问“除了数据和参数还能scaling什么”时，可讨论训练计算/优化步数，以及推理时的思考token、候选采样、搜索、检索和工具预算。但增加推理预算不是自动获得与预训练相同的scaling law：必须固定任务、数据和模型，比较正确率/成功率与延迟、token和总费用的曲线，控制裁判与选择器能力，区分pass@k上限与实际可选出答案的pass@1。冗长错误推理、相关候选或不可靠验证器会造成收益递减；所述是可检验方向，不是保证提升的公式。
 
 #### 易错点
 
@@ -206,13 +208,15 @@ p(M\mid P,S)=\prod_{t=1}^{|M|}p(M_t\mid\mathrm{format}(P,S),M_{\lt t})
 <a id="pre-006"></a>
 ### PRE-006 · 大规模预训练语料应怎样清洗？
 
-**L2**
+**L2** · 阿里巴巴
 
 #### 答案
 
 预训练清洗先确定目标语料分布，再完成解析、语言识别、质量过滤、去重、评测污染与敏感信息处理，并保留数据血缘和抽样审计。HTML 正文提取应去除导航、乱码和模板，再做语言与文档级检查。
 
 规则和模型打分可以互补，对高低评分及不同语言、领域都应抽检。去重后重新统计唯一 token、来源配比与重复曝光，记录规则版本；用保留率、领域覆盖、小模型实验和固定验证集衡量改动。过强过滤可能删除少数语言或专业内容，不能仅为降低训练 loss 调整清洗策略。
+
+数据pipeline吞吐高只说明处理快，不证明标签可信。应把规则/模型/人工责任分开，保留样本来源、处理版本与去重/过滤决策；对模型伪标注按语言、领域、难度及置信度分层盲审，报告错误率和覆盖率。多模态还检查图文配对、时间戳与坐标变换、OCR/公式失真及不可见信息幻觉，并在划分数据集之前按实体或近重复簇隔离，防止衍生样本跨训练测试集。用固定留出集比较过滤前后收益，不能让同一个Teacher既生成标签又作为唯一验收者。
 
 #### 易错点
 
@@ -393,6 +397,7 @@ Global norm clipping 将全部参数梯度的总范数 $`G=\sqrt{\sum_p\|g_p\|_2
 - [Transformers v4.57.1 official ForCausalLMLoss](https://raw.githubusercontent.com/huggingface/transformers/v4.57.1/src/transformers/loss/loss_utils.py)
 - [Scaling Laws for Neural Language Models](https://arxiv.org/abs/2001.08361)
 - [Training Compute-Optimal Large Language Models](https://arxiv.org/pdf/2203.15556)
+- [DeepSeek-R1 official repository](https://github.com/deepseek-ai/DeepSeek-R1)
 - [The RefinedWeb Dataset for Falcon LLM](https://arxiv.org/abs/2306.01116)
 - [Deduplicating Training Data Makes Language Models Better](https://arxiv.org/abs/2107.06499)
 - [DoReMi: Optimizing Data Mixtures Speeds Up Language Model Pretraining](https://arxiv.org/abs/2305.10429)

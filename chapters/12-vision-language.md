@@ -56,6 +56,7 @@
   - [VLM-022 · 交错图文和多图输入如何保持图像与指代关系？](#vlm-022)
   - [VLM-023 · Grounding 与普通图像问答有什么区别？](#vlm-023)
   - [VLM-025 · 多模态检索模型与生成式 VLM 问答怎样分工？](#vlm-025)
+  - [VLM-047 · 如何让 MLLM 执行像素级或推理分割，MLLM + SAM 和端到端训练如何取舍？](#vlm-047)
 
 <a id="topic-1"></a>
 ## 图文表示与预训练
@@ -181,7 +182,7 @@ BLIP 的三个目标分别负责整体匹配、细粒度对应和条件生成：
 <a id="vlm-033"></a>
 ### VLM-033 · ViT 如何将图像变成序列，patch 共享映射会不会丢失位置？
 
-**L1** · 腾讯 / 小红书
+**L1** · 腾讯 / 小红书 / 阿里巴巴 / 百度
 
 #### 答案
 
@@ -210,7 +211,7 @@ BLIP 的三个目标分别负责整体匹配、细粒度对应和条件生成：
 <a id="vlm-037"></a>
 ### VLM-037 · 多模态大模型有哪些常见架构，如何介绍自己熟悉的 MLLM？
 
-**L1** · 小红书
+**L1** · 小红书 / 阿里巴巴
 
 #### 答案
 
@@ -266,7 +267,7 @@ Q-Former 是带可学习查询的 Transformer，用查询间的自注意力与�
 <a id="vlm-008"></a>
 ### VLM-008 · Q-Former 与两层 MLP 连接器怎样选，MLP 已普遍淘汰 Q-Former 吗？
 
-**L2**
+**L2** · 阿里巴巴 / 深势科技
 
 #### 答案
 
@@ -366,7 +367,7 @@ MiniGPT-4复用带ViT与Q-Former的BLIP-2视觉部分，以可训练线性层接
 <a id="vlm-024"></a>
 ### VLM-024 · 多模态预训练和 SFT 的数据配比怎样设计？
 
-**L3** · 腾讯 / 字节跳动 / 小红书
+**L3** · 腾讯 / 字节跳动 / 小红书 / 阿里巴巴 / 深势科技
 
 #### 答案
 
@@ -522,7 +523,7 @@ patch、空间 merge 和时间 patch 是 checkpoint 的不同配置，不应当�
 <a id="vlm-013"></a>
 ### VLM-013 · M-RoPE 如何统一文本、图像和视频位置？
 
-**L2** · 腾讯
+**L2** · 腾讯 / 阿里巴巴
 
 #### 答案
 
@@ -710,7 +711,7 @@ Qwen2.5-VL 的视觉编码器在多数层使用窗口注意力，在四层保留
 <a id="vlm-027"></a>
 ### VLM-027 · Qwen3-VL 的基本模块与相较 Qwen2.5-VL 的结构变化是什么？
 
-**L2** · 字节跳动
+**L2** · 字节跳动 / 深势科技
 
 #### 答案
 
@@ -818,7 +819,7 @@ s_i=p(P\ \mathrm{present}\mid I)\,p(q_i\ \mathrm{matches}\mid P\ \mathrm{present
 <a id="vlm-036"></a>
 ### VLM-036 · DDPM 的前向加噪、训练目标和反向去噪怎样实现？
 
-**L2** · 小红书 / 腾讯
+**L2** · 小红书 / 腾讯 / 百度
 
 #### 答案
 
@@ -830,8 +831,10 @@ DDPM定义固定的前向高斯加噪链，再学习反向生成链。设每步�
 
 图文生成可把文本条件$`c`$输入去噪网络，但预测目标依然取决于图像生成参数化，与VQA的回答token交叉熵不同。标准DDPM的反向链是随机采样；Flow Matching常学习连续速度、用ODE积分。两者可在score/SDE视角联系，但不能把DDPM噪声预测均值公式直接当成Flow-GRPO的速度更新式。
 
+随机时间步训练的理由是时间维目标本身可写成各噪声级loss的平均：均匀抽一个t、按闭式边缘直接构造x_t并回归噪声，单样本loss在期望上估计这一平均目标，长期训练覆盖各噪声级，无须先实际加噪1000次再全链反传。1000是原论文的离散日程设置，不是每条训练样本必须执行的网络次数。生成没有真实x_0可代入前向闭式，只能从噪声按所选反向sampler逐步生成，两者计算流程不同。这里无偏指对所选时间平均/MSE目标的Monte Carlo估计，不是说未加权MSE等于完整ELBO；若改成非均匀采样t而又要保持原均匀目标，须按采样概率作importance correction，否则时间权重和优化目标会改变。
+
 ```math
-\begin{aligned}q(x_t\mid x_{t-1})&=\mathcal N(\sqrt{\alpha_t}x_{t-1},\beta_t I),\quad \bar\alpha_t=\prod_{s=1}^t\alpha_s\\ x_t&=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\,\epsilon,\quad \epsilon\sim\mathcal N(0,I)\\ \mathcal L_{\mathrm{simple}}&=\mathbb E_{x_0,t,\epsilon}\left[\|\epsilon-\epsilon_\theta(x_t,t)\|_2^2\right]\\ \hat x_0&=\frac{x_t-\sqrt{1-\bar\alpha_t}\epsilon_\theta(x_t,t)}{\sqrt{\bar\alpha_t}}\\ \mu_\theta(x_t,t)&=\frac1{\sqrt{\alpha_t}}\left(x_t-\frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(x_t,t)\right)\\ \tilde\beta_t&=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t,\quad \bar\alpha_0=1\\ x_{t-1}&=\mu_\theta(x_t,t)+\sigma_t z,\quad z\sim\mathcal N(0,I)\ (t\gt 1),\quad z=0\ (t=1)\end{aligned}
+\begin{aligned}q(x_t\mid x_{t-1})&=\mathcal N(\sqrt{\alpha_t}x_{t-1},\beta_t I),\quad \bar\alpha_t=\prod_{s=1}^t\alpha_s\\ x_t&=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\,\epsilon,\quad \epsilon\sim\mathcal N(0,I)\\ \mathcal L_{\mathrm{simple}}&=\mathbb E_{x_0,t,\epsilon}\left[\|\epsilon-\epsilon_\theta(x_t,t)\|_2^2\right]\\ \hat x_0&=\frac{x_t-\sqrt{1-\bar\alpha_t}\epsilon_\theta(x_t,t)}{\sqrt{\bar\alpha_t}}\\ \mu_\theta(x_t,t)&=\frac1{\sqrt{\alpha_t}}\left(x_t-\frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(x_t,t)\right)\\ \tilde\beta_t&=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t,\quad \bar\alpha_0=1\\ x_{t-1}&=\mu_\theta(x_t,t)+\sigma_t z,\quad z\sim\mathcal N(0,I)\ (t\gt 1),\quad z=0\ (t=1)\end{aligned}\qquad \begin{aligned}\mathcal L_{\mathrm{time\ mean}}&=\frac1T\sum_{t=1}^T\mathbb E_{x_0,\epsilon}[\ell_t(\theta;x_0,\epsilon)]\\ \mathbb E_{t\sim\mathrm{Uniform}(1,\ldots,T),x_0,\epsilon}[\ell_t]&=\mathcal L_{\mathrm{time\ mean}}\\ \mathbb E_{t\sim p,x_0,\epsilon}\!\left[\frac{\ell_t}{Tp(t)}\right]&=\mathcal L_{\mathrm{time\ mean}},\qquad p(t)\gt 0\end{aligned}
 ```
 
 #### 易错点
@@ -843,11 +846,12 @@ DDPM定义固定的前向高斯加噪链，再学习反向生成链。设每步�
 
 - 为什么训练可以随机采样一个时间步，而生成需要多步迭代？
 - 如果网络输出改成x0或v prediction，scheduler需要怎样转换？
+- t采样分布从均匀改为偏向高噪声，怎样保持原时间平均目标？
 
 <a id="vlm-038"></a>
 ### VLM-038 · DDPM 与 DDIM 有什么区别，DDIM 如何跨步采样？
 
-**L2** · 腾讯
+**L2** · 腾讯 / 百度
 
 #### 答案
 
@@ -874,7 +878,7 @@ DDPM从马尔可夫前向加噪链学习随机反向链；DDIM重新构造具有
 <a id="vlm-039"></a>
 ### VLM-039 · Flow Matching 怎样训练和推理，与 DDPM 的区别是什么？
 
-**L2** · 腾讯
+**L2** · 腾讯 / 百度
 
 #### 答案
 
@@ -982,7 +986,7 @@ DiT把带噪图像latent划分成patch tokens，用Transformer替代生成骨干
 <a id="vlm-046"></a>
 ### VLM-046 · VQ-VAE 的 codebook 怎样训练，为什么离散 latent 不一定比连续 VAE 更快？
 
-**L2** · 腾讯
+**L2** · 腾讯 / 百度
 
 #### 答案
 
@@ -1075,7 +1079,7 @@ EMA替代codebook梯度loss：累计各code命中数与被分配向量之和，�
 <a id="vlm-019"></a>
 ### VLM-019 · 怎样验证 VLM 真正依赖图像，而非商品记忆、文本捷径或测试泄漏？
 
-**L3** · 字节跳动
+**L3** · 字节跳动 / 深势科技
 
 #### 答案
 
@@ -1100,7 +1104,7 @@ EMA替代codebook梯度loss：累计各code命中数与被分配向量之和，�
 <a id="vlm-020"></a>
 ### VLM-020 · VLM 能力如何评估，为什么不能只报一个榜单分数？
 
-**L2** · 字节跳动
+**L2** · 字节跳动 / 深势科技
 
 #### 答案
 
@@ -1184,6 +1188,42 @@ EMA替代codebook梯度loss：累计各code命中数与被分配向量之和，�
 
 - 扫描文档为什么可能从视觉检索获益？
 
+<a id="vlm-047"></a>
+### VLM-047 · 如何让 MLLM 执行像素级或推理分割，MLLM + SAM 和端到端训练如何取舍？
+
+**L3** · 阿里巴巴
+
+#### 答案
+
+普通MLLM的词表logits用于预测下一个文本token，不是H×W的像素分类图。它可以序列化多边形/掩码，或增加专门分割头输出dense mask；后者能保留空间结构。推理分割还要求理解隐含意图，例如“能用来开门的东西”，不能把识别出框等同于分出了准确边界。
+
+模块化路线让MLLM生成点、框等结构化定位信息，经解析交给SAM/SAM2。语言模型负责选对对象，分割器利用高分辨率视觉特征恢复边界；易复用已有模型、缓存图像特征，也可按任务冻结SAM或微调其mask decoder。接口须统一resize/crop前后坐标、点的正负标签和缺失/多对象处理。一个框可能包含多个物体，定位错误时漂亮的边界仍是错误答案，需分别检查对象选择与掩码质量。
+
+LISA采用连续hidden接口：生成分割特殊token后，将其对应的最后层hidden经MLP投影，与SAM图像特征送入分割解码器。这里传的是hidden而非该token的词表概率；token字符串和自回归shift须按实现核对。训练联合文本CE、像素BCE与Dice，mask梯度能经解码器/投影传到LLM的可训练参数。原方案冻结视觉骨干，训练LLM LoRA、分割解码器、投影及相关embedding/LM head。因此已有端到端联合优化，“端到端”不要求所有参数解冻；普通文字点框经离散解析则没有这条直接mask梯度路径。
+
+原始Seg-Zero用Qwen2.5-VL产生框和两个内部点，再由冻结SAM2生成mask；GRPO优化推理模型。它没有人工CoT冷启动监督，但使用真实mask派生的框/点标注，奖励包含格式、框IoU及框/点坐标距离，主设置对定位指标采用阈值二值奖励；不能说没有标注或原方法直接优化最终mask IoU。统一任务级推理与分割，不等于所有模块共同接受RL梯度。若另设计最终mask奖励，可用score-function优化离散定位策略，无需SAM可微；要更新分割头还须明确监督损失或另一条可微训练路径。
+
+取舍看瓶颈与数据：点框接口易部署但会丢失细粒度语义；hidden接口能联合适配，却需要像素标注、接口训练并防止通用能力退化。固定视觉骨干、输入分辨率、数据和预算，对比对象命中、边界与复杂关系切片；给分割器真实点框的oracle对照能拆开定位和解码错误。ReasonSeg是评测数据集；其gIoU指各样本IoU平均，cIoU指累计交并比，不能混作检测的Generalized IoU。
+
+```math
+\begin{aligned}h_s&=P(h_{\mathrm{SEG}}),\quad z=D(E(I),h_s),\quad\hat M=\sigma(z)\\ \mathcal L&=\lambda_{\mathrm{txt}}\mathcal L_{\mathrm{token\ CE}}+\lambda_b\mathrm{BCEWithLogits}(z,M)+\lambda_d\mathcal L_{\mathrm{Dice}}(\hat M,M)\\ \mathcal L_{\mathrm{Dice}}&=1-\frac{2\sum_u\hat M_uM_u+\epsilon}{\sum_u\hat M_u+\sum_uM_u+\epsilon}\end{aligned}
+```
+
+#### 易错点
+
+- 词表logits与像素mask logits的维度和监督目标不同；新增分割头可输出掩码，不代表普通MLLM天然直接输出dense mask。
+- LISA已采用联合训练；冻结SAM视觉编码器不等于冻结mask decoder，也不等于文本与分割完全分开训练。
+- 原始Seg-Zero冻结SAM2，RL训练推理模型；无CoT标注不等于无真实mask派生定位监督，不能混同后续VisionReasoner版本。
+- SAM1/SAM2空间提示接口与SAM3概念提示能力要按版本区分；支持短名词概念也不自动解决任意复杂关系推理。
+- 本式将所有损失权重吸收到三个系数；Dice采用常见二值软Dice定义，空mask、ignore区域和聚合方式须按任务明确。
+
+#### 追问
+
+- 边界很好但分错对象，怎样用oracle点框定位模型瓶颈？
+- 分割loss能否直接穿过MLLM生成的离散坐标，RL又如何更新这一策略？
+- 如何处理多个SEG、多个对象、原图与MLLM/SAM输入分辨率不一致？
+- SAM3已有概念分割，为什么复杂关系与隐含意图仍需任务评测？
+
 ## 参考资料
 
 - [Learning Transferable Visual Models From Natural Language Supervision](https://arxiv.org/html/2103.00020v1)
@@ -1236,6 +1276,7 @@ EMA替代codebook梯度loss：累计各code命中数与被分配向量之和，�
 - [MineDojo: Building Open-Ended Embodied Agents with Internet-Scale Knowledge](https://arxiv.org/abs/2206.08853)
 - [Denoising Diffusion Probabilistic Models](https://arxiv.org/pdf/2006.11239)
 - [DDPM original diffusion utilities](https://github.com/hojonathanho/diffusion/blob/master/diffusion_tf/diffusion_utils_2.py)
+- [Denoising Diffusion Probabilistic Models 原论文](https://arxiv.org/html/2006.11239v2)
 - [Denoising Diffusion Implicit Models](https://arxiv.org/html/2010.02502)
 - [DDIM official generalized sampling](https://github.com/ermongroup/ddim/blob/main/functions/denoising.py)
 - [Flow Matching for Generative Modeling](https://arxiv.org/html/2210.02747)
@@ -1253,3 +1294,8 @@ EMA替代codebook梯度loss：累计各code命中数与被分配向量之和，�
 - [Meta SAM 2 官方仓库 README](https://github.com/facebookresearch/sam2/blob/main/README.md)
 - [Neural Discrete Representation Learning](https://arxiv.org/html/1711.00937)
 - [DeepMind Sonnet VectorQuantizer and VectorQuantizerEMA](https://github.com/google-deepmind/sonnet/blob/v2/sonnet/src/nets/vqvae.py)
+- [LISA: Reasoning Segmentation via Large Language Model](https://arxiv.org/html/2308.00692)
+- [LISA 官方模型与分割损失实现](https://raw.githubusercontent.com/JIA-Lab-research/LISA/main/model/LISA.py)
+- [LISA 官方训练脚本与冻结参数配置](https://raw.githubusercontent.com/JIA-Lab-research/LISA/main/train_ds.py)
+- [Seg-Zero: Reasoning-Chain Guided Segmentation via Cognitive Reinforcement](https://arxiv.org/html/2503.06520)
+- [Seg-Zero 官方项目仓库](https://github.com/JIA-Lab-research/Seg-Zero)

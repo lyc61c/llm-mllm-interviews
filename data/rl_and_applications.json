@@ -1046,6 +1046,21 @@
           "source_id": "XHS26-S001",
           "support": "reported_question",
           "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S019",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。 作者声明含AI生成内容，无法据此认证真实面试。"
+        },
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
@@ -1058,7 +1073,9 @@
         }
       ],
       "company_tags": [
-        "字节跳动"
+        "字节跳动",
+        "阿里巴巴",
+        "阶跃星辰"
       ]
     },
     {
@@ -1098,24 +1115,44 @@
         "GSPO",
         "GRPO",
         "sequence-level",
-        "importance ratio"
+        "importance ratio",
+        "MoE RL",
+        "Routing Replay",
+        "训推差异"
       ],
       "answer": {
-        "body": "GRPO 使用组内相对奖励作优势，常见实现逐 token 计算新旧策略概率比。GSPO 保留组内优势，但用整段回答似然比的长度归一化几何平均作比例，对整段回答进行 clip，使优化单位与序列奖励对齐。\n\n计算时先在有效回答 token 上求新旧 log-prob 差的均值，再指数化；不能先把序列概率直接相乘，否则长回答容易下溢。这个长度归一化比例也不是未经改变的整条轨迹 importance weight，须按论文目标理解。一个响应的 token 梯度共享序列权重，其 clipping 行为与 token 级 GRPO 不同，因此不能直接照搬同样的 epsilon。\n\n论文在特定 Qwen3/MoE 实验中报告稳定性与效率收益；这不保证所有数据、模型与奖励下都优于 GRPO。比较时应固定 rollout 预算、奖励、响应长度和训练算力，并记录 clip fraction、策略漂移和独立能力。",
+        "body": "GRPO 使用组内相对奖励作优势，常见实现逐 token 计算新旧策略概率比。GSPO 保留组内优势，但用整段回答似然比的长度归一化几何平均作比例，对整段回答进行 clip，使优化单位与序列奖励对齐。\n\n计算时先在有效回答 token 上求新旧 log-prob 差的均值，再指数化；不能先把序列概率直接相乘，否则长回答容易下溢。这个长度归一化比例也不是未经改变的整条轨迹 importance weight，须按论文目标理解。一个响应的 token 梯度共享序列权重，其 clipping 行为与 token 级 GRPO 不同，因此不能直接照搬同样的 epsilon。\n\n论文在特定 Qwen3/MoE 实验中报告稳定性与效率收益；这不保证所有数据、模型与奖励下都优于 GRPO。比较时应固定 rollout 预算、奖励、响应长度和训练算力，并记录 clip fraction、策略漂移和独立能力。\n\nRL训练MoE还要检查路由变化：同一rollout在旧/新策略下可能激活不同专家，导致逐token log-prob与ratio剧烈波动。GSPO论文在其Qwen3实验中指出更新后的专家激活变化，并讨论Routing Replay：缓存旧策略选中专家，在计算当前策略比例时重放该路由，以约束一致的计算路径；这会增加内存/通信并限制路由自由度。GSPO使用序列级比例，在这些实验中无需该策略即可稳定训练，但不能推广成所有MoE或奖励任务的保证。\n\n工程上保存对应参数快照和实际rollout log-prob，核对有效token、概率温度与旧/新策略版本；先用同权重的训推引擎比较概率和路由，排除精度/内核差异，再观察更新后的路由翻转、专家负载、KL和clip比例。训练推理精度不一致与策略更新引起的路由变化是两类问题。序列级目标不能代替负载均衡，也不会消除全专家权重及RL多个模型的显存。",
         "pitfalls": [
           "“GSPO只是把token loss先平均”不足以描述序列比例和clip条件的变化。"
         ],
         "followups": [
-          "两个响应某个 token 的 ratio 极端，但序列均值接近1，GSPO与GRPO会怎样不同？"
+          "两个响应某个 token 的 ratio 极端，但序列均值接近1，GSPO与GRPO会怎样不同？",
+          "RL训练MoE为何需要关注旧/新策略的专家选择？",
+          "Routing Replay有什么缓存和优化自由度代价，GSPO能否保证所有MoE收敛？"
         ],
         "formula": "\\begin{aligned}s_i(\\theta)&=\\exp\\left(\\frac{1}{|y_i|}\\sum_t\\log\\frac{\\pi_\\theta(y_{i,t}\\mid x,y_{i,<t})}{\\pi_{\\mathrm{old}}(y_{i,t}\\mid x,y_{i,<t})}\\right)\\\\ J_{\\mathrm{GSPO}}&=\\mathbb E\\left[\\frac1G\\sum_i\\min(s_i\\hat A_i,\\mathrm{clip}(s_i,1-\\epsilon,1+\\epsilon)\\hat A_i)\\right]\\end{aligned}"
       },
       "reference_ids": [
         "JUN26-P007"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "GRPO 与在线优化"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "主代理完整读取阿里淘天正文，明确问RL训练MoE的问题和GSPO；现有ALN-027保留公式，只补路由与训推引擎排查。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        }
+      ],
+      "editorial": false,
+      "topic": "GRPO 与在线优化",
+      "company_tags": [
+        "阿里巴巴",
+        "深势科技"
+      ]
     },
     {
       "id": "ALN-028",
@@ -1141,9 +1178,18 @@
       "reference_ids": [
         "JUN26-P008"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "GRPO 与在线优化"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        }
+      ],
+      "editorial": false,
+      "topic": "GRPO 与在线优化",
+      "company_tags": [
+        "阿里巴巴"
+      ]
     },
     {
       "id": "ALN-029",
@@ -1606,24 +1652,39 @@
         "Embodied Agent",
         "VLA",
         "SayCan",
-        "RT-2"
+        "RT-2",
+        "世界模型",
+        "动作条件",
+        "第一人称操作"
       ],
       "answer": {
-        "body": "具身Agent要把语言目标映射到传感器观测与实际动作，考虑空间、动力学、反馈延迟和安全约束。软件Agent也可能部分可观测、结果随机、操作不可逆，因此两者区别是观测与控制条件的侧重，不能粗分为“软件确定且安全，机器人不确定且危险”。\n\n高层可用LLM规划离散技能，低层控制器负责高频闭环；例如SayCan结合语言任务相关性与技能可执行性，避免语言上合理却物理上做不到的动作。VLA路线将视觉、语言与动作建模到一起，RT-2将动作离散为token并结合机器人数据训练，但输出合法token并不代表动作可安全执行。\n\n评测要检查任务成功、碰撞/约束违例、反馈与恢复、分布外环境和sim-to-real差距。感知错误、规划错误与控制误差应分层定位，部署需要动作边界、实时监控和可靠停止机制；不能只根据文字计划打分。",
+        "body": "具身Agent要把语言目标映射到传感器观测与实际动作，考虑空间、动力学、反馈延迟和安全约束。软件Agent也可能部分可观测、结果随机、操作不可逆，因此两者区别是观测与控制条件的侧重，不能粗分为“软件确定且安全，机器人不确定且危险”。\n\n高层可用LLM规划离散技能，低层控制器负责高频闭环；例如SayCan结合语言任务相关性与技能可执行性，避免语言上合理却物理上做不到的动作。VLA路线将视觉、语言与动作建模到一起，RT-2将动作离散为token并结合机器人数据训练，但输出合法token并不代表动作可安全执行。\n\n评测要检查任务成功、碰撞/约束违例、反馈与恢复、分布外环境和sim-to-real差距。感知错误、规划错误与控制误差应分层定位，部署需要动作边界、实时监控和可靠停止机制；不能只根据文字计划打分。\n\n世界模型与VLA承担不同角色：世界模型根据历史观测和候选动作预测下一状态/观测及可能结果，供规划、想象训练或环境仿真使用；VLA策略根据视觉和语言输出动作，两者可以配合但不能混称。以固定Genie 2官方介绍为例，模型以动作和历史latent帧逐帧生成下一观测；普通文本到视频能生成可信画面，并不自动具备动作条件、可干预因果或机器人可执行性。第一人称操作世界模型需处理遮挡与出画后的状态、相机运动和手物接触，评测不同动作的响应、长程状态一致性与真实环境误差；只看视频美观不能证明可用于具身控制。无动作标注的视频也能学习预测或潜在动作，但潜在符号到真实机器人动作还需定义映射、反馈和校准，不能从观看视频直接宣称会控制机械臂。",
         "pitfalls": [
           "自然语言计划正确不等于可达、可抓取或满足动力学约束。"
         ],
         "followups": [
-          "同一个“拿起杯子”目标失败，怎样区分视觉定位、技能选择和控制执行问题？"
+          "同一个“拿起杯子”目标失败，怎样区分视觉定位、技能选择和控制执行问题？",
+          "世界模型看起来逼真但对左右动作给出相同未来，能用于规划吗？"
         ]
       },
       "reference_ids": [
         "JUN26-P047",
-        "JUN26-P048"
+        "JUN26-P048",
+        "R3-VID-GENIE2",
+        "R3-VID-EGO4D"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "多 Agent 协同与训练"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S016",
+          "support": "reported_question",
+          "note": "主代理已读该美团面经明确追问世界模型与具身方向；增强现有VLA/具身题，不另开同义题。"
+        }
+      ],
+      "editorial": false,
+      "topic": "多 Agent 协同与训练",
+      "company_tags": [
+        "美团"
+      ]
     },
     {
       "id": "AGT-015",
@@ -1666,12 +1727,18 @@
           "source_id": "XHS26-S014",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "topic": "多 Agent 协同与训练",
       "company_tags": [
-        "字节跳动"
+        "字节跳动",
+        "深势科技"
       ]
     },
     {
@@ -1805,12 +1872,16 @@
         "REALM"
       ],
       "answer": {
-        "body": "双塔用query与正/负文档的相似度进行对比训练。in-batch negatives便宜，但常偏容易且可能包含假负例；BM25、当前模型ANN召回或交叉编码器筛选能构造更难负例。按问题来源/实体/文档版本划分评测，防止相同问题改写或答案段落泄漏。\n\nANCE使用来自动态ANN索引的困难负例，缓解训练样本与检索阶段候选的差异；RocketQA强调跨批次负样本与去噪等训练设计。困难不等于错误标签可靠，应处理多个同样正确文档、近重复段落与领域歧义，避免把相关答案推远。\n\n弱监督预训练中，ICT用句子与其上下文构造检索任务；SEED-Encoder借助较弱decoder形成瓶颈，促使encoder学习有用的全局表示；REALM把潜在文档检索纳入语言模型预训练，按检索文档条件化目标。这些方法改变训练任务或检索/语言目标耦合，不是换一个向量数据库。更换encoder后需同步索引，迭代采负例时关注索引滞后。",
+        "body": "双塔用query与正/负文档的相似度进行对比训练。in-batch negatives便宜，但常偏容易且可能包含假负例；BM25、当前模型ANN召回或交叉编码器筛选能构造更难负例。按问题来源/实体/文档版本划分评测，防止相同问题改写或答案段落泄漏。\n\nANCE使用来自动态ANN索引的困难负例，缓解训练样本与检索阶段候选的差异；RocketQA强调跨批次负样本与去噪等训练设计。困难不等于错误标签可靠，应处理多个同样正确文档、近重复段落与领域歧义，避免把相关答案推远。\n\n弱监督预训练中，ICT用句子与其上下文构造检索任务；SEED-Encoder借助较弱decoder形成瓶颈，促使encoder学习有用的全局表示；REALM把潜在文档检索纳入语言模型预训练，按检索文档条件化目标。这些方法改变训练任务或检索/语言目标耦合，不是换一个向量数据库。更换encoder后需同步索引，迭代采负例时关注索引滞后。\n\n实际训练先定义相关性：正例可来自人工 query/证据标注或经核验的文本配对，不能把同主题但无法回答问题的段落都当正例。In-batch negatives把其他样本的文档当候选负例，需依据文档ID、近重复及多正例标签排除假负例；hard negatives应与随机负例适当混合，并抽查高分误标。普通梯度累积不会自动让不同micro-batch的文档相互成为负例，扩大负例池需要显式联合打分、跨卡收集或梯度缓存。\n\n多任务embedding可先做弱监督文本对比预训练，再混合检索、NLI等高质量标注，并用reranker软分数蒸馏；采样比例、模板和目标要按任务验证，STS高分不等于检索高分。压缩需分清模型蒸馏、向量降维与索引量化：Matryoshka显式训练多个前缀维度，用于cosine或单位范数L2检索时，截断后按该维度重新归一化；任意embedding直接切前若干维没有质量保证。同步query/索引变换，并在压缩后的真实索引上测召回、排序、延迟及存储，不能只比较训练loss。",
         "pitfalls": [
-          "业务未标注为正例的文档不一定是真负例；盲目增加hard negatives可能损害召回。"
+          "业务未标注为正例的文档不一定是真负例；盲目增加hard negatives可能损害召回。",
+          "更难的负例不保证更正确；同文档、多答案或近重复内容需先排除假负例。",
+          "把普通梯度累积当作自动扩大in-batch负例池，或未训练/验证就任意截断embedding维度。"
         ],
         "followups": [
-          "检索模型只在旧索引上挖负例，为什么训练可能越来越不贴近线上？"
+          "检索模型只在旧索引上挖负例，为什么训练可能越来越不贴近线上？",
+          "同一query有多个有效证据，怎样构造positive mask并防止互为负例？",
+          "如何在相同数据和候选池下比较单任务训练、多任务训练与维度压缩？"
         ],
         "formula": "\\mathcal L_{\\mathrm{retriever}}=-\\log\\frac{\\exp(s(q,d^+)/\\tau)}{\\exp(s(q,d^+)/\\tau)+\\sum_{d^-}\\exp(s(q,d^-)/\\tau)}"
       },
@@ -1820,11 +1891,23 @@
         "JUN26-P051",
         "JUN26-P053",
         "JUN26-P059",
-        "JUN26-P052"
+        "JUN26-P052",
+        "R3-RET-004",
+        "R3-RET-005",
+        "R3-RET-006"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "召回、融合与重排"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "主代理已读正文明确涉及embedding训练/检索评测，与同主题既有题合并；新补充内容为独立核验。"
+        }
+      ],
+      "editorial": false,
+      "topic": "召回、融合与重排",
+      "company_tags": [
+        "阿里巴巴"
+      ]
     },
     {
       "id": "EVA-016",

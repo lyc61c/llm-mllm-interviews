@@ -17,8 +17,15 @@
 | [unique_permutations](reference.py#L321) | 全排列：回溯恢复现场、重复元素同层去重 | Python 标准库 |
 | [ListNode](reference.py#L348) / [reverse_linked_list](reference.py#L353) | 单链表原地反转，修改指针前检查环 | Python 标准库 |
 | [max_stock_profit](reference.py#L368) | 至多一次买卖：历史最低价与最佳收益 | Python 标准库 |
-| [test_reference.py](test_reference.py) | 26 组边界、不变量和独立算法对照测试 | Python 标准库 |
-| [test_torch_primitives.py](test_torch_primitives.py) | 11 组前向、mask、梯度、冻结及数据加载测试 | 无 PyTorch 时明确 skip |
+| [grouped_query_attention](reference.py#L394) / [PyTorch](torch_primitives.py#L175) | GQA 连续头分组、布尔 mask、增量位置偏移 | 标准库 / 可选 PyTorch |
+| [max_stock_profit_two_transactions](reference.py#L436) | 至多两次买卖：四状态动态规划 | Python 标准库 |
+| [variation_keep_indices](reference.py#L456) / [PyTorch](torch_primitives.py#L223) | V2Drop 单阶段变化评分与稳序保留索引 | 标准库 / 可选 PyTorch |
+| [float_sqrt](reference.py#L489) | 实数平方根：指数缩放、二分与浮点停止条件 | Python 标准库 |
+| [longest_increasing_matrix_path](reference.py#L531) | 四邻接严格递增路径：拓扑分层 BFS | Python 标准库 |
+| [moe_top_k_router](reference.py#L574) / [PyTorch](torch_primitives.py#L252) | Top-k 专家索引与门权重，稳定并列及可选重归一 | 标准库 / 可选 PyTorch |
+| [layer_norm_last_dim](reference.py#L602) / [PyTorch](torch_primitives.py#L278) | 最后特征轴 LayerNorm，总体方差、epsilon 与 affine | 标准库 / 可选 PyTorch |
+| [test_reference.py](test_reference.py) | 41 组边界、不变量和独立算法对照测试 | Python 标准库 |
+| [test_torch_primitives.py](test_torch_primitives.py) | 20 组前向、mask、梯度、冻结及数据加载测试 | 无 PyTorch 时明确 skip |
 
 重要约定：
 
@@ -31,5 +38,11 @@
 - KV 估算不含权重、激活、页表、量化 scale、分配碎片和工作区。
 - BucketBatchSampler 是单进程批次采样器，返回索引列表；分布式还需明确 rank 分片和批次数对齐。
 - VAE 默认输入 Bernoulli 重建 logits；`unit_gaussian` 分支输入均值、采用固定单位方差。感知损失与对抗训练不属于这个标准 ELBO 示例。
+- GQA 函数接收已投影 Q/K/V，以连续等大小 query 组共享 KV；教学显式展开不代表生产融合内核的显存用量。
+- V2Drop 函数仅返回单样本单阶段索引，保留全部非视觉 token；标准库用 Python 浮点，PyTorch 用 FP32 评分，不包含模型、位置/mask gather 或每层 KV 集成。
+- 实数平方根默认相对误差停止，低于浮点分辨率的要求仍受舍入限制；整数平方根是不同输出契约。
+- 矩阵递增路径示例约定上下左右且严格递增；面试时先确认移动规则。
+- MoE 示例仅输出 Top-k 专家索引与 gate，未包含专家执行和容量/通信；Top-1 重归一为 1 时主任务的 gate 梯度为 0。
+- LayerNorm 示例仅沿最后特征轴使用总体方差，epsilon 在平方根内部；不包含任意多维 normalized_shape 或模块参数注册。
 
 建议练习顺序：Softmax/CE → Attention/mask → RoPE → LoRA/InfoNCE → DPO/GRPO → TopK/岛屿/DP/LRU。

@@ -1144,21 +1144,26 @@
         "SFT",
         "RLHF",
         "DPO",
-        "RLHF流程"
+        "RLHF流程",
+        "RL选型"
       ],
       "answer": {
+        "body": "SFT用优质示范拟合指令到回答，通常最小化有效assistant回答token的负对数似然。它教模型如何完成任务，安全、诚实和推理也可通过示范学习，不能说SFT只学知识、RL只学推理。\n\nSFT后再做RL，是希望在当前策略生成的候选或真实交互轨迹上，用完整回答质量、可验证成功或环境回报选择更好的行为，而不只是模仿固定示范。结果容易评分、正确完整轨迹难以大量编写时，这种反馈有价值；SFT的teacher-forcing前缀和模型真实生成的前缀也可能不同。但RL不会凭空补齐完全缺失的任务知识，奖励弱或错配时反而可能退化。\n\n经典RLHF先收集同prompt回答偏好并训练RM，再用PPO等更新从SFT初始化的Actor。Actor/Critic训练，Reference/RM在RL阶段通常冻结；old policy是本轮rollout快照，reference是行为锚点，四个逻辑角色不必是四套独立大模型。RL也可用可验证规则而非学习RM，并可与示范阶段迭代或混合。\n\nDPO用同prompt的偏好回答对直接更新策略，省去独立RM拟合和在线RL循环，通过reference log-ratio表达相对偏好。若任务已有高质量示范且SFT达到目标，不必为了流程完整而加RL；有可靠离线偏好可比较DPO/KTO；有值得探索的行为和可验奖励才比较在线RL。用相同预算的SFT、偏好优化、RL对照，检查独立质量、泛化与成本，不能由一个bad case推断某算法必需。",
         "pitfalls": [
-          "不要说 SFT 只学知识、RL 只学推理；数据与任务同样重要。"
+          "SFT后RL是常见配方，不是所有任务和所有模型的必要条件。",
+          "“好样本SFT、坏样本loss取负”不等价于完整策略分布上的RL，需另看负CE目标和信用分配。"
         ],
         "followups": [
-          "同一 bad case 何时补 SFT 示范，何时补偏好对？"
-        ],
-        "body": "SFT 用优质示范教模型按指令完成任务，通常最小化目标回答的负对数似然；它主要提供行为和任务示范。典型 RLHF 在 SFT 后用偏好数据训练奖励模型，再通过强化学习优化策略，也可以迭代或混合不同阶段。\n\nDPO 直接用同一问题的偏好回答对更新策略，省去独立奖励模型拟合和在线 RL 更新，但仍通过目标函数表达偏好对应的奖励关系。三者都依赖数据质量；选型应结合任务、数据和评测，不能凭单个失败案例判断算法优劣。\n\n经典流程先用示范做SFT，再以同prompt回答的成对偏好训练RM，最后用PPO等采样并优化策略。Actor/Critic训练，Reference/RM在RL阶段通常冻结；新一轮rollout刷新old policy，Reference保持行为锚点。SFT解决示范拟合，偏好优化表达相对质量，两者互补，SFT也不是天然无法学习安全与诚实。"
+          "同一bad case何时补SFT示范，何时补偏好对，何时采样做RL？",
+          "奖励只识别格式时，SFT后RL可能优化出什么错误行为？"
+        ]
       },
       "reference_ids": [
         "APP-S101",
         "APP-S104",
-        "JUN26-P005"
+        "JUN26-P005",
+        "R3-ALN-INSTRUCT",
+        "R3-ALN-DPO"
       ],
       "community_evidence": [
         {
@@ -1170,12 +1175,30 @@
           "source_id": "XHS26-S001",
           "support": "reported_question",
           "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S019",
+          "support": "reported_question",
+          "note": "正文明确问为何SFT后还需RL。 主代理已读完整正文；作者披露含AI生成内容，此证据仅表示公开帖子提及该题，不担保真实面试发生。 作者声明含AI生成内容，无法据此认证真实面试。"
+        },
+        {
+          "source_id": "XHS26-S016",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "topic": "RLHF 与 PPO",
       "company_tags": [
-        "字节跳动"
+        "字节跳动",
+        "阶跃星辰",
+        "美团",
+        "阿里巴巴"
       ]
     },
     {
@@ -1202,9 +1225,18 @@
         "APP-S160",
         "JUN26-P005"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "奖励与对齐策略"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        }
+      ],
+      "editorial": false,
+      "topic": "奖励与对齐策略",
+      "company_tags": [
+        "阿里巴巴"
+      ]
     },
     {
       "id": "ALN-003",
@@ -1468,24 +1500,27 @@
       "level": "L2",
       "tags": [
         "GRPO",
-        "PPO"
+        "PPO",
+        "sample-level advantage",
+        "信用分配"
       ],
       "answer": {
+        "body": "Reward是任务评分，advantage是动作或响应相对基线的好坏。理论上A(s,a)=Q(s,a)−V(s)；一个响应即使拿到正奖励，低于同组均值时GRPO优势也可为负，组内零均值不代表整个batch绝对质量改善。\n\n常见PPO让critic预测前缀价值，结合逐步奖励、终止状态与value计算TD残差和GAE，所以同一回答不同token可以有不同优势。结果奖励GRPO对同prompt采样G条回答，减组均值、除组标准差，以组内相对优势代替独立critic，再把每条回答的优势广播到有效生成token。它是样本级反馈，不是GAE，也不能把最终正确性当成每个token的因果贡献；原始GRPO另有过程监督定义，不能概括为永远整条同一优势。\n\nGRPO适合数学验证、代码测试或完整生成结果评分等场景：完整响应有可信奖励，同prompt可采多条且组内有差异，省去critic训练能减一部分显存和拟合复杂度。长期交互、分步奖励和精细信用分配重要时，可比较价值网络/GAE或过程反馈；GRPO也能扩展，但只靠终态sample-level优势不自动解决这些问题。\n\nPPO和GRPO都可使用新旧策略比与clip，仍需rollout和奖励器；奖励器可为规则、RM或环境，reference/KL由方案决定。G=1或组奖励全同没有有效相对信号，epsilon只防除零；增加G有采样、KV、延迟成本。标准差归一会改变各prompt梯度权重，稀疏奖励、假高分与长度偏差需分项日志和独立评测。总资源取决于采样组、回答长度、优化器和激活，不能把去critic直接等同于整体成本降低固定百分比。",
+        "formula": "\\begin{aligned}A^\\pi(s,a)&=Q^\\pi(s,a)-V^\\pi(s)\\\\\\delta_t&=r_t+\\gamma V(s_{t+1})-V(s_t),\\quad\\hat A_t^{\\mathrm{PPO}}=\\sum_{l\\ge0}(\\gamma\\lambda)^l\\delta_{t+l}\\\\\\hat A_{i,t}^{\\mathrm{GRPO}}&=\\frac{R_i-\\bar R}{\\mathrm{std}(R_1,\\ldots,R_G)+\\epsilon}\\quad\\mathrm{(outcome\\ reward)}\\end{aligned}",
         "pitfalls": [
-          "去掉 critic 不等于没有 baseline，也不等于没有奖励模型。",
-          "GRPO的零均值优势不代表整个batch平均质量提高；评价能力必须另看原始reward与独立评测。"
+          "sample-level优势广播到tokens是更新权重，不是每个token导致结果的因果归因。",
+          "去critic不等于无baseline、无奖励器或无需rollout；原始GRPO过程监督另有优势构造。"
         ],
         "followups": [
-          "如何分离 rollout 显存和训练显存预算？",
-          "组内奖励是0.7、0.8、0.9时，0.7的奖励为何为正但优势为负？"
-        ],
-        "body": "Reward是任务给出的评分，advantage是某个动作或响应相对基线的好坏。理论优势为$A^\\pi(s,a)=Q^\\pi(s,a)-V^\\pi(s)$，不是直接把奖励改个名字；一个得到正奖励的响应若低于同组均值，GRPO优势仍可为负。\n\n常见PPO用critic预测前缀价值，再以逐步奖励、终止信息与value构造TD残差和GAE，因此同一响应的不同token可以有不同优势。结果奖励GRPO则对同一prompt采样G条响应，减组内平均奖励、除组内标准差，以相对优势替代独立critic；一条响应的组内优势通常广播到它的各个有效token。它估计的是组内相对表现，不能把它称为GAE或精确的逐状态Q-V，也不能从最终结果奖励断言各token的因果贡献相同。\n\n训练时两者都可用新旧策略概率比与clip。GRPO仍需要rollout和奖励器，奖励器可以是可验证规则、奖励模型或环境反馈，具体方案也可能保留reference模型。G=1或组内奖励全部相同没有有效相对信号；epsilon只防止除零。整体显存仍取决于组大小、回答长度、优化器、激活及KV cache，去掉critic不意味着生成与训练成本可以忽略。",
-        "formula": "\\begin{aligned}A^\\pi(s,a)&=Q^\\pi(s,a)-V^\\pi(s)\\\\ \\delta_t&=r_t+\\gamma V(s_{t+1})-V(s_t),\\quad \\hat A_t^{\\mathrm{PPO}}=\\sum_{l\\geq0}(\\gamma\\lambda)^l\\delta_{t+l}\\\\ \\hat A_{i,t}^{\\mathrm{GRPO}}&=\\frac{R_i-\\bar R}{\\mathrm{std}(R_1,\\ldots,R_G)+\\epsilon}\\quad\\mathrm{(outcome\\ reward)}\\end{aligned}"
+          "组奖励为0.7、0.8、0.9，为何0.7的reward为正但advantage为负？",
+          "多轮Agent只有最后是否成功，如何改善sample-level反馈的信用分配？"
+        ]
       },
       "reference_ids": [
         "APP-S106",
         "JUN26-P006",
-        "JUN26-P004"
+        "JUN26-P004",
+        "R3-ALN-GRPO"
       ],
       "community_evidence": [
         {
@@ -1512,13 +1547,31 @@
           "source_id": "XHS26-S014",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S019",
+          "support": "reported_question",
+          "note": "正文明确追问GRPO样本级优势相对PPO的差异与场景。 主代理已读完整正文；作者披露含AI生成内容，此证据仅表示公开帖子提及该题，不担保真实面试发生。 作者声明含AI生成内容，无法据此认证真实面试。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "topic": "GRPO 与在线优化",
       "company_tags": [
         "小红书",
-        "字节跳动"
+        "字节跳动",
+        "阶跃星辰",
+        "阿里巴巴",
+        "深势科技"
       ]
     },
     {
@@ -1597,12 +1650,23 @@
           "source_id": "XHS26-S014",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S022",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "topic": "GRPO 与在线优化",
       "company_tags": [
-        "字节跳动"
+        "字节跳动",
+        "深势科技"
       ]
     },
     {
@@ -1641,25 +1705,32 @@
     {
       "id": "ALN-015",
       "category": "ALN",
-      "title": "如何识别和缓解 reward hacking？",
+      "title": "如何识别和缓解 reward hacking，RM 业务判别准确率 100% 还会发生吗？",
       "level": "L2",
       "tags": [
         "奖励投机",
-        "Goodhart"
+        "Goodhart",
+        "奖励校准",
+        "目标错配"
       ],
       "answer": {
+        "body": "Reward hacking 是策略提高奖励代理，却降低真实任务效用。训练reward上涨本身不证明模型变好；应联合观察独立任务指标、回答长度、多样性、工具行为和人工盲评，复核高分失败样本。关键词堆砌、迎合裁判、空洞安全套话、绕过验证器都可能是待检验的表现。\n\n“RM在业务数据上判别100%”首先要明确数据范围和指标。有限测试集的二分类或成对排序全对，只约束这些样本的标签/排序；不证明奖励数值校准、分数差、覆盖所有响应，更不证明业务标签就是事实性、帮助性、成本等多维真实目标。即使策略仍在业务分布内，正确的粗分类也可能容许错误的类内排序：两个都被判为合格的回答，空泛长文可能比简洁正确回答得分更高。RL优化连续分数，就可能放大这种差异，无须把所有原因都归结为OOD。\n\n还要区分两个代理差距：RM预测业务标签的误差，以及业务标签/评分规格相对真实意图的遗漏。评分仅检查答案命中、不检查证据；工具结果伪造后奖励函数只读伪造日志；超时样本被错误记成功，这些属于评价或实现规格的问题。它们能与有限业务集100%正确率同时存在，不能只靠增加RM容量解决。\n\n但若题目加强为：在所有策略可达轨迹上，评分确实等于完整真实效用，评测输入与实现正确，任务分布、约束和优化目标一致，那么单纯利用“代理与真实目标不一致”的投机按定义被排除，不能继续断言仍必然reward hacking。正比例仿射的等价奖励也保留期望排序；仅仅单调变换、分类全对或有限排序全对没有这个保证。剩余退化需另查有限采样、优化失败、训练目标中的其他权重、环境变化和真实效用定义。\n\n排查时保留rollout及分项reward，做长度/风格/事实控制样本，检查RM是否奖励文风而忽略内容，比较训练RM、独立裁判与人工。多模态场景再用独立检测/OCR、画质、多样性与动作完成指标审查计数、文字和构图投机。KL、提前停止、多样反馈和对抗数据可降低风险，但不能修补不完整奖励规格；换GRPO的相对优势或同一个LLM judge也没有免疫性。",
+        "formula": "\\begin{aligned}\\mathrm{Acc}_{\\mathcal D}(\\hat r)&=1\\ \\not\\Rightarrow\\ \\hat r(x,y)=u(x,y)\\ \\mathrm{on\\ all\\ reachable}\\ (x,y)\\\\\\hat r(x,y)&=a\\,u(x,y)+b(x),\\quad a>0\\\\\\mathbb E_{x\\sim P,\\,y\\sim\\pi}[\\hat r]&=a\\,\\mathbb E[u]+\\mathbb E_{x\\sim P}[b(x)]\\end{aligned}",
         "pitfalls": [
-          "GRPO 的相对优势或换成 LLM judge 本身不是 reward hacking 的解药。"
+          "有限集分类全对既不意味着奖励标定全对，也不意味着业务标签涵盖真实目标。",
+          "若全可达支持域的完整真实效用确实由正确评分实现，就不能把不存在的代理误差当作hacking解释。",
+          "reward hacking、模式崩溃、谄媚与对齐税相关，但不是同义词。"
         ],
         "followups": [
-          "如果训练奖励上升、独立胜率下降，你先停哪一环？"
-        ],
-        "body": "Reward hacking 指模型过度优化奖励代理，却降低了真实任务质量。识别时应联合观察独立指标、回答长度、套话和异常工具行为，并对高分样本做人类或对抗复核；只看奖励上涨无法判断能力是否改善。\n\n常见表现包括重复关键词、迎合裁判、空泛安全回答或绕过弱验证器。参考 KL、提前停止和多样反馈可降低风险，但不能证明问题已经消除。工程上应保留 rollout 与分项奖励，聚类分析高分失败案例，再改进评分器和验证流程。\n\n回答模式化、奉承或内容空洞时，构造事实正确但朴素、华丽却无信息等控制样本，检查RM是否主要奖励风格或长度。比较训练RM与独立人工/judge，排查偏好数据窄、优化过量及KL不足；在新偏好数据中加入反例并保留通用能力回归。模式崩溃、谄媚与对齐税相关但不是同义词。\n\n多模态生成还要排查针对物体检测、OCR和偏好评分器的投机：比如计数检测高分但画面重复失真，OCR匹配成功却破坏构图，偏好分提高但图像趋同。将这些作为待检验的失败模式，用独立检测/OCR、人工盲评、画质与多样性指标交叉检查，并分析分项reward和高分失败样本。参考KL限制策略漂移，不能修补奖励器本身的漏洞；同组相对优势也会放大一个坏代理奖励。"
+          "保持业务数据分布不变，怎样构造分类仍全对但类内reward排序错误的控制例？",
+          "训练reward和人工质量分离后，怎样区分评分规格错误与RM泛化错误？"
+        ]
       },
       "reference_ids": [
         "APP-S112",
         "JUN26-P005",
-        "XHS26-PFLOW-GRPO"
+        "XHS26-PFLOW-GRPO",
+        "R3-ALN-OVEROPT"
       ],
       "community_evidence": [
         {
@@ -1676,13 +1747,37 @@
           "source_id": "XHS26-S013",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S019",
+          "support": "reported_question",
+          "note": "正文明确追问业务判别100%的RM在RL中是否仍可能hacking，不能只回答OOD。 主代理已读完整正文；作者披露含AI生成内容，此证据仅表示公开帖子提及该题，不担保真实面试发生。 作者声明含AI生成内容，无法据此认证真实面试。"
+        },
+        {
+          "source_id": "XHS26-S016",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S018",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "topic": "奖励与对齐策略",
       "company_tags": [
         "小红书",
-        "字节跳动"
+        "字节跳动",
+        "阶跃星辰",
+        "美团",
+        "快手",
+        "深势科技"
       ]
     },
     {
@@ -1745,33 +1840,50 @@
     {
       "id": "ALN-018",
       "category": "ALN",
-      "title": "IPO 等 DPO 变种主要试图解决什么问题？",
+      "title": "IPO、KTO 等偏好优化方法与 DPO 有何区别？",
       "level": "L3",
       "tags": [
         "IPO",
-        "偏好建模"
+        "偏好建模",
+        "KTO",
+        "binary feedback"
       ],
       "answer": {
+        "body": "先按数据和目标区分。DPO通常需要同prompt的chosen/rejected成对偏好，优化两条响应相对reference的log-prob差，经log-sigmoid拟合偏好；它省去独立RM和在线RL循环，但仍依赖参考策略、候选覆盖和偏好建模假设。\n\nIPO从更一般的成对偏好目标出发，用identity preference mapping讨论DPO在有限、近确定偏好下的过拟合与正则化问题。偏好未必能由单一标量奖励精确表达，不能把IPO概括为“DPO再加SFT loss”，也不能凭算法名字宣称普遍更好。\n\nKTO可以使用单条(prompt,response,desirable/undesirable)标签，不要求每条都有同prompt的另一候选。它把策略相对reference的序列log-ratio作为隐式奖励坐标，与KL形式的参考点比较，用sigmoid效用及正负权重控制更新。好样本的loss鼓励坐标高于参考点，坏样本相反；不是对坏样本CE乘−1。原论文实践中通过错配prompt/response构造共享参考点估计、截为非负并stop-gradient，这个估计不是精确真实KL。\n\nKTO的β控制效用曲线饱和，λ_D、λ_U和类别数量共同决定有效正负贡献，不能脱离标签比例断言坏样本权重必须更大。把成对数据直接拆成好/坏标签会改变语义：两条都不好时chosen只是相对更好，不一定适合作绝对好标签。已有可靠成对比较可用DPO/IPO；自然收集的点赞/点踩单条日志可考虑KTO，但需纠正曝光、prompt难度与标注偏差。\n\n比较时控制参考模型、数据量、长度和训练预算，同时观察独立胜率、正确率、KL、拒绝率和泛化。三者都是偏好优化方法；不应强称KTO是保持DPO目标不变的实现变体，或从论文中某些实验结果推出全部业务中KTO优于DPO。",
+        "formula": "\\begin{aligned}s_\\theta(x,y)&=\\log\\frac{\\pi_\\theta(y\\mid x)}{\\pi_{\\mathrm{ref}}(y\\mid x)},\\quad z=\\mathrm{sg}(\\hat z_0)\\\\\\ell_{\\mathrm{KTO}}(x,y)&=\\begin{cases}\\lambda_D[1-\\sigma(\\beta(s_\\theta-z))],&y\\ \\mathrm{desirable}\\\\\\lambda_U[1-\\sigma(\\beta(z-s_\\theta))],&y\\ \\mathrm{undesirable}\\end{cases}\\\\\\mathcal L_{\\mathrm{DPO}}&=-\\mathbb E\\log\\sigma\\!\\left(\\beta[s_\\theta(x,y_w)-s_\\theta(x,y_l)]\\right)\\end{aligned}",
         "pitfalls": [
-          "不要把所有 DPO 变种说成只是“加一项 SFT loss”。"
+          "KTO单条好坏标签与DPO同prompt相对偏好不同，不能无条件互换。",
+          "KTO的近似KL参考点用于效用比较且detach，并非任意加一项可微KL的同义词。",
+          "有效样本贡献取决于标签数量、采样和loss权重，而非只看λ_U/λ_D。"
         ],
         "followups": [
-          "若所有标注都绝对偏好同一答案，怎样监测过拟合？"
-        ],
-        "body": "DPO 变种主要调整偏好概率映射、正则化或数据使用方式。IPO 从更一般的成对偏好目标出发，讨论将偏好映射为标量奖励等假设；人类偏好可能非传递，未必能由单一标量奖励精确表达，因此应先说明建模假设和待解决的过拟合问题，再解释损失。\n\n算法名称不能证明效果更好。比较时应控制偏好噪声、候选覆盖、参考模型和训练预算，在相同评测中联合观察胜率、KL、回答长度与正确率，并核对改动是否适用于当前数据条件。"
+          "两个候选都错了但一个较好，如何分别为DPO与KTO标注？",
+          "点赞数据主要来自简单问题时，怎样避免KTO学习曝光/难度偏差？"
+        ]
       },
       "reference_ids": [
-        "APP-S114"
+        "APP-S114",
+        "R3-ALN-KTO",
+        "R3-ALN-IPO",
+        "R3-ALN-DPO"
       ],
       "community_evidence": [
         {
           "source_id": "APP-S009",
           "support": "reported_question",
           "note": "正文明确问 DPO 缺点与相关变种。"
+        },
+        {
+          "source_id": "XHS26-S019",
+          "support": "reported_question",
+          "note": "正文明确比较KTO与DPO；IPO内容保留原题，未声称原帖指名IPO。 主代理已读完整正文；作者披露含AI生成内容，此证据仅表示公开帖子提及该题，不担保真实面试发生。 作者声明含AI生成内容，无法据此认证真实面试。"
         }
       ],
       "editorial": false,
-      "topic": "DPO 与偏好数据"
+      "topic": "DPO 与偏好数据",
+      "company_tags": [
+        "阶跃星辰"
+      ]
     },
     {
       "id": "ALN-019",
@@ -1833,10 +1945,18 @@
           "source_id": "APP-S010",
           "support": "search_snippet",
           "note": "搜索摘要出现多目标奖励冲突题。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
-      "topic": "奖励与对齐策略"
+      "topic": "奖励与对齐策略",
+      "company_tags": [
+        "深势科技"
+      ]
     },
     {
       "id": "RAG-001",
@@ -1984,9 +2104,18 @@
         "JUN26-P049",
         "JUN26-P050"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "召回、融合与重排"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "正文明确涉及embedding模型、检索metrics及benchmark；已有选型与向量空间兼容答案可直接复用。"
+        }
+      ],
+      "editorial": false,
+      "topic": "召回、融合与重排",
+      "company_tags": [
+        "阿里巴巴"
+      ]
     },
     {
       "id": "RAG-005",
@@ -2175,27 +2304,39 @@
       ],
       "answer": {
         "pitfalls": [
-          "judge 分数和自动 reference-free 指标都有误差，不是无成本真值。"
+          "judge 分数和自动 reference-free 指标都有误差，不是无成本真值。",
+          "单相关标注下Hit@k与Recall@k可能相同，多相关时不能互换；未标注相关不等于真负。"
         ],
         "followups": [
-          "召回提升但答案质量不变，应做哪些消融？"
+          "召回提升但答案质量不变，应做哪些消融？",
+          "召回单位是文档、页还是chunk时，怎样避免重复命中造成虚高？"
         ],
-        "body": "RAG 评测应依次检查检索是否覆盖证据、上下文是否相关，以及答案是否忠于证据、正确且完整。准备带证据位置的业务集，按失败环节归因，并联合报告成本、延迟和拒答；只看 BLEU 或单一总分会掩盖链路瓶颈。\n\n检索可使用 Recall@K、MRR 与 nDCG，多段联合证据还需检查是否完整覆盖。用 oracle evidence 替换真实检索，可分析生成器读取证据的能力上限。自动 judge 与无参考指标均有误差，应通过人工样本校准，并记录模型、prompt、语料和指标版本。\n\n对每个query，MRR取第一个相关结果的倒数排名再平均，未命中记0；AP在每个二值相关命中位置计算Precision并按相关文档总数R_q归一，MAP对query平均。nDCG用等级相关性g_i的gain与位置折扣，再除以同一截断k的理想排序IDCG；下面使用2的g_i次方减1，也有直接用g_i的约定，需固定。R_q=0或IDCG=0时须预先规定剔除或记0，避免除零；AP@k的分母同样应声明。缺失标注可能把真实相关结果算负例，检索相关性也不等于答案证据支持。",
-        "formula": "\\begin{aligned}\\mathrm{MRR}&=\\frac1Q\\sum_q\\frac1{\\mathrm{rank}_q^{\\mathrm{first}}},\\quad \\text{无命中记 }0\\\\ \\mathrm{AP}(q)&=\\frac1{R_q}\\sum_{i=1}^{N}\\mathrm{Precision@}i\\cdot\\mathrm{rel}_{q,i}\\\\ \\mathrm{MAP}&=\\frac1Q\\sum_q\\mathrm{AP}(q)\\\\ \\mathrm{DCG@}k&=\\sum_{i=1}^k\\frac{2^{g_i}-1}{\\log_2(i+1)},\\quad \\mathrm{nDCG@}k=\\frac{\\mathrm{DCG@}k}{\\mathrm{IDCG@}k}\\end{aligned}"
+        "body": "RAG 评测应依次检查检索是否覆盖证据、上下文是否相关，以及答案是否忠于证据、正确且完整。准备带证据位置的业务集，按失败环节归因，并联合报告成本、延迟和拒答；只看 BLEU 或单一总分会掩盖链路瓶颈。\n\n检索可使用 Recall@K、MRR 与 nDCG，多段联合证据还需检查是否完整覆盖。用 oracle evidence 替换真实检索，可分析生成器读取证据的能力上限。自动 judge 与无参考指标均有误差，应通过人工样本校准，并记录模型、prompt、语料和指标版本。\n\n对每个query，MRR取第一个相关结果的倒数排名再平均，未命中记0；AP在每个二值相关命中位置计算Precision并按相关文档总数R_q归一，MAP对query平均。nDCG用等级相关性g_i的gain与位置折扣，再除以同一截断k的理想排序IDCG；下面使用2的g_i次方减1，也有直接用g_i的约定，需固定。R_q=0或IDCG=0时须预先规定剔除或记0，避免除零；AP@k的分母同样应声明。缺失标注可能把真实相关结果算负例，检索相关性也不等于答案证据支持。\n\nRecall@k通常指每个query的相关文档集合被Top-k覆盖的比例，再按query平均；Hit/Success@k只判断至少命中一个，两者在多相关文档时不同。固定文档/页/片段粒度、去重与qrels版本，不能把多个同文档块重复算命中。MTEB的STS等任务与retrieval应分别看；原MTEB检索协议以nDCG@10为主，ColPali原论文的ViDoRe页图检索以nDCG@5为主。对业务还要测域外/新文档、图表小字和延迟，保持相同候选库、ANN预算与重排条件，不能跨协议直接比榜单数字。公式中花体 R_q、T_{q,k} 分别为相关集合与Top-k去重结果集合，AP中的标量 R_q 是相关文档数量。",
+        "formula": "\\begin{aligned}\\mathrm{Recall@}k(q)&=\\frac{|\\mathcal R_q\\cap\\mathcal T_{q,k}|}{|\\mathcal R_q|},\\quad |\\mathcal R_q|>0\\\\ \\mathrm{MRR}&=\\frac1Q\\sum_q\\frac1{\\mathrm{rank}_q^{\\mathrm{first}}},\\quad \\text{无命中记 }0\\\\ \\mathrm{AP}(q)&=\\frac1{R_q}\\sum_{i=1}^{N}\\mathrm{Precision@}i\\cdot\\mathrm{rel}_{q,i}\\\\ \\mathrm{MAP}&=\\frac1Q\\sum_q\\mathrm{AP}(q)\\\\ \\mathrm{DCG@}k&=\\sum_{i=1}^k\\frac{2^{g_i}-1}{\\log_2(i+1)},\\quad \\mathrm{nDCG@}k=\\frac{\\mathrm{DCG@}k}{\\mathrm{IDCG@}k}\\end{aligned}"
       },
       "reference_ids": [
         "APP-S123",
-        "JUN26-P054"
+        "JUN26-P054",
+        "R3-RET-002",
+        "R3-RET-005"
       ],
       "community_evidence": [
         {
           "source_id": "APP-S006",
           "support": "reported_topic",
           "note": "README 明列 RAG 系统评测。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "主代理已读正文明确涉及embedding训练/检索评测，与同主题既有题合并；新补充内容为独立核验。"
         }
       ],
       "editorial": false,
-      "topic": "评测、权限与多模态 RAG"
+      "topic": "评测、权限与多模态 RAG",
+      "company_tags": [
+        "阿里巴巴"
+      ]
     },
     {
       "id": "RAG-012",
@@ -2678,12 +2819,18 @@
           "source_id": "XHS26-S013",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "topic": "可靠性与评测",
       "company_tags": [
-        "字节跳动"
+        "字节跳动",
+        "深势科技"
       ]
     },
     {
@@ -2826,10 +2973,18 @@
           "source_id": "APP-S011",
           "support": "search_snippet",
           "note": "知乎技术文章摘要讨论 judge 质量与人工黄金集校准；并非面经。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
-      "topic": "幻觉与可信度"
+      "topic": "幻觉与可信度",
+      "company_tags": [
+        "深势科技"
+      ]
     },
     {
       "id": "EVA-004",

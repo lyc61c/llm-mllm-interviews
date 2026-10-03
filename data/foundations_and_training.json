@@ -1769,7 +1769,8 @@
       "tags": [
         "MoE",
         "routing",
-        "capacity"
+        "capacity",
+        "路由手写"
       ],
       "answer": {
         "body": "稀疏 MoE 常把 FFN 替换成多个专家，router 根据 token 隐状态产生专家分数，只激活 Top-k 专家，按选中权重聚合输出。不同实现对选中概率是否重归一化有差异；Switch 使用Top-1，原始稀疏门控工作也研究噪声Top-k。总参数含全部专家，单 token 计算只涉及所选专家，因此 active参数与总参数必须分开。\n\ncapacity 对每个专家设置可接收 token 的预算，常按平均负载乘 capacity factor 取整；负载超过容量时传统实现可 drop 溢出分支、回退或走残差，不能简单理解为从语料删掉该token。提高容量减轻溢出但增加buffer、计算与通信，dropless方案避免drop却须面对不均衡显存和调度。Top-k 的离散选择不是处处可微，router梯度主要来自被选专家的门权重及辅助目标。选型需联合看质量、负载、通信与实际吞吐。",
@@ -1785,11 +1786,22 @@
       },
       "reference_ids": [
         "WD26-SWITCH",
-        "WD26-STMOE"
+        "WD26-STMOE",
+        "R3-COD-MIXTRAL",
+        "R3-COD-MIXTRAL-CODE"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "MoE 路由、训练与压缩"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "主代理已读阿里淘天面经完整正文，明确手撕MoE路由实现。代码将题意标准化为top-k ids/gates核心，不假定原题要求capacity或专家并行。"
+        }
+      ],
+      "editorial": false,
+      "topic": "MoE 路由、训练与压缩",
+      "company_tags": [
+        "阿里巴巴"
+      ]
     },
     {
       "id": "ARC-009",
@@ -1817,9 +1829,18 @@
         "WD26-SWITCH",
         "WD26-STMOE"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "MoE 路由、训练与压缩"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        }
+      ],
+      "editorial": false,
+      "topic": "MoE 路由、训练与压缩",
+      "company_tags": [
+        "阿里巴巴"
+      ]
     },
     {
       "id": "ARC-010",
@@ -2186,12 +2207,18 @@
           "source_id": "XHS26-S012",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "topic": "知识蒸馏与模型编辑",
       "company_tags": [
-        "字节跳动"
+        "字节跳动",
+        "深势科技"
       ]
     },
     {

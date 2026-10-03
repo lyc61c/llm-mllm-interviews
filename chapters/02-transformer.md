@@ -34,7 +34,7 @@
 <a id="tfm-001"></a>
 ### TFM-001 · 缩放点积注意力如何计算，为什么除以 √d_k？
 
-**L1** · 小红书
+**L1** · 小红书 / 阿里巴巴
 
 #### 答案
 
@@ -119,7 +119,7 @@ Attention mask 在 softmax 前排除不可见的 key：允许连接加 0，禁�
 <a id="tfm-016"></a>
 ### TFM-016 · Cross-attention 与 self-attention 有何区别，Q/K/V 从哪里来？
 
-**L1** · 腾讯
+**L1** · 腾讯 / 深势科技
 
 #### 答案
 
@@ -373,7 +373,7 @@ BatchNorm 通常按通道聚合 batch 与其他指定轴，训练时用批统计
 <a id="tfm-006"></a>
 ### TFM-006 · RMSNorm 与 LayerNorm 的公式和性质有什么区别？
 
-**L2**
+**L2** · 百度
 
 #### 答案
 

@@ -320,6 +320,272 @@ class ReferenceTests(unittest.TestCase):
             self.assertEqual(max_stock_profit(iter(prices)), expected)
             self.assertEqual(prices, original)
 
+    def test_infonce_normalization_temperature_and_paired_diagonal(self):
+        q = [[1., 0.], [0., 1.]]
+        k = [[8., 0.], [0., 0.25]]
+        for temperature in (0.2, 1., 3.):
+            expected = math.log1p(math.exp(-1. / temperature))
+            self.assertAlmostEqual(info_nce(q, k, temperature), expected)
+            # Positive rescaling per feature vector cannot change cosine logits.
+            self.assertAlmostEqual(info_nce([[7., 0.], [0., 11.]], k, temperature), expected)
+        self.assertEqual(info_nce([[1., 2.]], [[3., 4.]]), 0.)
+        for temperature in (0., -1.):
+            with self.assertRaises(ValueError):
+                info_nce(q, k, temperature)
+        with self.assertRaises(ValueError):
+            info_nce([[0., 0.]], [[1., 0.]])
+
+    def test_infonce_logsumexp_extremes_and_raw_dot_option(self):
+        q = [[1., 0.], [0., 1.]]
+        k = [[1000., 0.], [0., 1000.]]
+        # The wrong positive is 1000 below the negative: no exp(1000) required.
+        self.assertEqual(info_nce(q, k[::-1], 1., normalize=False), 1000.)
+        self.assertEqual(info_nce(q, k[::-1], 0.5, normalize=False), 2000.)
+        self.assertEqual(info_nce(q, k, 1., normalize=False), 0.)
+        self.assertAlmostEqual(info_nce(q, k, 1.), math.log1p(math.exp(-1.)))
+
+
+    def test_gqa_consecutive_groups_and_mha_mqa_endpoints(self):
+        q = [[[[0., 0.]] for _ in range(4)]]
+        k = [[[[0., 0.]], [[0., 0.]]]]
+        v = [[[[3., 4.]], [[8., 9.]]]]
+        # With a single key, the output selects the KV group independently of softmax.
+        self.assertEqual(grouped_query_attention(q, k, v), [[[[3., 4.]], [[3., 4.]], [[8., 9.]], [[8., 9.]]]])
+        q3 = [[[[0.]] for _ in range(3)]]
+        self.assertEqual(grouped_query_attention(q3, [[[[0.]]]], [[[[7.]]]]), [[[[7.]], [[7.]], [[7.]]]])
+        values = [[[[1.]], [[2.]], [[3.]]]]
+        self.assertEqual(grouped_query_attention(q3, q3, values), values)
+
+    def test_gqa_against_independent_per_head_formula(self):
+        rng = random.Random(31)
+        def tensor(b, h, t, d):
+            return [[[[rng.uniform(-2, 2) for _ in range(d)] for _ in range(t)] for _ in range(h)] for _ in range(b)]
+        for hq, hkv in ((6, 2), (4, 1), (3, 3)):
+            q, k, v = tensor(2, hq, 2, 3), tensor(2, hkv, 4, 3), tensor(2, hkv, 4, 3)
+            result = grouped_query_attention(q, k, v)
+            for b in range(2):
+                for h in range(hq):
+                    kv = h // (hq // hkv)
+                    for t in range(2):
+                        logits = [math.fsum(a * z for a, z in zip(q[b][h][t], row)) / math.sqrt(3) for row in k[b][kv]]
+                        weights = [math.exp(z - max(logits)) for z in logits]
+                        weights = [z / math.fsum(weights) for z in weights]
+                        expected = [math.fsum(w * row[d] for w, row in zip(weights, v[b][kv])) for d in range(3)]
+                        for actual, target in zip(result[b][h][t], expected):
+                            self.assertAlmostEqual(actual, target)
+
+    def test_gqa_mask_offset_and_input_contract(self):
+        q = [[[[1.], [1.]], [[1.], [1.]]]]
+        k = [[[[0.], [1.], [2.]]]]
+        v = [[[[3.], [4.], [100.]]]]
+        mask = [[True, False, False], [False, True, False]]
+        self.assertEqual(grouped_query_attention(q, k, v, mask), [[[[3.], [4.]], [[3.], [4.]]]])
+        masks = [[mask, mask[::-1]]]
+        self.assertEqual(grouped_query_attention(q, k, v, masks), [[[[3.], [4.]], [[4.], [3.]]]])
+        causal = grouped_query_attention(q, k, v, causal=True, query_offset=1)
+        shifted = grouped_query_attention(q, k, [[[[3.], [4.], [10000.]]]], causal=True, query_offset=1)
+        self.assertEqual(causal[0][0][0], shifted[0][0][0])
+        self.assertNotEqual(causal[0][0][1], shifted[0][0][1])
+        for bad in ([[False] * 3] * 2, [[1, 0, 0]] * 2, [[True]]):
+            with self.assertRaises(ValueError):
+                grouped_query_attention(q, k, v, bad)
+        with self.assertRaises(ValueError):
+            grouped_query_attention(q + q, k, v)
+        with self.assertRaises(ValueError):
+            grouped_query_attention(q, k * 2, v * 2)
+
+    def test_two_transaction_stock_profit_against_all_ordered_pairs(self):
+        def brute(prices):
+            n = len(prices)
+            trades = [(i, j, prices[j] - prices[i]) for i in range(n) for j in range(i + 1, n)]
+            return max([0] + [profit for _, _, profit in trades] +
+                       [p1 + p2 for _, sell, p1 in trades for buy, _, p2 in trades if sell < buy])
+        for prices, expected in (([], 0), ([8], 0), ([7, 6, 4, 3, 1], 0),
+                                 ([3, 3, 5, 0, 0, 3, 1, 4], 6), ([1, 2, 3, 4, 5], 4),
+                                 ([-3, -1, -4, 2], 8)):
+            self.assertEqual(max_stock_profit_two_transactions(prices), expected)
+        rng = random.Random(32)
+        for _ in range(300):
+            prices = [rng.randrange(-5, 20) for _ in range(rng.randrange(10))]
+            original = prices.copy()
+            self.assertEqual(max_stock_profit_two_transactions(prices), brute(prices))
+            self.assertEqual(max_stock_profit_two_transactions(iter(prices)), brute(prices))
+            self.assertEqual(prices, original)
+        with self.assertRaises(ValueError):
+            max_stock_profit_two_transactions([1, math.nan])
+
+    def test_variation_keep_indices_budget_stability_and_independent_scores(self):
+        previous = [[0., 0.]] * 6
+        current = [[99., 99.], [3., 4.], [0., 8.], [5., 0.], [4., 3.], [-9., -9.]]
+        mask = [False, True, True, True, True, False]
+        self.assertEqual(variation_keep_indices(previous, current, mask, 2), [0, 1, 2, 5])
+        self.assertEqual(variation_keep_indices(previous, current, mask, 0), [0, 5])
+        self.assertEqual(variation_keep_indices(previous, current, mask, 4), list(range(6)))
+        self.assertEqual(variation_keep_indices([], [], [], 0), [])
+        self.assertEqual(variation_keep_indices([[0.]], [[math.nan]], [False], 0), [0])
+        rng = random.Random(33)
+        for _ in range(100):
+            n = rng.randrange(1, 15)
+            before = [[rng.randrange(-5, 6) for _ in range(3)] for _ in range(n)]
+            after = [[rng.randrange(-5, 6) for _ in range(3)] for _ in range(n)]
+            visual = [rng.choice((True, False)) for _ in range(n)]
+            budget = rng.randrange(sum(visual) + 1)
+            ranking = sorted((i for i in range(n) if visual[i]),
+                             key=lambda i: (-sum((a-b)**2 for a,b in zip(after[i], before[i])), i))
+            selected = set(ranking[:budget])
+            expected = [i for i in range(n) if not visual[i] or i in selected]
+            self.assertEqual(variation_keep_indices(before, after, visual, budget), expected)
+
+    def test_variation_multistage_original_positions_and_bad_inputs(self):
+        original_ids = [10, 20, 30, 40, 50, 60]
+        before = [[0.]] * 6
+        after = [[0.], [2.], [8.], [3.], [9.], [0.]]
+        mask = [False, True, True, True, True, False]
+        first = variation_keep_indices(before, after, mask, 3)
+        ids = [original_ids[i] for i in first]
+        next_before = [after[i] for i in first]
+        next_after = [[a[0] + change] for a, change in zip(next_before, [0, 5, 7, 1, 0])]
+        second = variation_keep_indices(next_before, next_after, [mask[i] for i in first], 1)
+        self.assertEqual([ids[i] for i in second], [10, 40, 60])
+        for bad_budget in (-1, 5):
+            with self.assertRaises(ValueError):
+                variation_keep_indices(before, after, mask, bad_budget)
+        with self.assertRaises(TypeError):
+            variation_keep_indices(before, after, mask, True)
+        with self.assertRaises(ValueError):
+            variation_keep_indices([[0.]], [[math.inf]], [True], 0)
+        with self.assertRaises(ValueError):
+            variation_keep_indices(before, after, [1] * 6, 2)
+        with self.assertRaises(ValueError):
+            variation_keep_indices([[0., 1.]], [[2.]], [True], 1)
+
+    def test_float_sqrt_against_math_extreme_scales_and_random_values(self):
+        import sys
+        cases = [0., 1., 2., 4., 0.01, 1e-300, 1e300, sys.float_info.max,
+                 sys.float_info.min, math.ulp(0.0), 3 * math.ulp(0.0)]
+        rng = random.Random(34)
+        cases += [math.ldexp(rng.uniform(0.5, 1), rng.randrange(-1073, 1024)) for _ in range(400)]
+        for value in cases:
+            result = float_sqrt(value)
+            expected = math.sqrt(value)
+            self.assertTrue(math.isfinite(result))
+            self.assertTrue(math.isclose(result, expected, rel_tol=1.1e-12, abs_tol=0.), (value, result, expected))
+        self.assertLessEqual(abs(float_sqrt(2, abs_tol=1e-4, rel_tol=0) - math.sqrt(2)), 1e-4)
+        self.assertLessEqual(abs(float_sqrt(2, rel_tol=1e-25) - math.sqrt(2)), math.ulp(math.sqrt(2)))
+
+    def test_float_sqrt_validation_and_iteration_limit(self):
+        for value in (-1., math.nan, math.inf, 10**1000):
+            with self.assertRaises(ValueError):
+                float_sqrt(value)
+        for value in (True, '2', 2j):
+            with self.assertRaises(TypeError):
+                float_sqrt(value)
+        for kwargs in ({'rel_tol': -1}, {'rel_tol': math.nan}, {'abs_tol': math.inf},
+                       {'abs_tol': 0, 'rel_tol': 0}, {'max_iterations': 0}):
+            with self.assertRaises(ValueError):
+                float_sqrt(2., **kwargs)
+        with self.assertRaises(RuntimeError):
+            float_sqrt(2, max_iterations=1)
+
+    def test_longest_matrix_path_against_exhaustive_small_dfs(self):
+        def brute(matrix):
+            if not matrix or not matrix[0]:
+                return 0
+            rows, columns = len(matrix), len(matrix[0])
+            def visit(row, col):
+                candidates = [1]
+                for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    nr, nc = row + dr, col + dc
+                    if 0 <= nr < rows and 0 <= nc < columns and matrix[nr][nc] > matrix[row][col]:
+                        candidates.append(1 + visit(nr, nc))
+                return max(candidates)
+            return max(visit(r, c) for r in range(rows) for c in range(columns))
+        self.assertEqual(longest_increasing_matrix_path([]), 0)
+        self.assertEqual(longest_increasing_matrix_path([[], []]), 0)
+        self.assertEqual(longest_increasing_matrix_path([[1, 1], [1, 1]]), 1)
+        self.assertEqual(longest_increasing_matrix_path([[9, 9, 4], [6, 6, 8], [2, 1, 1]]), 4)
+        self.assertEqual(longest_increasing_matrix_path([list(range(2000))]), 2000)
+        rng = random.Random(35)
+        for _ in range(250):
+            matrix = [[rng.randrange(-3, 5) for _ in range(rng.randrange(1, 4))]]
+            columns = len(matrix[0])
+            matrix += [[rng.randrange(-3, 5) for _ in range(columns)] for _ in range(rng.randrange(3))]
+            original = [row.copy() for row in matrix]
+            self.assertEqual(longest_increasing_matrix_path(matrix), brute(matrix))
+            self.assertEqual(matrix, original)
+        with self.assertRaises(ValueError):
+            longest_increasing_matrix_path([[1], [2, 3]])
+        with self.assertRaises(ValueError):
+            longest_increasing_matrix_path([[math.nan]])
+
+
+    def test_moe_router_closed_form_normalization_and_stable_ties(self):
+        row = [math.log(value) for value in (1, 2, 4, 8)]
+        for offset in (0., 1000.):
+            indices, weights = moe_top_k_router([[value + offset for value in row]], 2)
+            self.assertEqual(indices, [[3, 2]])
+            for actual, expected in zip(weights[0], (2 / 3, 1 / 3)):
+                self.assertAlmostEqual(actual, expected)
+        indices, weights = moe_top_k_router([row], 2, renormalize=False)
+        for actual, expected in zip(weights[0], (8 / 15, 4 / 15)):
+            self.assertAlmostEqual(actual, expected)
+        self.assertLess(sum(weights[0]), 1.)
+        self.assertEqual(moe_top_k_router([[0., 0., 0.]], 2), ([[0, 1]], [[0.5, 0.5]]))
+        self.assertEqual(moe_top_k_router([[5., -10.]], 1)[1], [[1.]])
+        rng = random.Random(39)
+        for _ in range(100):
+            row = [rng.randrange(-5, 6) for _ in range(rng.randrange(1, 10))]
+            k = rng.randrange(1, len(row) + 1)
+            expected = sorted(range(len(row)), key=lambda e: (-row[e], e))[:k]
+            actual, weights = moe_top_k_router([row], k)
+            self.assertEqual(actual[0], expected)
+            exp_values = [math.exp(row[e]) for e in expected]
+            for weight, value in zip(weights[0], exp_values):
+                self.assertAlmostEqual(weight, value / sum(exp_values))
+
+    def test_moe_router_invalid_k_nonfinite_and_shapes(self):
+        for k in (0, -1, 3, True, 1.5):
+            with self.assertRaises(ValueError):
+                moe_top_k_router([[0., 1.]], k)
+        for bad in ([], [[]], [[1.], [2., 3.]], [[math.inf]], [[math.nan]]):
+            with self.assertRaises(ValueError):
+                moe_top_k_router(bad, 1)
+        with self.assertRaises(TypeError):
+            moe_top_k_router([[0., 1.]], 1, renormalize=1)
+
+
+    def test_layernorm_population_variance_epsilon_affine_and_leading_dims(self):
+        x = [[1., 3.], [4., 4.]]
+        actual = layer_norm_last_dim(x, gamma=[2., 3.], beta=[0.5, -0.25], epsilon=1.)
+        expected = [[0.5 - math.sqrt(2), -0.25 + 3 / math.sqrt(2)], [0.5, -0.25]]
+        for row, target in zip(actual, expected):
+            for value, goal in zip(row, target):
+                self.assertAlmostEqual(value, goal)
+        self.assertEqual(layer_norm_last_dim([[[2., 2.]], [[-3., -3.]]], beta=[3., 5.]),
+                         [[[3., 5.]], [[3., 5.]]])
+        self.assertEqual(layer_norm_last_dim([8.]), [0.])
+        from statistics import mean, pvariance
+        rng = random.Random(40)
+        for _ in range(100):
+            row = [rng.uniform(-5, 5) for _ in range(rng.randrange(1, 10))]
+            expected = [(value - mean(row)) / math.sqrt(pvariance(row) + 0.1) for value in row]
+            for value, goal in zip(layer_norm_last_dim(row, epsilon=0.1), expected):
+                self.assertAlmostEqual(value, goal)
+            for value, shifted in zip(layer_norm_last_dim(row, epsilon=0.1),
+                                      layer_norm_last_dim([v + 1000 for v in row], epsilon=0.1)):
+                self.assertAlmostEqual(value, shifted)
+
+    def test_layernorm_invalid_shape_statistics_and_parameters(self):
+        for x in ([], [[]], [[1], [2, 3]], [[math.nan]]):
+            with self.assertRaises(ValueError):
+                layer_norm_last_dim(x)
+        for kwargs in ({'epsilon': 0}, {'epsilon': math.inf}, {'gamma': [1.]},
+                       {'beta': [0., math.nan]}):
+            with self.assertRaises(ValueError):
+                layer_norm_last_dim([1., 3.], **kwargs)
+        with self.assertRaises(ValueError):
+            layer_norm_last_dim([1e308, -1e308])
+
 
 if __name__ == "__main__":
     unittest.main()

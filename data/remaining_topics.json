@@ -380,9 +380,18 @@
         "WD26-SWITCH",
         "WD26-STMOE"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "MoE 路由、训练与压缩"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        }
+      ],
+      "editorial": false,
+      "topic": "MoE 路由、训练与压缩",
+      "company_tags": [
+        "阿里巴巴"
+      ]
     },
     {
       "id": "ARC-015",

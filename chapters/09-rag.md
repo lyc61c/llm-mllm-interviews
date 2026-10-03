@@ -16,6 +16,7 @@
   - [RAG-006 · 混合检索的分数融合与 RRF 有什么区别？](#rag-006)
   - [RAG-007 · reranker 和 embedding 检索模型如何分工？](#rag-007)
   - [RAG-019 · 怎样训练 embedding/retriever，hard negatives、ICT、SEED 与 REALM 分别解决什么？](#rag-019)
+  - [RAG-020 · 多向量检索怎样训练和打分，ColBERT 与 ColPali 有何区别？](#rag-020)
 - [查询优化与图检索](#topic-3)
   - [RAG-009 · query rewrite、multi-query 和 HyDE 何时有用？](#rag-009)
   - [RAG-010 · Self-RAG 和多跳检索怎样改善复杂问答？](#rag-010)
@@ -151,7 +152,7 @@ M_{\mathrm{PQ\ codes}}\approx N\frac{Mb}{8}\ \mathrm{bytes},\qquad \mathrm{probe
 <a id="rag-004"></a>
 ### RAG-004 · embedding 模型与相似度应如何选？
 
-**L2**
+**L2** · 阿里巴巴
 
 #### 答案
 
@@ -233,7 +234,7 @@ Embedding 检索用独立表示快速缩小候选范围；cross-encoder 将问�
 <a id="rag-019"></a>
 ### RAG-019 · 怎样训练 embedding/retriever，hard negatives、ICT、SEED 与 REALM 分别解决什么？
 
-**L3**
+**L3** · 阿里巴巴
 
 #### 答案
 
@@ -243,6 +244,10 @@ ANCE使用来自动态ANN索引的困难负例，缓解训练样本与检索阶�
 
 弱监督预训练中，ICT用句子与其上下文构造检索任务；SEED-Encoder借助较弱decoder形成瓶颈，促使encoder学习有用的全局表示；REALM把潜在文档检索纳入语言模型预训练，按检索文档条件化目标。这些方法改变训练任务或检索/语言目标耦合，不是换一个向量数据库。更换encoder后需同步索引，迭代采负例时关注索引滞后。
 
+实际训练先定义相关性：正例可来自人工 query/证据标注或经核验的文本配对，不能把同主题但无法回答问题的段落都当正例。In-batch negatives把其他样本的文档当候选负例，需依据文档ID、近重复及多正例标签排除假负例；hard negatives应与随机负例适当混合，并抽查高分误标。普通梯度累积不会自动让不同micro-batch的文档相互成为负例，扩大负例池需要显式联合打分、跨卡收集或梯度缓存。
+
+多任务embedding可先做弱监督文本对比预训练，再混合检索、NLI等高质量标注，并用reranker软分数蒸馏；采样比例、模板和目标要按任务验证，STS高分不等于检索高分。压缩需分清模型蒸馏、向量降维与索引量化：Matryoshka显式训练多个前缀维度，用于cosine或单位范数L2检索时，截断后按该维度重新归一化；任意embedding直接切前若干维没有质量保证。同步query/索引变换，并在压缩后的真实索引上测召回、排序、延迟及存储，不能只比较训练loss。
+
 ```math
 \mathcal L_{\mathrm{retriever}}=-\log\frac{\exp(s(q,d^+)/\tau)}{\exp(s(q,d^+)/\tau)+\sum_{d^-}\exp(s(q,d^-)/\tau)}
 ```
@@ -250,10 +255,46 @@ ANCE使用来自动态ANN索引的困难负例，缓解训练样本与检索阶�
 #### 易错点
 
 - 业务未标注为正例的文档不一定是真负例；盲目增加hard negatives可能损害召回。
+- 更难的负例不保证更正确；同文档、多答案或近重复内容需先排除假负例。
+- 把普通梯度累积当作自动扩大in-batch负例池，或未训练/验证就任意截断embedding维度。
 
 #### 追问
 
 - 检索模型只在旧索引上挖负例，为什么训练可能越来越不贴近线上？
+- 同一query有多个有效证据，怎样构造positive mask并防止互为负例？
+- 如何在相同数据和候选池下比较单任务训练、多任务训练与维度压缩？
+
+<a id="rag-020"></a>
+### RAG-020 · 多向量检索怎样训练和打分，ColBERT 与 ColPali 有何区别？
+
+**L3** · 阿里巴巴
+
+#### 答案
+
+单向量双塔把整段文本池化成一个向量，多向量检索保留多个上下文化 token 或视觉 patch 向量。Query 和文档分别编码，文档可离线建库；在线通过 late interaction 做细粒度匹配，介于单向量内积与每对 query/document 都联合编码的 cross-encoder 之间。不能把一份文档复制出多个相同向量就称为有效多向量模型。
+
+ColBERT 用带 query/document 标记的 BERT 编码文本，再投影并逐向量 L2 归一化。每个 query 向量找文档中最相似向量，随后沿 query 求和，即 MaxSim。匹配是非对称的，同一文档向量可以匹配多个 query token，不是双向平均或一一分配。ColPali 将文档页作为图像输入 PaliGemma，把最后层的图像/文本 token 表示投影到低维空间，与文字 query 做相同 late interaction，保留版面、图表与文字线索；它是检索模型，不直接生成答案。
+
+训练使用 query 与相关/不相关文档。原始 ColBERT 用正负对的 softmax 交叉熵；原始 ColPali 对每个 query 取 batch 内最高分负例，与正例做 pairwise softplus，下式给出其形式。两项 softmax 交叉熵等于 softplus(s_minus−s_plus)，这里主要差别是负例组织与选择。ColPali 原论文主要更新语言层 LoRA 和新投影，并非所有视觉参数都更新。MaxSim 在唯一最大值处可回传梯度，数据仍需过滤假负例和跨文档泄漏；B 指参与联合打分的候选池大小；单卡 micro-batch 为1但跨卡收集到合法负例仍可训练。B=1 且没有额外负例时，不能定义最难 batch 负例。
+
+多向量提高细粒度匹配能力，也增加索引、搬运和打分开销。单对朴素打分为 O(Lq·Ld·D)，存储随文档向量数与维度增长；大库应采用候选剪枝或适配 late interaction 的索引。低维投影、残差量化或 token pooling 可节约成本，但可能丢失小字/表格细节，需比较 Recall、MRR、nDCG、P95 延迟和索引体积。MaxSim 热图可检查模型匹配位置，不能当作定位真值或因果解释。
+
+```math
+\begin{aligned}S(q,d)&=\sum_{i=1}^{L_q}\max_{1\le j\le L_d}q_i^\top d_j,\qquad \|q_i\|_2=\|d_j\|_2=1\\ s_k^+&=S(q_k,d_k),\qquad s_k^-=\max_{l\ne k}S(q_k,d_l)\\ \mathcal L_{\mathrm{ColPali}}&=\frac1B\sum_{k=1}^{B}\log\left(1+\exp(s_k^--s_k^+)\right)\end{aligned}
+```
+
+#### 易错点
+
+- 普通padding不能参与MaxSim；ColBERT/ColPali的有效query augmentation tokens并非需要自动丢弃的padding。
+- 将全部batch负例的InfoNCE称为原始ColPali论文的训练损失；原论文此处使用最高分in-batch负例的pairwise目标。
+- 独立编码/离线索引不代表任意ANN单向量库天然支持sum-MaxSim；量化或池化后也不保证排序不变。
+- 只有一个query-page对且无额外负例时，batch内max负分集合为空，必须补合法负例或调整训练配置。
+
+#### 追问
+
+- MaxSim为什么能反传，最大值并列时梯度由什么约定决定？
+- 原始页图匹配正确但答案读错表格，属于检索还是生成问题？
+- 怎样证明token pooling的收益没有以漏检小字或关键单元格为代价？
 
 <a id="topic-3"></a>
 ## 查询优化与图检索
@@ -325,7 +366,7 @@ Microsoft GraphRAG先抽取图结构并生成社区报告。Local Search围绕�
 <a id="rag-011"></a>
 ### RAG-011 · RAG 如何建立分层评测并定位 bad case？
 
-**L2**
+**L2** · 阿里巴巴
 
 #### 答案
 
@@ -335,17 +376,21 @@ RAG 评测应依次检查检索是否覆盖证据、上下文是否相关，以�
 
 对每个query，MRR取第一个相关结果的倒数排名再平均，未命中记0；AP在每个二值相关命中位置计算Precision并按相关文档总数R_q归一，MAP对query平均。nDCG用等级相关性g_i的gain与位置折扣，再除以同一截断k的理想排序IDCG；下面使用2的g_i次方减1，也有直接用g_i的约定，需固定。R_q=0或IDCG=0时须预先规定剔除或记0，避免除零；AP@k的分母同样应声明。缺失标注可能把真实相关结果算负例，检索相关性也不等于答案证据支持。
 
+Recall@k通常指每个query的相关文档集合被Top-k覆盖的比例，再按query平均；Hit/Success@k只判断至少命中一个，两者在多相关文档时不同。固定文档/页/片段粒度、去重与qrels版本，不能把多个同文档块重复算命中。MTEB的STS等任务与retrieval应分别看；原MTEB检索协议以nDCG@10为主，ColPali原论文的ViDoRe页图检索以nDCG@5为主。对业务还要测域外/新文档、图表小字和延迟，保持相同候选库、ANN预算与重排条件，不能跨协议直接比榜单数字。公式中花体 R_q、T_{q,k} 分别为相关集合与Top-k去重结果集合，AP中的标量 R_q 是相关文档数量。
+
 ```math
-\begin{aligned}\mathrm{MRR}&=\frac1Q\sum_q\frac1{\mathrm{rank}_q^{\mathrm{first}}},\quad \text{无命中记 }0\\ \mathrm{AP}(q)&=\frac1{R_q}\sum_{i=1}^{N}\mathrm{Precision@}i\cdot\mathrm{rel}_{q,i}\\ \mathrm{MAP}&=\frac1Q\sum_q\mathrm{AP}(q)\\ \mathrm{DCG@}k&=\sum_{i=1}^k\frac{2^{g_i}-1}{\log_2(i+1)},\quad \mathrm{nDCG@}k=\frac{\mathrm{DCG@}k}{\mathrm{IDCG@}k}\end{aligned}
+\begin{aligned}\mathrm{Recall@}k(q)&=\frac{|\mathcal R_q\cap\mathcal T_{q,k}|}{|\mathcal R_q|},\quad |\mathcal R_q|\gt 0\\ \mathrm{MRR}&=\frac1Q\sum_q\frac1{\mathrm{rank}_q^{\mathrm{first}}},\quad \text{无命中记 }0\\ \mathrm{AP}(q)&=\frac1{R_q}\sum_{i=1}^{N}\mathrm{Precision@}i\cdot\mathrm{rel}_{q,i}\\ \mathrm{MAP}&=\frac1Q\sum_q\mathrm{AP}(q)\\ \mathrm{DCG@}k&=\sum_{i=1}^k\frac{2^{g_i}-1}{\log_2(i+1)},\quad \mathrm{nDCG@}k=\frac{\mathrm{DCG@}k}{\mathrm{IDCG@}k}\end{aligned}
 ```
 
 #### 易错点
 
 - judge 分数和自动 reference-free 指标都有误差，不是无成本真值。
+- 单相关标注下Hit@k与Recall@k可能相同，多相关时不能互换；未标注相关不等于真负。
 
 #### 追问
 
 - 召回提升但答案质量不变，应做哪些消融？
+- 召回单位是文档、页还是chunk时，怎样避免重复命中造成虚高？
 
 <a id="rag-012"></a>
 ### RAG-012 · RAG 为什么仍会幻觉，怎样设计引用与拒答？
@@ -469,6 +514,8 @@ DSPy强调用声明的程序/模块与指标优化提示、示例或模型权重
 - [Active Retrieval Augmented Generation](https://arxiv.org/abs/2305.06983)
 - [Ragas](https://arxiv.org/abs/2309.15217)
 - [Introduction to Information Retrieval: Evaluation of ranked retrieval results](https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-ranked-retrieval-results-1.html)
+- [ColPali: Efficient Document Retrieval with Vision Language Models](https://arxiv.org/html/2407.01449)
+- [MTEB: Massive Text Embedding Benchmark](https://arxiv.org/html/2210.07316)
 - [FActScore](https://arxiv.org/abs/2305.14251)
 - [Document-Level Access Control — Azure AI Search](https://learn.microsoft.com/en-us/azure/search/search-document-level-access-overview)
 - [Lost in the Middle](https://arxiv.org/abs/2307.03172)
@@ -484,3 +531,8 @@ DSPy强调用声明的程序/模块与指标优化提示、示例或模型权重
 - [Latent Retrieval for Weakly Supervised Open Domain Question Answering](https://arxiv.org/abs/1906.00300)
 - [Less is More: Pre-train a Strong Text Encoder for Dense Retrieval Using a Weak Decoder](https://arxiv.org/abs/2102.09206)
 - [REALM: Retrieval-Augmented Language Model Pre-Training](https://arxiv.org/abs/2002.08909)
+- [Text Embeddings by Weakly-Supervised Contrastive Pre-training](https://arxiv.org/html/2212.03533)
+- [Matryoshka Representation Learning](https://arxiv.org/html/2205.13147v4)
+- [ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT](https://arxiv.org/html/2004.12832)
+- [ColBERTv2: Effective and Efficient Retrieval via Lightweight Late Interaction](https://arxiv.org/html/2112.01488)
+- [ColPali official model implementation](https://github.com/illuin-tech/colpali/blob/main/colpali_engine/models/paligemma/colpali/modeling_colpali.py)

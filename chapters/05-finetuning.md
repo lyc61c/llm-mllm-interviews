@@ -120,7 +120,7 @@ Chat template 将角色与消息转成模型训练过的 token 序列，错配�
 <a id="ft-010"></a>
 ### FT-010 · SFT 数据量越大越好吗，怎样构建高质量指令集？
 
-**L2** · 字节跳动
+**L2** · 字节跳动 / 阿里巴巴 / 深势科技
 
 #### 答案
 
@@ -221,7 +221,7 @@ Packing 把多个短样本装入一条训练行，减少 padding。先应用 cha
 <a id="ft-004"></a>
 ### FT-004 · 全参数微调、LoRA、Adapter 和 Prefix-Tuning 怎样选择？
 
-**L1**
+**L1** · 深势科技
 
 #### 答案
 
@@ -242,7 +242,7 @@ LoRA 给线性层加低秩更新，合适时可合并回权重；Adapter 加任�
 <a id="ft-005"></a>
 ### FT-005 · LoRA 的低秩更新公式及可训练参数量是什么？
 
-**L1** · 腾讯
+**L1** · 腾讯 / 百度
 
 #### 答案
 
@@ -278,7 +278,7 @@ LoRA 冻结 $`W_0\in\mathbb R^{d_{\rm out}\times d_{\rm in}}`$，学习 $`\Delta
 <a id="ft-006"></a>
 ### FT-006 · LoRA 怎样初始化，r、alpha 与 dropout 各控制什么？
 
-**L2** · 腾讯
+**L2** · 腾讯 / 快手 / 百度
 
 #### 答案
 
@@ -307,7 +307,7 @@ PEFT普通Linear的默认调用是 `kaiming_uniform_(A, a=sqrt(5))`，配合默�
 <a id="ft-007"></a>
 ### FT-007 · LoRA 的 rank、alpha、dropout 和 target_modules 应怎么调？
 
-**L2**
+**L2** · 快手 / 百度 / 深势科技
 
 #### 答案
 
@@ -316,6 +316,8 @@ LoRA 调参需要一起考虑更新容量、分支尺度、正则与适配位置
 标准缩放为 $`s=\alpha/r`$，`use_rslora=True` 为 $`\alpha/\sqrt r`$。固定 alpha 增大 rank 会减小标准分支尺度，固定 alpha/r 也不能保证优化轨迹相同，因此可在同一缩放家族内分别消融容量与尺度。普通 Linear 分支是 $`sBA\mathrm{Dropout}(x)`$，它不删除底座权重，eval 时关闭；小数据可检查正则收益，过大 dropout 也会欠拟合，且它与全模型 attention/hidden dropout 配置不同。
 
 `target_modules` 决定更新位置，可比较 attention 投影、MLP 或 `all-linear`，并核对输出层排除、embedding/LM head 保存及额外 trainable bias。常见 Q/V 实验不意味着 LoRA 只支持 Q/V。记录 PEFT 版本、初始化、缩放变体、优化器和成本；库默认不是数据相关实验中的最优值。
+
+LoRA主要减少可训练权重、梯度、优化器状态及相关通信，不会跳过底座的前向计算；为把梯度传到更早的可训练分支，通常还要计算冻结层的输入梯度并保存或重算必要激活。相比全参可能减少权重梯度计算，但新增低秩矩阵乘法、算子调度、量化解码和小batch利用率也影响耗时，因此不能按可训练参数比例推算加速倍数。应在同卡型、精度、有效batch、序列/帧数及checkpoint配置下实测有效tokens/s、step延迟和峰值显存，区分训练吞吐与合并权重后的推理延迟。
 
 ```math
 \begin{aligned}h&=W_0x+sBA\mathrm{Dropout}(x)\\N_{\rm train}&\approx r(d_{\rm in}+d_{\rm out})\\s_{\rm standard}&=\alpha/r,\quad s_{\rm rsLoRA}=\alpha/\sqrt r\end{aligned}
@@ -633,7 +635,7 @@ SFT loss 降低只表示更贴合训练目标，不能证明事实性或真实�
 <a id="ft-022"></a>
 ### FT-022 · 知识蒸馏中的 logits、隐藏层和生成答案监督各有什么作用？
 
-**L2** · 字节跳动
+**L2** · 字节跳动 / 深势科技
 
 #### 答案
 
@@ -785,6 +787,7 @@ SFT通常对给定答案做交叉熵，适合建立新知识、格式与任务�
 - [PEFT official implementation: LoRA layer](https://raw.githubusercontent.com/huggingface/peft/main/src/peft/tuners/lora/layer.py)
 - [PEFT LoRA Linear 初始化官方实现](https://github.com/huggingface/peft/blob/main/src/peft/tuners/lora/layer.py)
 - [QLoRA: Efficient Finetuning of Quantized LLMs](https://arxiv.org/pdf/2305.14314)
+- [LoRA](https://arxiv.org/abs/2106.09685)
 - [PEFT: Prompt tuning](https://huggingface.co/docs/peft/main/en/package_reference/prompt_tuning)
 - [Self-Instruct: Aligning Language Models with Self-Generated Instructions](https://arxiv.org/abs/2212.10560)
 - [Continual Learning Through Synaptic Intelligence](https://arxiv.org/abs/1703.04200)

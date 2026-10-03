@@ -27,8 +27,9 @@
   - [ALN-006 · DPO 的损失如何从 KL 正则化 RLHF 目标推出？](#aln-006)
   - [ALN-007 · DPO 的 β 和参考模型如何理解与调参？](#aln-007)
   - [ALN-009 · 如何把点赞、点踩和日志变成高质量偏好数据？](#aln-009)
-  - [ALN-018 · IPO 等 DPO 变种主要试图解决什么问题？](#aln-018)
+  - [ALN-018 · IPO、KTO 等偏好优化方法与 DPO 有何区别？](#aln-018)
   - [ALN-019 · 离线偏好优化和在线 RL 的分布差异是什么？](#aln-019)
+  - [ALN-042 · 坏数据的 SFT loss 直接取负能代替 RL 吗，与 unlikelihood 有何区别？](#aln-042)
 - [GRPO 与在线优化](#topic-4)
   - [ALN-010 · GRPO 与 PPO 怎样计算优势，reward 和 advantage 有什么区别？](#aln-010)
   - [ALN-011 · GRPO 组内标准差归一化带来哪些问题？](#aln-011)
@@ -42,9 +43,11 @@
   - [ALN-031 · GRPO 不收敛或训练奖励升高但能力退化，怎样排查和调参？](#aln-031)
   - [ALN-032 · 正负样本不对称设计有哪些方式，和 PPO/DAPO 的不对称 clip 有何区别？](#aln-032)
   - [ALN-040 · Flow-GRPO 怎样训练图像生成模型，如何把 ODE 转成保持边缘分布的 SDE？](#aln-040)
+  - [ALN-041 · RLOO 如何计算 leave-one-out 基线，与 GRPO、PPO 有什么区别？](#aln-041)
+  - [ALN-043 · 分类任务只用 SFT 是否够，GRPO 的收益与代价应怎样判断？](#aln-043)
 - [奖励与对齐策略](#topic-5)
   - [ALN-002 · 奖励模型如何用成对偏好训练？](#aln-002)
-  - [ALN-015 · 如何识别和缓解 reward hacking？](#aln-015)
+  - [ALN-015 · 如何识别和缓解 reward hacking，RM 业务判别准确率 100% 还会发生吗？](#aln-015)
   - [ALN-016 · 后训练为什么会出现对齐税或遗忘？](#aln-016)
   - [ALN-017 · RLAIF 和 Constitutional AI 如何工作？](#aln-017)
   - [ALN-020 · 多目标奖励发生冲突时如何处理？](#aln-020)
@@ -309,23 +312,27 @@ Agent SFT相当于示范轨迹上的行为学习；数据应包含工具选择�
 <a id="aln-001"></a>
 ### ALN-001 · SFT、RLHF 与 DPO 分别解决什么问题？
 
-**L1** · 字节跳动
+**L1** · 字节跳动 / 阶跃星辰 / 美团 / 阿里巴巴
 
 #### 答案
 
-SFT 用优质示范教模型按指令完成任务，通常最小化目标回答的负对数似然；它主要提供行为和任务示范。典型 RLHF 在 SFT 后用偏好数据训练奖励模型，再通过强化学习优化策略，也可以迭代或混合不同阶段。
+SFT用优质示范拟合指令到回答，通常最小化有效assistant回答token的负对数似然。它教模型如何完成任务，安全、诚实和推理也可通过示范学习，不能说SFT只学知识、RL只学推理。
 
-DPO 直接用同一问题的偏好回答对更新策略，省去独立奖励模型拟合和在线 RL 更新，但仍通过目标函数表达偏好对应的奖励关系。三者都依赖数据质量；选型应结合任务、数据和评测，不能凭单个失败案例判断算法优劣。
+SFT后再做RL，是希望在当前策略生成的候选或真实交互轨迹上，用完整回答质量、可验证成功或环境回报选择更好的行为，而不只是模仿固定示范。结果容易评分、正确完整轨迹难以大量编写时，这种反馈有价值；SFT的teacher-forcing前缀和模型真实生成的前缀也可能不同。但RL不会凭空补齐完全缺失的任务知识，奖励弱或错配时反而可能退化。
 
-经典流程先用示范做SFT，再以同prompt回答的成对偏好训练RM，最后用PPO等采样并优化策略。Actor/Critic训练，Reference/RM在RL阶段通常冻结；新一轮rollout刷新old policy，Reference保持行为锚点。SFT解决示范拟合，偏好优化表达相对质量，两者互补，SFT也不是天然无法学习安全与诚实。
+经典RLHF先收集同prompt回答偏好并训练RM，再用PPO等更新从SFT初始化的Actor。Actor/Critic训练，Reference/RM在RL阶段通常冻结；old policy是本轮rollout快照，reference是行为锚点，四个逻辑角色不必是四套独立大模型。RL也可用可验证规则而非学习RM，并可与示范阶段迭代或混合。
+
+DPO用同prompt的偏好回答对直接更新策略，省去独立RM拟合和在线RL循环，通过reference log-ratio表达相对偏好。若任务已有高质量示范且SFT达到目标，不必为了流程完整而加RL；有可靠离线偏好可比较DPO/KTO；有值得探索的行为和可验奖励才比较在线RL。用相同预算的SFT、偏好优化、RL对照，检查独立质量、泛化与成本，不能由一个bad case推断某算法必需。
 
 #### 易错点
 
-- 不要说 SFT 只学知识、RL 只学推理；数据与任务同样重要。
+- SFT后RL是常见配方，不是所有任务和所有模型的必要条件。
+- “好样本SFT、坏样本loss取负”不等价于完整策略分布上的RL，需另看负CE目标和信用分配。
 
 #### 追问
 
-- 同一 bad case 何时补 SFT 示范，何时补偏好对？
+- 同一bad case何时补SFT示范，何时补偏好对，何时采样做RL？
+- 奖励只识别格式时，SFT后RL可能优化出什么错误行为？
 
 <a id="aln-003"></a>
 ### ALN-003 · PPO 的概率比、clip 和 min 分别起什么作用？
@@ -418,7 +425,7 @@ RLHF 的参考策略 KL 惩罚用于约束模型相对行为锚点的漂移，�
 <a id="aln-025"></a>
 ### ALN-025 · RLHF-PPO 的四模型完整流程是什么？Critic 的 V_target 从哪里来？
 
-**L2** · 字节跳动
+**L2** · 字节跳动 / 阿里巴巴 / 阶跃星辰
 
 #### 答案
 
@@ -534,23 +541,36 @@ M_{\mathrm{peak}}\approx\max_{\mathrm{phase}}\big(M_{\mathrm{train\ states}}+M_{
 - AI 评分生成偏好时怎样估计标注噪声？
 
 <a id="aln-018"></a>
-### ALN-018 · IPO 等 DPO 变种主要试图解决什么问题？
+### ALN-018 · IPO、KTO 等偏好优化方法与 DPO 有何区别？
 
-**L3**
+**L3** · 阶跃星辰
 
 #### 答案
 
-DPO 变种主要调整偏好概率映射、正则化或数据使用方式。IPO 从更一般的成对偏好目标出发，讨论将偏好映射为标量奖励等假设；人类偏好可能非传递，未必能由单一标量奖励精确表达，因此应先说明建模假设和待解决的过拟合问题，再解释损失。
+先按数据和目标区分。DPO通常需要同prompt的chosen/rejected成对偏好，优化两条响应相对reference的log-prob差，经log-sigmoid拟合偏好；它省去独立RM和在线RL循环，但仍依赖参考策略、候选覆盖和偏好建模假设。
 
-算法名称不能证明效果更好。比较时应控制偏好噪声、候选覆盖、参考模型和训练预算，在相同评测中联合观察胜率、KL、回答长度与正确率，并核对改动是否适用于当前数据条件。
+IPO从更一般的成对偏好目标出发，用identity preference mapping讨论DPO在有限、近确定偏好下的过拟合与正则化问题。偏好未必能由单一标量奖励精确表达，不能把IPO概括为“DPO再加SFT loss”，也不能凭算法名字宣称普遍更好。
+
+KTO可以使用单条(prompt,response,desirable/undesirable)标签，不要求每条都有同prompt的另一候选。它把策略相对reference的序列log-ratio作为隐式奖励坐标，与KL形式的参考点比较，用sigmoid效用及正负权重控制更新。好样本的loss鼓励坐标高于参考点，坏样本相反；不是对坏样本CE乘−1。原论文实践中通过错配prompt/response构造共享参考点估计、截为非负并stop-gradient，这个估计不是精确真实KL。
+
+KTO的β控制效用曲线饱和，λ_D、λ_U和类别数量共同决定有效正负贡献，不能脱离标签比例断言坏样本权重必须更大。把成对数据直接拆成好/坏标签会改变语义：两条都不好时chosen只是相对更好，不一定适合作绝对好标签。已有可靠成对比较可用DPO/IPO；自然收集的点赞/点踩单条日志可考虑KTO，但需纠正曝光、prompt难度与标注偏差。
+
+比较时控制参考模型、数据量、长度和训练预算，同时观察独立胜率、正确率、KL、拒绝率和泛化。三者都是偏好优化方法；不应强称KTO是保持DPO目标不变的实现变体，或从论文中某些实验结果推出全部业务中KTO优于DPO。
+
+```math
+\begin{aligned}s_\theta(x,y)&=\log\frac{\pi_\theta(y\mid x)}{\pi_{\mathrm{ref}}(y\mid x)},\quad z=\mathrm{sg}(\hat z_0)\\\ell_{\mathrm{KTO}}(x,y)&=\begin{cases}\lambda_D[1-\sigma(\beta(s_\theta-z))],&y\ \mathrm{desirable}\\\lambda_U[1-\sigma(\beta(z-s_\theta))],&y\ \mathrm{undesirable}\end{cases}\\\mathcal L_{\mathrm{DPO}}&=-\mathbb E\log\sigma\!\left(\beta[s_\theta(x,y_w)-s_\theta(x,y_l)]\right)\end{aligned}
+```
 
 #### 易错点
 
-- 不要把所有 DPO 变种说成只是“加一项 SFT loss”。
+- KTO单条好坏标签与DPO同prompt相对偏好不同，不能无条件互换。
+- KTO的近似KL参考点用于效用比较且detach，并非任意加一项可微KL的同义词。
+- 有效样本贡献取决于标签数量、采样和loss权重，而非只看λ_U/λ_D。
 
 #### 追问
 
-- 若所有标注都绝对偏好同一答案，怎样监测过拟合？
+- 两个候选都错了但一个较好，如何分别为DPO与KTO标注？
+- 点赞数据主要来自简单问题时，怎样避免KTO学习曝光/难度偏差？
 
 <a id="aln-019"></a>
 ### ALN-019 · 离线偏好优化和在线 RL 的分布差异是什么？
@@ -571,35 +591,67 @@ DPO 变种主要调整偏好概率映射、正则化或数据使用方式。IPO 
 
 - 怎样发现离线数据覆盖不足，而非优化器没收敛？
 
+<a id="aln-042"></a>
+### ALN-042 · 坏数据的 SFT loss 直接取负能代替 RL 吗，与 unlikelihood 有何区别？
+
+**L2** · 阶跃星辰
+
+#### 答案
+
+不能把“好样本最小化CE、坏样本CE乘−1”直接称为RL的等价替代。对坏目标，CE=−log p_bad，取负后最小化的是log p_bad；它确实推动该目标概率下降，但p_bad趋于0时这一负CE项趋于−∞，没有有限下界。混合正样本后某个数据集是否发散还取决于参数共享、冲突和正则，不能据此保证一般训练稳定；梯度裁剪也不会使目标获得下界。
+
+Unlikelihood 使用−log(1−p_bad)，在0≤p_bad<1上非负，坏候选概率趋于0时loss趋于0。对单个bad token的softmax logit，负CE梯度为1−p_bad，unlikelihood梯度为p_bad：前者在坏概率已很小时仍强烈压低，后者逐渐减弱。可将正答案MLE与指定负候选的unlikelihood按正权重结合；负候选应排除正确目标，并按事实错误、重复片段等规则定义，不能把整条被点踩回答里的每个词都认定有害。
+
+多轮训练只在选定assistant响应或精确错误span上施加目标，屏蔽prompt、padding和无需惩罚的工具结果；正负样本采样比例、每样本长度归约和loss权重要分清，权重大小不是标签语义本身。数值上用稳定的log1mexp(log p)计算log(1−p)，按概率精度处理p接近1的情况；随意clamp会改变目标，应说明阈值并监控。
+
+这些仍是由给定数据和负候选约束概率的监督目标。DPO使用同prompt的相对偏好及reference log-ratio，KTO使用单响应好坏标签与相对参考点的效用；在线RL则在策略生成的轨迹上评价奖励，通过优势、采样分布和策略约束更新。一个on-policy负优势在某次更新中可表现为负权重log-prob梯度，但这不让固定坏数据的负CE整体等价于RL。若仅有少量局部明确错误，修订示范或unlikelihood可能足够；有可靠序列/环境反馈且需探索候选时，再比较在线RL与离线偏好优化，并用独立任务指标验收。
+
+```math
+\begin{aligned}\mathcal L_{\mathrm{negCE}}&=\log p_b\longrightarrow-\infty\quad(p_b\to0)\\\mathcal L_{\mathrm{UL}}&=-\log(1-p_b)\ge0,\quad\lim_{p_b\to0}\mathcal L_{\mathrm{UL}}=0\\\frac{\partial\mathcal L_{\mathrm{negCE}}}{\partial z_b}&=1-p_b,\qquad\frac{\partial\mathcal L_{\mathrm{UL}}}{\partial z_b}=p_b\\\mathcal L&=\mathcal L_{\mathrm{MLE}}+\alpha\sum_{t}\sum_{c\in C_t}-\log(1-p_\theta(c\mid x_{\lt t})),\quad\alpha\ge0\end{aligned}
+```
+
+#### 易错点
+
+- unlikelihood有下界但不是有上界；p_bad接近1时其loss发散。
+- 只要给loss乘正负权重就是RL，这一说法忽略采样分布、奖励/优势、reference和轨迹信用分配。
+- 坏回答整体标签不能推出每个token都应被压低，通用词和正确部分也可能受损。
+
+#### 追问
+
+- 一个回答只有最后一个数字错了，你会惩罚哪些位置？
+- 若负例概率已经很小，负CE与unlikelihood为何仍产生不同梯度？
+
 <a id="topic-4"></a>
 ## GRPO 与在线优化
 
 <a id="aln-010"></a>
 ### ALN-010 · GRPO 与 PPO 怎样计算优势，reward 和 advantage 有什么区别？
 
-**L2** · 小红书 / 字节跳动
+**L2** · 小红书 / 字节跳动 / 阶跃星辰 / 阿里巴巴 / 深势科技
 
 #### 答案
 
-Reward是任务给出的评分，advantage是某个动作或响应相对基线的好坏。理论优势为$`A^\pi(s,a)=Q^\pi(s,a)-V^\pi(s)`$，不是直接把奖励改个名字；一个得到正奖励的响应若低于同组均值，GRPO优势仍可为负。
+Reward是任务评分，advantage是动作或响应相对基线的好坏。理论上A(s,a)=Q(s,a)−V(s)；一个响应即使拿到正奖励，低于同组均值时GRPO优势也可为负，组内零均值不代表整个batch绝对质量改善。
 
-常见PPO用critic预测前缀价值，再以逐步奖励、终止信息与value构造TD残差和GAE，因此同一响应的不同token可以有不同优势。结果奖励GRPO则对同一prompt采样G条响应，减组内平均奖励、除组内标准差，以相对优势替代独立critic；一条响应的组内优势通常广播到它的各个有效token。它估计的是组内相对表现，不能把它称为GAE或精确的逐状态Q-V，也不能从最终结果奖励断言各token的因果贡献相同。
+常见PPO让critic预测前缀价值，结合逐步奖励、终止状态与value计算TD残差和GAE，所以同一回答不同token可以有不同优势。结果奖励GRPO对同prompt采样G条回答，减组均值、除组标准差，以组内相对优势代替独立critic，再把每条回答的优势广播到有效生成token。它是样本级反馈，不是GAE，也不能把最终正确性当成每个token的因果贡献；原始GRPO另有过程监督定义，不能概括为永远整条同一优势。
 
-训练时两者都可用新旧策略概率比与clip。GRPO仍需要rollout和奖励器，奖励器可以是可验证规则、奖励模型或环境反馈，具体方案也可能保留reference模型。G=1或组内奖励全部相同没有有效相对信号；epsilon只防止除零。整体显存仍取决于组大小、回答长度、优化器、激活及KV cache，去掉critic不意味着生成与训练成本可以忽略。
+GRPO适合数学验证、代码测试或完整生成结果评分等场景：完整响应有可信奖励，同prompt可采多条且组内有差异，省去critic训练能减一部分显存和拟合复杂度。长期交互、分步奖励和精细信用分配重要时，可比较价值网络/GAE或过程反馈；GRPO也能扩展，但只靠终态sample-level优势不自动解决这些问题。
+
+PPO和GRPO都可使用新旧策略比与clip，仍需rollout和奖励器；奖励器可为规则、RM或环境，reference/KL由方案决定。G=1或组奖励全同没有有效相对信号，epsilon只防除零；增加G有采样、KV、延迟成本。标准差归一会改变各prompt梯度权重，稀疏奖励、假高分与长度偏差需分项日志和独立评测。总资源取决于采样组、回答长度、优化器和激活，不能把去critic直接等同于整体成本降低固定百分比。
 
 ```math
-\begin{aligned}A^\pi(s,a)&=Q^\pi(s,a)-V^\pi(s)\\ \delta_t&=r_t+\gamma V(s_{t+1})-V(s_t),\quad \hat A_t^{\mathrm{PPO}}=\sum_{l\geq0}(\gamma\lambda)^l\delta_{t+l}\\ \hat A_{i,t}^{\mathrm{GRPO}}&=\frac{R_i-\bar R}{\mathrm{std}(R_1,\ldots,R_G)+\epsilon}\quad\mathrm{(outcome\ reward)}\end{aligned}
+\begin{aligned}A^\pi(s,a)&=Q^\pi(s,a)-V^\pi(s)\\\delta_t&=r_t+\gamma V(s_{t+1})-V(s_t),\quad\hat A_t^{\mathrm{PPO}}=\sum_{l\ge0}(\gamma\lambda)^l\delta_{t+l}\\\hat A_{i,t}^{\mathrm{GRPO}}&=\frac{R_i-\bar R}{\mathrm{std}(R_1,\ldots,R_G)+\epsilon}\quad\mathrm{(outcome\ reward)}\end{aligned}
 ```
 
 #### 易错点
 
-- 去掉 critic 不等于没有 baseline，也不等于没有奖励模型。
-- GRPO的零均值优势不代表整个batch平均质量提高；评价能力必须另看原始reward与独立评测。
+- sample-level优势广播到tokens是更新权重，不是每个token导致结果的因果归因。
+- 去critic不等于无baseline、无奖励器或无需rollout；原始GRPO过程监督另有优势构造。
 
 #### 追问
 
-- 如何分离 rollout 显存和训练显存预算？
-- 组内奖励是0.7、0.8、0.9时，0.7的奖励为何为正但优势为负？
+- 组奖励为0.7、0.8、0.9，为何0.7的reward为正但advantage为负？
+- 多轮Agent只有最后是否成功，如何改善sample-level反馈的信用分配？
 
 <a id="aln-011"></a>
 ### ALN-011 · GRPO 组内标准差归一化带来哪些问题？
@@ -642,7 +694,7 @@ Dr. GRPO 讨论移除回答长度和组内标准差归一化，并采用常数�
 <a id="aln-013"></a>
 ### ALN-013 · RLVR 的可验证奖励如何设计？
 
-**L2** · 字节跳动
+**L2** · 字节跳动 / 深势科技
 
 #### 答案
 
@@ -682,7 +734,7 @@ PRM 的步骤边界、可验证性及分数聚合方式会影响结果，模型�
 <a id="aln-027"></a>
 ### ALN-027 · GSPO 与 GRPO 的 importance ratio、clip 和梯度单位有什么区别？
 
-**L3**
+**L3** · 阿里巴巴 / 深势科技
 
 #### 答案
 
@@ -691,6 +743,10 @@ GRPO 使用组内相对奖励作优势，常见实现逐 token 计算新旧策�
 计算时先在有效回答 token 上求新旧 log-prob 差的均值，再指数化；不能先把序列概率直接相乘，否则长回答容易下溢。这个长度归一化比例也不是未经改变的整条轨迹 importance weight，须按论文目标理解。一个响应的 token 梯度共享序列权重，其 clipping 行为与 token 级 GRPO 不同，因此不能直接照搬同样的 epsilon。
 
 论文在特定 Qwen3/MoE 实验中报告稳定性与效率收益；这不保证所有数据、模型与奖励下都优于 GRPO。比较时应固定 rollout 预算、奖励、响应长度和训练算力，并记录 clip fraction、策略漂移和独立能力。
+
+RL训练MoE还要检查路由变化：同一rollout在旧/新策略下可能激活不同专家，导致逐token log-prob与ratio剧烈波动。GSPO论文在其Qwen3实验中指出更新后的专家激活变化，并讨论Routing Replay：缓存旧策略选中专家，在计算当前策略比例时重放该路由，以约束一致的计算路径；这会增加内存/通信并限制路由自由度。GSPO使用序列级比例，在这些实验中无需该策略即可稳定训练，但不能推广成所有MoE或奖励任务的保证。
+
+工程上保存对应参数快照和实际rollout log-prob，核对有效token、概率温度与旧/新策略版本；先用同权重的训推引擎比较概率和路由，排除精度/内核差异，再观察更新后的路由翻转、专家负载、KL和clip比例。训练推理精度不一致与策略更新引起的路由变化是两类问题。序列级目标不能代替负载均衡，也不会消除全专家权重及RL多个模型的显存。
 
 ```math
 \begin{aligned}s_i(\theta)&=\exp\left(\frac{1}{|y_i|}\sum_t\log\frac{\pi_\theta(y_{i,t}\mid x,y_{i,\lt t})}{\pi_{\mathrm{old}}(y_{i,t}\mid x,y_{i,\lt t})}\right)\\ J_{\mathrm{GSPO}}&=\mathbb E\left[\frac1G\sum_i\min(s_i\hat A_i,\mathrm{clip}(s_i,1-\epsilon,1+\epsilon)\hat A_i)\right]\end{aligned}
@@ -703,11 +759,13 @@ GRPO 使用组内相对奖励作优势，常见实现逐 token 计算新旧策�
 #### 追问
 
 - 两个响应某个 token 的 ratio 极端，但序列均值接近1，GSPO与GRPO会怎样不同？
+- RL训练MoE为何需要关注旧/新策略的专家选择？
+- Routing Replay有什么缓存和优化自由度代价，GSPO能否保证所有MoE收敛？
 
 <a id="aln-028"></a>
 ### ALN-028 · DAPO 相比原始 GRPO 改了什么，四个核心设计分别解决什么问题？
 
-**L3**
+**L3** · 阿里巴巴
 
 #### 答案
 
@@ -823,7 +881,7 @@ PPO/DAPO的clip取决于优势符号：正优势只限制过度增加概率，�
 <a id="aln-040"></a>
 ### ALN-040 · Flow-GRPO 怎样训练图像生成模型，如何把 ODE 转成保持边缘分布的 SDE？
 
-**L3** · 小红书
+**L3** · 小红书 / 美团 / 快手
 
 #### 答案
 
@@ -839,6 +897,8 @@ Rectified Flow取$`x_t=(1-t)x_0+t\epsilon`$，这里0是数据、1是噪声，�
 
 训练采样可减少去噪步数，评测仍使用原推理日程，这是denoising reduction；不是直接把训练中的低步数图像质量等同于最终推理质量。检查分组、采样/训练scheduler与CFG一致性、旧策略同权重时ratio接近1，并同时评测任务奖励、画质和多样性，避免奖励涨了却只会制造评分器喜欢的伪图像。
 
+迁移到视频需同时区分视频帧轴与去噪时间轴，并为每条完整视频轨迹定义结果奖励、组ID和有效随机步骤。原Flow-GRPO论文主要验证图像任务，把视频奖励设计、多目标权衡和采样成本列为未来方向；因此不能从图像提升直接担保视频效果。分组与流水调度、视频动作/手部奖励及SFT基线需另行控制实验，固定ODE条件转移也不能直接冒充可计算连续随机密度。
+
 ```math
 \begin{aligned}q_u&=p_{1-u},\quad b_u=-v_{1-u},\quad s_t=\nabla\log p_t\\ \partial_u q_u&=-\nabla\!\cdot[(b_u+\tfrac12\sigma_t^2\nabla\log q_u)q_u]+\tfrac12\sigma_t^2\Delta q_u=-\nabla\!\cdot(b_uq_u)\\ \mu_\theta(x_t,t,h,c)&=x_t-h\left[v_\theta(x_t,t,c)+\frac{\sigma_t^2}{2t}\big(x_t+(1-t)v_\theta(x_t,t,c)\big)\right]\\ x_{t-h}&=\mu_\theta+\sigma_t\sqrt h\,z,\quad z\sim\mathcal N(0,I),\quad h\gt 0\\ \pi_\theta(x_{t-h}\mid x_t,t,c)&=\mathcal N(\mu_\theta,\sigma_t^2hI)\\ \hat A_i&=\frac{R_i-\bar R}{\mathrm{std}(R)+\epsilon},\quad \rho_{i,t}=\exp(\log\pi_\theta-\log\pi_{\mathrm{old}})\\ J&=\mathbb E\left[\frac1G\sum_i\frac1T\sum_t\left(\min(\rho_{i,t}\hat A_i,\mathrm{clip}(\rho_{i,t},1-\eta,1+\eta)\hat A_i)-\beta D_{\mathrm{KL}}(\pi_\theta\Vert\pi_{\mathrm{ref}})\right)\right]\end{aligned}
 ```
@@ -853,13 +913,75 @@ Rectified Flow取$`x_t=(1-t)x_0+t\epsilon`$，这里0是数据、1是噪声，�
 - 若只在部分步加噪声，哪些步能参与概率比更新，和原始全SDE方案有何区别？
 - 把latent维log-prob的mean换成sum，为什么概率比、clip fraction和KL尺度都会改变？
 
+<a id="aln-041"></a>
+### ALN-041 · RLOO 如何计算 leave-one-out 基线，与 GRPO、PPO 有什么区别？
+
+**L2** · 阶跃星辰
+
+#### 答案
+
+RLOO 是 REINFORCE Leave-One-Out。对同一 prompt 用采样策略独立生成 G≥2 条响应，评分得到 R_i，用另外 G−1 条响应的平均奖励作第 i 条的 baseline，优势为本条奖励减这个基线。原论文把整条回答作为动作，响应 log-prob 是有效生成 token 的 log-prob 求和，最小化负的优势乘序列 log-prob；不是把回答概率相乘后直接取浮点数。
+
+以下无偏性分析在 on-policy 更新点 θ=θ_old 上成立。在同 prompt、i.i.d. 采样、奖励/优势 detach 的条件下，其他样本构成的 baseline 不依赖本条采样动作，因此它乘本条 score-function 梯度的期望为零，保留原始策略梯度的期望。若把本样本也纳入均值，未作标准差归一时的组中心化梯度会缩为 (G−1)/G；RLOO 恰好乘 G/(G−1) 修正。此结论不能直接套到跨 prompt 混组、相关采样、筛选 top-k 后的样本或继续除随机组标准差的目标。G=1无定义；所有奖励相同则优势全零。
+
+结果奖励 GRPO 常用(R_i−组均值)/组标准差，也不训练独立 critic，但标准差缩放改变了不同 prompt 的梯度权重，不等于原始无偏 RLOO。PPO 常用价值网络、TD/GAE来估计前缀级优势，适合需要逐步信用分配的轨迹；三者不能仅按有没有 critic 区分全部实现。
+
+当前 TRL main 的 RLOO 文档还支持同一 rollout 的多步更新，用整序列新旧策略概率比与 clip 构造 surrogate，并将采样策略相对 reference 的 log-ratio 惩罚在 no_grad 下并入序列 reward。原论文的 on-policy REINFORCE 与这个实现扩展需分开说明；裁剪后的多步更新不能继续宣称完全无偏。单条 log-ratio Monte Carlo 值可为负，只有正确采样下的期望才对应非负 KL；也不要重复计算 reward 内和显式 loss 中的 KL。
+
+RLOO 适用于能为完整响应提供可靠评分、同 prompt 多次采样可承受且不想训练 critic 的任务。省去 critic 仍有多响应 rollout、奖励器、reference、激活和KV缓存成本；组内缺少奖励差异、奖励噪声与奖励投机仍需独立评测和调参。
+
+```math
+\begin{aligned}y_i&\overset{\mathrm{i.i.d.}}{\sim}\pi_{\mathrm{old}}(\cdot\mid x),\quad G\ge2,\quad\theta=\theta_{\mathrm{old}}\\b_i&=\frac1{G-1}\sum_{j\ne i}R_j,\quad A_i=R_i-b_i=\frac{G}{G-1}(R_i-\bar R)\\\mathcal L_{\mathrm{RF}}&=-\frac1G\sum_i\mathrm{sg}(A_i)\sum_{t\in\mathcal V_i}\log\pi_\theta(y_{i,t}\mid x,y_{i,\lt t})\\\mathbb E[(R_i-\bar R)\nabla_\theta\log\pi_\theta(y_i\mid x)]&=\frac{G-1}{G}\mathbb E[R_i\nabla_\theta\log\pi_\theta(y_i\mid x)]\quad\mathrm{(on\ policy)}\end{aligned}
+```
+
+#### 易错点
+
+- 无偏性针对满足独立采样条件的未裁剪REINFORCE梯度；不能推广到任意同名Trainer、组标准差归一或off-policy多步训练。
+- 同组均值并非leave-one-out均值；G=1不能靠epsilon修复分母G−1。
+- 样本奖励是整序列反馈，广播优势不提供每个token的因果责任。
+
+#### 追问
+
+- RLOO的G=2优势与组均值中心化有何关系？
+- 若只有top-k筛选后的回答参与更新，原来的无偏基线证明还成立吗？
+
+<a id="aln-043"></a>
+### ALN-043 · 分类任务只用 SFT 是否够，GRPO 的收益与代价应怎样判断？
+
+**L2** · 字节跳动
+
+#### 答案
+
+固定类别、可靠标签的分类任务应先建立交叉熵/SFT基线，并比较分类头、受限标签解码、类别加权和阈值调整。若输出标签由多个token构成，需计算整段标签的条件概率或用分类头；不能只比较第一个token，也不应让不同长度标签和自由格式输出造成评测偏差。
+
+SFT拟合标签分布；结果奖励可直接关联预测正确、拒答、业务代价等非可微目标，但需要额外采样且梯度方差较大。以下简化推导只考虑采样一个类别：真实条件分布为$`\eta(c\mid x)`$时，若模型分布族可表示该真实分布，交叉熵的总体最优预测是该分布；正确性奖励的期望是$`\sum_c\eta(c\mid x)p_\theta(c\mid x)`$，无正则时偏好把概率集中到最可能类别。它不是argmax分类准确率的可微公式，也不能保证概率校准。
+
+GRPO适合有可验证终态、推理或工具链、代价约束且采样组能提供奖励差异的场景。纯单标签0/1奖励中，一组全对或全错会失去相对优势信号；还会受类别不平衡、标签噪声及裁判漏洞影响。宏平均F1是数据集级指标，不能未经推导就当作每条样本独立奖励。先清洗标签、检查抽样与失败类型，再决定RL是否比增加高质量SFT数据更有效。
+
+比较时固定模型、数据划分和推理预算，同时报告accuracy、macro-F1/各类召回、拒答覆盖率、log loss或校准指标、延迟及训练成本；若任务含图像，还需文本单模态、图像遮挡或替换对照。用多种子和独立测试集确认提升，避免把更长推理或更大采样预算的收益全部归因于GRPO。没有实测依据时，应说明实验设计和预期机制，不能编造项目提升。
+
+```math
+\begin{aligned}\mathcal L_{\mathrm{CE}}&=\mathbb E_x\!\left[-\sum_c\eta(c\mid x)\log p_\theta(c\mid x)\right]\\ J_{\mathrm{correct}}&=\mathbb E_x\!\left[\sum_c\eta(c\mid x)p_\theta(c\mid x)\right]\end{aligned}
+```
+
+#### 易错点
+
+- 固定标签分类不自动需要RL；结果奖励并不必然提升宏平均F1或校准。
+- 奖励全同导致组内优势为零；KL项仍可能产生梯度。
+- 标签字符串的长度、tokenization、无效输出处理和决策阈值都属于公平对比协议。
+
+#### 追问
+
+- 一组候选标签全部错误时，怎样判断需要改善初始化还是奖励？
+- 类别不平衡时，accuracy提升而macro-F1下降应怎么排查？
+
 <a id="topic-5"></a>
 ## 奖励与对齐策略
 
 <a id="aln-002"></a>
 ### ALN-002 · 奖励模型如何用成对偏好训练？
 
-**L2**
+**L2** · 阿里巴巴
 
 #### 答案
 
@@ -882,27 +1004,36 @@ Rectified Flow取$`x_t=(1-t)x_0+t\epsilon`$，这里0是数据、1是噪声，�
 - 如何处理平局与偏好不传递？
 
 <a id="aln-015"></a>
-### ALN-015 · 如何识别和缓解 reward hacking？
+### ALN-015 · 如何识别和缓解 reward hacking，RM 业务判别准确率 100% 还会发生吗？
 
-**L2** · 小红书 / 字节跳动
+**L2** · 小红书 / 字节跳动 / 阶跃星辰 / 美团 / 快手 / 深势科技
 
 #### 答案
 
-Reward hacking 指模型过度优化奖励代理，却降低了真实任务质量。识别时应联合观察独立指标、回答长度、套话和异常工具行为，并对高分样本做人类或对抗复核；只看奖励上涨无法判断能力是否改善。
+Reward hacking 是策略提高奖励代理，却降低真实任务效用。训练reward上涨本身不证明模型变好；应联合观察独立任务指标、回答长度、多样性、工具行为和人工盲评，复核高分失败样本。关键词堆砌、迎合裁判、空洞安全套话、绕过验证器都可能是待检验的表现。
 
-常见表现包括重复关键词、迎合裁判、空泛安全回答或绕过弱验证器。参考 KL、提前停止和多样反馈可降低风险，但不能证明问题已经消除。工程上应保留 rollout 与分项奖励，聚类分析高分失败案例，再改进评分器和验证流程。
+“RM在业务数据上判别100%”首先要明确数据范围和指标。有限测试集的二分类或成对排序全对，只约束这些样本的标签/排序；不证明奖励数值校准、分数差、覆盖所有响应，更不证明业务标签就是事实性、帮助性、成本等多维真实目标。即使策略仍在业务分布内，正确的粗分类也可能容许错误的类内排序：两个都被判为合格的回答，空泛长文可能比简洁正确回答得分更高。RL优化连续分数，就可能放大这种差异，无须把所有原因都归结为OOD。
 
-回答模式化、奉承或内容空洞时，构造事实正确但朴素、华丽却无信息等控制样本，检查RM是否主要奖励风格或长度。比较训练RM与独立人工/judge，排查偏好数据窄、优化过量及KL不足；在新偏好数据中加入反例并保留通用能力回归。模式崩溃、谄媚与对齐税相关但不是同义词。
+还要区分两个代理差距：RM预测业务标签的误差，以及业务标签/评分规格相对真实意图的遗漏。评分仅检查答案命中、不检查证据；工具结果伪造后奖励函数只读伪造日志；超时样本被错误记成功，这些属于评价或实现规格的问题。它们能与有限业务集100%正确率同时存在，不能只靠增加RM容量解决。
 
-多模态生成还要排查针对物体检测、OCR和偏好评分器的投机：比如计数检测高分但画面重复失真，OCR匹配成功却破坏构图，偏好分提高但图像趋同。将这些作为待检验的失败模式，用独立检测/OCR、人工盲评、画质与多样性指标交叉检查，并分析分项reward和高分失败样本。参考KL限制策略漂移，不能修补奖励器本身的漏洞；同组相对优势也会放大一个坏代理奖励。
+但若题目加强为：在所有策略可达轨迹上，评分确实等于完整真实效用，评测输入与实现正确，任务分布、约束和优化目标一致，那么单纯利用“代理与真实目标不一致”的投机按定义被排除，不能继续断言仍必然reward hacking。正比例仿射的等价奖励也保留期望排序；仅仅单调变换、分类全对或有限排序全对没有这个保证。剩余退化需另查有限采样、优化失败、训练目标中的其他权重、环境变化和真实效用定义。
+
+排查时保留rollout及分项reward，做长度/风格/事实控制样本，检查RM是否奖励文风而忽略内容，比较训练RM、独立裁判与人工。多模态场景再用独立检测/OCR、画质、多样性与动作完成指标审查计数、文字和构图投机。KL、提前停止、多样反馈和对抗数据可降低风险，但不能修补不完整奖励规格；换GRPO的相对优势或同一个LLM judge也没有免疫性。
+
+```math
+\begin{aligned}\mathrm{Acc}_{\mathcal D}(\hat r)&=1\ \not\Rightarrow\ \hat r(x,y)=u(x,y)\ \mathrm{on\ all\ reachable}\ (x,y)\\\hat r(x,y)&=a\,u(x,y)+b(x),\quad a\gt 0\\\mathbb E_{x\sim P,\,y\sim\pi}[\hat r]&=a\,\mathbb E[u]+\mathbb E_{x\sim P}[b(x)]\end{aligned}
+```
 
 #### 易错点
 
-- GRPO 的相对优势或换成 LLM judge 本身不是 reward hacking 的解药。
+- 有限集分类全对既不意味着奖励标定全对，也不意味着业务标签涵盖真实目标。
+- 若全可达支持域的完整真实效用确实由正确评分实现，就不能把不存在的代理误差当作hacking解释。
+- reward hacking、模式崩溃、谄媚与对齐税相关，但不是同义词。
 
 #### 追问
 
-- 如果训练奖励上升、独立胜率下降，你先停哪一环？
+- 保持业务数据分布不变，怎样构造分类仍全对但类内reward排序错误的控制例？
+- 训练reward和人工质量分离后，怎样区分评分规格错误与RM泛化错误？
 
 <a id="aln-016"></a>
 ### ALN-016 · 后训练为什么会出现对齐税或遗忘？
@@ -947,7 +1078,7 @@ RLAIF 用 AI 提供偏好或反馈，减少人工逐样本标注成本。Constit
 <a id="aln-020"></a>
 ### ALN-020 · 多目标奖励发生冲突时如何处理？
 
-**L3**
+**L3** · 深势科技
 
 #### 答案
 
@@ -991,6 +1122,8 @@ DPO适合已有同一问题、同一证据上下文下的可靠chosen/rejected�
 - [Training language models to follow instructions with human feedback](https://arxiv.org/html/2203.02155v1)
 - [Direct Preference Optimization](https://arxiv.org/html/2305.18290v3)
 - [Training language models to follow instructions with human feedback](https://arxiv.org/abs/2203.02155)
+- [Training language models to follow instructions with human feedback](https://arxiv.org/pdf/2203.02155)
+- [Direct Preference Optimization: Your Language Model is Secretly a Reward Model](https://arxiv.org/html/2305.18290v2)
 - [Reward Modeling — TRL](https://huggingface.co/docs/trl/reward_trainer)
 - [PPO — Spinning Up](https://spinningup.openai.com/en/latest/algorithms/ppo.html)
 - [Proximal Policy Optimization Algorithms](https://arxiv.org/abs/1707.06347)
@@ -1003,14 +1136,18 @@ DPO适合已有同一问题、同一证据上下文下的可靠chosen/rejected�
 - [UltraFeedback](https://arxiv.org/html/2310.01377v1)
 - [DeepSeekMath](https://arxiv.org/html/2402.03300v3)
 - [DeepSeekMath](https://arxiv.org/abs/2402.03300)
+- [DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models](https://arxiv.org/html/2402.03300v1)
 - [GRPO Trainer — TRL](https://huggingface.co/docs/trl/grpo_trainer)
 - [Understanding R1-Zero-Like Training: A Critical Perspective](https://arxiv.org/html/2503.20783v2)
 - [DeepSeek-R1](https://arxiv.org/html/2501.12948v1)
 - [Let's Verify Step by Step](https://arxiv.org/abs/2305.20050)
 - [Scaling Laws for Reward Model Overoptimization](https://arxiv.org/abs/2210.10760)
 - [Flow-GRPO: Training Flow Matching Models via Online RL](https://arxiv.org/html/2505.05470v2)
+- [Scaling Laws for Reward Model Overoptimization](https://proceedings.mlr.press/v202/gao23h/gao23h.pdf)
 - [Constitutional AI](https://arxiv.org/abs/2212.08073)
 - [A General Theoretical Paradigm to Understand Learning from Human Preferences](https://arxiv.org/abs/2310.12036)
+- [KTO: Model Alignment as Prospect Theoretic Optimization](https://arxiv.org/html/2402.01306v3)
+- [A General Theoretical Paradigm to Understand Learning from Human Preferences](https://arxiv.org/html/2310.12036v2)
 - [Online DPO Trainer — TRL](https://huggingface.co/docs/trl/online_dpo_trainer)
 - [Safe RLHF](https://arxiv.org/abs/2310.12773)
 - [Spinning Up: Key Concepts in RL](https://spinningup.openai.com/en/latest/spinningup/rl_intro.html)
@@ -1037,3 +1174,8 @@ DPO适合已有同一问题、同一证据上下文下的可靠chosen/rejected�
 - [Flow-GRPO official SDE sampler with log probabilities](https://github.com/yifan123/flow_grpo/blob/main/flow_grpo/diffusers_patch/sd3_sde_with_logprob.py)
 - [Flow-GRPO official SD3 training loop](https://github.com/yifan123/flow_grpo/blob/main/scripts/train_sd3.py)
 - [Score-Based Generative Modeling through Stochastic Differential Equations](https://arxiv.org/html/2011.13456)
+- [Flow-GRPO: Training Flow Matching Models via Online RL（v4）](https://arxiv.org/html/2505.05470v4)
+- [Back to Basics: Revisiting REINFORCE-Style Optimization for Learning from Human Feedback in LLMs](https://aclanthology.org/2024.acl-long.662.pdf)
+- [TRL RLOO Trainer (main)](https://huggingface.co/docs/trl/main/en/rloo_trainer)
+- [Neural Text Generation with Unlikelihood Training](https://arxiv.org/pdf/1908.04319)
+- [scikit-learn: Log loss and classification metrics](https://scikit-learn.org/stable/modules/model_evaluation.html#log-loss)

@@ -38,7 +38,7 @@ def main():
         'data_sha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((ROOT/'data').glob('*.json'))},
         'checks':records,
         'limits':[
-            '26 standard-library coding tests executed; 11 optional PyTorch tests skipped because PyTorch is not installed.',
+            '41 standard-library coding tests executed; 20 optional PyTorch tests skipped because PyTorch is not installed.',
             '8 supplied-question coverage and provenance regression tests executed, including user-paste/webpage distinction and source-catalog consistency.',
             'Offline HTML verified through Node VM / minimal DOM smoke tests; no live browser screenshot acceptance.',
             'External URLs were researched at collection time; there is no exhaustive automated current-availability check.',

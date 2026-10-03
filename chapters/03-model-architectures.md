@@ -421,7 +421,7 @@ R1 主要是基于 V3-Base 的推理后训练路线：R1-Zero 探索从底座直
 <a id="tfm-015"></a>
 ### TFM-015 · MoE 与 Dense 的参数量和计算量应怎样比较？
 
-**L2**
+**L2** · 阿里巴巴
 
 #### 答案
 
@@ -446,7 +446,7 @@ MoE 通常把部分 FFN 替换为专家集合，由 router 为每个 token 选�
 <a id="arc-008"></a>
 ### ARC-008 · MoE 路由、Top-k、capacity factor 与 token dropping 分别做什么？
 
-**L2**
+**L2** · 阿里巴巴
 
 #### 答案
 
@@ -471,7 +471,7 @@ capacity 对每个专家设置可接收 token 的预算，常按平均负载乘 
 <a id="arc-009"></a>
 ### ARC-009 · MoE 的负载均衡损失与 router z-loss 有何区别？
 
-**L3**
+**L3** · 阿里巴巴
 
 #### 答案
 
@@ -517,7 +517,7 @@ MoEBERT 从预训练 BERT 的 FFN 适配出多个较小专家，以神经元重�
 <a id="arc-014"></a>
 ### ARC-014 · MoE 微调为什么容易过拟合，专家一定按语言或领域自动分工吗？
 
-**L2**
+**L2** · 阿里巴巴
 
 #### 答案
 
@@ -635,6 +635,8 @@ R1 的主路线是少量长 CoT 冷启动 SFT → 推理 RL → 对较好的生�
 - [Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer](https://arxiv.org/abs/1910.10683)
 - [Switch Transformers](https://arxiv.org/abs/2101.03961)
 - [ST-MoE: Designing Stable and Transferable Sparse Expert Models](https://arxiv.org/abs/2202.08906)
+- [Mixtral of Experts](https://arxiv.org/html/2401.04088v1)
+- [Transformers MixtralTopKRouter reference](https://github.com/huggingface/transformers/blob/main/src/transformers/models/mixtral/modeling_mixtral.py)
 - [BART: Denoising Sequence-to-Sequence Pre-training](https://arxiv.org/abs/1910.13461)
 - [Non-Autoregressive Neural Machine Translation](https://arxiv.org/abs/1711.02281)
 - [Go Wider Instead of Deeper](https://arxiv.org/abs/2107.11817)

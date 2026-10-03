@@ -626,25 +626,30 @@
     {
       "id": "COD-002",
       "category": "COD",
-      "title": "手撕 Multi-Head Attention：形状、缩放与 mask 怎么写？",
+      "title": "手撕 MHA/GQA：形状、分组头映射、缩放与 mask 怎么写？",
       "level": "L1",
       "tags": [
         "MHA",
         "shape",
-        "mask"
+        "mask",
+        "GQA"
       ],
       "answer": {
-        "body": "输入形状为 `[B,T,D]`，Q/K/V 投影后拆成 `[B,H,T,d]`，其中 $D=Hd$。可以使用一个 `D→3D` 线性层一次生成三组投影，但它们仍有各自的参数。\n\n计算缩放点积后，分数形状为 `[B,H,Tq,Tk]`。先加因果或 padding mask，再沿 `Tk` 轴做 softmax，与 V 相乘；各头输出拼接回 `[B,T,D]`，最后经过输出投影。用输出形状和“未来 token 改变不影响较早位置”的性质检查实现。教学代码可显式生成二次方大小的分数矩阵，生产 SDPA 通常用融合内核；训练与推理的 dropout 设置也要区分。\n\n若追问原始Transformer还包括什么，应根据层级说明：注意力子层内部有缩放、mask、softmax/dropout、多头拼接和输出投影；完整block还包括残差、LayerNorm与FFN，输入序列还需位置表达。题目未指名“关键一步”时先澄清是在问注意力算子还是整个block，不能把位置编码硬塞进softmax，或把后续模型的RoPE当作原始Transformer的实现。",
-        "formula": "\\mathrm{Attention}(Q,K,V)=\\mathrm{softmax}\\!\\left(\\frac{QK^\\top}{\\sqrt d}+M\\right)V",
+        "body": "MHA输入为[B,T,D]，Q/K/V分别投影后拆成[B,H,T,d]，D=Hd。一次D→3D投影只是合并实现，三组仍有不同参数；分数为[B,H,Tq,Tk]，mask后沿Tk做softmax，与V相乘，拼接为[B,Tq,H*d]并做输出投影。\n\nGQA保留Hq个query头，只用Hkv个KV头。明确连续等大小分组的契约：Hq能被Hkv整除，g=Hq/Hkv，第h个query头用第floor(h/g)个KV头。Q形状[B,Hq,Tq,d]，K/V为[B,Hkv,Tk,d]；不能把query先平均，也不能把重复布局错误写成按头轮流轮换KV组。Hkv=Hq退化MHA，Hkv=1退化MQA。\n\n教学实现可repeat_interleave(g,dim=1)映射KV后计算各query头的scaled attention，或逐头/按组运算；Q、分数、输出头数都仍是Hq。物理repeat有额外临时内存，生产应选择支持GQA的融合内核，KV缓存保留紧凑Hkv头而非永久存展开Hq头。当前MultiHeadAttention旧参考仅MHA；新增函数直接接收已投影Q/K/V并实现GQA，不声称包含完整Transformer block或cache管理。\n\n参考函数mask的True表示允许；PyTorch版支持广播到[B,Hq,Tq,Tk]，标准库版支持共享[Tq,Tk]或完整[B,Hq,Tq,Tk]布尔mask，先将禁止位置score置−∞再softmax。至少每个query有一个允许key，否则本教学实现显式报错；不同库可能为全mask行返回零或非有限结果，不能默认等价。自回归使用绝对query/key位置构造因果mask；cache增量时query_offset不能丢。完整block另有残差、norm、FFN，位置表达应在对应层级处理。\n\n检查独立头映射、MHA/MQA端点、mask与cross-attention的Tq≠Tk，验证改变被遮key不影响输出。标准库使用独立单头oracle；PyTorch对照按query头选KV的独立公式及无dropout SDPA，不只检查shape。教学显式注意力矩阵是二次空间，dropout、混合精度和生产内核需分别声明。",
+        "formula": "\\begin{aligned}g&=H_q/H_{\\mathrm{kv}},\\quad j(h)=\\lfloor h/g\\rfloor,\\quad H_q\\bmod H_{\\mathrm{kv}}=0\\\\O_h&=\\mathrm{softmax}\\!\\left(Q_hK_{j(h)}^\\top/\\sqrt d+M_h\\right)V_{j(h)}\\\\\\mathrm{shape}(O)&=[B,H_q,T_q,d],\\quad\\mathrm{ConcatHeads}(O)=[B,T_q,H_qd]\\end{aligned}",
         "pitfalls": [
-          "把布尔 mask 语义弄反；PyTorch 不同 API 的 True 可能表示允许或屏蔽。"
+          "连续分组采用repeat_interleave，普通repeat产生交错头映射，不能混用。",
+          "GQA减少KV头数，query头数和注意力score的Hq轴保持不变。",
+          "布尔mask的True语义依API变化；全mask行和增量cache的offset需明确。"
         ],
         "followups": [
-          "加入 GQA 后 Q 头数与 KV 头数如何对应？"
+          "不展开KV怎样按组计算，实际节省的是缓存还是attention矩阵？",
+          "TP分片后query与KV连续组映射怎样保持一致？"
         ]
       },
       "reference_ids": [
-        "ENG-P01"
+        "ENG-P01",
+        "R3-ALN-GQA"
       ],
       "community_evidence": [
         {
@@ -661,13 +666,31 @@
           "source_id": "XHS26-S002",
           "support": "reported_question",
           "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S019",
+          "support": "reported_question",
+          "note": "正文明确报告手写GQA；新增参考函数的输入、mask和错误处理为独立教学契约，不冒充原题参数。 主代理已读完整正文；作者披露含AI生成内容，此证据仅表示公开帖子提及该题，不担保真实面试发生。 作者声明含AI生成内容，无法据此认证真实面试。"
         }
       ],
       "editorial": false,
       "topic": "模型算子与数值实现",
       "company_tags": [
         "字节跳动",
-        "腾讯"
+        "腾讯",
+        "阶跃星辰"
+      ],
+      "code_links": [
+        {
+          "path": "coding/reference.py",
+          "function": "grouped_query_attention",
+          "line": 394
+        },
+        {
+          "path": "coding/torch_primitives.py",
+          "function": "grouped_query_attention",
+          "line": 175
+        }
       ]
     },
     {
@@ -727,36 +750,69 @@
     {
       "id": "COD-005",
       "category": "COD",
-      "title": "手写 InfoNCE：正样本标签与 in-batch negatives 如何组织？",
+      "title": "手写 InfoNCE：正样本标签、归一化、温度与排除自身如何定义？",
       "level": "L2",
       "tags": [
         "InfoNCE",
         "对比学习",
-        "false negative"
+        "false negative",
+        "交叉熵",
+        "L2 normalization",
+        "temperature",
+        "NT-Xent"
       ],
       "answer": {
-        "body": "把匹配的 query/key 排在相同 batch 索引，归一化后计算两两相似度并除以温度，得到 `[N,N]` logits；以 `arange(N)` 为标签，对每一行做交叉熵并取平均。正样本在对角线上，其他列为 in-batch negatives。\n\n温度必须大于零；降低温度会让分布更尖，也会改变梯度与难负例的影响。双向图文训练可以平均两个方向的损失，但要注意重复样本形成假负例。分布式 all-gather 时，标签 offset 必须对应全局 batch 顺序，同时确认实现是否向被 gather 的特征回传梯度。",
-        "formula": "\\mathcal L=-\\frac1N\\sum_{i=1}^N\\log\\frac{\\exp(s(q_i,k_i)/\\tau)}{\\sum_{j=1}^N\\exp(s(q_i,k_j)/\\tau)}",
+        "body": "先确认候选集合和正样本索引。成对的query/key版本把两组[N,D]特征按匹配关系排在同一batch索引，计算N×N相似度矩阵，除以正温度τ后得到logits；标签为arange(N)，每行对角线是正样本，其余N-1列是in-batch negatives。可以平均query→key和key→query两个方向的CE，得到双向图文目标。现有标准库和PyTorch info_nce均实现这一成对定义，时间O(N²D)、完整logits的空间O(N²)。\n\n不要混淆两种“normalize”。CE从logits计算softmax概率并取目标类别的负对数；logits本身可为任意实数，不要求先L2归一，也不要求logits之和为1。PyTorch cross_entropy直接接收未归一化logits，手动softmax后再传入它会让概率被当作新logits，改变目标。若调用只接收对数概率的NLLLoss，则需先log_softmax；两种接口不能混用。\n\nInfoNCE中对embedding做L2归一，是为了把点积定义为余弦相似度，使表示长度不直接放大相似度。这是相似度设计选择，不是CE数学上成立的条件。标准库版本的normalize=False允许直接点积，PyTorch参考版本固定使用F.normalize；后者按max(norm,eps)处理近零范数，标准库余弦版本则拒绝零向量。这些接口约定不同，不能声称所有输入逐项行为完全相同。\n\n温度决定分布的尖锐程度，并将对相似度的CE梯度缩放为(p-目标)/τ。低温更重视高相似度负例，但错误正例或假负例也可能被强烈放大；高温分布更平缓，不能脱离数据和batch大小说越低越好。计算loss用稳定logsumexp或log_softmax：每行loss=LSE(logits)-正例logit，减去行最大值不会改变结果，避免直接exp再log的溢出和下溢。相似度/归约可用FP32，但极端小温度仍可能在除法时先溢出，需设合理范围并监控非有限值。\n\n“排除自身”取决于矩阵定义。在SimCLR式两视图NT-Xent中，把同一批N样本的两个增强视图合并为2N个anchor，构建2N×2N矩阵，屏蔽i=i的同一个视图自身，正样本是该样本的另一个视图，分母仍保留这个正例和2N-2个负例。若排列为[a0…aN-1,b0…bN-1]，正例索引为(i+N) mod 2N。成对query/key的N×N矩阵对角线则是需要保留的正例，照搬mask会删除训练目标。参考代码没有实现完整SimCLR变体，不应把两者声称为同一API。\n\n测试用两个正交向量的闭式log(1+exp(-1/τ))作为独立基线，再覆盖打乱keys后的错误正例、embedding正比例缩放不改变余弦loss、raw-dot与余弦的区别、相差1000的logits及温度边界。N=1时成对目标没有负例，loss和对表示的梯度均为0，因此batch小不只是吞吐问题。分布式all-gather后要核对全局标签offset和梯度传播，重复或同义样本需处理假负例；多个正确答案时应明确采用多正例目标，而非继续强行使用唯一对角标签。",
+        "formula": "\\begin{aligned}z_{ij}&=s(q_i,k_j)/\\tau,\\quad p_{ij}=\\mathrm{softmax}_j(z_i)\\\\\\mathcal L_i&=\\log\\sum_j e^{z_{ij}}-z_{ii},\\quad \\mathcal L=\\tfrac1N\\sum_i\\mathcal L_i\\\\\\frac{\\partial\\mathcal L_i}{\\partial s_{ij}}&=\\frac{p_{ij}-\\mathbf1[j=i]}{\\tau}\\\\s_{\\mathrm{cos}}(q,k)&=\\frac{q^\\top k}{\\lVert q\\rVert_2\\lVert k\\rVert_2}\\end{aligned}",
         "pitfalls": [
-          "把一批同类别的另一个正例也当负例；或打乱 keys 后仍用对角标签。"
+          "CE不要求embedding先L2归一；特征范数归一化和softmax概率归一化是不同操作。",
+          "成对N×N的对角线是正例，SimCLR的2N×2N对角线才是同一anchor自身，不能盲目屏蔽。",
+          "keys重排后仍使用原对角标签会改变正例关系；相同类别或语义等价样本也可能被误当负例。",
+          "FP32和稳定logsumexp解决不了除以极端小温度之前已经生成的无穷大logits。"
         ],
         "followups": [
-          "当 N=1 时还有对比信号吗？"
+          "多个文档都能回答同一query，如何构造多正例对比目标？",
+          "分布式all-gather怎样排列全局标签，梯度是否回传到其他rank特征？",
+          "SimCLR两视图矩阵为何需要排除自身，却必须保留配对正例？"
         ]
       },
       "reference_ids": [
         "ENG-P03",
-        "ENG-P02"
+        "ENG-P02",
+        "R3-COD-CLIP",
+        "R3-COD-SIMCLR",
+        "R3-COD-CE",
+        "R3-COD-NORMALIZE"
       ],
       "community_evidence": [
         {
           "source_id": "ENG-C01",
           "support": "reported_question",
           "note": "正文明确要求理解并编码 InfoNCE；答案为独立实现。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "主代理已读完整正文，明确报告手撕InfoNCE loss并追问CrossEntropy、normalize和温度。SimCLR排除自身是解释候选定义的标准追问补充，未声称原面经指名SimCLR。"
         }
       ],
       "editorial": false,
-      "topic": "损失函数与训练代码"
+      "topic": "损失函数与训练代码",
+      "code_links": [
+        {
+          "path": "coding/reference.py",
+          "function": "info_nce",
+          "line": 73
+        },
+        {
+          "path": "coding/torch_primitives.py",
+          "function": "info_nce",
+          "line": 100
+        }
+      ],
+      "company_tags": [
+        "阿里巴巴"
+      ]
     },
     {
       "id": "COD-006",
@@ -1598,6 +1654,26 @@
           "source_id": "XHS26-S014",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S020",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
@@ -1605,7 +1681,10 @@
       "company_tags": [
         "字节跳动",
         "腾讯",
-        "小红书"
+        "小红书",
+        "阿里巴巴",
+        "百度",
+        "深势科技"
       ]
     },
     {
@@ -1671,6 +1750,16 @@
           "source_id": "XHS26-S014",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S018",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
@@ -1679,7 +1768,8 @@
         "字节跳动",
         "腾讯",
         "小红书",
-        "阿里巴巴"
+        "阿里巴巴",
+        "快手"
       ]
     },
     {
@@ -1716,13 +1806,30 @@
           "source_id": "XHS26-S012",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S018",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "topic": "项目贡献与实验设计",
       "company_tags": [
         "腾讯",
-        "字节跳动"
+        "字节跳动",
+        "阿里巴巴",
+        "快手"
       ]
     },
     {
@@ -1779,6 +1886,21 @@
           "source_id": "XHS26-S014",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S016",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S018",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
@@ -1786,7 +1908,10 @@
       "company_tags": [
         "小红书",
         "阿里巴巴",
-        "字节跳动"
+        "字节跳动",
+        "美团",
+        "快手",
+        "深势科技"
       ]
     },
     {
@@ -1817,12 +1942,18 @@
           "source_id": "XHS26-S008",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S018",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "topic": "调试、数据与复现",
       "company_tags": [
-        "腾讯"
+        "腾讯",
+        "快手"
       ]
     },
     {
@@ -1874,6 +2005,36 @@
           "source_id": "XHS26-S015",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S016",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S018",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S020",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S022",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
@@ -1882,7 +2043,10 @@
         "阿里巴巴",
         "腾讯",
         "小红书",
-        "字节跳动"
+        "字节跳动",
+        "美团",
+        "快手",
+        "百度"
       ]
     },
     {
@@ -1932,7 +2096,7 @@
         "checkpoint"
       ],
       "answer": {
-        "body": "保存代码 commit、依赖版本、模型和数据 hash、完整配置、随机种子、硬件、有效 batch 及日志，给出从处理数据到评测的最小执行路径。Tokenizer、chat template、混合数据比例和 packing/mask 规则也属于复现条件。\n\n恢复训练的 checkpoint 还应包含优化器、调度器与数据进度。固定 seed 不能保证跨设备或内核逐位一致，应说明环境差异，以数值容差或分布意义定义可接受的重现。",
+        "body": "保存代码 commit、依赖版本、模型和数据 hash、完整配置、随机种子、硬件、有效 batch 及日志，给出从处理数据到评测的最小执行路径。Tokenizer、chat template、混合数据比例和 packing/mask 规则也属于复现条件。\n\n恢复训练的 checkpoint 还应包含优化器、调度器与数据进度。固定 seed 不能保证跨设备或内核逐位一致，应说明环境差异，以数值容差或分布意义定义可接受的重现。\n\n被追问卡数、6000条数据耗时或多少步出现收益时，先交代模型版本/规模、分辨率/FPS/帧数、序列长度、micro-batch与梯度累积、DP规模、rollout组大小及采样步数；“条数”不等于有效token或视频计算量。给出采样、评分、训练和IO的实测耗时分解、峰值显存、预热后吞吐与验证曲线。参数来自开源配置只是起点，应说明控制变量的消融与资源约束；没有日志时给估算方法与待测项，不能编卡数、耗时或最优超参数。",
         "formula": "",
         "pitfalls": [
           "只上传最终权重，没有数据处理脚本和评测命令。"
@@ -1944,9 +2108,47 @@
       "reference_ids": [
         "ENG-P21"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "调试、数据与复现"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S016",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S018",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S022",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        }
+      ],
+      "editorial": false,
+      "topic": "调试、数据与复现",
+      "company_tags": [
+        "美团",
+        "快手",
+        "深势科技",
+        "字节跳动",
+        "阿里巴巴"
+      ]
     },
     {
       "id": "PRJ-009",

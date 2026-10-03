@@ -6,12 +6,15 @@
 
 - [模型算子与数值实现](#topic-1)
   - [COD-001 · 手写稳定 Softmax 与交叉熵，为什么要减最大值？](#cod-001)
-  - [COD-002 · 手撕 Multi-Head Attention：形状、缩放与 mask 怎么写？](#cod-002)
+  - [COD-002 · 手撕 MHA/GQA：形状、分组头映射、缩放与 mask 怎么写？](#cod-002)
   - [COD-004 · 手写 RoPE，并证明旋转保持范数与相对位置内积。](#cod-004)
   - [COD-007 · 实现 LoRA Linear 并证明 merge 前后输出一致。](#cod-007)
   - [COD-018 · 用 PyTorch 实现两层 MLP，图像输入应该怎样组织？](#cod-018)
+  - [COD-026 · 如何实现基于跨层变化的渐进视觉 token 裁剪？](#cod-026)
+  - [COD-029 · 手写 MoE Top-k 路由：专家索引、门权重与溢出策略怎么定义？](#cod-029)
+  - [COD-030 · 手写 LayerNorm：归一化轴、biased variance、epsilon 与 gamma/beta 怎样实现？](#cod-030)
 - [损失函数与训练代码](#topic-2)
-  - [COD-005 · 手写 InfoNCE：正样本标签与 in-batch negatives 如何组织？](#cod-005)
+  - [COD-005 · 手写 InfoNCE：正样本标签、归一化、温度与排除自身如何定义？](#cod-005)
   - [COD-008 · 实现 DPO loss，怎样避免符号和序列概率错误？](#cod-008)
   - [COD-009 · 实现 GRPO 组内优势，标准差为零时怎么办？](#cod-009)
   - [COD-019 · 手写 VAE 训练 loss：ELBO、重参数化、KL 闭式和 reduction 怎样对应？](#cod-019)
@@ -32,7 +35,9 @@
   - [COD-022 · 手写最长回文子串：区间 DP 和中心扩展怎样取舍？](#cod-022)
   - [COD-023 · 手写全排列：回溯如何恢复现场，重复元素怎样去重？](#cod-023)
   - [COD-024 · 反转单链表怎样原地改指针，如何证明不丢节点也不引入环？](#cod-024)
-  - [COD-025 · 手写股票最大利润：交易次数、手续费和冷冻期不同，解法怎样变化？](#cod-025)
+  - [COD-025 · 手写股票最大利润：单笔、至多两笔、手续费与冷冻期怎样区分？](#cod-025)
+  - [COD-027 · 不调用 sqrt 求非负实数平方根，如何控制误差并处理极大、极小值？](#cod-027)
+  - [COD-028 · 矩阵中的最长递增路径怎么求，如何避免递归深度溢出？](#cod-028)
 
 <a id="topic-1"></a>
 ## 模型算子与数值实现
@@ -63,29 +68,38 @@ Softmax 对所有 logits 加同一常数不变，因为分子与分母中的公�
 - 如何实现 label smoothing 和 ignore_index？
 
 <a id="cod-002"></a>
-### COD-002 · 手撕 Multi-Head Attention：形状、缩放与 mask 怎么写？
+### COD-002 · 手撕 MHA/GQA：形状、分组头映射、缩放与 mask 怎么写？
 
-**L1** · 字节跳动 / 腾讯
+**L1** · 字节跳动 / 腾讯 / 阶跃星辰
 
 #### 答案
 
-输入形状为 `[B,T,D]`，Q/K/V 投影后拆成 `[B,H,T,d]`，其中 $`D=Hd`$。可以使用一个 `D→3D` 线性层一次生成三组投影，但它们仍有各自的参数。
+MHA输入为[B,T,D]，Q/K/V分别投影后拆成[B,H,T,d]，D=Hd。一次D→3D投影只是合并实现，三组仍有不同参数；分数为[B,H,Tq,Tk]，mask后沿Tk做softmax，与V相乘，拼接为[B,Tq,H*d]并做输出投影。
 
-计算缩放点积后，分数形状为 `[B,H,Tq,Tk]`。先加因果或 padding mask，再沿 `Tk` 轴做 softmax，与 V 相乘；各头输出拼接回 `[B,T,D]`，最后经过输出投影。用输出形状和“未来 token 改变不影响较早位置”的性质检查实现。教学代码可显式生成二次方大小的分数矩阵，生产 SDPA 通常用融合内核；训练与推理的 dropout 设置也要区分。
+GQA保留Hq个query头，只用Hkv个KV头。明确连续等大小分组的契约：Hq能被Hkv整除，g=Hq/Hkv，第h个query头用第floor(h/g)个KV头。Q形状[B,Hq,Tq,d]，K/V为[B,Hkv,Tk,d]；不能把query先平均，也不能把重复布局错误写成按头轮流轮换KV组。Hkv=Hq退化MHA，Hkv=1退化MQA。
 
-若追问原始Transformer还包括什么，应根据层级说明：注意力子层内部有缩放、mask、softmax/dropout、多头拼接和输出投影；完整block还包括残差、LayerNorm与FFN，输入序列还需位置表达。题目未指名“关键一步”时先澄清是在问注意力算子还是整个block，不能把位置编码硬塞进softmax，或把后续模型的RoPE当作原始Transformer的实现。
+教学实现可repeat_interleave(g,dim=1)映射KV后计算各query头的scaled attention，或逐头/按组运算；Q、分数、输出头数都仍是Hq。物理repeat有额外临时内存，生产应选择支持GQA的融合内核，KV缓存保留紧凑Hkv头而非永久存展开Hq头。当前MultiHeadAttention旧参考仅MHA；新增函数直接接收已投影Q/K/V并实现GQA，不声称包含完整Transformer block或cache管理。
+
+参考函数mask的True表示允许；PyTorch版支持广播到[B,Hq,Tq,Tk]，标准库版支持共享[Tq,Tk]或完整[B,Hq,Tq,Tk]布尔mask，先将禁止位置score置−∞再softmax。至少每个query有一个允许key，否则本教学实现显式报错；不同库可能为全mask行返回零或非有限结果，不能默认等价。自回归使用绝对query/key位置构造因果mask；cache增量时query_offset不能丢。完整block另有残差、norm、FFN，位置表达应在对应层级处理。
+
+检查独立头映射、MHA/MQA端点、mask与cross-attention的Tq≠Tk，验证改变被遮key不影响输出。标准库使用独立单头oracle；PyTorch对照按query头选KV的独立公式及无dropout SDPA，不只检查shape。教学显式注意力矩阵是二次空间，dropout、混合精度和生产内核需分别声明。
 
 ```math
-\mathrm{Attention}(Q,K,V)=\mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt d}+M\right)V
+\begin{aligned}g&=H_q/H_{\mathrm{kv}},\quad j(h)=\lfloor h/g\rfloor,\quad H_q\bmod H_{\mathrm{kv}}=0\\O_h&=\mathrm{softmax}\!\left(Q_hK_{j(h)}^\top/\sqrt d+M_h\right)V_{j(h)}\\\mathrm{shape}(O)&=[B,H_q,T_q,d],\quad\mathrm{ConcatHeads}(O)=[B,T_q,H_qd]\end{aligned}
 ```
+
+代码：[grouped_query_attention](../coding/reference.py#L394) · [grouped_query_attention](../coding/torch_primitives.py#L175)
 
 #### 易错点
 
-- 把布尔 mask 语义弄反；PyTorch 不同 API 的 True 可能表示允许或屏蔽。
+- 连续分组采用repeat_interleave，普通repeat产生交错头映射，不能混用。
+- GQA减少KV头数，query头数和注意力score的Hq轴保持不变。
+- 布尔mask的True语义依API变化；全mask行和增量cache的offset需明确。
 
 #### 追问
 
-- 加入 GQA 后 Q 头数与 KV 头数如何对应？
+- 不展开KV怎样按组计算，实际节省的是缓存还是attention矩阵？
+- TP分片后query与KV连续组映射怎样保持一致？
 
 <a id="cod-004"></a>
 ### COD-004 · 手写 RoPE，并证明旋转保持范数与相对位置内积。
@@ -164,31 +178,152 @@ H=\mathrm{GELU}(XW_1^{\mathsf T}+b_1),\qquad Y=HW_2^{\mathsf T}+b_2,\qquad W_1\i
 - 输入分辨率翻倍时，整图 flatten MLP 第一层参数量会如何变化？
 - 如何把整图 MLP 改成 patch 投影，并让不同 patch 之间进行信息交互？
 
+<a id="cod-026"></a>
+### COD-026 · 如何实现基于跨层变化的渐进视觉 token 裁剪？
+
+**L3** · 快手
+
+#### 答案
+
+V2Drop的核心是同一视觉token在相邻LLM层前后hidden的变化，默认用L2范数作重要性代理，在若干层按预算逐步保留高分token；不是相邻视频帧之差，也不需要显式attention权重。阶段层位和各阶段保留数影响计算与质量，应通过消融选择，不能声称小变化一定可无损删除。
+
+最小接口可输入前后hidden[N,D]、视觉mask[N]和当前阶段保留视觉数k，返回原序列中的keep indices。仅对视觉位置在FP32下算变化、取高分前k个，再与全部文本/特殊token索引合并并按原顺序排序；保留顺序而非按重要性重新排列。示例稳定排序使并列值优先保留较早token，显式校验k、形状、设备和有限分数。它只演示评分/索引核心，不是完整模型复现。
+
+实际在层前存一份输入，在层后比较同一逻辑token；剪枝后同步gather当前hidden、视觉/有效mask与原position IDs，下阶段比较的两份hidden也须仍对应同一保留集合。Qwen的时空MRoPE位置不能改成密集新编号。二维padding mask删序列轴；已有方阵注意力mask删query/key两轴，带past的非方阵须按各自逻辑索引重建，不能盲目同切。多样本保留数不同还需padding或变长布局，示例只处理单样本。
+
+推理一般在prefill剪枝；各层KV长度可能不同，要维护该层的逻辑位置到缓存槽映射和后续decode offset，不能拿深层索引统一删除已形成的浅层cache。仅mask也不会自动缩小矩阵。官方某LLaVA实现中的固定偏移和token数不可当通用接口。硬top-k不可对选择边界直接求导，若用于训练，需明确未选token的梯度、label对应和训练/推理分布变化；本题示例不训练选择器。测试应覆盖保留全部文本、预算0/全保留、并列分数、空视觉、非有限值与连续多阶段索引一致性。
+
+标准库参考使用Python float，PyTorch核心以FP32评分；极接近分数可能因精度产生不同排名，比较时应固定评分精度。两份代码都只覆盖单样本、单阶段评分与索引，不包含完整视觉模型、位置或缓存集成。
+
+```math
+\begin{aligned}s_i^{(\ell)}&=\lVert h_i^{(\ell)}-h_i^{(\ell-1)}\rVert_2\\ M_0&\ge M_1\ge\cdots\ge M_K\ge0\end{aligned}
+```
+
+代码：[variation_keep_indices](../coding/reference.py#L456) · [variation_keep_indices](../coding/torch_primitives.py#L223)
+
+#### 易错点
+
+- 表征变化是剪枝启发式，不能从其L2小直接推出删除对所有任务严格无影响。
+- 相邻层hidden必须对应同一逻辑token；跨层索引错位会把变化分数算成不同token的距离。
+- prefill后的各层KV预算可能不同，cache映射、MRoPE和非方阵mask须随具体模型实现同步；示例不覆盖完整缓存。
+- 示例不采用官方某文件的固定视觉span，不代表跑通LLaVA或Qwen端到端复现。
+
+#### 追问
+
+- 保留分数相同的token时怎样让结果可复现？
+- 剪枝后为什么应保留原位置ID，而不是从0重新编号？
+- 每个阶段最终都保留相同token数，为何提早与渐进剪枝成本不同？
+
+<a id="cod-029"></a>
+### COD-029 · 手写 MoE Top-k 路由：专家索引、门权重与溢出策略怎么定义？
+
+**L2** · 阿里巴巴
+
+#### 答案
+
+稀疏MoE常把FFN替换为多个专家，router从token hidden产生E个专家logits，选择Top-k专家并加权输出。总参数包括所有专家，单token只执行被选专家及共享模块；不能以总参数或k/E直接推断完整FLOPs、常驻权重或服务延迟。
+
+手写先约定输入：hidden可由[B,T,D]展平为[N,D]，线性router得到[N,E] logits；本库moe_top_k_router直接接收已算好的有限logits，返回[N,k]整数expert ids和[N,k]门权重，不包含router线性权重、专家执行、容量或通信。默认对选中logits再softmax，等价于完整softmax取Top-k后重归一；renormalize=False保留原完整分布的选中概率，其权重和通常小于1。不能不说明这个选择就声称所有MoE门控相同。
+
+选中id不可微，PyTorch版的gate权重仍通过选中logits反传。特别是Top-1重归一权重恒为1，主任务经门权重到router的梯度为0；Switch保留原softmax gate及辅助目标等设计，不能简单把Top-2改成k=1并断言训练等价。敏感gate归一一般用FP32；本实现float64输入保留float64。并列logits按较小expert id优先，是可复现教学契约；官方topk未必保证这一顺序。
+
+分发时对每个选中expert收集对应token行，运行该专家FFN，按route slot的门权重加权，再scatter_add到原token行。同token可能有k份分支，应累加而非覆盖；不能先计算全部专家再mask却称获得稀疏算力收益。教学router为稳定并列全排序，复杂度O(NE logE)，gate概率/返回值空间分别为O(NE)/O(Nk)；生产可用部分Top-k和融合dispatch，不能把核心排序成本冒充整层复杂度。
+
+capacity对每个expert设置可接收分支预算，常按平均Nk/E负载乘capacity factor取整。此核心是dropless选择器，未定义容量筛选。若扩展capacity，必须明定专家接收的分支顺序、溢出drop/回退策略，以及剩余门权重是否重归一；保留原权重和将其归一到1是不同目标。若一个token的全部分支都落选，不能对零权重和做除法，须明确零专家输出加残差或指定fallback；也不是从序列彻底删除该token。更大容量减少溢出但增加buffer/通信，dropless也仍有负载和小批GEMM瓶颈。噪声Top-k、expert choice、共享专家、balance loss和router z-loss属于不同机制，示例核心不实现它们。
+
+测试先用logits=log([1,2,4,8])验证Top-2 ids=[3,2]、重归一权重[2/3,1/3]与原权重[8/15,4/15]，再验平移不变、并列、非法k/非有限值。Torch测试独立核对门权重梯度与Top-1归一后零gate梯度。
+
+```math
+\begin{aligned}z&=XW_r^\top,\quad S_t=\mathrm{TopK}(z_t,k)\\\tilde p_{t,e}&=\frac{e^{z_{t,e}}}{\sum_{j\in S_t}e^{z_{t,j}}}\quad(e\in S_t)\\y_t&=\sum_{e\in S_t}\tilde p_{t,e}\,E_e(x_t)\\C&=\left\lceil\mathrm{capacity\_factor}\cdot\frac{Nk}{E}\right\rceil\end{aligned}
+```
+
+代码：[moe_top_k_router](../coding/reference.py#L574) · [moe_top_k_router](../coding/torch_primitives.py#L252)
+
+#### 易错点
+
+- 选中权重是否重归一会影响尺度和router梯度，Top-1归一恒为1不能忽略。
+- 返回ids/gates只是路由核心，不代表实现expert dispatch、capacity、EP或完整MoE训练。
+- token dropping常指溢出的专家分支，不是必然删除序列token。
+
+#### 追问
+
+- Top-1保留原softmax值和重归一为1，router主任务梯度如何不同？
+- 被两个专家选择的token怎样scatter_add，并与capacity溢出策略一致？
+
+<a id="cod-030"></a>
+### COD-030 · 手写 LayerNorm：归一化轴、biased variance、epsilon 与 gamma/beta 怎样实现？
+
+**L2** · 百度
+
+#### 答案
+
+先明确normalized_shape；本库核心处理任意领先维度的[...,D]，只沿最后一个特征轴D为每个向量独立计算均值和总体方差，输出同形状。Transformer输入[B,T,D]时，每个(batch,token)分别计算统计，不能沿batch或时间轴一起归一。完整PyTorch LayerNorm允许最后多个轴构成normalized_shape，本参考没有实现这个通用接口。
+
+计算mean=mean(x,dim=−1,keepdim=True)，variance=mean((x−mean)²,dim=−1,keepdim=True)，再用(x−mean)/sqrt(variance+epsilon)。这里方差除D而非D−1，等价于torch.var(correction=0)；默认torch.var的无偏修正若直接照搬会不同。epsilon在平方根内部，是正的稳定项，不能写成sqrt(variance)+epsilon。D=1或常量向量归一结果为0，避免0/0；加affine后输出对应beta。
+
+gamma、beta为[D]逐特征参数，通过广播共享于所有领先位置；常见初始化gamma=1、beta=0，但训练后不保持单位均值/方差。函数接收它们而不自动注册参数，若需要可训练模块，使用nn.Parameter包装并交给优化器，不能把Python列表当成自动训练参数。LayerNorm的train/eval都使用当前输入统计，没有BatchNorm的running mean/variance。
+
+PyTorch参考用float64保留双精度，否则均值、方差和归一放FP32，再返回输入dtype；gamma/beta梯度仍通过转换传播。标准库版支持非空矩形嵌套列表并返回新列表；两版明确检查epsilon、形状、affine长度和有限统计。FP32可以减轻低精度风险，但不保证任意巨大输入不溢出。
+
+N个D维向量的计算O(ND)，输出O(ND)，统计O(N)。独立测试以x=[1,3]、epsilon=1得到[−1/√2,1/√2]识别biased方差和epsilon位置，再覆盖常量、D=1、leading dims、affine和非法输入；随机标准库结果用statistics.pvariance对照。Torch环境中对照F.layer_norm前向与x/gamma/beta梯度。
+
+```math
+\begin{aligned}\mu_i&=\frac1D\sum_{j=1}^{D}x_{ij},\qquad v_i=\frac1D\sum_{j=1}^{D}(x_{ij}-\mu_i)^2\\y_{ij}&=\gamma_j\frac{x_{ij}-\mu_i}{\sqrt{v_i+\epsilon}}+\beta_j,\qquad\epsilon\gt 0\end{aligned}
+```
+
+代码：[layer_norm_last_dim](../coding/reference.py#L602) · [layer_norm_last_dim](../coding/torch_primitives.py#L278)
+
+#### 易错点
+
+- 末D轴总体方差除D，不能误用D−1或沿batch归一。
+- epsilon位置在sqrt内部；归一后的affine可改变均值/方差。
+- 核心函数接收gamma/beta，不会自动把它们注册成模型参数。
+
+#### 追问
+
+- 为什么D=1时结果为beta，RMSNorm会有何区别？
+- 若normalized_shape=(H,W)，均值/方差和affine的轴怎样改？
+
 <a id="topic-2"></a>
 ## 损失函数与训练代码
 
 <a id="cod-005"></a>
-### COD-005 · 手写 InfoNCE：正样本标签与 in-batch negatives 如何组织？
+### COD-005 · 手写 InfoNCE：正样本标签、归一化、温度与排除自身如何定义？
 
-**L2**
+**L2** · 阿里巴巴
 
 #### 答案
 
-把匹配的 query/key 排在相同 batch 索引，归一化后计算两两相似度并除以温度，得到 `[N,N]` logits；以 `arange(N)` 为标签，对每一行做交叉熵并取平均。正样本在对角线上，其他列为 in-batch negatives。
+先确认候选集合和正样本索引。成对的query/key版本把两组[N,D]特征按匹配关系排在同一batch索引，计算N×N相似度矩阵，除以正温度τ后得到logits；标签为arange(N)，每行对角线是正样本，其余N-1列是in-batch negatives。可以平均query→key和key→query两个方向的CE，得到双向图文目标。现有标准库和PyTorch info_nce均实现这一成对定义，时间O(N²D)、完整logits的空间O(N²)。
 
-温度必须大于零；降低温度会让分布更尖，也会改变梯度与难负例的影响。双向图文训练可以平均两个方向的损失，但要注意重复样本形成假负例。分布式 all-gather 时，标签 offset 必须对应全局 batch 顺序，同时确认实现是否向被 gather 的特征回传梯度。
+不要混淆两种“normalize”。CE从logits计算softmax概率并取目标类别的负对数；logits本身可为任意实数，不要求先L2归一，也不要求logits之和为1。PyTorch cross_entropy直接接收未归一化logits，手动softmax后再传入它会让概率被当作新logits，改变目标。若调用只接收对数概率的NLLLoss，则需先log_softmax；两种接口不能混用。
+
+InfoNCE中对embedding做L2归一，是为了把点积定义为余弦相似度，使表示长度不直接放大相似度。这是相似度设计选择，不是CE数学上成立的条件。标准库版本的normalize=False允许直接点积，PyTorch参考版本固定使用F.normalize；后者按max(norm,eps)处理近零范数，标准库余弦版本则拒绝零向量。这些接口约定不同，不能声称所有输入逐项行为完全相同。
+
+温度决定分布的尖锐程度，并将对相似度的CE梯度缩放为(p-目标)/τ。低温更重视高相似度负例，但错误正例或假负例也可能被强烈放大；高温分布更平缓，不能脱离数据和batch大小说越低越好。计算loss用稳定logsumexp或log_softmax：每行loss=LSE(logits)-正例logit，减去行最大值不会改变结果，避免直接exp再log的溢出和下溢。相似度/归约可用FP32，但极端小温度仍可能在除法时先溢出，需设合理范围并监控非有限值。
+
+“排除自身”取决于矩阵定义。在SimCLR式两视图NT-Xent中，把同一批N样本的两个增强视图合并为2N个anchor，构建2N×2N矩阵，屏蔽i=i的同一个视图自身，正样本是该样本的另一个视图，分母仍保留这个正例和2N-2个负例。若排列为[a0…aN-1,b0…bN-1]，正例索引为(i+N) mod 2N。成对query/key的N×N矩阵对角线则是需要保留的正例，照搬mask会删除训练目标。参考代码没有实现完整SimCLR变体，不应把两者声称为同一API。
+
+测试用两个正交向量的闭式log(1+exp(-1/τ))作为独立基线，再覆盖打乱keys后的错误正例、embedding正比例缩放不改变余弦loss、raw-dot与余弦的区别、相差1000的logits及温度边界。N=1时成对目标没有负例，loss和对表示的梯度均为0，因此batch小不只是吞吐问题。分布式all-gather后要核对全局标签offset和梯度传播，重复或同义样本需处理假负例；多个正确答案时应明确采用多正例目标，而非继续强行使用唯一对角标签。
 
 ```math
-\mathcal L=-\frac1N\sum_{i=1}^N\log\frac{\exp(s(q_i,k_i)/\tau)}{\sum_{j=1}^N\exp(s(q_i,k_j)/\tau)}
+\begin{aligned}z_{ij}&=s(q_i,k_j)/\tau,\quad p_{ij}=\mathrm{softmax}_j(z_i)\\\mathcal L_i&=\log\sum_j e^{z_{ij}}-z_{ii},\quad \mathcal L=\tfrac1N\sum_i\mathcal L_i\\\frac{\partial\mathcal L_i}{\partial s_{ij}}&=\frac{p_{ij}-\mathbf1[j=i]}{\tau}\\s_{\mathrm{cos}}(q,k)&=\frac{q^\top k}{\lVert q\rVert_2\lVert k\rVert_2}\end{aligned}
 ```
+
+代码：[info_nce](../coding/reference.py#L73) · [info_nce](../coding/torch_primitives.py#L100)
 
 #### 易错点
 
-- 把一批同类别的另一个正例也当负例；或打乱 keys 后仍用对角标签。
+- CE不要求embedding先L2归一；特征范数归一化和softmax概率归一化是不同操作。
+- 成对N×N的对角线是正例，SimCLR的2N×2N对角线才是同一anchor自身，不能盲目屏蔽。
+- keys重排后仍使用原对角标签会改变正例关系；相同类别或语义等价样本也可能被误当负例。
+- FP32和稳定logsumexp解决不了除以极端小温度之前已经生成的无穷大logits。
 
 #### 追问
 
-- 当 N=1 时还有对比信号吗？
+- 多个文档都能回答同一query，如何构造多正例对比目标？
+- 分布式all-gather怎样排列全局标签，梯度是否回传到其他rank特征？
+- SimCLR两视图矩阵为何需要排除自身，却必须保留配对正例？
 
 <a id="cod-008"></a>
 ### COD-008 · 实现 DPO loss，怎样避免符号和序列概率错误？
@@ -239,7 +374,7 @@ A_i=\frac{r_i-\bar r}{\sqrt{\frac1G\sum_{j=1}^G(r_j-\bar r)^2}+\epsilon}
 <a id="cod-019"></a>
 ### COD-019 · 手写 VAE 训练 loss：ELBO、重参数化、KL 闭式和 reduction 怎样对应？
 
-**L2** · 腾讯
+**L2** · 腾讯 / 百度
 
 #### 答案
 
@@ -571,9 +706,11 @@ r=\max\{k\in\mathbb Z_{\ge0}:k^2\le n\},\qquad r^2\le n\lt (r+1)^2,\qquad m^2\le
 <a id="cod-022"></a>
 ### COD-022 · 手写最长回文子串：区间 DP 和中心扩展怎样取舍？
 
-**L2** · 小红书
+**L2** · 小红书 / 阿里巴巴
 
 #### 答案
+
+先确认题目要连续的回文子串，还是允许跳过字符的回文子序列，再确认返回长度还是实际结果。本库参考函数解决连续子串；未明确约束的“最长回文”不能自动当成两者之一。
 
 回文子串必须连续，不能跳过中间字符；最长回文子序列是另一题。先确认返回长度还是实际子串、同长答案的选择规则。参考函数返回实际子串，多个最长结果时取最靠左的出现位置，并把空字符串作为额外练习边界。
 
@@ -582,6 +719,8 @@ r=\max\{k\in\mathbb Z_{\ge0}:k^2\le n\},\qquad r^2\le n\lt (r+1)^2,\qquad m^2\le
 只需要一个最长子串时可用中心扩展：对每个位置分别以(i,i)检查奇数长度、以(i,i+1)检查偶数长度，只要左右字符相同就向外扩张，记录最佳边界。参考 longest_palindromic_substring 用该方法，最坏时间O(n²)、额外工作空间O(1)，最终切片返回字符串需要O(L)空间。省掉DP表的同时，仍覆盖所有回文，因为每个回文都有唯一的单字符或字符间隙中心。
 
 测试不能只比较babad的某一个答案，除非实现已约定tie规则。参考测试穷举短字符串的全部连续子串，以正反相同判定回文、按长度和最早起点得到独立oracle，覆盖奇数、偶数、重复字符、空串和无长回文。若长度很大且需要最坏线性时间，可追问Manacher；需讲清奇偶统一处理、镜像半径和右边界，不能只报算法名称。
+
+若要求最长回文子序列，区间长度DP在两端相等时取内部最长长度加2，不等时取删左端/删右端的较大值；它允许跳过字符。例如bbbab的最长回文子序列为bbbb、长度4，但最长连续回文子串为bbb、长度3。上述中心扩展函数不能解决子序列版本。
 
 ```math
 P_{i,j}=(s_i=s_j)\land\big((j-i\le1)\lor P_{i+1,j-1}\big),\qquad 0\le i\le j\lt n
@@ -669,45 +808,114 @@ U=\frac{n!}{\prod_j c_j!},\qquad \mathrm{skip}(i)=\mathrm{used}_i\lor(i\gt 0\lan
 - 快慢指针为什么可判断有环，递归版为什么占O(n)额外空间？
 
 <a id="cod-025"></a>
-### COD-025 · 手写股票最大利润：交易次数、手续费和冷冻期不同，解法怎样变化？
+### COD-025 · 手写股票最大利润：单笔、至多两笔、手续费与冷冻期怎样区分？
 
-**L2** · 腾讯
+**L2** · 腾讯 / 百度
 
 #### 答案
 
-先问清最多交易几次、是否只持有一股、能否不交易、是否有手续费或冷冻期，再定义状态。只说“股票最大利润”不能确定具体版本。本题参考 max_stock_profit 明确采用至多一次买入、在更晚一天卖出、允许不交易；这只是标准练习契约，不把面经未说明的交易次数补成事实。
+先问最多交易几次、是否只持一股、是否允许不交易，以及手续费、冷冻期。单次、无限次和至多两次是不同问题；参考max_stock_profit明确是一次，max_stock_profit_two_transactions是至多两次、不重叠持仓，允许不交易。
 
-单次交易遍历每天价格，维护此前最低买入价lowest和已知最佳利润best。对当天作为卖出日，先比较price-lowest，再更新lowest，这样候选买入日始终在卖出日之前。任意最优交易若在当天卖出，最好的买入价必是此前最低价；遍历所有卖出日就不会漏最优解。best从0开始，因此空输入、单元素、价格持平或不断下跌都返回0。时间O(n)、辅助空间O(1)，支持流式遍历且不改变输入。
+单次遍历卖出日，维护此前最低价格与最佳收益，先用price−lowest更新best，再纳入当天价格。最优交易若当天卖出，最优买价必是此前最低价，因此遍历所有卖日不会漏解。best初始0，空输入、单元素、持平和下跌都返回0；时间O(n)、空间O(1)，不得用全局max−min而忽略先后。
 
-不限次数、没有费用或冷冻期、至多持有一股时，可以累加每对相邻日价格的正增量；每段上涨区间等价于在最低点买、最高点卖。但只做一次交易不能累加多段上涨：例如[1,3,1,3]单次利润2、多次利润4。若至多k次交易，可用“第j次买入后的持有收益”和“第j次卖出后的空仓收益”状态，第j次买入依赖第j-1次卖出，第j次卖出依赖第j次买入；按天推进，时间O(nk)、滚动空间O(k)，初始化不可达状态为负无穷并允许零次交易。
+股票III至多两笔，用hold1/cash1/hold2/cash2表示至多一次买入后的持仓、至多一次完成后的空仓、至多第二次买入后的持仓、至多两次完成后的空仓。初始hold为−∞、cash为0；每一天保存上一日四个状态，买入减price、卖出加price，第二次买入依赖上一日cash1。返回cash2，允许它包含只交易一次或零次的方案。全部从旧值转移，明确每天至多一个动作且第一笔卖日严格早于第二笔买日。无费用/冷冻期时，同价同日卖再买不会额外增加收益，可合并相邻交易，但旧状态写法更容易审核。四状态时间O(n)、空间O(1)。参考算术函数接受有限有符号数；业务价格需按题意验证非负。
 
-手续费版本通常在卖出时只扣一次fee，用hold和cash两状态，从前一天状态计算新状态；也可等价改为买入时扣费，但不能两边各扣一次。一个完整冷冻日意味着昨天卖出后今天不能买入，此时可保留rest/hold/sold三状态，或让当天买入引用前两天可空仓收益，不能沿用没有冷冻期的cash前一天转移。状态更新必须明确是否允许同日操作，并保存需要的旧值，避免新旧状态混用。
+例如[3,3,5,0,0,3,1,4]单次收益4、至多两次收益6。无限次无费用/冷冻期可以累加相邻正增量，[1,3,1,3]单次2、两次4；至多k次用相同的买/卖状态扩展到O(nk)时间、O(k)空间。手续费每笔只扣一次，可在买或卖时统一扣；冷冻期要求买入依赖满足等待条件的空仓状态，不能直接用无冷冻版cash。
 
-单次版本测试用所有买卖日i<j的价格差和0作为穷举oracle，覆盖空、单元素、上涨、下跌、重复低点与多个上涨波段；这样可揭露使用全局max-min却忽略时间先后，或者把多次交易利润误当单次交易答案的问题。若要求输出交易日，维护最低价下标和最佳下标对，再约定同利润的选择规则。
+单次用所有i<j交易的穷举作oracle；两次则枚举所有buy1<sell1<buy2<sell2及单笔/零笔方案，覆盖多个上涨波段和重复价。若需要输出交易日，再维护状态对应路径及同收益选择规则。
 
 ```math
-P=\max\big(\{0\}\cup\{p_j-p_i:0\le i\lt j\lt n\}\big),\qquad m_t=\min_{0\le i\le t}p_i,\qquad P_t=\max(P_{t-1},p_t-m_{t-1})\ (t\ge1)
+\begin{aligned}h_{1,t}&=\max(h_{1,t-1},-p_t)\\c_{1,t}&=\max(c_{1,t-1},h_{1,t-1}+p_t)\\h_{2,t}&=\max(h_{2,t-1},c_{1,t-1}-p_t)\\c_{2,t}&=\max(c_{2,t-1},h_{2,t-1}+p_t)\\h_{1,-1}&=h_{2,-1}=-\infty,\quad c_{1,-1}=c_{2,-1}=0\end{aligned}
 ```
 
-代码：[max_stock_profit](../coding/reference.py#L368)
+代码：[max_stock_profit](../coding/reference.py#L368) · [max_stock_profit_two_transactions](../coding/reference.py#L436)
 
 #### 易错点
 
-- 全局最大价减最小价可能先卖后买，违反时间顺序。
-- 累加所有正增量只适用于相应的不限次数无费用/冷冻期版本。
-- 手续费、冷冻期和交易次数限制都会改变状态，不能只换一个初始化值就套用同一代码。
+- 四状态代表至多两笔，不是强迫两笔都交易；空/单元素可返回0。
+- 复用当天刚更新状态会隐含同日动作；若加入fee/cooldown，这种约定必须重新审查。
+- 官方股票III是至多两笔，不能把单次函数当作它的完整实现。
 
 #### 追问
 
-- 最多两次交易怎样写四个状态，并控制更新顺序？
-- 手续费和一个冷冻日同时存在时，怎样定义可买入的空仓状态？
+- 最多k次如何扩展状态，何时能退化为无限次贪心？
+- 两笔版本如果同时加手续费和一个冷冻日，哪些转移要改？
+
+<a id="cod-027"></a>
+### COD-027 · 不调用 sqrt 求非负实数平方根，如何控制误差并处理极大、极小值？
+
+**L2** · 深势科技
+
+#### 答案
+
+先明确返回近似实数而非整数下取整，输入为可表示成有限float的非负int/float，误差按绝对与相对尺度判断；负值、NaN、无穷大不属于这个接口。0直接返回0。普通二分可以用[0,max(1,x)]包住根，但直接计算mid²可能溢出，极小数若只用固定绝对精度又可能直接被当成0。
+
+参考实现先用frexp把x分成m·2^e，非零时0.5≤m<1。将奇数e减1并令m乘2，使指数为偶数；这样sqrt(x)=sqrt(m)·2^(e/2)，调整后的m在[0.5,2)，只需在[0.5,2]二分其根，平方不会因原x的量级溢出。实现只用乘法和frexp/ldexp恢复尺度，没有调用sqrt、isqrt或幂0.5；从最大有限float到最小正subnormal都可处理。
+
+每步用区间中点作为估计，把当前半区间宽通过ldexp变回实际根的尺度；当半宽≤abs_tol+rel_tol·|estimate|时返回。默认abs_tol=0、rel_tol=1e−12，避免把很小的正根粗暴压成0。若中点舍入后不再改变端点，已达到浮点分辨率，返回当前估计；低于机器精度的误差要求无法保证。max_iterations限制步数，未满足条件且未停滞时显式报错，不把最后的粗结果冒充收敛。
+
+一般二分需要O(log(初始区间宽/所需精度))步、O(1)空间；指数缩放让循环次数主要随有效精度变化，默认上限128。也可用牛顿法z←(z+x/z)/2，但需良好初值、零值处理和避免中间溢出，不能仅说收敛快就忽略数值域。测试允许用math.sqrt作为独立oracle，覆盖0、非完全平方、0<x<1、浮点极大/极小及随机指数，同时验证非法输入和迭代上限。
+
+```math
+\begin{aligned}x&=m\,2^{2k},\quad m\in[\tfrac12,2),\qquad\sqrt x=\sqrt m\,2^k\\\hat r&=2^k\frac{a+b}{2},\qquad E=2^k\frac{b-a}{2}\\E&\le\mathrm{abs\_tol}+\mathrm{rel\_tol}\,|\hat r|\end{aligned}
+```
+
+代码：[float_sqrt](../coding/reference.py#L489)
+
+#### 易错点
+
+- 整数sqrt返回floor根，实数版本返回近似浮点，不能复用整数题的输出契约。
+- 固定绝对误差会吞掉极小正数；在原数值尺度直接平方可能溢出。
+- 迭代停止和浮点舍入只给近似，不能声称任意精度或数学精确平方根。
+
+#### 追问
+
+- 不用指数缩放时，怎样用x/mid比较避免平方溢出？
+- 为何x很小时初始区间不能简单写成[0,x]？
+
+<a id="cod-028"></a>
+### COD-028 · 矩阵中的最长递增路径怎么求，如何避免递归深度溢出？
+
+**L2** · 字节跳动
+
+#### 答案
+
+先确认合法移动、是否严格递增，以及要返回路径长度还是路径；“矩阵最长递增序列”本身没有唯一题意。本库示例约定只能上下左右移动，不走对角线、不绕回边界、每步值严格增大，返回经过的单元格数。
+
+把每个单元格视作节点，从较小值连到相邻较大值。严格递增使沿边的数值不断增大，因此不可能形成有向环；相等值之间没有边。最长路径可用记忆化DFS：dp(v)=1+max邻接更大节点dp，但长蛇形路径可能让递归栈达到mn，不适合直接依赖Python默认递归深度。
+
+参考实现用拓扑分层BFS：每个节点的入度是相邻更小节点数，先将入度0的局部极小点入队。一轮处理当前所有节点，把相邻更大节点的入度减1；入度降0后排入下一层。一个节点只有所有较小前驱都处理完才能进入队列，其层数等于最长前驱链长度加1，所以总轮数就是最长严格递增路径长度。单节点或全相等矩阵为1，空矩形为0；不修改输入。
+
+每格最多四条边，入度计算与队列遍历均为O(mn)，入度和队列空间O(mn)。应先检查矩形，避免长短行造成索引错误。若改成非严格递增，等值相邻节点可以构成环，此DAG证明失效；若允许任意位置跳转，问题结构也变了，不能直接套同一函数。需要返回路径时，可维护最佳前驱和长度再回溯。测试用小矩阵穷举所有合法递增分支的独立DFS oracle，另用一行2000个递增值验证实现不依赖递归栈。
+
+```math
+\begin{aligned}u\to v&\iff u,v\ \mathrm{are\ four\ neighbors}\ \land\ M_v\gt M_u\\\mathrm{dp}(v)&=1+\max\big(\{0\}\cup\{\mathrm{dp}(u):u\to v\}\big)\\L&=\max_v\mathrm{dp}(v)\end{aligned}
+```
+
+代码：[longest_increasing_matrix_path](../coding/reference.py#L531)
+
+#### 易错点
+
+- 本题长度计单元格数而非边数；单节点长度为1。
+- 严格递增是无环证明关键，等值节点不能连边。
+- 移动规则和严格性须先澄清；允许任意跳转或非严格递增时是不同问题。
+
+#### 追问
+
+- 改成不下降路径时，为什么拓扑BFS不能直接使用？
+- 怎样在O(mn)求长度的同时返回一条最优路径？
 
 ## 参考资料
 
 - [PyTorch CrossEntropyLoss](https://docs.pytorch.org/docs/2.14/generated/torch.nn.CrossEntropyLoss.html)
 - [PyTorch scaled_dot_product_attention](https://docs.pytorch.org/docs/2.14/generated/torch.nn.functional.scaled_dot_product_attention.html)
+- [GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints](https://arxiv.org/html/2305.13245v3)
 - [RoFormer / RoPE](https://arxiv.org/abs/2104.09864)
 - [Contrastive Predictive Coding](https://arxiv.org/abs/1807.03748)
+- [Learning Transferable Visual Models From Natural Language Supervision](https://arxiv.org/abs/2103.00020)
+- [A Simple Framework for Contrastive Learning of Visual Representations](https://arxiv.org/abs/2002.05709)
+- [PyTorch functional.cross_entropy：直接接收未归一化logits](https://docs.pytorch.org/docs/2.14/generated/torch.nn.functional.cross_entropy.html)
+- [PyTorch functional.normalize：Lp特征范数归一化](https://docs.pytorch.org/docs/2.14/generated/torch.nn.functional.normalize.html)
 - [Transformers GenerationConfig](https://huggingface.co/docs/transformers/main/en/main_classes/text_generation)
 - [LoRA](https://arxiv.org/abs/2106.09685)
 - [TRL DPO Trainer](https://huggingface.co/docs/trl/dpo_trainer)
@@ -736,3 +944,14 @@ P=\max\big(\{0\}\cup\{p_j-p_i:0\le i\lt j\lt n\}\big),\qquad m_t=\min_{0\le i\le
 - [Algorithms 4th edition：Bags, Queues, Stacks与单链表节点](https://algs4.cs.princeton.edu/13stacks/)
 - [WPI CS2223：Stocks动态规划课程解答](https://web.cs.wpi.edu/~cs2223/b05/HW/HW6/SolutionsHW6/)
 - [University of Washington CSE421：Dynamic Programming交易手续费题](https://courses.cs.washington.edu/courses/cse421/25wi/files/homework/homework5_problems.pdf)
+- [Best Time to Buy and Sell Stock III: official problem definition](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/description/)
+- [Variation-aware Vision Token Dropping for Faster Large Vision-Language Models（v2）](https://arxiv.org/html/2509.01552v2)
+- [V2Drop CVPR 2026 官方论文页](https://openaccess.thecvf.com/content/CVPR2026/html/Chen_Variation-aware_Vision_Token_Dropping_for_Faster_Large_Vision-Language_Models_CVPR_2026_paper.html)
+- [V2Drop 官方 LLaVA 实现](https://github.com/xuyang-liu16/V2Drop/blob/main/llava/model/language_model/V2Drop.py)
+- [PyTorch 2.14 官方 torch.argsort 文档](https://docs.pytorch.org/docs/2.14/generated/torch.argsort.html)
+- [Python math: frexp, ldexp, isfinite and floating-point tolerance](https://docs.python.org/3/library/math.html)
+- [Longest Increasing Path in a Matrix: official four-neighbor problem definition](https://leetcode.com/problems/longest-increasing-path-in-a-matrix/description/)
+- [Mixtral of Experts](https://arxiv.org/html/2401.04088v1)
+- [Transformers MixtralTopKRouter reference](https://github.com/huggingface/transformers/blob/main/src/transformers/models/mixtral/modeling_mixtral.py)
+- [Switch Transformers](https://arxiv.org/abs/2101.03961)
+- [torch.nn.LayerNorm — PyTorch 2.14 documentation](https://docs.pytorch.org/docs/2.14/generated/torch.nn.LayerNorm.html)

@@ -271,7 +271,7 @@ A2A用于不同系统中的Agent互操作，主要抽象包括AgentCard发现能
 <a id="agt-014"></a>
 ### AGT-014 · 具身 Agent、VLA 与软件工具 Agent 有什么区别？
 
-**L2**
+**L2** · 美团
 
 #### 答案
 
@@ -281,6 +281,8 @@ A2A用于不同系统中的Agent互操作，主要抽象包括AgentCard发现能
 
 评测要检查任务成功、碰撞/约束违例、反馈与恢复、分布外环境和sim-to-real差距。感知错误、规划错误与控制误差应分层定位，部署需要动作边界、实时监控和可靠停止机制；不能只根据文字计划打分。
 
+世界模型与VLA承担不同角色：世界模型根据历史观测和候选动作预测下一状态/观测及可能结果，供规划、想象训练或环境仿真使用；VLA策略根据视觉和语言输出动作，两者可以配合但不能混称。以固定Genie 2官方介绍为例，模型以动作和历史latent帧逐帧生成下一观测；普通文本到视频能生成可信画面，并不自动具备动作条件、可干预因果或机器人可执行性。第一人称操作世界模型需处理遮挡与出画后的状态、相机运动和手物接触，评测不同动作的响应、长程状态一致性与真实环境误差；只看视频美观不能证明可用于具身控制。无动作标注的视频也能学习预测或潜在动作，但潜在符号到真实机器人动作还需定义映射、反馈和校准，不能从观看视频直接宣称会控制机械臂。
+
 #### 易错点
 
 - 自然语言计划正确不等于可达、可抓取或满足动力学约束。
@@ -288,11 +290,12 @@ A2A用于不同系统中的Agent互操作，主要抽象包括AgentCard发现能
 #### 追问
 
 - 同一个“拿起杯子”目标失败，怎样区分视觉定位、技能选择和控制执行问题？
+- 世界模型看起来逼真但对左右动作给出相同未来，能用于规划吗？
 
 <a id="agt-015"></a>
 ### AGT-015 · 怎样训练 Agent 的工具使用能力，SFT、轨迹偏好与在线 RL 数据如何组织？
 
-**L2** · 字节跳动
+**L2** · 字节跳动 / 深势科技
 
 #### 答案
 
@@ -442,7 +445,7 @@ Benchmark 是用于比较能力的任务集合与评分协议，包括样本、�
 <a id="agt-009"></a>
 ### AGT-009 · 如何防止 Agent 死循环和无效规划？
 
-**L2** · 字节跳动
+**L2** · 字节跳动 / 深势科技
 
 #### 答案
 
@@ -513,6 +516,8 @@ A2A委派需要继承根任务和父任务路径，检测同一目标在Agent之
 - [LlamaIndex Framework](https://developers.llamaindex.ai/python/framework/)
 - [Do As I Can, Not As I Say: Grounding Language in Robotic Affordances](https://arxiv.org/abs/2204.01691)
 - [RT-2: Vision-Language-Action Models](https://arxiv.org/abs/2307.15818)
+- [Genie 2: A large-scale foundation world model](https://deepmind.google/blog/genie-2-a-large-scale-foundation-world-model/)
+- [Ego4D 官方 Annotation Guidelines](https://ego4d-data.org/docs/data/annotation-guidelines/)
 - [A Reduction of Imitation Learning and Structured Prediction to No-Regret Online Learning](https://arxiv.org/abs/1011.0686)
 - [WebShop: Towards Scalable Real-World Web Interaction with Grounded Language Agents](https://arxiv.org/html/2207.01206)
 - [Scaling Instructable Agents Across Many Simulated Worlds](https://arxiv.org/abs/2404.10179)

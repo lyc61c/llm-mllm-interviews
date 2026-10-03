@@ -1,0 +1,2076 @@
+{
+  "sources": [
+    {
+      "id": "XHS26-S016",
+      "title": "美团多模态算法一面凉经",
+      "url": "https://www.xiaohongshu.com/explore/6a7748f9000000002500f64c",
+      "platform": "小红书",
+      "type": "community",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读完整正文及图片1–5页。排除实习安排等非技术问题；项目实际数值未作标准答案。 厂商按作者描述关联，未独立认证面试。",
+      "topics": [
+        "SFT与GRPO各解决什么、为何后期引入RL",
+        "视频画质模型在线打分还是离线预处理",
+        "batch size=8的采样、打分、更新时序",
+        "CLIP/Qwen打分慢的优化方案",
+        "GRPO训练数据量与6000条训练耗时",
+        "多模型打分显存资源估算",
+        "相邻帧相似度奖励的局限和动作定义",
+        "时序奖励权重与多维奖励作用",
+        "Qwen-VL提示词输出0–10分能否作为可靠奖励",
+        "SFT数据量、与RL基线的可视化及指标对照",
+        "视频项目如何整理成论文",
+        "具身智能与世界模型的理解",
+        "第一人称操作视频生成难点、SFT与RL分工",
+        "视频时长、FPS及1–10分钟粗caption与子动作粒度不匹配",
+        "离线模型伪标注还是视频CoT自行拆动作",
+        "相机位姿怎样作为条件注入视频生成模型",
+        "小手部扭曲模糊在SFT/RL阶段如何优化",
+        "每帧YOLO手框四元组怎样输入生成模型",
+        "动态视觉token剪枝和手部空间先验"
+      ],
+      "claimed_company": "美团"
+    },
+    {
+      "id": "XHS26-S017",
+      "title": "阿里多模态算法一面面经",
+      "url": "https://www.xiaohongshu.com/explore/6a07f853000000000803ec76",
+      "platform": "小红书",
+      "type": "community",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读完整正文。模型名用于技术答案示例，不冒充帖子点名。 厂商按作者描述关联，未独立认证面试。",
+      "topics": [
+        "论文项目的模型架构、训练与方案设计取舍",
+        "数据集构建配比和训练参数",
+        "多向量模型与embedding模型如何训练",
+        "对比学习原理与正负样本构造",
+        "MLLM整体结构及视觉输入",
+        "检索metrics和benchmark",
+        "Q-Former与两层MLP的选择原因",
+        "MRoPE原理",
+        "SFT/RL、GRPO/PPO以及只做SFT是否够",
+        "Transformer缩放与softmax作用",
+        "手写InfoNCE、交叉熵、归一化及温度系数"
+      ],
+      "claimed_company": "阿里巴巴"
+    },
+    {
+      "id": "XHS26-S018",
+      "title": "快手多模态算法一面凉经",
+      "url": "https://www.xiaohongshu.com/explore/6a647262000000000a039f0d",
+      "platform": "小红书",
+      "type": "community",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读完整正文和图片1–6页。具体训练时长、卡数和个人贡献须实际作答，未编造数值。V2Drop名称按论文与作者代码核验后使用。 厂商按作者描述关联，未独立认证面试。",
+      "topics": [
+        "项目资源、卡数与框架搭建耗时",
+        "为什么用GRPO做文生视频语义对齐",
+        "GRPO怎样融合扩散去噪流程",
+        "去噪轨迹更新与最终视频奖励的区别",
+        "最终视频RL反传的显存效率",
+        "多维奖励设计及是否全部靠Qwen prompt",
+        "模型选型、开源工程与原生Wan2.1微调基线",
+        "集成GRPO扩散训练的bug与排查",
+        "Qwen评分虚高和实际质量维度",
+        "FID、LPIPS与视频时序指标及量化对照",
+        "Wan2.1版本与参数量",
+        "group size、帧数、patch size的超参数依据",
+        "何时出现训练提升和LoRA rank选择",
+        "工程pipeline与研究创新的区别",
+        "V2Drop视觉变化剪枝与文本QK任务感知改进怎样对照",
+        "token压缩文献、复现困难与改进动机",
+        "复现官方指标不一致的原因",
+        "LLaVA迁移Qwen-VL剪枝时attention及位置编码适配",
+        "V2Drop重要性、L2跨层token变化与attention的关系",
+        "工程亮点与自己的算法贡献、复现修改",
+        "现场实现V2Drop渐进视觉token裁剪"
+      ],
+      "claimed_company": "快手"
+    },
+    {
+      "id": "XHS26-S019",
+      "title": "阶越星辰 多模态数据算法研究员 一面拷打",
+      "url": "https://www.xiaohongshu.com/explore/68d0db02000000001301c24a",
+      "platform": "小红书",
+      "type": "community",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读完整正文；帖子作者声明“含AI生成内容”。标签仅按标题及阶跃星辰话题关联，不独立认证真实面试。 厂商按作者描述关联，未独立认证面试。",
+      "topics": [
+        "手写GQA",
+        "reward hacking与业务数据上100%准确RM的边界",
+        "RLOO原理",
+        "为何还要RL、只SFT是否够",
+        "坏样本SFT loss取负能否代替RL",
+        "KTO与DPO区别",
+        "GRPO结果优势与PPO的场景取舍"
+      ],
+      "claimed_company": "阶跃星辰"
+    },
+    {
+      "id": "XHS26-S020",
+      "title": "百度多模态算法面经",
+      "url": "https://www.xiaohongshu.com/explore/68f20d750000000007036bb1",
+      "platform": "小红书",
+      "type": "community",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读完整正文和两张题目图片。股票题明确为最佳买卖时机III，视频加速为宽泛主题。 厂商按作者描述关联，未独立认证面试。",
+      "topics": [
+        "LoRA原理、训练耗时、rank/alpha与变体",
+        "Wan2.1架构细节",
+        "Wan2.1图像与文本条件注入",
+        "Wan2.2高低噪专家架构与切换",
+        "高低噪划分与SNR关系",
+        "重参数化技巧",
+        "Flow Matching目标速度怎样计算",
+        "DDPM与Flow Matching区别",
+        "DDPM为何随机采样t训练而非1000步全链加噪",
+        "VQ-VAE原理",
+        "ViT怎样转换图像token",
+        "手写LayerNorm",
+        "手写股票最佳买卖时机III",
+        "项目和最近论文的技术复盘",
+        "视频生成加速方法"
+      ],
+      "claimed_company": "百度"
+    },
+    {
+      "id": "XHS26-S021",
+      "title": "深势科技多模态大模型算法实习一面面经",
+      "url": "https://www.xiaohongshu.com/explore/6a8c68a50000000028027a96",
+      "platform": "小红书",
+      "type": "community",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读完整正文。只提取明确技术题；团队业务描述未冒充新增问句。 厂商按作者描述关联，未独立认证面试。",
+      "topics": [
+        "项目有哪些模态、图文数据来源",
+        "Qwen3-VL融合、MLP作用与其他跨模态融合",
+        "推理数据来源、teacher选择及补数据理由",
+        "全参SFT与LoRA对照",
+        "模型规模和训练卡数",
+        "开放答案评测、LLM Judge选择",
+        "如何证明使用图像而非只依赖文字",
+        "为何GSPO、与GRPO对比",
+        "多模态reward设计",
+        "Agent为何GRPO、多轮工具reward",
+        "如何发现并处理reward hacking",
+        "不用sqrt求实数平方根"
+      ],
+      "claimed_company": "深势科技"
+    },
+    {
+      "id": "XHS26-S022",
+      "title": "字节多模态算法-实习面经",
+      "url": "https://www.xiaohongshu.com/explore/6ab62208000000001b032e54",
+      "platform": "小红书",
+      "type": "community",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读完整正文。矩阵递增原文未给出移动约束，答案示例显式采用四邻接严格递增，须先确认题意。 厂商按作者描述关联，未独立认证面试。",
+      "topics": [
+        "简短介绍论文的问题、创新与结果",
+        "Qwen3-VL后训练数据量和GRPO奖励",
+        "SFT与GRPO分类任务差异、GRPO优势边界",
+        "矩阵中的最长递增序列（移动条件未给出）"
+      ],
+      "claimed_company": "字节跳动"
+    },
+    {
+      "id": "XHS26-S023",
+      "title": "阿里淘天多模态算法面经（OC）",
+      "url": "https://www.xiaohongshu.com/explore/69ef7da60000000022029d46",
+      "platform": "小红书",
+      "type": "community",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读完整正文的三轮技术题。第二张MoE代码图未采用；“reward路由”未给出具体结构，排除未确认题意。最长回文未指定子串或子序列，原题明确两者区别。 厂商按作者描述关联，未独立认证面试。",
+      "topics": [
+        "论文/PPT与项目介绍",
+        "reward system训练、loss和普通LLM区别",
+        "reward路由类型与判断（结构未明）",
+        "MoE特点、训练及所用模型规模",
+        "MoE路由方案与设置依据",
+        "MoE训推差异和显存占用",
+        "RL训练MoE遇到的问题",
+        "手写MoE路由",
+        "数据集构建",
+        "PPO与DAPO、GSPO优化点",
+        "MLLM+SAM分割方案、与其他方案对比",
+        "MLLM直接分割、统一RL和模块训练",
+        "手写最长回文（子串/子序列未指定）",
+        "MLLM突破点与业务价值",
+        "除了数据模型还有哪些scaling方向",
+        "高效数据pipeline如何保证可信"
+      ],
+      "claimed_company": "阿里巴巴"
+    },
+    {
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "id": "R3-RET-001",
+      "title": "ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT",
+      "url": "https://arxiv.org/html/2004.12832",
+      "notes": "已读3.2/3.3/检索：归一化token embedding、非对称sum-MaxSim、query augmentation、正负pairwise softmax训练及离线编码。",
+      "topics": [
+        "ColBERT",
+        "MaxSim",
+        "多向量检索"
+      ]
+    },
+    {
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "id": "R3-RET-002",
+      "title": "ColPali: Efficient Document Retrieval with Vision Language Models",
+      "url": "https://arxiv.org/html/2407.01449",
+      "notes": "已读4.1/4.2、ViDoRe协议及消融：PaliGemma输出投影128维，LoRA语言层+投影训练，batch内最难负例pairwise softplus；nDCG@5、Recall、MRR，文档级防污染；池化/patch预算与成本权衡。限定原论文，不混用后续ColQwen版本。",
+      "topics": [
+        "ColPali",
+        "ViDoRe",
+        "多模态文档检索",
+        "训练"
+      ]
+    },
+    {
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "id": "R3-RET-003",
+      "title": "ColBERTv2: Effective and Efficient Retrieval via Lightweight Late Interaction",
+      "url": "https://arxiv.org/html/2112.01488",
+      "notes": "已读3.1/3.2/3.3与压缩附录：cross-encoder教师、困难负例及残差压缩；不将论文个别质量/加速数值当普遍承诺。",
+      "topics": [
+        "ColBERTv2",
+        "残差压缩",
+        "检索蒸馏"
+      ]
+    },
+    {
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "id": "R3-RET-004",
+      "title": "Text Embeddings by Weakly-Supervised Contrastive Pre-training",
+      "url": "https://arxiv.org/html/2212.03533",
+      "notes": "已读E5第4节：文本对比预训练，query/passage角色，多来源NLI/MS-MARCO/NQ微调、hard negatives与cross-encoder软标签蒸馏；任务混合并非自动对所有评测获益。",
+      "topics": [
+        "E5",
+        "Embedding训练",
+        "多任务",
+        "困难负例"
+      ]
+    },
+    {
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "id": "R3-RET-005",
+      "title": "MTEB: Massive Text Embedding Benchmark",
+      "url": "https://arxiv.org/html/2210.07316",
+      "notes": "已读任务/指标定义与检索、STS差异：原论文retrieval主指标nDCG@10、STS看相关系数；不把原论文任务数和排名当当前榜单状态。",
+      "topics": [
+        "MTEB",
+        "检索评测",
+        "STS"
+      ]
+    },
+    {
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "id": "R3-RET-006",
+      "title": "Matryoshka Representation Learning",
+      "url": "https://arxiv.org/html/2205.13147v4",
+      "notes": "已读第3节nested representations与4节部署：显式训练多个前缀维度，归一化按各维度单独处理；不是任意向量直接截断即可保证质量。",
+      "topics": [
+        "Matryoshka",
+        "维度压缩",
+        "嵌套表示"
+      ]
+    },
+    {
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "id": "R3-RET-007",
+      "title": "ColPali official model implementation",
+      "url": "https://github.com/illuin-tech/colpali/blob/main/colpali_engine/models/paligemma/colpali/modeling_colpali.py",
+      "notes": "已读forward：最后hidden states→custom projection→逐token L2 norm，再按attention mask处理padding；仅静态阅读，未执行模型。",
+      "topics": [
+        "ColPali",
+        "L2归一化",
+        "多向量表示"
+      ]
+    },
+    {
+      "id": "R3-WAN-001",
+      "title": "Wan2.1 官方仓库：模型下载与版本配置",
+      "url": "https://github.com/Wan-Video/Wan2.1",
+      "notes": "已核对Model Download及T2V配置：T2V-1.3B推荐480P、T2V-14B支持480P/720P，I2V-14B有480P/720P两个checkpoint。1.3B并非结构上不能生成720P。",
+      "topics": [
+        "Wan2.1",
+        "模型选型",
+        "T2V",
+        "I2V"
+      ],
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03"
+    },
+    {
+      "id": "R3-WAN-002",
+      "title": "Wan: Open and Advanced Large-Scale Video Generative Models",
+      "url": "https://arxiv.org/html/2503.20314",
+      "notes": "已读4.1/4.2/4.3/5.1相关段落：4×8×8因果VAE及首帧处理、umT5、DiT与共享调制、Flow Matching公式、I2V条件latent/mask及CLIP图像分支。论文公式使用0为噪声、1为数据，代码scheduler可能采用相反时间约定。",
+      "topics": [
+        "Wan-VAE",
+        "DiT",
+        "Flow Matching",
+        "I2V"
+      ],
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03"
+    },
+    {
+      "id": "R3-WAN-003",
+      "title": "Wan2.1 官方代码：WanModel 与时空 RoPE",
+      "url": "https://github.com/Wan-Video/Wan2.1/blob/main/wan/modules/model.py",
+      "notes": "已核对rope_apply按f/h/w构造旋转频率及WanSelfAttention/WanT2VCrossAttention/WanI2VCrossAttention，未将2.2 MoE特性套入2.1。 已进一步读原始代码WanI2VCrossAttention：共享视觉Q、独立图像K/V，两路attention输出相加后输出投影；不写存在论文/代码表述差别的MLP层数。",
+      "topics": [
+        "3D RoPE",
+        "时空注意力",
+        "文本条件"
+      ],
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03"
+    },
+    {
+      "id": "R3-WAN-004",
+      "title": "Wan-AI/Wan2.1-I2V-14B-480P 官方模型卡",
+      "url": "https://huggingface.co/Wan-AI/Wan2.1-I2V-14B-480P",
+      "notes": "已核对官方I2V-14B-480P checkpoint名称；README的I2V执行表存在一处T2V模型名笔误，答案依据下载列表和官方模型卡。",
+      "topics": [
+        "I2V",
+        "checkpoint"
+      ],
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03"
+    },
+    {
+      "id": "R3-WAN22-001",
+      "title": "Wan2.2 官方仓库：A14B MoE 与 TI2V-5B 架构",
+      "url": "https://github.com/Wan-Video/Wan2.2",
+      "notes": "已读模型下载及Introduction：T2V/I2V-A14B双专家、约27B总参数/14B每步激活；TI2V-5B为dense，高低噪阶段而非token级router。",
+      "topics": [
+        "Wan2.2",
+        "MoE",
+        "A14B"
+      ],
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03"
+    },
+    {
+      "id": "R3-WAN22-002",
+      "title": "Wan2.2 T2V-A14B 官方配置",
+      "url": "https://github.com/Wan-Video/Wan2.2/blob/main/wan/configs/wan_t2v_A14B.py",
+      "notes": "已核对boundary=0.875、两专家目录、Wan2.1_VAE及(4,8,8)stride。",
+      "topics": [
+        "boundary",
+        "T2V"
+      ],
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03"
+    },
+    {
+      "id": "R3-WAN22-003",
+      "title": "Wan2.2 I2V-A14B 官方配置",
+      "url": "https://github.com/Wan-Video/Wan2.2/blob/main/wan/configs/wan_i2v_A14B.py",
+      "notes": "已核对boundary=0.900、两专家目录与Wan2.1_VAE；不能混为所有任务统一门限。",
+      "topics": [
+        "boundary",
+        "I2V"
+      ],
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03"
+    },
+    {
+      "id": "R3-WAN22-004",
+      "title": "Wan2.2 T2V 官方 timestep 专家选择",
+      "url": "https://github.com/Wan-Video/Wan2.2/blob/main/wan/text2video.py",
+      "notes": "已读_prepare_model_for_timestep与generate：boundary=b*N，t>=boundary选高噪专家，低于选低噪；scheduler转换后t决定选择，offload按模型搬运。",
+      "topics": [
+        "专家选择",
+        "推理调度"
+      ],
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03"
+    },
+    {
+      "id": "R3-WAN22-005",
+      "title": "Wan2.2 I2V 官方 timestep 专家选择",
+      "url": "https://raw.githubusercontent.com/Wan-Video/Wan2.2/main/wan/image2video.py",
+      "notes": "已核对同向t门限，I2V latent/mask条件及未使用Wan2.1-I2V的CLIP图像编码器分支；本题只讨论专家切换，不把2.1图像接口混入2.2。",
+      "topics": [
+        "I2V",
+        "噪声专家"
+      ],
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03"
+    },
+    {
+      "id": "R3-WAN22-006",
+      "title": "Wan2.2 官方 FlowUniPC scheduler",
+      "url": "https://raw.githubusercontent.com/Wan-Video/Wan2.2/main/wan/utils/fm_solvers_unipc.py",
+      "notes": "已读shift与set_timesteps、sigma_to_alpha_sigma_t、convert_model_output：alpha=1-sigma，sigma调度乘N作为t，信号端预测sample-sigma*flow。SNR公式是据线性插值与单位方差条件推导，并非声称README明确给出该公式。",
+      "topics": [
+        "scheduler",
+        "Flow Matching",
+        "SNR"
+      ],
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03"
+    },
+    {
+      "id": "R3-WAN22-007",
+      "title": "Wan2.2 官方共享配置",
+      "url": "https://raw.githubusercontent.com/Wan-Video/Wan2.2/main/wan/configs/shared_config.py",
+      "notes": "已核对num_train_timesteps=1000、umT5 XXL及BF16默认；门限数字限定所读main版本配置。",
+      "topics": [
+        "训练时间尺度"
+      ],
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03"
+    },
+    {
+      "id": "R3-VID-VBENCH",
+      "title": "VBench: Comprehensive Benchmark Suite for Video Generative Models",
+      "url": "https://arxiv.org/abs/2311.17982",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读原论文摘要，核对将视频生成质量拆解为多个独立维度；未引用具体榜单数字。",
+      "topics": [
+        "视频生成评测",
+        "时序一致性"
+      ]
+    },
+    {
+      "id": "R3-VID-VBENCH-CODE",
+      "title": "VBench 官方评测仓库",
+      "url": "https://github.com/Vchitect/VBench",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读16维度列表及 temporal flickering 评测前筛除静态视频的说明，不把静止当作高质量动作。",
+      "topics": [
+        "静态视频奖励投机",
+        "动态程度"
+      ]
+    },
+    {
+      "id": "R3-VID-VIDEOSCORE",
+      "title": "VideoScore: Building Automatic Metrics to Simulate Fine-grained Human Feedback for Video Generation",
+      "url": "https://arxiv.org/html/2406.15252",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读论文及官方仓库的多维人工反馈训练说明；学习型视频评分器与仅写prompt的通用VLM评分不同。",
+      "topics": [
+        "视频奖励模型",
+        "人工反馈"
+      ]
+    },
+    {
+      "id": "R3-VID-VIDEOSCORE-QWEN",
+      "title": "VideoScore-Qwen2-VL 官方模型卡",
+      "url": "https://huggingface.co/TIGER-Lab/VideoScore-Qwen2-VL",
+      "platform": "作者官方模型卡",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "核对五维回归提示与1.0–4.0量表；不误称Qwen-VL天生支持经校准的0–10画质评分。",
+      "topics": [
+        "Qwen2-VL",
+        "评分尺度"
+      ]
+    },
+    {
+      "id": "R3-VID-FLOW",
+      "title": "Flow-GRPO: Training Flow Matching Models via Online RL（v4）",
+      "url": "https://arxiv.org/html/2505.05470v4",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读ODE-to-SDE、组内优势、采样训练及视频future work；原文主要实验为T2I，迁移视频是方案与限制讨论，不冒称已验证视频结果。",
+      "topics": [
+        "Flow-GRPO",
+        "连续采样策略"
+      ]
+    },
+    {
+      "id": "R3-VID-DDPO",
+      "title": "Training Diffusion Models with Reinforcement Learning",
+      "url": "https://arxiv.org/html/2305.13301",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读多步去噪MDP、每步似然及黑盒奖励政策梯度，核对不需穿过不可微VLM评分器反传。",
+      "topics": [
+        "DDPO",
+        "黑盒奖励",
+        "连续动作"
+      ]
+    },
+    {
+      "id": "R3-VID-EGO4D",
+      "title": "Ego4D 官方 Annotation Guidelines",
+      "url": "https://ego4d-data.org/docs/data/annotation-guidelines/",
+      "platform": "Ego4D 官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读narrations与summary区分、动作时间窗口、PRE/CONTACT/PNR/POST及手物体框说明；不把粗summary等同于逐动作真值。",
+      "topics": [
+        "第一人称视频",
+        "动作状态变化"
+      ]
+    },
+    {
+      "id": "R3-VID-CLIMER",
+      "title": "Learning Temporal Sentence Grounding From Narrated EgoVideos",
+      "url": "https://proceedings.bmvc2023.org/332/",
+      "platform": "BMVC 论文主页",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读论文主页摘要，确认CliMer使用narration与粗时间戳学习定位；不宣称仅整段caption就能唯一恢复子动作。",
+      "topics": [
+        "弱监督定位",
+        "粗时间戳"
+      ]
+    },
+    {
+      "id": "R3-VID-TIMESTAMP",
+      "title": "Temporal Action Segmentation from Timestamp Supervision",
+      "url": "https://arxiv.org/abs/2103.06669",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读摘要，核对增加稀疏时间戳监督并据模型预测推断帧级标签的原则；不挪用实验收益。",
+      "topics": [
+        "动作分割",
+        "时间戳监督"
+      ]
+    },
+    {
+      "id": "R3-VID-CAMERA",
+      "title": "CameraCtrl: Enabling Camera Control for Video Diffusion Models",
+      "url": "https://arxiv.org/html/2404.02101v2",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读Plücker表示、只用相机条件的多尺度encoder、时序attention注入及外观泄漏消融；公式射线方向按官方代码与明确c2w坐标约定重写。",
+      "topics": [
+        "相机轨迹",
+        "Plücker",
+        "条件注入"
+      ]
+    },
+    {
+      "id": "R3-VID-CAMERA-CODE",
+      "title": "CameraCtrl 官方相机射线与 Plücker 编码",
+      "url": "https://github.com/hehao13/CameraCtrl/blob/main/cameractrl/data/dataset.py",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读ray_condition中directions归一化、c2w旋转、相机中心、cross(rays_o,rays_d)及坐标翻转；方向不错误加平移。",
+      "topics": [
+        "相机坐标",
+        "射线方向",
+        "裁剪映射"
+      ]
+    },
+    {
+      "id": "R3-VID-GLIGEN",
+      "title": "GLIGEN: Open-Set Grounded Text-to-Image Generation",
+      "url": "https://arxiv.org/html/2301.07093",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读公式5及keypoint扩展：语义特征与Fourier位置编码经MLP形成grounding token；原文T2I，不冒称其直接实现视频手部生成。",
+      "topics": [
+        "空间条件",
+        "边界框",
+        "Fourier编码"
+      ]
+    },
+    {
+      "id": "R3-VID-HOI4D",
+      "title": "HOI4D: A 4D Egocentric Dataset for Category-Level Human-Object Interaction",
+      "url": "https://hoi4d.github.io/",
+      "platform": "论文作者项目页",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读作者项目页，核对手姿态、物体姿态、动作/运动分割等精细HOI信息；仅用来说明bbox不足以描述手部几何。",
+      "topics": [
+        "手物交互",
+        "手部几何"
+      ]
+    },
+    {
+      "id": "R3-VID-FASTV",
+      "title": "FastV 官方实现与延迟验证说明",
+      "url": "https://github.com/pkunlp-icler/FastV",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读token masking与inplace token dropping区分、深层视觉token剪枝与KV Cache范围，不将理论FLOPs直接当真实加速，不声称原方法保证手部ROI保留。",
+      "topics": [
+        "动态视觉token剪枝",
+        "真实延迟"
+      ]
+    },
+    {
+      "id": "R3-VID-GENIE2",
+      "title": "Genie 2: A large-scale foundation world model",
+      "url": "https://deepmind.google/blog/genie-2-a-large-scale-foundation-world-model/",
+      "platform": "Google DeepMind 官方介绍",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读官方模型介绍中的动作输入、历史latent帧和下一观测生成；只用于机制比较，不用其界面动作代表真实机器人控制器。",
+      "topics": [
+        "动作条件世界模型",
+        "交互环境"
+      ]
+    },
+    {
+      "id": "R3-VID-FID",
+      "title": "GANs Trained by a Two Time-Scale Update Rule Converge to a Local Nash Equilibrium",
+      "url": "https://arxiv.org/abs/1706.08500",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "核对FID原论文的图像分布评测对象，不把逐帧FID当作时序顺序指标。",
+      "topics": [
+        "FID",
+        "分布评测"
+      ]
+    },
+    {
+      "id": "R3-VID-FVD",
+      "title": "Towards Accurate Generative Models of Video: A New Metric and Challenges",
+      "url": "https://arxiv.org/abs/1812.01717",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读FVD原论文摘要，核对用视频表征比较生成与参考集合分布，非单视频与文本一致性打分。",
+      "topics": [
+        "FVD",
+        "视频时序评测"
+      ]
+    },
+    {
+      "id": "R3-VID-FVD-CODE",
+      "title": "Google Research 官方 Fréchet Video Distance 实现",
+      "url": "https://github.com/google-research/google-research/blob/master/frechet_video_distance/frechet_video_distance.py",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读视频resize/归一化、I3D特征及Frechet集合计算接口，要求固定抽帧、样本量、特征网络与预处理协议。",
+      "topics": [
+        "FVD评测协议",
+        "I3D特征"
+      ]
+    },
+    {
+      "id": "R3-VID-LPIPS",
+      "title": "The Unreasonable Effectiveness of Deep Features as a Perceptual Metric",
+      "url": "https://arxiv.org/abs/1801.03924",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读原论文摘要与官方仓库用法，LPIPS为图像对感知距离；参考式重建比较需相同几何和正确对应。",
+      "topics": [
+        "LPIPS",
+        "感知距离"
+      ]
+    },
+    {
+      "id": "R3-VID-LPIPS-CODE",
+      "title": "LPIPS 官方 PerceptualSimilarity 仓库",
+      "url": "https://github.com/richzhang/PerceptualSimilarity",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "核对Nx3xHxW及[-1,1]输入、alex/vgg设置与距离方向，不能为开放生成随意配对真值。",
+      "topics": [
+        "LPIPS输入协议",
+        "感知评测"
+      ]
+    },
+    {
+      "id": "R3-VID-V2DROP",
+      "title": "Variation-aware Vision Token Dropping for Faster Large Vision-Language Models（v2）",
+      "url": "https://arxiv.org/html/2509.01552v2",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读跨相邻LLM层L2变化、渐进层预算、保留高变化视觉token及算法附录；不把变化量当作跨帧运动或严格无损保证。",
+      "topics": [
+        "V2Drop",
+        "渐进视觉token剪枝"
+      ]
+    },
+    {
+      "id": "R3-VID-V2DROP-CVPR",
+      "title": "V2Drop CVPR 2026 官方论文页",
+      "url": "https://openaccess.thecvf.com/content/CVPR2026/html/Chen_Variation-aware_Vision_Token_Dropping_for_Faster_Large_Vision-Language_Models_CVPR_2026_paper.html",
+      "platform": "CVPR Open Access",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "确认同名论文与作者身份，面经V2Drop名称无须猜改为其他算法。",
+      "topics": [
+        "V2Drop论文确认"
+      ]
+    },
+    {
+      "id": "R3-VID-V2DROP-CODE",
+      "title": "V2Drop 官方 LLaVA 实现",
+      "url": "https://github.com/xuyang-liu16/V2Drop/blob/main/llava/model/language_model/V2Drop.py",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读相邻层hidden L2、topk、原序排序及position/mask/cache处理；示例固定576与35偏移不可直接移植动态Qwen输入。",
+      "topics": [
+        "V2Drop实现",
+        "keep indices",
+        "位置与缓存"
+      ]
+    },
+    {
+      "id": "R3-VID-DDPM",
+      "title": "Denoising Diffusion Probabilistic Models 原论文",
+      "url": "https://arxiv.org/html/2006.11239v2",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读前向边缘闭式、随机t训练算法及简化目标与ELBO权重区分；补充随机时间步Monte Carlo估计不需1000次前向链。",
+      "topics": [
+        "DDPM",
+        "随机时间步",
+        "Monte Carlo估计"
+      ]
+    },
+    {
+      "id": "R3-VID-ARGSORT",
+      "title": "PyTorch 2.14 官方 torch.argsort 文档",
+      "url": "https://docs.pytorch.org/docs/2.14/generated/torch.argsort.html",
+      "platform": "PyTorch 官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "核对stable=True保留相等元素的原始顺序，教学代码用其约定并列变化值的选择。",
+      "topics": [
+        "稳定排序",
+        "PyTorch"
+      ]
+    },
+    {
+      "id": "R3-ALN-RLOO",
+      "title": "Back to Basics: Revisiting REINFORCE-Style Optimization for Learning from Human Feedback in LLMs",
+      "url": "https://aclanthology.org/2024.acl-long.662.pdf",
+      "platform": "ACL Anthology",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读第2.2–2.3节与式7–9：整序列REINFORCE、同prompt独立采样、leave-one-out无偏基线。",
+      "topics": []
+    },
+    {
+      "id": "R3-ALN-TRL-RLOO",
+      "title": "TRL RLOO Trainer (main)",
+      "url": "https://huggingface.co/docs/trl/main/en/rloo_trainer",
+      "platform": "Hugging Face documentation",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读Generating completions到Computing loss：当前main解释序列概率比的clipped surrogate，KL在no_grad下作为reward shaping；与原论文和历史实现区别陈述。",
+      "topics": []
+    },
+    {
+      "id": "R3-ALN-UL",
+      "title": "Neural Text Generation with Unlikelihood Training",
+      "url": "https://arxiv.org/pdf/1908.04319",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读第5节式3–8：负候选-token的-log(1-p)目标、与likelihood混合及生成续写上的token惩罚；不是把坏答案CE直接乘-1。",
+      "topics": []
+    },
+    {
+      "id": "R3-ALN-KTO",
+      "title": "KTO: Model Alignment as Prospect Theoretic Optimization",
+      "url": "https://arxiv.org/html/2402.01306v3",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读第4.1节式8–9、Data与Hyperparameters：单条desirable/undesirable标签、隐式log-ratio、KL参考点、stop-gradient、正负权重；实验不证明普遍优于DPO。",
+      "topics": []
+    },
+    {
+      "id": "R3-ALN-IPO",
+      "title": "A General Theoretical Paradigm to Understand Learning from Human Preferences",
+      "url": "https://arxiv.org/html/2310.12036v2",
+      "platform": "arXiv / Google DeepMind",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读第4.2、5节：确定性偏好下过拟合与IPO的identity preference mapping；保留原题IPO内容，不把KTO说成只加SFT loss。",
+      "topics": []
+    },
+    {
+      "id": "R3-ALN-DPO",
+      "title": "Direct Preference Optimization: Your Language Model is Secretly a Reward Model",
+      "url": "https://arxiv.org/html/2305.18290v2",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读第3–4节式3–7、梯度与附录unlikelihood baseline：成对偏好、参考log-ratio、离线目标，与简单负CE不同。",
+      "topics": []
+    },
+    {
+      "id": "R3-ALN-OVEROPT",
+      "title": "Scaling Laws for Reward Model Overoptimization",
+      "url": "https://proceedings.mlr.press/v202/gao23h/gao23h.pdf",
+      "platform": "PMLR",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读合成gold/proxy设置、第2.2校准与第4.5局限：标签拟合和真实人类意图分别存在代理差距；100%分类不能直接推导全支持域真实效用准确。",
+      "topics": []
+    },
+    {
+      "id": "R3-ALN-INSTRUCT",
+      "title": "Training language models to follow instructions with human feedback",
+      "url": "https://arxiv.org/pdf/2203.02155",
+      "platform": "arXiv / OpenAI",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读第3.1节训练三阶段与SFT、RM、PPO数据区别；用于比较示范拟合和策略分布上的奖励优化，不宣称RL必需或必然有效。",
+      "topics": []
+    },
+    {
+      "id": "R3-ALN-GRPO",
+      "title": "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",
+      "url": "https://arxiv.org/html/2402.03300v1",
+      "platform": "arXiv / DeepSeek",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读第4.1节式3–5：去critic、组内均值/标准差和结果/过程监督区别；sample-level优势不能冒称逐token因果归因。",
+      "topics": []
+    },
+    {
+      "id": "R3-ALN-GQA",
+      "title": "GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints",
+      "url": "https://arxiv.org/html/2305.13245v3",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读方法和图1：query头分组共享KV、MHA/MQA端点；代码采用连续等大小组的明确契约。",
+      "topics": []
+    },
+    {
+      "id": "R3-COD-CLIP",
+      "title": "Learning Transferable Visual Models From Natural Language Supervision",
+      "url": "https://arxiv.org/abs/2103.00020",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读论文PDF的N×N匹配、对称CE、图3归一化特征和温度缩放伪代码；不需要把成对图文矩阵的对角正例屏蔽。",
+      "topics": [
+        "InfoNCE",
+        "CLIP",
+        "对角正样本",
+        "温度"
+      ]
+    },
+    {
+      "id": "R3-COD-SIMCLR",
+      "title": "A Simple Framework for Contrastive Learning of Visual Representations",
+      "url": "https://arxiv.org/abs/2002.05709",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读PDF第2页NT-Xent公式和算法1：2N视图、排除anchor自身、每个anchor保留另一个视图的正例；该变体只用于答案定义区分，现有参考代码仍是N×N成对版本。",
+      "topics": [
+        "NT-Xent",
+        "SimCLR",
+        "排除自身"
+      ]
+    },
+    {
+      "id": "R3-COD-CE",
+      "title": "PyTorch functional.cross_entropy：直接接收未归一化logits",
+      "url": "https://docs.pytorch.org/docs/2.14/generated/torch.nn.functional.cross_entropy.html",
+      "platform": "PyTorch documentation",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读input为unnormalized logits、target可为class indices或概率和reduction说明；stable链接当前重定向至2.14。",
+      "topics": [
+        "CrossEntropy",
+        "logits",
+        "数值稳定"
+      ]
+    },
+    {
+      "id": "R3-COD-NORMALIZE",
+      "title": "PyTorch functional.normalize：Lp特征范数归一化",
+      "url": "https://docs.pytorch.org/docs/2.14/generated/torch.nn.functional.normalize.html",
+      "platform": "PyTorch documentation",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读v/max(norm,eps)定义、dim/eps和梯度说明；与CE内部softmax概率归一化区别明确。",
+      "topics": [
+        "L2 normalization",
+        "embedding",
+        "余弦相似度"
+      ]
+    },
+    {
+      "id": "R3-COD-STOCKIII",
+      "title": "Best Time to Buy and Sell Stock III: official problem definition",
+      "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/description/",
+      "platform": "LeetCode",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读官方题面：至多两笔、不同时持有多个交易、先卖再买、非负价格约束；S020明确说III，故对应此版本。参考代码的空输入和有符号数扩展另行声明。",
+      "topics": [
+        "至多两笔交易",
+        "动态规划"
+      ]
+    },
+    {
+      "id": "R3-COD-MATH",
+      "title": "Python math: frexp, ldexp, isfinite and floating-point tolerance",
+      "url": "https://docs.python.org/3/library/math.html",
+      "platform": "Python documentation",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读frexp/ldexp mantissa与二进制指数关系、isfinite和浮点比较；二分算法及误差界为独立推导，不把isclose的max形式误称本函数abs+rel求和条件。",
+      "topics": [
+        "实数平方根",
+        "浮点缩放",
+        "误差"
+      ]
+    },
+    {
+      "id": "R3-COD-MATRIX",
+      "title": "Longest Increasing Path in a Matrix: official four-neighbor problem definition",
+      "url": "https://leetcode.com/problems/longest-increasing-path-in-a-matrix/description/",
+      "platform": "LeetCode",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读四邻接、不越界/不绕回的标准题面；S022只证明矩阵递增题族，未说邻接，库中约束是明确独立标准化题意而非替原帖补事实。",
+      "topics": [
+        "矩阵递增路径",
+        "拓扑BFS"
+      ]
+    },
+    {
+      "id": "R3-COD-MIXTRAL",
+      "title": "Mixtral of Experts",
+      "url": "https://arxiv.org/html/2401.04088v1",
+      "platform": "arXiv / Mistral",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读第2.1节：TopK logits非选中置负无穷再softmax、稀疏专家加权、EP分发/返回。此题代码只实现top-k score/index核心，不声称完整MoE。",
+      "topics": [
+        "MoE",
+        "Top-k routing",
+        "归一化"
+      ]
+    },
+    {
+      "id": "R3-COD-MIXTRAL-CODE",
+      "title": "Transformers MixtralTopKRouter reference",
+      "url": "https://github.com/huggingface/transformers/blob/main/src/transformers/models/mixtral/modeling_mixtral.py",
+      "platform": "Hugging Face official code",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "已读MixtralTopKRouter.forward：FP32 softmax、topk、selected gate重新归一及MoE block reshape/expert dispatch。教学代码稳定并列id是独立契约，未声称官方topk保证相同并列次序。",
+      "topics": [
+        "MoE",
+        "FP32 router",
+        "selected gate"
+      ]
+    },
+    {
+      "id": "R3-SEG-LISA",
+      "title": "LISA: Reasoning Segmentation via Large Language Model",
+      "url": "https://arxiv.org/html/2308.00692",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读推理分割/ReasonSeg定义、embedding-as-mask、文本CE与BCE/Dice目标、可训练参数及评测；ReasonSeg是数据集和任务基准，非另一种模型。未引用跨模型收益数字。",
+      "topics": [
+        "推理分割",
+        "ReasonSeg",
+        "LISA",
+        "联合训练"
+      ]
+    },
+    {
+      "id": "R3-SEG-LISA-CODE",
+      "title": "LISA 官方模型与分割损失实现",
+      "url": "https://raw.githubusercontent.com/JIA-Lab-research/LISA/main/model/LISA.py",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读SAM图像编码no_grad、train_mask_decoder、text_hidden_fcs、text_embeds接口、原分辨率postprocess及BCEWithLogits/Dice实现。<SEG>对应hidden需要按代码的自回归shift和视觉span对齐，不能直接用词表logits作mask。",
+      "topics": [
+        "分割hidden接口",
+        "SAM mask decoder",
+        "梯度路径"
+      ]
+    },
+    {
+      "id": "R3-SEG-LISA-TRAIN",
+      "title": "LISA 官方训练脚本与冻结参数配置",
+      "url": "https://raw.githubusercontent.com/JIA-Lab-research/LISA/main/train_ds.py",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读默认train_mask_decoder=True、冻结视觉塔/mm_projector、LLM LoRA及lm_head/embed_tokens/text_hidden_fcs/mask_decoder可训练设置；代码用[SEG]，论文写<SEG>，本题采用论文记号而不假定任意检查点token字符串一致。",
+      "topics": [
+        "LoRA",
+        "冻结视觉编码器",
+        "联合优化"
+      ]
+    },
+    {
+      "id": "R3-SEG-SEGZERO",
+      "title": "Seg-Zero: Reasoning-Chain Guided Segmentation via Cognitive Reinforcement",
+      "url": "https://arxiv.org/html/2503.06520",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读原始Seg-Zero的Qwen2.5-VL生成bbox+两点、SAM2冻结、GRPO训练、GT mask派生定位监督、格式/框IoU/框与点L1奖励。原方法并非直接用最终mask IoU作RL奖励，也不是无标注学习。",
+      "topics": [
+        "Seg-Zero",
+        "GRPO",
+        "SAM2",
+        "定位奖励"
+      ]
+    },
+    {
+      "id": "R3-SEG-SEGZERO-CODE",
+      "title": "Seg-Zero 官方项目仓库",
+      "url": "https://github.com/JIA-Lab-research/Seg-Zero",
+      "platform": "论文/官方代码",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "已读官方README与原Seg-Zero训练/评测说明；仓库同时展示后续VisionReasoner，本题只讨论原始Seg-Zero，不混用后续模型、全模块训练或实验结果。",
+      "topics": [
+        "模型版本边界",
+        "推理分割"
+      ]
+    },
+    {
+      "id": "R3-ROOT-CLASS-METRICS",
+      "title": "scikit-learn: Log loss and classification metrics",
+      "url": "https://scikit-learn.org/stable/modules/model_evaluation.html#log-loss",
+      "platform": "官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "用于分类对数损失与评测定义；本文目标比较由公式直接分析。",
+      "topics": [
+        "交叉熵",
+        "分类评测"
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "category": "RAG",
+      "topic": "召回、融合与重排",
+      "level": "L3",
+      "title": "多向量检索怎样训练和打分，ColBERT 与 ColPali 有何区别？",
+      "tags": [
+        "多向量检索",
+        "ColBERT",
+        "ColPali",
+        "Late Interaction",
+        "MaxSim",
+        "训练与压缩"
+      ],
+      "company_tags": [
+        "阿里巴巴"
+      ],
+      "answer": {
+        "body": "单向量双塔把整段文本池化成一个向量，多向量检索保留多个上下文化 token 或视觉 patch 向量。Query 和文档分别编码，文档可离线建库；在线通过 late interaction 做细粒度匹配，介于单向量内积与每对 query/document 都联合编码的 cross-encoder 之间。不能把一份文档复制出多个相同向量就称为有效多向量模型。\n\nColBERT 用带 query/document 标记的 BERT 编码文本，再投影并逐向量 L2 归一化。每个 query 向量找文档中最相似向量，随后沿 query 求和，即 MaxSim。匹配是非对称的，同一文档向量可以匹配多个 query token，不是双向平均或一一分配。ColPali 将文档页作为图像输入 PaliGemma，把最后层的图像/文本 token 表示投影到低维空间，与文字 query 做相同 late interaction，保留版面、图表与文字线索；它是检索模型，不直接生成答案。\n\n训练使用 query 与相关/不相关文档。原始 ColBERT 用正负对的 softmax 交叉熵；原始 ColPali 对每个 query 取 batch 内最高分负例，与正例做 pairwise softplus，下式给出其形式。两项 softmax 交叉熵等于 softplus(s_minus−s_plus)，这里主要差别是负例组织与选择。ColPali 原论文主要更新语言层 LoRA 和新投影，并非所有视觉参数都更新。MaxSim 在唯一最大值处可回传梯度，数据仍需过滤假负例和跨文档泄漏；B 指参与联合打分的候选池大小；单卡 micro-batch 为1但跨卡收集到合法负例仍可训练。B=1 且没有额外负例时，不能定义最难 batch 负例。\n\n多向量提高细粒度匹配能力，也增加索引、搬运和打分开销。单对朴素打分为 O(Lq·Ld·D)，存储随文档向量数与维度增长；大库应采用候选剪枝或适配 late interaction 的索引。低维投影、残差量化或 token pooling 可节约成本，但可能丢失小字/表格细节，需比较 Recall、MRR、nDCG、P95 延迟和索引体积。MaxSim 热图可检查模型匹配位置，不能当作定位真值或因果解释。",
+        "formula": "\\begin{aligned}S(q,d)&=\\sum_{i=1}^{L_q}\\max_{1\\le j\\le L_d}q_i^\\top d_j,\\qquad \\|q_i\\|_2=\\|d_j\\|_2=1\\\\ s_k^+&=S(q_k,d_k),\\qquad s_k^-=\\max_{l\\ne k}S(q_k,d_l)\\\\ \\mathcal L_{\\mathrm{ColPali}}&=\\frac1B\\sum_{k=1}^{B}\\log\\left(1+\\exp(s_k^--s_k^+)\\right)\\end{aligned}",
+        "pitfalls": [
+          "普通padding不能参与MaxSim；ColBERT/ColPali的有效query augmentation tokens并非需要自动丢弃的padding。",
+          "将全部batch负例的InfoNCE称为原始ColPali论文的训练损失；原论文此处使用最高分in-batch负例的pairwise目标。",
+          "独立编码/离线索引不代表任意ANN单向量库天然支持sum-MaxSim；量化或池化后也不保证排序不变。",
+          "只有一个query-page对且无额外负例时，batch内max负分集合为空，必须补合法负例或调整训练配置。"
+        ],
+        "followups": [
+          "MaxSim为什么能反传，最大值并列时梯度由什么约定决定？",
+          "原始页图匹配正确但答案读错表格，属于检索还是生成问题？",
+          "怎样证明token pooling的收益没有以漏检小字或关键单元格为代价？"
+        ]
+      },
+      "reference_ids": [
+        "R3-RET-001",
+        "R3-RET-002",
+        "R3-RET-003",
+        "R3-RET-007"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "主代理已读阿里帖完整正文，明确问多向量模型及embedding训练；ColBERT/ColPali为答案中的核验示例，未声称帖子逐字指定了这两个模型。"
+        }
+      ],
+      "editorial": false,
+      "id": "RAG-020"
+    },
+    {
+      "category": "OMM",
+      "topic": "视频生成与控制",
+      "level": "L2",
+      "title": "Wan2.1 有哪些版本，视频生成架构是什么，如何选择并验证原生微调基线？",
+      "tags": [
+        "Wan2.1",
+        "T2V",
+        "I2V",
+        "视频生成",
+        "Flow Matching",
+        "微调基线"
+      ],
+      "company_tags": [
+        "快手",
+        "百度"
+      ],
+      "answer": {
+        "body": "先明确项目实际用的是 Wan2.1 的哪个 checkpoint，而不是只说“用了万相”。核心 T2V 版本为 1.3B 和 14B：1.3B 官方推荐 480P，14B 支持 480P/720P；I2V 为 14B，分别提供 480P 和 720P 权重。1.3B 生成 720P 并非结构上不可能，而是该分辨率训练有限、官方推荐更稳定的 480P。参数量标签主要描述生成主干，不能直接代表包括文本编码器、VAE、激活和优化器在内的总显存。\n\n架构由 Wan-VAE、umT5 文本编码器和视频 DiT 组成。3D 因果 VAE 按时间×高度×宽度约 4×8×8 压缩为16通道 latent，首帧只做空间压缩；DiT 对 latent 进行时空 patch 化，用时空 RoPE 与自注意力建模视频，并通过 cross-attention 注入文本条件。Wan2.1-I2V 在输入通道拼接待去噪 latent、参考首帧的 VAE latent 与重排后的 mask；另将投影后的 CLIP 图像特征作为独立图像 K/V，与文本分支共用视觉 Q 做分离的 cross-attention，合并两路结果。文本经 umT5 编码后提供文本 K/V，不能把这两种图像条件都描述成普通文本 token。因果 VAE 不意味着 DiT 按帧自回归生成。\n\n基础生成训练采用 Flow Matching：下式按论文约定令 x0 为噪声、x1 为真实视频 latent，学习线性插值轨迹的速度，采样从0走向1。论文先做低分辨率图像预训练，再逐步联合训练更高分辨率的图像和视频；生成模型训练冻结 VAE 和文本编码器。实现若使用“0数据、1噪声”的 scheduler，需同步转换速度符号与积分方向。\n\n选型要说明任务条件和资源：纯文本生成从 T2V 出发，参考首帧驱动优先评估对应分辨率的 I2V；1.3B 可作较低成本消融，14B 的收益须实际评测。对姿态、轨迹等严格控制，原生模型未必具备所需条件接口，可增加控制分支，但仍应先评估冻结原模型、LoRA/原生 DiT 微调等基线，给出选择新结构的依据。固定数据划分、条件、分辨率、帧数与采样设置，在相同或明确报告的算力预算下比较控制遵循、画质、时序一致性、泛化、耗时与峰值显存；项目未做的实验应明确说明，不能将官方模型数字冒充实测结果。",
+        "formula": "\\begin{aligned}x_t&=(1-t)x_0+t x_1,\\qquad x_0\\sim\\mathcal N(0,I),\\ t\\in[0,1]\\\\v^*&=x_1-x_0,\\qquad \\mathcal L_{\\mathrm{FM}}=\\mathbb E\\left[\\|u_\\theta(x_t,c,t)-v^*\\|_2^2\\right]\\\\(F,H,W)=(4k+1,H,W)&\\longrightarrow(16,k+1,H/8,W/8)\\end{aligned}",
+        "pitfalls": [
+          "将Wan2.2的MoE架构或其他版本的能力混入Wan2.1；只写14B而不明确T2V/I2V、分辨率及checkpoint。",
+          "把4×8×8压缩简单写成所有帧数F/4：首帧单独处理，给定公式限定F=4k+1且空间尺寸可整除。",
+          "混用论文和实现的时间方向；论文下式0为噪声、1为数据，反方向scheduler需同步改变速度符号。",
+          "将新增控制分支必然优于原生微调当作结论，或将官方推理显存/速度宣传数字当作个人训练实测。"
+        ],
+        "followups": [
+          "如果原生I2V不能稳定跟随人体姿态，怎样设计受控消融证明控制分支的必要性？",
+          "冻结VAE和文本编码器后，什么时候可以缓存latent/embedding，什么时候数据增强或prompt变化会使缓存失效？",
+          "1.3B与14B比较怎样区分参数规模、训练预算和采样设置带来的影响？"
+        ]
+      },
+      "reference_ids": [
+        "R3-WAN-001",
+        "R3-WAN-002",
+        "R3-WAN-003",
+        "R3-WAN-004"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S018",
+          "support": "reported_question",
+          "note": "主代理实际读到图片3/6明确问使用Wan2.1哪个版本、参数量及为何不直接原生微调；答案的模型架构与训练细节经官方资料独立核验，未声称帖子逐字问了全部细节。"
+        },
+        {
+          "source_id": "XHS26-S020",
+          "support": "reported_question",
+          "note": "主代理实际读百度面经图片1/2明确问Wan2.1架构与图像/文本条件注入、Flow Matching真实速度；与已有Wan2.1题合并，不另建基础同义题。"
+        }
+      ],
+      "editorial": false,
+      "id": "OMM-019"
+    },
+    {
+      "category": "OMM",
+      "topic": "视频生成与控制",
+      "level": "L3",
+      "title": "Wan2.2 的高噪与低噪专家怎样切换，SNR、时间门限和 LLM MoE 有什么区别？",
+      "tags": [
+        "Wan2.2",
+        "A14B",
+        "噪声专家",
+        "SNR",
+        "scheduler",
+        "MoE"
+      ],
+      "company_tags": [
+        "百度"
+      ],
+      "answer": {
+        "body": "Wan2.2 中应具体指 T2V-A14B 或 I2V-A14B：它们按去噪阶段使用两个完整生成专家，高噪专家主要建整体布局，低噪专家进一步细化；官方标注总参数约27B、每步激活约14B。TI2V-5B 则是 dense 模型，不能把所有“2.2”都称作相同 MoE。A14B 仍使用 Wan2.1-VAE，TI2V-5B 才采用更高空间压缩的 Wan2.2-VAE。\n\n这里的选择由噪声时间决定，同一步使用一个专家处理整段 latent，不是 LLM 中每个 token 经可学习 router 选择不同 FFN，也不是按视频帧序号轮换。官方推理先算 boundary=b×N，再比较当前 scheduler timestep：t≥boundary 用高噪专家，t<boundary 用低噪专家。所核验默认 N=1000，T2V-A14B 的 b=0.875，I2V-A14B 为0.900；对应875/900是时间门限，不是激活参数比例或固定采样步数。\n\n按实现的噪声坐标，接近1是噪声、接近0是数据，生成由高噪走向低噪。对单位方差、独立的数据/噪声线性插值，下式 SNR=(1-s)²/s²，随噪声量s增加而下降，因此高噪早期SNR低、细化后期SNR高。实际代码不在每一步估算图像内容的SNR再做学习式路由，而是使用与噪声阶段对应的预设t门限；时间shift会改变哪些离散采样步落在门限两边，不能用“40步按比例切成35+5”代替真实scheduler。\n\n两专家增加总容量而控制每步主干计算，仍需保存两套权重；全部驻留显存更大，CPU offload可以减少驻留但增加搬运，实际延迟须测量。微调时明确更新哪一专家、采样哪些噪声区间，并检查切换附近的轨迹和画质；更改solver、shift、门限或CFG后，重新验证两专家覆盖，不能把默认阈值称作跨任务最优值。",
+        "formula": "\\begin{aligned}E(t)&=\\begin{cases}E_{\\mathrm{high}},&t\\ge bN\\\\E_{\\mathrm{low}},&t<bN\\end{cases}\\\\x_s&=(1-s)x_{\\mathrm{data}}+s\\epsilon,\\qquad 0<s<1\\\\\\mathrm{SNR}(s)&=\\frac{(1-s)^2}{s^2},\\qquad\\frac{d\\,\\mathrm{SNR}}{ds}=-\\frac{2(1-s)}{s^3}<0\\end{aligned}",
+        "pitfalls": [
+          "把Wan2.2所有型号都当作双专家；将dense TI2V-5B与A14B的参数、VAE或路由机制混写。",
+          "大t表示高噪低SNR，而不是高SNR；视频帧轴、去噪时间轴与采样循环序号不能混用。",
+          "SNR公式限定独立且单位方差的线性插值；若改用其他路径、缩放或时间约定，应重新计算信号/噪声系数。",
+          "每步激活14B不等于整个推理系统只存14B权重；offload与并行方式影响显存和时延。"
+        ],
+        "followups": [
+          "调大sample_shift而采样步数不变，会怎样改变高噪专家实际使用的步数？",
+          "为什么T2V与I2V默认门限不同，如何做门限扫描而不把训练集当评测？",
+          "只训练低噪专家时，能否保证主体布局或复杂运动能力随之改善？"
+        ]
+      },
+      "reference_ids": [
+        "R3-WAN22-001",
+        "R3-WAN22-002",
+        "R3-WAN22-003",
+        "R3-WAN22-004",
+        "R3-WAN22-005",
+        "R3-WAN22-006",
+        "R3-WAN22-007"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S020",
+          "support": "reported_question",
+          "note": "主代理已实际读百度面经图片1/2，明确问Wan2.2架构、两专家转换与选择及SNR划分；参数量、默认门限和型号区分经官方资料独立核验。"
+        }
+      ],
+      "editorial": false,
+      "id": "OMM-020"
+    },
+    {
+      "category": "OMM",
+      "topic": "视频生成与控制",
+      "title": "视频生成怎样评测时序和动作、设计多维奖励，并校准 Qwen-VL 打分？",
+      "level": "L3",
+      "tags": [
+        "视频奖励",
+        "时序一致性",
+        "动作完成",
+        "Qwen-VL评分",
+        "奖励校准",
+        "FID",
+        "FVD",
+        "LPIPS",
+        "VBench"
+      ],
+      "company_tags": [
+        "美团",
+        "快手"
+      ],
+      "answer": {
+        "body": "相邻帧CLIP相似度只是外观一致性代理：静止、重复帧也能很高，真实抓取或镜头运动反而可能降低；不能据此证明动作完成。VBench把主体/背景一致性、闪烁、运动平滑和动态程度分开，闪烁评测还需筛除静态投机。动作应定义为可观察的对象、接触、位移和前后状态，例如“抓住杯子并移到桌面”，再分别测语义遵循、动作完成、手部质量和时序稳定；运动应符合任务，不是越大越好。\n\nFID用图像特征比较集合分布；把视频帧汇成无序集合计算的逐帧FID，打乱帧序也可能不变，不能评时序。FVD使用视频特征比较生成与参考集合分布，可包含时序信息，但不是单视频动作正确率；需固定特征网络、抽帧/FPS、时长、分辨率、预处理和样本量，报告不确定性。LPIPS是图像对感知距离，做重建评测须有正确对齐的参考；开放文本生成不能随意配一段真值，邻帧距离小也可能奖励静止。三者均不能替代文本遵循、动作完成和多样性评测。\n\n奖励组合前先把分项统一成越大越好，距离/误差项须取负或作单调下降映射；再用固定留出样本校准尺度，按独立人工偏好选权重并保留分项结果，避免画质抵消未完成动作，此统计与GRPO组内归一化不同。CLIP偏语义/外观，Qwen-VL也不应独占时序裁判：结合时间定位、状态/接触或姿态检查与经人评验证的专用评分器，承认不可见和稀疏抽帧的盲区。\n\nQwen-VL评分须固定模型、抽帧时间戳、rubric和schema，为0、5、10提供人工锚点；仅输出0–10不产生可靠量尺。检查重测稳定性、人工排序相关性及对静止、倒序、畸形手的辨别，用留出人评校准，解析失败标无效。VideoScore是用人工多维反馈训练的评分模型，与通用Qwen的prompt评分不同，量表须核对版本。SFT/RL对照固定条件、帧数与采样预算，展示整段和手部局部，多种子盲评动作、质量、多样性；训练奖励升而独立质量降应排查reward hacking。",
+        "formula": "\\begin{aligned}r_{\\mathrm{sim}}&=\\frac{1}{F-1}\\sum_{j=1}^{F-1}\\frac{f_j^\\top f_{j+1}}{\\lVert f_j\\rVert_2\\lVert f_{j+1}\\rVert_2}\\\\ R(v,c)&=\\sum_{k=1}^{K}w_k\\,\\frac{r_k(v,c)-\\mu_k}{\\sigma_k+\\epsilon},\\qquad w_k\\ge0,\\quad\\sum_k w_k=1\\end{aligned}",
+        "pitfalls": [
+          "相似度奖励要求至少两帧、非零特征范数；静止视频可达高分，但不表示目标动作正确。",
+          "评分锚点和校准需要独立人工样本；同一裁判既训练又验收会隐藏偏差。",
+          "稀疏抽帧看不到的手部接触或畸变不能靠裁判提示词恢复。",
+          "FID/FVD是集合分布指标，不能把一条视频的分数当标准实现结果；采样协议和集合规模须一致。",
+          "LPIPS低表示感知上近，不等于动作正确；对合法开放生成用任意真值配对可能误罚多样性。"
+        ],
+        "followups": [
+          "同一组视频都得到9分，怎样判断评分饱和还是动作确实相同？",
+          "“打开抽屉”怎样分别验证动作、终态和手部几何？",
+          "打乱视频帧顺序后逐帧FID不变，说明什么评测盲区？",
+          "论文FVD复现不一致，如何逐项对齐抽帧、样本量和特征实现？"
+        ]
+      },
+      "reference_ids": [
+        "R3-VID-VBENCH",
+        "R3-VID-VBENCH-CODE",
+        "R3-VID-VIDEOSCORE",
+        "R3-VID-VIDEOSCORE-QWEN",
+        "R3-VID-FID",
+        "R3-VID-FVD",
+        "R3-VID-FVD-CODE",
+        "R3-VID-LPIPS",
+        "R3-VID-LPIPS-CODE"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S016",
+          "support": "reported_question",
+          "note": "主代理完整阅读美团面经正文与图片2–5页中的明确提问；公司为作者标题自述。技术答案基于一手资料重新组织，方案不代表作者已做实验。"
+        },
+        {
+          "source_id": "XHS26-S018",
+          "support": "reported_question",
+          "note": "主代理完整读取快手面经图1–6页；公司为作者标题自述，以下仅关联该帖明确提问。明确追问视频多维奖励、动作一致性与时序连贯是否只靠Qwen-VL prompt评分。另明确追问FID/LPIPS、时序量化对照及Qwen评分虚高。"
+        }
+      ],
+      "editorial": false,
+      "id": "OMM-021"
+    },
+    {
+      "category": "OMM",
+      "topic": "视频生成与控制",
+      "title": "视频生成为何在 SFT 后做 GRPO，batch size=8 时怎样采样、打分和更新？",
+      "level": "L3",
+      "tags": [
+        "视频生成RL",
+        "GRPO",
+        "rollout分组",
+        "microbatch",
+        "连续策略密度",
+        "terminal reward",
+        "score-function",
+        "group size",
+        "RL调试"
+      ],
+      "company_tags": [
+        "美团",
+        "快手"
+      ],
+      "answer": {
+        "body": "视频SFT通常优化扩散去噪或Flow Matching目标，学习真实场景、运动与手物交互分布；不是对像素做文本回答交叉熵。RL用结果偏好补充动作完成、语义或画质，但依赖可信奖励和采样多样性，不能替代缺失的运动先验。\n\n先说明batch=8指每卡视频数、prompt数、组大小G还是训练microbatch。P个条件各生成G条轨迹，本轮共P×G；完整同条件组评分并跨卡汇总后算相对优势，再按microbatch和梯度累积更新。可以逐采样批异步评分，收齐本轮buffer后更新；不意味着生成完全部6000条。这里G至少为2，示式std采用总体标准差，其他框架须核对配置。G越大相对比较更丰富但成本增长，应看有效奖励方差和独立质量。帧数/时长依动作与模型限制，去噪步数依质量成本曲线；patch size通常由检查点架构固定，改变可能涉及投影权重形状、位置编码和重新适配，不能当普通batch超参随改。\n\n连续latent策略须定义合法随机转移密度，保存状态、下一状态、时间、旧log-prob与采样配置。这里约定0为数据、1为噪声，生成由t走向t-h，h>0；纯ODE条件转移是确定性的，不能照搬LLM token概率比。Flow-GRPO原实验主要是图像，迁移视频须核对scheduler、噪声、CFG及高维log-prob归约。\n\n最终视频只给一次奖励，不等于只更新最后一步。基础score-function梯度把结果奖励乘以各个有效随机转移的log-prob梯度；不需穿过黑盒裁判或整条采样链BPTT。下式末行是未裁剪期望奖励梯度，GRPO另用组内优势、旧策略ratio、clip/KL构造surrogate，并非该梯度的完整无偏实现；统计分配也不能直接证明某步造成何种缺陷。可微奖励沿全链反传是另一类pathwise方案。\n\n集成先核验同策略同轨迹ratio≈1、随机转移方差非零、时间/预测参数化/归约一致、轨迹与group ID不混乱，再查LoRA梯度、数值范围、零方差组和评分有效性。监测KL、clip比例、滞后与独立画质，限制旧样本复用。多少步提升须据固定验证集学习曲线回答，不能报通用数字。",
+        "formula": "\\begin{aligned}N_{\\mathrm{rollout}}&=PG,\\qquad G\\ge2\\\\ \\bar R_p&=\\frac1G\\sum_{i=1}^G R_{p,i},\\quad s_p=\\sqrt{\\frac1G\\sum_{i=1}^G(R_{p,i}-\\bar R_p)^2},\\quad\\hat A_{p,i}=\\frac{R_{p,i}-\\bar R_p}{s_p+\\epsilon}\\\\ \\rho_{p,i,t}&=\\exp\\!\\left[\\log\\pi_\\theta(x_{t-h}\\mid x_t,t,c_p)-\\log\\pi_{\\mathrm{old}}(x_{t-h}\\mid x_t,t,c_p)\\right]\\\\ \\nabla_\\theta J&=\\mathbb E_{\\tau\\sim\\pi_\\theta}\\left[R(\\tau)\\sum_t\\nabla_\\theta\\log\\pi_\\theta(x_{t-h}\\mid x_t,t,c)\\right]\\end{aligned}",
+        "pitfalls": [
+          "视频帧序号与去噪时间步是两条轴，不能把每帧当一次去噪动作。",
+          "奖励只需黑盒评分时无需穿过Qwen-VL反传；可微奖励梯度优化是另一类方法。",
+          "异步过旧样本会偏离当前采样策略，须限制滞后并保留正确旧概率；clip不保证任意滞后都安全。",
+          "核对实际reshape与梯度累积：访问时官方SD3脚本实际重分批未直接采用train.batch_size，不能只改配置字段就声称microbatch已变。",
+          "完整联合latent密度与按维度平均的log-prob归约尺度不同；采样、训练、clip和KL须保持一致。",
+          "公式末行是基础未裁剪策略梯度示意，不是GRPO完整带clip/KL目标；只对合法随机转移谈普通连续密度。",
+          "组内含自身奖励的均值与标准差归一化是GRPO surrogate的一部分，不能冒称未改变原目标的无偏基线。",
+          "latent patch尺寸、帧数和扩散步骤不是同一类参数，修改须符合具体检查点架构。"
+        ],
+        "followups": [
+          "8张卡各有同一prompt的部分样本，如何算组内均值和标准差？",
+          "确定性去噪步骤是否能参与普通高斯log-prob的ratio更新？",
+          "最终视频才有奖励，为什么前面的去噪步也可以得到参数梯度？",
+          "score-function与对可微奖励全链反传的显存需求有何区别？",
+          "组大小变大但奖励全部相同，是否仍有相对学习信号？",
+          "如何用ratio≈1与单步梯度检查定位扩散GRPO实现bug？"
+        ]
+      },
+      "reference_ids": [
+        "R3-VID-FLOW",
+        "XHS26-PFLOW-TRAIN",
+        "R3-VID-DDPO"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S016",
+          "support": "reported_question",
+          "note": "主代理完整阅读美团面经正文与图片2–5页中的明确提问；公司为作者标题自述。技术答案基于一手资料重新组织，方案不代表作者已做实验。"
+        },
+        {
+          "source_id": "XHS26-S018",
+          "support": "reported_question",
+          "note": "主代理完整读取快手面经图1–6页；公司为作者标题自述，以下仅关联该帖明确提问。明确追问GRPO语义对齐、与去噪结合、最终组奖励及梯度作用于哪些去噪步骤。另明确追问group size、帧数/PatchSize超参和扩散GRPO集成bug排查。"
+        }
+      ],
+      "editorial": false,
+      "id": "OMM-022"
+    },
+    {
+      "category": "OMM",
+      "topic": "视频生成与控制",
+      "title": "视频生成 RL 的 CLIP/Qwen-VL 评分如何加速，多模型显存和训练耗时怎样估算？",
+      "level": "L3",
+      "tags": [
+        "在线奖励",
+        "评分批处理",
+        "异步流水线",
+        "多模型显存",
+        "耗时估算"
+      ],
+      "company_tags": [
+        "美团",
+        "快手"
+      ],
+      "answer": {
+        "body": "先区分“在线”是当前策略生成的新视频要重新评分，还是评分器本身也训练。RL常使用冻结的CLIP或Qwen-VL作为在线奖励器；不能预先给未来尚未生成的视频打好分。离线可缓存固定数据的伪标注、条件文本embedding及同一视频的可复用特征，必须连同模型、prompt、抽帧和预处理版本标记。\n\n拆解生成去噪、VAE解码、视频取帧、评分排队、模型前向和更新耗时。可按分辨率/帧数拼评分批，复用解码帧与CLIP特征，冻结评分器并关闭反向图，减少不必要输出，或用独立GPU/服务与生成流水重叠。昂贵裁判可蒸馏为小评分器，但要用留出人评和难例确认排序没有改变。降低抽帧率/分辨率会遗漏短动作和手指细节，不能只报吞吐收益。Flow-GRPO官方图像循环会异步提交奖励、收齐buffer后再更新，这是一种实现示例，不代表所有视频系统的唯一调度。\n\n显存包括生成权重与优化器、训练激活、rollout latent轨迹、VAE、多个评分器权重及其输入/激活峰值。同卡驻留简单但会竞争，分卡增加传输与排队；CPU offload或分阶段换入能降驻留显存，也增加搬运成本。小batch降低峰值未必加快；评分器量化后须复核分数与排序，不能假定奖励不变。\n\n6000条条件并不足以报训练小时数：还需组大小、分辨率、帧数、去噪步数、轮数、更新复用、卡型与并行方案。先用代表性小批实测每轮分项时间和峰值显存，再按真实处理轮次估算总时长；下式仅是串行调度的估算，流水重叠应按关键路径重算，并计入验证、检查点与失败重试。\n\n按转移密度做RL时，不需要一直保存整条去噪链的反向激活：可先无梯度采样，保留方法要求的状态/下一状态及旧概率，再逐步或按子批重算有梯度的前向，配合checkpointing。latent轨迹缓存仍占显存，不能把“无需全链反传”说成“无需存轨迹”。具体步骤采样与归约须符合所选算法目标。",
+        "formula": "T_{\\mathrm{total}}\\approx U\\big(T_{\\mathrm{generate}}+T_{\\mathrm{decode/score}}+T_{\\mathrm{update}}\\big)+T_{\\mathrm{eval}}+T_{\\mathrm{save/retry}}",
+        "pitfalls": [
+          "缓存键必须覆盖视频内容和评分协议；策略更新后新视频不能复用旧视频的奖励。",
+          "流水重叠只有资源与依赖允许时才产生收益，线程异步提交不保证同卡GPU计算真正并行。",
+          "梯度累积降低更新microbatch峰值，不会自动消除rollout缓存或评分器权重占用。"
+        ],
+        "followups": [
+          "评分GPU成为瓶颈，怎样权衡抽帧、增评分卡和小模型蒸馏？",
+          "一轮rollout有大量latent，哪些必须保存以重算同一动作的log-prob？"
+        ]
+      },
+      "reference_ids": [
+        "XHS26-PFLOW-TRAIN",
+        "R3-VID-VIDEOSCORE-QWEN",
+        "R3-VID-DDPO"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S016",
+          "support": "reported_question",
+          "note": "主代理完整阅读美团面经正文与图片2–5页中的明确提问；公司为作者标题自述。技术答案基于一手资料重新组织，方案不代表作者已做实验。"
+        },
+        {
+          "source_id": "XHS26-S018",
+          "support": "reported_question",
+          "note": "主代理完整读取快手面经图1–6页；公司为作者标题自述，以下仅关联该帖明确提问。明确追问卡数资源、最终结果RL梯度与显存效率。"
+        }
+      ],
+      "editorial": false,
+      "id": "OMM-023"
+    },
+    {
+      "category": "OMM",
+      "topic": "视频采样与时序",
+      "title": "1–10分钟第一人称操作视频只有粗 caption，如何切子动作并用于时序训练？",
+      "level": "L3",
+      "tags": [
+        "第一人称视频",
+        "粗caption",
+        "子动作分割",
+        "伪标注",
+        "时序训练"
+      ],
+      "company_tags": [
+        "美团"
+      ],
+      "answer": {
+        "body": "粗caption可能只说“做早餐”，不能唯一给出“拿杯子、倒水、搅拌”的顺序和边界，更不能把整段描述直接贴到每个短clip。第一人称还存在镜头/手同时运动、手物遮挡、重复操作、目标出画与细小状态变化，画面变化或切镜头不等于子动作边界。\n\n先保留真实时间戳和视频级目标，用多尺度滑窗找到候选，再结合手物接触、物体状态变化、运动特征和语义定位细化边界。可让视频VLM在候选片段上产生“起止时间、动词、对象、前后状态、证据帧、置信度”的伪标签，再合并重复、检查顺序/覆盖和人工抽审；不能只让LLM根据常识写一套必然发生的步骤。Ego4D明确区分整段summary与带时间窗口的动作narration；只有粗summary时应承认弱监督，少量人工动作时间点或边界能提供额外锚点。\n\n离线伪标注便于复核、缓存和重复训练；在线视频步骤拆解可按问题动态细采样，但增加推理成本，生成解释并不能证明边界正确。两者可组合为“离线候选库，在线检索和细化”，按训练视频分组隔离评测，避免相邻clip跨集合泄漏。\n\n训练理解模型可用可信clip-描述对齐、动作识别或带时间坐标的定位目标；生成模型则用短clip及其局部动作条件继续去噪/速度回归，保留前段上下文学习动作衔接。低置信伪标签降权或保留为弱约束，不冒充逐帧真值。评测以人工时间边界、重复动作和未见操作检查定位/分割，再看生成动作完成及跨片段连续性，不能只比较caption流畅度。",
+        "formula": "",
+        "pitfalls": [
+          "CliMer等粗时间戳方法仍使用narration和粗时间定位，不能外推成仅一个整段caption就能恢复精确动作边界。",
+          "手物接触可能不可见，低置信度必须保留，不应让模型补成确定事实。",
+          "未来视频生成若依赖前段上下文，训练不得把后段真实画面泄露给可部署条件。"
+        ],
+        "followups": [
+          "同一视频中两次倒水如何避免伪标注合并为一个长动作？",
+          "只新增少量人工监督时，标动作时间点、完整边界或长caption怎样选？"
+        ]
+      },
+      "reference_ids": [
+        "R3-VID-EGO4D",
+        "R3-VID-CLIMER",
+        "R3-VID-TIMESTAMP"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S016",
+          "support": "reported_question",
+          "note": "主代理完整阅读美团面经正文与图片2–5页中的明确提问；公司为作者标题自述。技术答案基于一手资料重新组织，方案不代表作者已做实验。"
+        }
+      ],
+      "editorial": false,
+      "id": "OMM-024"
+    },
+    {
+      "category": "OMM",
+      "topic": "视频生成与控制",
+      "title": "第一人称视频的相机抖动如何建模，camera pose 条件怎样注入生成网络？",
+      "level": "L3",
+      "tags": [
+        "camera pose",
+        "相机抖动",
+        "Plücker",
+        "条件注入",
+        "坐标约定"
+      ],
+      "company_tags": [
+        "美团"
+      ],
+      "answer": {
+        "body": "先区分希望复现的相机运动、要抑制的高频抖动与独立物体运动。画面光流混合三者，仅用光流不能直接得到可信camera pose；可用带内参的视频和姿态估计获得轨迹，但遮挡、快速运动、滚动快门与单目尺度不确定都需检查。统一相机到世界/世界到相机约定，并用首帧作相对坐标锚点；抽帧、裁剪和resize后，时间与内参也要同步变换。\n\n条件可把每帧内外参编码为时序token，再以交叉注意力/调制注入；更显式的做法是逐像素射线。约定c2w为旋转R和平移o，下式用K反投影得到相机射线，旋转到世界后归一化，再以Plücker的方向与力矩组成6通道。相机平移是射线原点，不应直接加进方向向量。CameraCtrl将该序列送入camera encoder，形成多尺度特征注入时序attention；迁移到DiT可设计条件token或adapter，但须训练和消融，不能把U-Net实现直接当DiT现成接口。\n\n注入pose使模型有机会把相机变化与主体运动分开，并不自动消除模糊或恢复遮挡几何。想生成稳定视频，需要在推理指定可信平滑轨迹并验证可控性；滤平原轨迹也可能去掉任务必需的转头，不能将任意平滑都当正确。比较无条件、原轨迹、平滑/扰动轨迹，在同场景检查位姿响应、手物交互和时序质量；实际项目还需防止pose encoder利用训练外观捷径。",
+        "formula": "\\begin{aligned}d_{t,u,v}&=\\frac{R_tK_t^{-1}[u,v,1]^\\top}{\\lVert R_tK_t^{-1}[u,v,1]^\\top\\rVert_2}\\\\ p_{t,u,v}&=[o_t\\times d_{t,u,v};\\ d_{t,u,v}]\\in\\mathbb R^6\\end{aligned}",
+        "pitfalls": [
+          "公式明确R为camera-to-world旋转，o为相机中心；若用world-to-camera外参需先转换。",
+          "pose估计误差与条件控制误差要分开评测，不能把估计轨迹当绝对真值。",
+          "相同pose的条件应跟实际帧对应，乱序、不同FPS或裁剪后的旧内参会导致几何错位。"
+        ],
+        "followups": [
+          "视频水平翻转后，camera ray map和图像内参怎样同步处理？",
+          "平滑轨迹使手物操作看起来不对，怎样区分相机条件冲突和生成先验不足？"
+        ]
+      },
+      "reference_ids": [
+        "R3-VID-CAMERA",
+        "R3-VID-CAMERA-CODE"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S016",
+          "support": "reported_question",
+          "note": "主代理完整阅读美团面经正文与图片2–5页中的明确提问；公司为作者标题自述。技术答案基于一手资料重新组织，方案不代表作者已做实验。"
+        }
+      ],
+      "editorial": false,
+      "id": "OMM-025"
+    },
+    {
+      "category": "OMM",
+      "topic": "视频生成与控制",
+      "title": "手部小目标扭曲模糊如何处理，逐帧 YOLO 手框怎样作为视频生成条件？",
+      "level": "L3",
+      "tags": [
+        "手部生成",
+        "ROI条件",
+        "YOLO手框",
+        "手物交互",
+        "SFT与RL"
+      ],
+      "company_tags": [
+        "美团"
+      ],
+      "answer": {
+        "body": "先判断手部损坏来自输入采样/裁剪、VAE压缩、训练数据或生成模型：整帧看似清楚但手只有几个latent格时，RL奖励很难补回已经丢失的细节。SFT可用清晰、覆盖不同姿态和接触状态的真实手物clip建立先验，保留全局上下文并增加手部高分辨率或局部监督；不能简单删掉快速运动中的真实模糊而改变任务分布。RL在模型能产生合理候选后，用可靠局部几何、接触与时序奖励调偏好，两阶段应固定预算比较。\n\nYOLO的每帧四元组先统一成裁剪/resize后坐标，归一化并加时间、左右手或track ID、置信度与缺失mask，处理多手、框抖动和遮挡。可借鉴GLIGEN，把框的Fourier位置特征与手/对象语义特征经MLP形成条件token，供视频时空层交叉注意力读取；也可栅格化成时空mask送adapter，或用ROI分支采样局部特征并带回原坐标。需训练融合，直接把四个数字拼到hidden上不保证模型懂位置。\n\n框只给粗位置与尺度，无法约束指头数、关节、掌面朝向或真实接触；这些目标需更丰富的关键点/姿态或手物关系监督。训练时从目标视频检测的未来手框，推理时也必须由用户轨迹、规划器或预测器提供；否则是不可用的未来条件，不能靠读取尚未生成的真值帧解决。\n\n评估同时看局部细节、完整操作和时间一致性，避免只强化裁判喜欢的静态大手。若用手部先验保护视觉token，保留手及交互对象附近细节，同时给背景、动作前后帧与运动区域最低预算；手框漏检时要回退。注意力显著性小不代表手部无用，具体剪枝代价应结合实际延迟和任务错误验证。",
+        "formula": "\\begin{aligned}\\tilde b_{t,k}&=(x_{\\min}/W,\\ y_{\\min}/H,\\ x_{\\max}/W,\\ y_{\\max}/H)\\\\ h_{t,k}&=\\mathrm{MLP}\\big([e_{\\mathrm{hand},k};\\ \\phi(\\tilde b_{t,k});\\ e_t;\\ q_{t,k}]\\big)\\end{aligned}",
+        "pitfalls": [
+          "归一化只适用于相同变换后的图像坐标；YOLO输出xyxy或xywh需先明确转换。",
+          "GLIGEN原文是图像grounding，时序ID、视频融合与手部监督是需验证的工程扩展。",
+          "缺失框不能当作手不存在；框条件不能替代手部几何与动作监督。"
+        ],
+        "followups": [
+          "某帧左右手框交叉，如何保持条件身份而不把两只手交换？",
+          "手框定位正确但六根手指，下一步改条件、数据还是奖励？"
+        ]
+      },
+      "reference_ids": [
+        "R3-VID-GLIGEN",
+        "R3-VID-HOI4D",
+        "R3-VID-EGO4D",
+        "R3-VID-FLOW"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S016",
+          "support": "reported_question",
+          "note": "主代理完整阅读美团面经正文与图片2–5页中的明确提问；公司为作者标题自述。技术答案基于一手资料重新组织，方案不代表作者已做实验。"
+        }
+      ],
+      "editorial": false,
+      "id": "OMM-026"
+    },
+    {
+      "category": "COD",
+      "topic": "模型算子与数值实现",
+      "title": "如何实现基于跨层变化的渐进视觉 token 裁剪？",
+      "level": "L3",
+      "tags": [
+        "V2Drop",
+        "渐进token裁剪",
+        "keep indices",
+        "L2变化",
+        "PyTorch",
+        "KV Cache"
+      ],
+      "company_tags": [
+        "快手"
+      ],
+      "answer": {
+        "body": "V2Drop的核心是同一视觉token在相邻LLM层前后hidden的变化，默认用L2范数作重要性代理，在若干层按预算逐步保留高分token；不是相邻视频帧之差，也不需要显式attention权重。阶段层位和各阶段保留数影响计算与质量，应通过消融选择，不能声称小变化一定可无损删除。\n\n最小接口可输入前后hidden[N,D]、视觉mask[N]和当前阶段保留视觉数k，返回原序列中的keep indices。仅对视觉位置在FP32下算变化、取高分前k个，再与全部文本/特殊token索引合并并按原顺序排序；保留顺序而非按重要性重新排列。示例稳定排序使并列值优先保留较早token，显式校验k、形状、设备和有限分数。它只演示评分/索引核心，不是完整模型复现。\n\n实际在层前存一份输入，在层后比较同一逻辑token；剪枝后同步gather当前hidden、视觉/有效mask与原position IDs，下阶段比较的两份hidden也须仍对应同一保留集合。Qwen的时空MRoPE位置不能改成密集新编号。二维padding mask删序列轴；已有方阵注意力mask删query/key两轴，带past的非方阵须按各自逻辑索引重建，不能盲目同切。多样本保留数不同还需padding或变长布局，示例只处理单样本。\n\n推理一般在prefill剪枝；各层KV长度可能不同，要维护该层的逻辑位置到缓存槽映射和后续decode offset，不能拿深层索引统一删除已形成的浅层cache。仅mask也不会自动缩小矩阵。官方某LLaVA实现中的固定偏移和token数不可当通用接口。硬top-k不可对选择边界直接求导，若用于训练，需明确未选token的梯度、label对应和训练/推理分布变化；本题示例不训练选择器。测试应覆盖保留全部文本、预算0/全保留、并列分数、空视觉、非有限值与连续多阶段索引一致性。\n\n标准库参考使用Python float，PyTorch核心以FP32评分；极接近分数可能因精度产生不同排名，比较时应固定评分精度。两份代码都只覆盖单样本、单阶段评分与索引，不包含完整视觉模型、位置或缓存集成。",
+        "formula": "\\begin{aligned}s_i^{(\\ell)}&=\\lVert h_i^{(\\ell)}-h_i^{(\\ell-1)}\\rVert_2\\\\ M_0&\\ge M_1\\ge\\cdots\\ge M_K\\ge0\\end{aligned}",
+        "pitfalls": [
+          "表征变化是剪枝启发式，不能从其L2小直接推出删除对所有任务严格无影响。",
+          "相邻层hidden必须对应同一逻辑token；跨层索引错位会把变化分数算成不同token的距离。",
+          "prefill后的各层KV预算可能不同，cache映射、MRoPE和非方阵mask须随具体模型实现同步；示例不覆盖完整缓存。",
+          "示例不采用官方某文件的固定视觉span，不代表跑通LLaVA或Qwen端到端复现。"
+        ],
+        "followups": [
+          "保留分数相同的token时怎样让结果可复现？",
+          "剪枝后为什么应保留原位置ID，而不是从0重新编号？",
+          "每个阶段最终都保留相同token数，为何提早与渐进剪枝成本不同？"
+        ]
+      },
+      "reference_ids": [
+        "R3-VID-V2DROP",
+        "R3-VID-V2DROP-CVPR",
+        "R3-VID-V2DROP-CODE",
+        "R3-VID-ARGSORT"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S018",
+          "support": "reported_question",
+          "note": "主代理完整读快手面经图1–6；图5明确问token变化L2及迁移，图6明确要求手写V2Drop渐进式Token实现算法。仅核心教学代码，未宣称实际复现作者项目。"
+        }
+      ],
+      "editorial": false,
+      "code_links": [
+        {
+          "path": "coding/reference.py",
+          "function": "variation_keep_indices",
+          "line": 456
+        },
+        {
+          "path": "coding/torch_primitives.py",
+          "function": "variation_keep_indices",
+          "line": 223
+        }
+      ],
+      "id": "COD-026"
+    },
+    {
+      "category": "ALN",
+      "topic": "GRPO 与在线优化",
+      "level": "L2",
+      "title": "RLOO 如何计算 leave-one-out 基线，与 GRPO、PPO 有什么区别？",
+      "tags": [
+        "RLOO",
+        "REINFORCE",
+        "leave-one-out",
+        "baseline",
+        "方差"
+      ],
+      "company_tags": [
+        "阶跃星辰"
+      ],
+      "editorial": false,
+      "answer": {
+        "body": "RLOO 是 REINFORCE Leave-One-Out。对同一 prompt 用采样策略独立生成 G≥2 条响应，评分得到 R_i，用另外 G−1 条响应的平均奖励作第 i 条的 baseline，优势为本条奖励减这个基线。原论文把整条回答作为动作，响应 log-prob 是有效生成 token 的 log-prob 求和，最小化负的优势乘序列 log-prob；不是把回答概率相乘后直接取浮点数。\n\n以下无偏性分析在 on-policy 更新点 θ=θ_old 上成立。在同 prompt、i.i.d. 采样、奖励/优势 detach 的条件下，其他样本构成的 baseline 不依赖本条采样动作，因此它乘本条 score-function 梯度的期望为零，保留原始策略梯度的期望。若把本样本也纳入均值，未作标准差归一时的组中心化梯度会缩为 (G−1)/G；RLOO 恰好乘 G/(G−1) 修正。此结论不能直接套到跨 prompt 混组、相关采样、筛选 top-k 后的样本或继续除随机组标准差的目标。G=1无定义；所有奖励相同则优势全零。\n\n结果奖励 GRPO 常用(R_i−组均值)/组标准差，也不训练独立 critic，但标准差缩放改变了不同 prompt 的梯度权重，不等于原始无偏 RLOO。PPO 常用价值网络、TD/GAE来估计前缀级优势，适合需要逐步信用分配的轨迹；三者不能仅按有没有 critic 区分全部实现。\n\n当前 TRL main 的 RLOO 文档还支持同一 rollout 的多步更新，用整序列新旧策略概率比与 clip 构造 surrogate，并将采样策略相对 reference 的 log-ratio 惩罚在 no_grad 下并入序列 reward。原论文的 on-policy REINFORCE 与这个实现扩展需分开说明；裁剪后的多步更新不能继续宣称完全无偏。单条 log-ratio Monte Carlo 值可为负，只有正确采样下的期望才对应非负 KL；也不要重复计算 reward 内和显式 loss 中的 KL。\n\nRLOO 适用于能为完整响应提供可靠评分、同 prompt 多次采样可承受且不想训练 critic 的任务。省去 critic 仍有多响应 rollout、奖励器、reference、激活和KV缓存成本；组内缺少奖励差异、奖励噪声与奖励投机仍需独立评测和调参。",
+        "formula": "\\begin{aligned}y_i&\\overset{\\mathrm{i.i.d.}}{\\sim}\\pi_{\\mathrm{old}}(\\cdot\\mid x),\\quad G\\ge2,\\quad\\theta=\\theta_{\\mathrm{old}}\\\\b_i&=\\frac1{G-1}\\sum_{j\\ne i}R_j,\\quad A_i=R_i-b_i=\\frac{G}{G-1}(R_i-\\bar R)\\\\\\mathcal L_{\\mathrm{RF}}&=-\\frac1G\\sum_i\\mathrm{sg}(A_i)\\sum_{t\\in\\mathcal V_i}\\log\\pi_\\theta(y_{i,t}\\mid x,y_{i,<t})\\\\\\mathbb E[(R_i-\\bar R)\\nabla_\\theta\\log\\pi_\\theta(y_i\\mid x)]&=\\frac{G-1}{G}\\mathbb E[R_i\\nabla_\\theta\\log\\pi_\\theta(y_i\\mid x)]\\quad\\mathrm{(on\\ policy)}\\end{aligned}",
+        "pitfalls": [
+          "无偏性针对满足独立采样条件的未裁剪REINFORCE梯度；不能推广到任意同名Trainer、组标准差归一或off-policy多步训练。",
+          "同组均值并非leave-one-out均值；G=1不能靠epsilon修复分母G−1。",
+          "样本奖励是整序列反馈，广播优势不提供每个token的因果责任。"
+        ],
+        "followups": [
+          "RLOO的G=2优势与组均值中心化有何关系？",
+          "若只有top-k筛选后的回答参与更新，原来的无偏基线证明还成立吗？"
+        ]
+      },
+      "reference_ids": [
+        "R3-ALN-RLOO",
+        "R3-ALN-TRL-RLOO",
+        "R3-ALN-GRPO"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S019",
+          "support": "reported_question",
+          "note": "正文明确列出RLOO。 主代理已读完整正文；作者披露含AI生成内容，此证据仅表示公开帖子提及该题，不担保真实面试发生。"
+        }
+      ],
+      "id": "ALN-041"
+    },
+    {
+      "category": "ALN",
+      "topic": "DPO 与偏好数据",
+      "level": "L2",
+      "title": "坏数据的 SFT loss 直接取负能代替 RL 吗，与 unlikelihood 有何区别？",
+      "tags": [
+        "负交叉熵",
+        "Unlikelihood",
+        "梯度上升",
+        "偏好目标",
+        "SFT"
+      ],
+      "company_tags": [
+        "阶跃星辰"
+      ],
+      "editorial": false,
+      "answer": {
+        "body": "不能把“好样本最小化CE、坏样本CE乘−1”直接称为RL的等价替代。对坏目标，CE=−log p_bad，取负后最小化的是log p_bad；它确实推动该目标概率下降，但p_bad趋于0时这一负CE项趋于−∞，没有有限下界。混合正样本后某个数据集是否发散还取决于参数共享、冲突和正则，不能据此保证一般训练稳定；梯度裁剪也不会使目标获得下界。\n\nUnlikelihood 使用−log(1−p_bad)，在0≤p_bad<1上非负，坏候选概率趋于0时loss趋于0。对单个bad token的softmax logit，负CE梯度为1−p_bad，unlikelihood梯度为p_bad：前者在坏概率已很小时仍强烈压低，后者逐渐减弱。可将正答案MLE与指定负候选的unlikelihood按正权重结合；负候选应排除正确目标，并按事实错误、重复片段等规则定义，不能把整条被点踩回答里的每个词都认定有害。\n\n多轮训练只在选定assistant响应或精确错误span上施加目标，屏蔽prompt、padding和无需惩罚的工具结果；正负样本采样比例、每样本长度归约和loss权重要分清，权重大小不是标签语义本身。数值上用稳定的log1mexp(log p)计算log(1−p)，按概率精度处理p接近1的情况；随意clamp会改变目标，应说明阈值并监控。\n\n这些仍是由给定数据和负候选约束概率的监督目标。DPO使用同prompt的相对偏好及reference log-ratio，KTO使用单响应好坏标签与相对参考点的效用；在线RL则在策略生成的轨迹上评价奖励，通过优势、采样分布和策略约束更新。一个on-policy负优势在某次更新中可表现为负权重log-prob梯度，但这不让固定坏数据的负CE整体等价于RL。若仅有少量局部明确错误，修订示范或unlikelihood可能足够；有可靠序列/环境反馈且需探索候选时，再比较在线RL与离线偏好优化，并用独立任务指标验收。",
+        "formula": "\\begin{aligned}\\mathcal L_{\\mathrm{negCE}}&=\\log p_b\\longrightarrow-\\infty\\quad(p_b\\to0)\\\\\\mathcal L_{\\mathrm{UL}}&=-\\log(1-p_b)\\ge0,\\quad\\lim_{p_b\\to0}\\mathcal L_{\\mathrm{UL}}=0\\\\\\frac{\\partial\\mathcal L_{\\mathrm{negCE}}}{\\partial z_b}&=1-p_b,\\qquad\\frac{\\partial\\mathcal L_{\\mathrm{UL}}}{\\partial z_b}=p_b\\\\\\mathcal L&=\\mathcal L_{\\mathrm{MLE}}+\\alpha\\sum_{t}\\sum_{c\\in C_t}-\\log(1-p_\\theta(c\\mid x_{<t})),\\quad\\alpha\\ge0\\end{aligned}",
+        "pitfalls": [
+          "unlikelihood有下界但不是有上界；p_bad接近1时其loss发散。",
+          "只要给loss乘正负权重就是RL，这一说法忽略采样分布、奖励/优势、reference和轨迹信用分配。",
+          "坏回答整体标签不能推出每个token都应被压低，通用词和正确部分也可能受损。"
+        ],
+        "followups": [
+          "一个回答只有最后一个数字错了，你会惩罚哪些位置？",
+          "若负例概率已经很小，负CE与unlikelihood为何仍产生不同梯度？"
+        ]
+      },
+      "reference_ids": [
+        "R3-ALN-UL",
+        "R3-ALN-DPO",
+        "R3-ALN-KTO",
+        "R3-ALN-RLOO"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S019",
+          "support": "reported_question",
+          "note": "正文明确追问坏SFT数据loss取负能否替代RL区分好坏。 主代理已读完整正文；作者披露含AI生成内容，此证据仅表示公开帖子提及该题，不担保真实面试发生。"
+        }
+      ],
+      "id": "ALN-042"
+    },
+    {
+      "category": "COD",
+      "topic": "通用算法与数据结构",
+      "level": "L2",
+      "title": "不调用 sqrt 求非负实数平方根，如何控制误差并处理极大、极小值？",
+      "tags": [
+        "实数平方根",
+        "二分",
+        "frexp",
+        "浮点误差"
+      ],
+      "company_tags": [
+        "深势科技"
+      ],
+      "editorial": false,
+      "answer": {
+        "body": "先明确返回近似实数而非整数下取整，输入为可表示成有限float的非负int/float，误差按绝对与相对尺度判断；负值、NaN、无穷大不属于这个接口。0直接返回0。普通二分可以用[0,max(1,x)]包住根，但直接计算mid²可能溢出，极小数若只用固定绝对精度又可能直接被当成0。\n\n参考实现先用frexp把x分成m·2^e，非零时0.5≤m<1。将奇数e减1并令m乘2，使指数为偶数；这样sqrt(x)=sqrt(m)·2^(e/2)，调整后的m在[0.5,2)，只需在[0.5,2]二分其根，平方不会因原x的量级溢出。实现只用乘法和frexp/ldexp恢复尺度，没有调用sqrt、isqrt或幂0.5；从最大有限float到最小正subnormal都可处理。\n\n每步用区间中点作为估计，把当前半区间宽通过ldexp变回实际根的尺度；当半宽≤abs_tol+rel_tol·|estimate|时返回。默认abs_tol=0、rel_tol=1e−12，避免把很小的正根粗暴压成0。若中点舍入后不再改变端点，已达到浮点分辨率，返回当前估计；低于机器精度的误差要求无法保证。max_iterations限制步数，未满足条件且未停滞时显式报错，不把最后的粗结果冒充收敛。\n\n一般二分需要O(log(初始区间宽/所需精度))步、O(1)空间；指数缩放让循环次数主要随有效精度变化，默认上限128。也可用牛顿法z←(z+x/z)/2，但需良好初值、零值处理和避免中间溢出，不能仅说收敛快就忽略数值域。测试允许用math.sqrt作为独立oracle，覆盖0、非完全平方、0<x<1、浮点极大/极小及随机指数，同时验证非法输入和迭代上限。",
+        "formula": "\\begin{aligned}x&=m\\,2^{2k},\\quad m\\in[\\tfrac12,2),\\qquad\\sqrt x=\\sqrt m\\,2^k\\\\\\hat r&=2^k\\frac{a+b}{2},\\qquad E=2^k\\frac{b-a}{2}\\\\E&\\le\\mathrm{abs\\_tol}+\\mathrm{rel\\_tol}\\,|\\hat r|\\end{aligned}",
+        "pitfalls": [
+          "整数sqrt返回floor根，实数版本返回近似浮点，不能复用整数题的输出契约。",
+          "固定绝对误差会吞掉极小正数；在原数值尺度直接平方可能溢出。",
+          "迭代停止和浮点舍入只给近似，不能声称任意精度或数学精确平方根。"
+        ],
+        "followups": [
+          "不用指数缩放时，怎样用x/mid比较避免平方溢出？",
+          "为何x很小时初始区间不能简单写成[0,x]？"
+        ]
+      },
+      "reference_ids": [
+        "R3-COD-MATH"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "主代理已读完整正文，明确报告类似LeetCode69的实数版本且不能调用sqrt。参考函数的误差参数、缩放和类型契约是独立实现，不推断原面试输入格式。"
+        }
+      ],
+      "code_links": [
+        {
+          "path": "coding/reference.py",
+          "function": "float_sqrt",
+          "line": 489
+        }
+      ],
+      "id": "COD-027"
+    },
+    {
+      "category": "COD",
+      "topic": "通用算法与数据结构",
+      "level": "L2",
+      "title": "矩阵中的最长递增路径怎么求，如何避免递归深度溢出？",
+      "tags": [
+        "矩阵",
+        "严格递增",
+        "四邻接",
+        "拓扑排序",
+        "BFS"
+      ],
+      "company_tags": [
+        "字节跳动"
+      ],
+      "editorial": false,
+      "answer": {
+        "body": "先确认合法移动、是否严格递增，以及要返回路径长度还是路径；“矩阵最长递增序列”本身没有唯一题意。本库示例约定只能上下左右移动，不走对角线、不绕回边界、每步值严格增大，返回经过的单元格数。\n\n把每个单元格视作节点，从较小值连到相邻较大值。严格递增使沿边的数值不断增大，因此不可能形成有向环；相等值之间没有边。最长路径可用记忆化DFS：dp(v)=1+max邻接更大节点dp，但长蛇形路径可能让递归栈达到mn，不适合直接依赖Python默认递归深度。\n\n参考实现用拓扑分层BFS：每个节点的入度是相邻更小节点数，先将入度0的局部极小点入队。一轮处理当前所有节点，把相邻更大节点的入度减1；入度降0后排入下一层。一个节点只有所有较小前驱都处理完才能进入队列，其层数等于最长前驱链长度加1，所以总轮数就是最长严格递增路径长度。单节点或全相等矩阵为1，空矩形为0；不修改输入。\n\n每格最多四条边，入度计算与队列遍历均为O(mn)，入度和队列空间O(mn)。应先检查矩形，避免长短行造成索引错误。若改成非严格递增，等值相邻节点可以构成环，此DAG证明失效；若允许任意位置跳转，问题结构也变了，不能直接套同一函数。需要返回路径时，可维护最佳前驱和长度再回溯。测试用小矩阵穷举所有合法递增分支的独立DFS oracle，另用一行2000个递增值验证实现不依赖递归栈。",
+        "formula": "\\begin{aligned}u\\to v&\\iff u,v\\ \\mathrm{are\\ four\\ neighbors}\\ \\land\\ M_v>M_u\\\\\\mathrm{dp}(v)&=1+\\max\\big(\\{0\\}\\cup\\{\\mathrm{dp}(u):u\\to v\\}\\big)\\\\L&=\\max_v\\mathrm{dp}(v)\\end{aligned}",
+        "pitfalls": [
+          "本题长度计单元格数而非边数；单节点长度为1。",
+          "严格递增是无环证明关键，等值节点不能连边。",
+          "移动规则和严格性须先澄清；允许任意跳转或非严格递增时是不同问题。"
+        ],
+        "followups": [
+          "改成不下降路径时，为什么拓扑BFS不能直接使用？",
+          "怎样在O(mn)求长度的同时返回一条最优路径？"
+        ]
+      },
+      "reference_ids": [
+        "R3-COD-MATRIX"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S022",
+          "support": "reported_question",
+          "note": "主代理已读完整正文，原文为矩阵中的最长递增序列，未明确邻接/严格性。此证据只支持题族；四邻接严格递增是题库独立标准化契约。"
+        }
+      ],
+      "code_links": [
+        {
+          "path": "coding/reference.py",
+          "function": "longest_increasing_matrix_path",
+          "line": 531
+        }
+      ],
+      "id": "COD-028"
+    },
+    {
+      "title": "手写 MoE Top-k 路由：专家索引、门权重与溢出策略怎么定义？",
+      "company_tags": [
+        "阿里巴巴"
+      ],
+      "tags": [
+        "MoE",
+        "Top-k routing",
+        "路由手写",
+        "归一化",
+        "capacity"
+      ],
+      "answer": {
+        "body": "稀疏MoE常把FFN替换为多个专家，router从token hidden产生E个专家logits，选择Top-k专家并加权输出。总参数包括所有专家，单token只执行被选专家及共享模块；不能以总参数或k/E直接推断完整FLOPs、常驻权重或服务延迟。\n\n手写先约定输入：hidden可由[B,T,D]展平为[N,D]，线性router得到[N,E] logits；本库moe_top_k_router直接接收已算好的有限logits，返回[N,k]整数expert ids和[N,k]门权重，不包含router线性权重、专家执行、容量或通信。默认对选中logits再softmax，等价于完整softmax取Top-k后重归一；renormalize=False保留原完整分布的选中概率，其权重和通常小于1。不能不说明这个选择就声称所有MoE门控相同。\n\n选中id不可微，PyTorch版的gate权重仍通过选中logits反传。特别是Top-1重归一权重恒为1，主任务经门权重到router的梯度为0；Switch保留原softmax gate及辅助目标等设计，不能简单把Top-2改成k=1并断言训练等价。敏感gate归一一般用FP32；本实现float64输入保留float64。并列logits按较小expert id优先，是可复现教学契约；官方topk未必保证这一顺序。\n\n分发时对每个选中expert收集对应token行，运行该专家FFN，按route slot的门权重加权，再scatter_add到原token行。同token可能有k份分支，应累加而非覆盖；不能先计算全部专家再mask却称获得稀疏算力收益。教学router为稳定并列全排序，复杂度O(NE logE)，gate概率/返回值空间分别为O(NE)/O(Nk)；生产可用部分Top-k和融合dispatch，不能把核心排序成本冒充整层复杂度。\n\ncapacity对每个expert设置可接收分支预算，常按平均Nk/E负载乘capacity factor取整。此核心是dropless选择器，未定义容量筛选。若扩展capacity，必须明定专家接收的分支顺序、溢出drop/回退策略，以及剩余门权重是否重归一；保留原权重和将其归一到1是不同目标。若一个token的全部分支都落选，不能对零权重和做除法，须明确零专家输出加残差或指定fallback；也不是从序列彻底删除该token。更大容量减少溢出但增加buffer/通信，dropless也仍有负载和小批GEMM瓶颈。噪声Top-k、expert choice、共享专家、balance loss和router z-loss属于不同机制，示例核心不实现它们。\n\n测试先用logits=log([1,2,4,8])验证Top-2 ids=[3,2]、重归一权重[2/3,1/3]与原权重[8/15,4/15]，再验平移不变、并列、非法k/非有限值。Torch测试独立核对门权重梯度与Top-1归一后零gate梯度。",
+        "formula": "\\begin{aligned}z&=XW_r^\\top,\\quad S_t=\\mathrm{TopK}(z_t,k)\\\\\\tilde p_{t,e}&=\\frac{e^{z_{t,e}}}{\\sum_{j\\in S_t}e^{z_{t,j}}}\\quad(e\\in S_t)\\\\y_t&=\\sum_{e\\in S_t}\\tilde p_{t,e}\\,E_e(x_t)\\\\C&=\\left\\lceil\\mathrm{capacity\\_factor}\\cdot\\frac{Nk}{E}\\right\\rceil\\end{aligned}",
+        "pitfalls": [
+          "选中权重是否重归一会影响尺度和router梯度，Top-1归一恒为1不能忽略。",
+          "返回ids/gates只是路由核心，不代表实现expert dispatch、capacity、EP或完整MoE训练。",
+          "token dropping常指溢出的专家分支，不是必然删除序列token。"
+        ],
+        "followups": [
+          "Top-1保留原softmax值和重归一为1，router主任务梯度如何不同？",
+          "被两个专家选择的token怎样scatter_add，并与capacity溢出策略一致？"
+        ]
+      },
+      "reference_ids": [
+        "R3-COD-MIXTRAL",
+        "R3-COD-MIXTRAL-CODE",
+        "WD26-SWITCH"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "主代理已读阿里淘天面经完整正文，明确手撕MoE路由实现。代码将题意标准化为top-k ids/gates核心，不假定原题要求capacity或专家并行。"
+        }
+      ],
+      "code_links": [
+        {
+          "path": "coding/reference.py",
+          "function": "moe_top_k_router",
+          "line": 574
+        },
+        {
+          "path": "coding/torch_primitives.py",
+          "function": "moe_top_k_router",
+          "line": 252
+        }
+      ],
+      "category": "COD",
+      "topic": "模型算子与数值实现",
+      "level": "L2",
+      "editorial": false,
+      "id": "COD-029"
+    },
+    {
+      "category": "COD",
+      "topic": "模型算子与数值实现",
+      "level": "L2",
+      "title": "手写 LayerNorm：归一化轴、biased variance、epsilon 与 gamma/beta 怎样实现？",
+      "tags": [
+        "LayerNorm",
+        "总体方差",
+        "归一化轴",
+        "gamma",
+        "beta",
+        "数值稳定"
+      ],
+      "company_tags": [
+        "百度"
+      ],
+      "editorial": false,
+      "answer": {
+        "body": "先明确normalized_shape；本库核心处理任意领先维度的[...,D]，只沿最后一个特征轴D为每个向量独立计算均值和总体方差，输出同形状。Transformer输入[B,T,D]时，每个(batch,token)分别计算统计，不能沿batch或时间轴一起归一。完整PyTorch LayerNorm允许最后多个轴构成normalized_shape，本参考没有实现这个通用接口。\n\n计算mean=mean(x,dim=−1,keepdim=True)，variance=mean((x−mean)²,dim=−1,keepdim=True)，再用(x−mean)/sqrt(variance+epsilon)。这里方差除D而非D−1，等价于torch.var(correction=0)；默认torch.var的无偏修正若直接照搬会不同。epsilon在平方根内部，是正的稳定项，不能写成sqrt(variance)+epsilon。D=1或常量向量归一结果为0，避免0/0；加affine后输出对应beta。\n\ngamma、beta为[D]逐特征参数，通过广播共享于所有领先位置；常见初始化gamma=1、beta=0，但训练后不保持单位均值/方差。函数接收它们而不自动注册参数，若需要可训练模块，使用nn.Parameter包装并交给优化器，不能把Python列表当成自动训练参数。LayerNorm的train/eval都使用当前输入统计，没有BatchNorm的running mean/variance。\n\nPyTorch参考用float64保留双精度，否则均值、方差和归一放FP32，再返回输入dtype；gamma/beta梯度仍通过转换传播。标准库版支持非空矩形嵌套列表并返回新列表；两版明确检查epsilon、形状、affine长度和有限统计。FP32可以减轻低精度风险，但不保证任意巨大输入不溢出。\n\nN个D维向量的计算O(ND)，输出O(ND)，统计O(N)。独立测试以x=[1,3]、epsilon=1得到[−1/√2,1/√2]识别biased方差和epsilon位置，再覆盖常量、D=1、leading dims、affine和非法输入；随机标准库结果用statistics.pvariance对照。Torch环境中对照F.layer_norm前向与x/gamma/beta梯度。",
+        "formula": "\\begin{aligned}\\mu_i&=\\frac1D\\sum_{j=1}^{D}x_{ij},\\qquad v_i=\\frac1D\\sum_{j=1}^{D}(x_{ij}-\\mu_i)^2\\\\y_{ij}&=\\gamma_j\\frac{x_{ij}-\\mu_i}{\\sqrt{v_i+\\epsilon}}+\\beta_j,\\qquad\\epsilon>0\\end{aligned}",
+        "pitfalls": [
+          "末D轴总体方差除D，不能误用D−1或沿batch归一。",
+          "epsilon位置在sqrt内部；归一后的affine可改变均值/方差。",
+          "核心函数接收gamma/beta，不会自动把它们注册成模型参数。"
+        ],
+        "followups": [
+          "为什么D=1时结果为beta，RMSNorm会有何区别？",
+          "若normalized_shape=(H,W)，均值/方差和affine的轴怎样改？"
+        ]
+      },
+      "reference_ids": [
+        "CORE-S087"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S020",
+          "support": "reported_question",
+          "note": "主代理完整读取百度面经两张图，明确要求手撕LayerNorm。此题与TFM-005/006数学基础互补，未错误链接COD-001(Softmax/CE)。"
+        }
+      ],
+      "code_links": [
+        {
+          "path": "coding/reference.py",
+          "function": "layer_norm_last_dim",
+          "line": 602
+        },
+        {
+          "path": "coding/torch_primitives.py",
+          "function": "layer_norm_last_dim",
+          "line": 278
+        }
+      ],
+      "id": "COD-030"
+    },
+    {
+      "category": "VLM",
+      "topic": "感知、文档与视觉评测",
+      "title": "如何让 MLLM 执行像素级或推理分割，MLLM + SAM 和端到端训练如何取舍？",
+      "level": "L3",
+      "tags": [
+        "推理分割",
+        "MLLM+SAM",
+        "LISA",
+        "Seg-Zero",
+        "SEG hidden",
+        "联合训练",
+        "像素级监督"
+      ],
+      "company_tags": [
+        "阿里巴巴"
+      ],
+      "answer": {
+        "body": "普通MLLM的词表logits用于预测下一个文本token，不是H×W的像素分类图。它可以序列化多边形/掩码，或增加专门分割头输出dense mask；后者能保留空间结构。推理分割还要求理解隐含意图，例如“能用来开门的东西”，不能把识别出框等同于分出了准确边界。\n\n模块化路线让MLLM生成点、框等结构化定位信息，经解析交给SAM/SAM2。语言模型负责选对对象，分割器利用高分辨率视觉特征恢复边界；易复用已有模型、缓存图像特征，也可按任务冻结SAM或微调其mask decoder。接口须统一resize/crop前后坐标、点的正负标签和缺失/多对象处理。一个框可能包含多个物体，定位错误时漂亮的边界仍是错误答案，需分别检查对象选择与掩码质量。\n\nLISA采用连续hidden接口：生成分割特殊token后，将其对应的最后层hidden经MLP投影，与SAM图像特征送入分割解码器。这里传的是hidden而非该token的词表概率；token字符串和自回归shift须按实现核对。训练联合文本CE、像素BCE与Dice，mask梯度能经解码器/投影传到LLM的可训练参数。原方案冻结视觉骨干，训练LLM LoRA、分割解码器、投影及相关embedding/LM head。因此已有端到端联合优化，“端到端”不要求所有参数解冻；普通文字点框经离散解析则没有这条直接mask梯度路径。\n\n原始Seg-Zero用Qwen2.5-VL产生框和两个内部点，再由冻结SAM2生成mask；GRPO优化推理模型。它没有人工CoT冷启动监督，但使用真实mask派生的框/点标注，奖励包含格式、框IoU及框/点坐标距离，主设置对定位指标采用阈值二值奖励；不能说没有标注或原方法直接优化最终mask IoU。统一任务级推理与分割，不等于所有模块共同接受RL梯度。若另设计最终mask奖励，可用score-function优化离散定位策略，无需SAM可微；要更新分割头还须明确监督损失或另一条可微训练路径。\n\n取舍看瓶颈与数据：点框接口易部署但会丢失细粒度语义；hidden接口能联合适配，却需要像素标注、接口训练并防止通用能力退化。固定视觉骨干、输入分辨率、数据和预算，对比对象命中、边界与复杂关系切片；给分割器真实点框的oracle对照能拆开定位和解码错误。ReasonSeg是评测数据集；其gIoU指各样本IoU平均，cIoU指累计交并比，不能混作检测的Generalized IoU。",
+        "formula": "\\begin{aligned}h_s&=P(h_{\\mathrm{SEG}}),\\quad z=D(E(I),h_s),\\quad\\hat M=\\sigma(z)\\\\ \\mathcal L&=\\lambda_{\\mathrm{txt}}\\mathcal L_{\\mathrm{token\\ CE}}+\\lambda_b\\mathrm{BCEWithLogits}(z,M)+\\lambda_d\\mathcal L_{\\mathrm{Dice}}(\\hat M,M)\\\\ \\mathcal L_{\\mathrm{Dice}}&=1-\\frac{2\\sum_u\\hat M_uM_u+\\epsilon}{\\sum_u\\hat M_u+\\sum_uM_u+\\epsilon}\\end{aligned}",
+        "pitfalls": [
+          "词表logits与像素mask logits的维度和监督目标不同；新增分割头可输出掩码，不代表普通MLLM天然直接输出dense mask。",
+          "LISA已采用联合训练；冻结SAM视觉编码器不等于冻结mask decoder，也不等于文本与分割完全分开训练。",
+          "原始Seg-Zero冻结SAM2，RL训练推理模型；无CoT标注不等于无真实mask派生定位监督，不能混同后续VisionReasoner版本。",
+          "SAM1/SAM2空间提示接口与SAM3概念提示能力要按版本区分；支持短名词概念也不自动解决任意复杂关系推理。",
+          "本式将所有损失权重吸收到三个系数；Dice采用常见二值软Dice定义，空mask、ignore区域和聚合方式须按任务明确。"
+        ],
+        "followups": [
+          "边界很好但分错对象，怎样用oracle点框定位模型瓶颈？",
+          "分割loss能否直接穿过MLLM生成的离散坐标，RL又如何更新这一策略？",
+          "如何处理多个SEG、多个对象、原图与MLLM/SAM输入分辨率不一致？",
+          "SAM3已有概念分割，为什么复杂关系与隐含意图仍需任务评测？"
+        ]
+      },
+      "reference_ids": [
+        "R3-SEG-LISA",
+        "R3-SEG-LISA-CODE",
+        "R3-SEG-LISA-TRAIN",
+        "R3-SEG-SEGZERO",
+        "R3-SEG-SEGZERO-CODE",
+        "XHS26-R2SAM04"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "主代理完整读取阿里淘天面经正文，明确问MLLM+SAM方案、直接分割可能性与RL统一训练。公司按作者标题自述；技术答案独立核验，不宣称作者项目采用某个具体论文。"
+        }
+      ],
+      "editorial": false,
+      "id": "VLM-047"
+    },
+    {
+      "category": "ALN",
+      "topic": "GRPO 与在线优化",
+      "level": "L2",
+      "title": "分类任务只用 SFT 是否够，GRPO 的收益与代价应怎样判断？",
+      "tags": [
+        "分类",
+        "SFT",
+        "GRPO",
+        "概率校准",
+        "奖励设计"
+      ],
+      "company_tags": [
+        "字节跳动"
+      ],
+      "reference_ids": [
+        "R3-ROOT-CLASS-METRICS",
+        "JUN26-P006"
+      ],
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S022",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        }
+      ],
+      "editorial": false,
+      "answer": {
+        "body": "固定类别、可靠标签的分类任务应先建立交叉熵/SFT基线，并比较分类头、受限标签解码、类别加权和阈值调整。若输出标签由多个token构成，需计算整段标签的条件概率或用分类头；不能只比较第一个token，也不应让不同长度标签和自由格式输出造成评测偏差。\n\nSFT拟合标签分布；结果奖励可直接关联预测正确、拒答、业务代价等非可微目标，但需要额外采样且梯度方差较大。以下简化推导只考虑采样一个类别：真实条件分布为$\\eta(c\\mid x)$时，若模型分布族可表示该真实分布，交叉熵的总体最优预测是该分布；正确性奖励的期望是$\\sum_c\\eta(c\\mid x)p_\\theta(c\\mid x)$，无正则时偏好把概率集中到最可能类别。它不是argmax分类准确率的可微公式，也不能保证概率校准。\n\nGRPO适合有可验证终态、推理或工具链、代价约束且采样组能提供奖励差异的场景。纯单标签0/1奖励中，一组全对或全错会失去相对优势信号；还会受类别不平衡、标签噪声及裁判漏洞影响。宏平均F1是数据集级指标，不能未经推导就当作每条样本独立奖励。先清洗标签、检查抽样与失败类型，再决定RL是否比增加高质量SFT数据更有效。\n\n比较时固定模型、数据划分和推理预算，同时报告accuracy、macro-F1/各类召回、拒答覆盖率、log loss或校准指标、延迟及训练成本；若任务含图像，还需文本单模态、图像遮挡或替换对照。用多种子和独立测试集确认提升，避免把更长推理或更大采样预算的收益全部归因于GRPO。没有实测依据时，应说明实验设计和预期机制，不能编造项目提升。",
+        "formula": "\\begin{aligned}\\mathcal L_{\\mathrm{CE}}&=\\mathbb E_x\\!\\left[-\\sum_c\\eta(c\\mid x)\\log p_\\theta(c\\mid x)\\right]\\\\ J_{\\mathrm{correct}}&=\\mathbb E_x\\!\\left[\\sum_c\\eta(c\\mid x)p_\\theta(c\\mid x)\\right]\\end{aligned}",
+        "pitfalls": [
+          "固定标签分类不自动需要RL；结果奖励并不必然提升宏平均F1或校准。",
+          "奖励全同导致组内优势为零；KL项仍可能产生梯度。",
+          "标签字符串的长度、tokenization、无效输出处理和决策阈值都属于公平对比协议。"
+        ],
+        "followups": [
+          "一组候选标签全部错误时，怎样判断需要改善初始化还是奖励？",
+          "类别不平衡时，accuracy提升而macro-F1下降应怎么排查？"
+        ]
+      },
+      "id": "ALN-043"
+    }
+  ]
+}

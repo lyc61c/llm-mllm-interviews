@@ -1376,6 +1376,16 @@
           "source_id": "MM-S001",
           "support": "reported_question",
           "note": "面经明确比较 BLIP2 Q-Former 与 LLaVA MLP 的利弊。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
@@ -1390,6 +1400,10 @@
           "alt": "逐 token MLP 与 Q-Former 视觉连接器",
           "caption": "MLP 通常保留输入 token 数；固定查询的 Q-Former 可压缩视觉序列，具体配置依模型而定。"
         }
+      ],
+      "company_tags": [
+        "阿里巴巴",
+        "深势科技"
       ]
     },
     {
@@ -1551,12 +1565,18 @@
           "source_id": "XHS26-S008",
           "support": "reported_topic",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "topic": "动态分辨率与位置编码",
       "company_tags": [
-        "腾讯"
+        "腾讯",
+        "阿里巴巴"
       ]
     },
     {
@@ -1776,12 +1796,18 @@
           "source_id": "XHS26-S013",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "topic": "感知、文档与视觉评测",
       "company_tags": [
-        "字节跳动"
+        "字节跳动",
+        "深势科技"
       ]
     },
     {
@@ -1820,12 +1846,18 @@
           "source_id": "XHS26-S013",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "topic": "感知、文档与视觉评测",
       "company_tags": [
-        "字节跳动"
+        "字节跳动",
+        "深势科技"
       ]
     },
     {
@@ -1973,6 +2005,26 @@
           "source_id": "XHS26-S005",
           "support": "reported_question",
           "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S022",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
@@ -1980,7 +2032,9 @@
       "company_tags": [
         "腾讯",
         "字节跳动",
-        "小红书"
+        "小红书",
+        "阿里巴巴",
+        "深势科技"
       ]
     },
     {
@@ -2126,23 +2180,55 @@
       "level": "L3",
       "tags": [
         "视频压缩",
-        "时空建模"
+        "时空建模",
+        "动态视觉token剪枝",
+        "手部空间先验",
+        "ROI",
+        "真实延迟",
+        "V2Drop",
+        "query-aware剪枝",
+        "跨层变化",
+        "剪枝迁移",
+        "公平基线"
       ],
       "answer": {
-        "body": "长视频可通过空间池化、时空连接器、分段摘要或检索压缩视觉 token。VideoLLaMA 2 的时空连接器强调联合建模空间与时间；分段处理应携带时间边界，避免用摘要覆盖原始证据。\n\n压缩降低成本，也可能抹掉短事件、局部细节和事件顺序。要按任务保留证据，比较压缩前后的定位与问答效果；细粒度动作题通常需要比主题总结更高的保真预算，不能只看最终文本是否流畅。",
+        "body": "长视频可通过空间池化、时空连接器、分段摘要或检索压缩视觉 token。VideoLLaMA 2 的时空连接器强调联合建模空间与时间；分段处理应携带时间边界，避免用摘要覆盖原始证据。\n\n压缩降低成本，也可能抹掉短事件、局部细节和事件顺序。要按任务保留证据，比较压缩前后的定位与问答效果；细粒度动作题通常需要比主题总结更高的保真预算，不能只看最终文本是否流畅。\n\n动态剪枝要区分编码器/连接器与LLM内部：前者省更多后续计算，后者已支付前端开销。视觉冗余法按空间/跨帧相似性压缩；query/task-aware法按文本Q与视觉K关联保留任务证据，仍须注意分数归约和位置偏差。V2Drop则按同一视觉token在相邻LLM层的表征变化渐进筛选，不是跨帧L2，也不显式索取attention矩阵；变化小只是一种启发式，并非无损证明。任务评分、冗余、手部/交互对象ROI先验可组合，但要消融各自贡献和漏检回退。\n\nLLaVA迁移Qwen-VL必须重建真实视觉span、动态grid/merger对应、帧与空间position IDs及MRoPE，不能复用固定576 token或文本偏移。FlashAttention通常不返回完整attention，强制取权重可能回退并增加显存；若只mask不缩短矩阵，理论剪枝未必加速。公平比较固定模型、输入帧/分辨率、生成长度、硬件/精度与内核，以各层平均保留预算和剪枝层位对齐，同时报selector/ROI开销、端到端延迟、显存及手部/短事件质量；复现还需对齐数据、prompt、预处理和代码版本。生成输出latent网格能否恢复须另验证。",
         "pitfalls": [
           "平均所有帧特征会丢失部分顺序信息。"
         ],
         "followups": [
-          "怎样设计时间顺序交换的消融测试？"
+          "怎样设计时间顺序交换的消融测试？",
+          "手部框漏检时怎样设置最低预算和回退？",
+          "视觉token只在LLM深层删掉，哪些前端计算已经花掉？",
+          "跨层L2变化和跨帧L2冗余有什么区别？",
+          "把LLaVA固定视觉token偏移直接移植Qwen-VL会出什么错？",
+          "相同最终保留token数为何仍可能计算预算不同？"
         ]
       },
       "reference_ids": [
-        "MM-S032"
+        "MM-S032",
+        "R3-VID-FASTV",
+        "R3-VID-V2DROP",
+        "R3-VID-V2DROP-CODE"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "视频采样与时序"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S016",
+          "support": "reported_question",
+          "note": "主代理已读该美团面经明确追问动态视觉token剪枝及手部空间先验；与现有压缩题合并。"
+        },
+        {
+          "source_id": "XHS26-S018",
+          "support": "reported_question",
+          "note": "主代理完整读取快手面经图1–6页；公司为作者标题自述，以下仅关联该帖明确提问。明确追问V2Drop/文本QK方法差异、token重要性与L2变化、LLaVA迁移QwenVL和论文指标复现。"
+        }
+      ],
+      "editorial": false,
+      "topic": "视频采样与时序",
+      "company_tags": [
+        "美团",
+        "快手"
+      ]
     },
     {
       "id": "OMM-004",
@@ -2606,13 +2692,27 @@
           "source_id": "MM-S003",
           "support": "search_snippet",
           "note": "牛客搜索片段明确问 7B 微调 Adam 混合精度内存倍数。"
+        },
+        {
+          "source_id": "XHS26-S016",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S021",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
       "article_supplement_keys": [
         "Z29"
       ],
-      "topic": "训练显存与状态分片"
+      "topic": "训练显存与状态分片",
+      "company_tags": [
+        "美团",
+        "深势科技"
+      ]
     },
     {
       "id": "DST-004",
@@ -2822,9 +2922,18 @@
       "reference_ids": [
         "MM-S058"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "并行策略与通信"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S023",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        }
+      ],
+      "editorial": false,
+      "topic": "并行策略与通信",
+      "company_tags": [
+        "阿里巴巴"
+      ]
     },
     {
       "id": "DST-011",

@@ -603,7 +603,9 @@
       ],
       "company_tags": [
         "腾讯",
-        "小红书"
+        "小红书",
+        "阿里巴巴",
+        "百度"
       ],
       "answer": {
         "body": "原始 ViT 把 H×W×C 图像划分为 N 个不重叠的 P×P patch，将每块按固定顺序展平为 P²C 维向量，再用同一个可训练矩阵映射到 D 维。所有 patch 共享映射参数，不是每块各训练一层；这一步等价于 kernel_size=stride=P 的卷积。随后加入 CLS token 和位置向量，经过多层 Pre-LN、自注意力、FFN 与残差连接，用 CLS 的最终表示做分类。它主要沿用 Transformer Encoder，图像理解通常使用双向注意力，不需要文本生成时的因果 mask。\n\n切 patch 本身并没有打乱块内像素的固定顺序，但展平后的序列索引不会自动成为注意力的位置条件。不加位置信息且不引入其他位置相关结构时，自注意力对 patch 排列具有置换等变性，CLS 的聚合无法稳定区分跨 patch 的上下左右关系。原始 ViT 加可学习一维位置表；提高分辨率时通常先将旧表还原成二维网格再插值。现代视觉编码器也可使用二维 RoPE 或相对位置偏置。\n\n共享映射与位置丢失是两件事。若投影维度不足，线性映射可能丢失块内细节；位置编码解决的是跨块空间关系，也不会恢复缩放时已消失的小字和纹理。\n\n用于分类时，原始ViT可取可学习CLS token的最终表示接分类头；部分实现使用全局平均池化，必须说明具体版本。文本分类可从BERT的CLS表示或合适的池化表示接线性分类头。两者都能用监督交叉熵更新，区别主要在图像patch投影与文本词嵌入、位置表示和预训练目标，不是“图像分类不能用Transformer”。去掉语言生成头改接分类头时还须明确标签空间和数据监督。",
@@ -631,6 +633,16 @@
           "source_id": "XHS26-S010",
           "support": "reported_question",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
+        },
+        {
+          "source_id": "XHS26-S020",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
@@ -848,13 +860,16 @@
         "Flow Matching",
         "ODE-to-SDE",
         "图像生成",
-        "策略梯度"
+        "策略梯度",
+        "视频生成RL"
       ],
       "company_tags": [
-        "小红书"
+        "小红书",
+        "美团",
+        "快手"
       ],
       "answer": {
-        "body": "Flow-GRPO把图像去噪看作多步MDP：状态是prompt、时间和当前latent，动作是下一个latent，策略是它的条件转移密度，最终图像提供结果奖励。同一prompt采样多条轨迹，计算组内相对优势，缓存旧log-prob，再固定这些轨迹计算当前策略的log-prob，用GRPO裁剪目标与参考策略KL更新生成模型，不训练独立critic。奖励随任务选择：物体检测、属性与空间关系验证，OCR文字匹配，或PickScore人类偏好评分；GRPO本身不规定必须使用哪种奖励器。\n\nRectified Flow取$x_t=(1-t)x_0+t\\epsilon$，这里0是数据、1是噪声，模型学习噪声方向速度，生成时从1向0积分。不同初始噪声仍可产生不同图像，但固定当前状态后的ODE下一步是确定的Dirac转移，无法直接套用普通连续密度的PPO逐步概率比。ODE可以通过变量变换计算输出边缘密度，这与这里需要的转移密度不是一回事。\n\n保持边缘分布需要同时改漂移和加噪声。令递增采样时钟$u=1-t$、$q_u=p_{1-u}$、ODE漂移$b_u=-v_{1-u}$。在噪声系数只依赖时间时，选SDE漂移$b_u+\\sigma_t^2\\nabla\\log q_u/2$；Fokker–Planck中的该score漂移与扩散项相消，得到原ODE的连续性方程。线性高斯插值满足$\\nabla\\log p_t(x)=-[x+(1-t)v_t(x)]/t$：由条件高斯score等于$-\\epsilon/t$取条件期望，再联立$x=(1-t)\\mathbb E[x_0\\mid x]+t\\mathbb E[\\epsilon\\mid x]$与$v_t=\\mathbb E[\\epsilon-x_0\\mid x]$即可导出。\n\n用正步长$h>0$更新到$t-h$，均值取下式，噪声标准差为$\\sigma_t\\sqrt h$，因而每步策略是可计算log-prob的高斯。论文采用$\\sigma_t=a\\sqrt{t/(1-t)}$控制探索。连续时间、精确score与相同初始分布下才有上述同边缘分布结论；学到的近似速度、有限步Euler采样及端点修正会引入误差，不能说离散实现严格保持每一步分布，更不能只加高斯噪声而省略漂移修正。\n\n工程上必须处理$t=1$的噪声系数发散和$t=0$的除法：官方sde分支在起点用调度表下一个时间值替代分母中的1，只从正时间计算更新；均值与log-prob转FP32。零方差的确定性步不能当普通高斯算log-prob或ratio。原实现还对latent各维log-prob求平均，所以代码的比例是完整联合密度比的维度归一化版本，改变归约时不能直接沿用同样的clip和KL尺度。\n\n训练采样可减少去噪步数，评测仍使用原推理日程，这是denoising reduction；不是直接把训练中的低步数图像质量等同于最终推理质量。检查分组、采样/训练scheduler与CFG一致性、旧策略同权重时ratio接近1，并同时评测任务奖励、画质和多样性，避免奖励涨了却只会制造评分器喜欢的伪图像。",
+        "body": "Flow-GRPO把图像去噪看作多步MDP：状态是prompt、时间和当前latent，动作是下一个latent，策略是它的条件转移密度，最终图像提供结果奖励。同一prompt采样多条轨迹，计算组内相对优势，缓存旧log-prob，再固定这些轨迹计算当前策略的log-prob，用GRPO裁剪目标与参考策略KL更新生成模型，不训练独立critic。奖励随任务选择：物体检测、属性与空间关系验证，OCR文字匹配，或PickScore人类偏好评分；GRPO本身不规定必须使用哪种奖励器。\n\nRectified Flow取$x_t=(1-t)x_0+t\\epsilon$，这里0是数据、1是噪声，模型学习噪声方向速度，生成时从1向0积分。不同初始噪声仍可产生不同图像，但固定当前状态后的ODE下一步是确定的Dirac转移，无法直接套用普通连续密度的PPO逐步概率比。ODE可以通过变量变换计算输出边缘密度，这与这里需要的转移密度不是一回事。\n\n保持边缘分布需要同时改漂移和加噪声。令递增采样时钟$u=1-t$、$q_u=p_{1-u}$、ODE漂移$b_u=-v_{1-u}$。在噪声系数只依赖时间时，选SDE漂移$b_u+\\sigma_t^2\\nabla\\log q_u/2$；Fokker–Planck中的该score漂移与扩散项相消，得到原ODE的连续性方程。线性高斯插值满足$\\nabla\\log p_t(x)=-[x+(1-t)v_t(x)]/t$：由条件高斯score等于$-\\epsilon/t$取条件期望，再联立$x=(1-t)\\mathbb E[x_0\\mid x]+t\\mathbb E[\\epsilon\\mid x]$与$v_t=\\mathbb E[\\epsilon-x_0\\mid x]$即可导出。\n\n用正步长$h>0$更新到$t-h$，均值取下式，噪声标准差为$\\sigma_t\\sqrt h$，因而每步策略是可计算log-prob的高斯。论文采用$\\sigma_t=a\\sqrt{t/(1-t)}$控制探索。连续时间、精确score与相同初始分布下才有上述同边缘分布结论；学到的近似速度、有限步Euler采样及端点修正会引入误差，不能说离散实现严格保持每一步分布，更不能只加高斯噪声而省略漂移修正。\n\n工程上必须处理$t=1$的噪声系数发散和$t=0$的除法：官方sde分支在起点用调度表下一个时间值替代分母中的1，只从正时间计算更新；均值与log-prob转FP32。零方差的确定性步不能当普通高斯算log-prob或ratio。原实现还对latent各维log-prob求平均，所以代码的比例是完整联合密度比的维度归一化版本，改变归约时不能直接沿用同样的clip和KL尺度。\n\n训练采样可减少去噪步数，评测仍使用原推理日程，这是denoising reduction；不是直接把训练中的低步数图像质量等同于最终推理质量。检查分组、采样/训练scheduler与CFG一致性、旧策略同权重时ratio接近1，并同时评测任务奖励、画质和多样性，避免奖励涨了却只会制造评分器喜欢的伪图像。\n\n迁移到视频需同时区分视频帧轴与去噪时间轴，并为每条完整视频轨迹定义结果奖励、组ID和有效随机步骤。原Flow-GRPO论文主要验证图像任务，把视频奖励设计、多目标权衡和采样成本列为未来方向；因此不能从图像提升直接担保视频效果。分组与流水调度、视频动作/手部奖励及SFT基线需另行控制实验，固定ODE条件转移也不能直接冒充可计算连续随机密度。",
         "formula": "\\begin{aligned}q_u&=p_{1-u},\\quad b_u=-v_{1-u},\\quad s_t=\\nabla\\log p_t\\\\ \\partial_u q_u&=-\\nabla\\!\\cdot[(b_u+\\tfrac12\\sigma_t^2\\nabla\\log q_u)q_u]+\\tfrac12\\sigma_t^2\\Delta q_u=-\\nabla\\!\\cdot(b_uq_u)\\\\ \\mu_\\theta(x_t,t,h,c)&=x_t-h\\left[v_\\theta(x_t,t,c)+\\frac{\\sigma_t^2}{2t}\\big(x_t+(1-t)v_\\theta(x_t,t,c)\\big)\\right]\\\\ x_{t-h}&=\\mu_\\theta+\\sigma_t\\sqrt h\\,z,\\quad z\\sim\\mathcal N(0,I),\\quad h>0\\\\ \\pi_\\theta(x_{t-h}\\mid x_t,t,c)&=\\mathcal N(\\mu_\\theta,\\sigma_t^2hI)\\\\ \\hat A_i&=\\frac{R_i-\\bar R}{\\mathrm{std}(R)+\\epsilon},\\quad \\rho_{i,t}=\\exp(\\log\\pi_\\theta-\\log\\pi_{\\mathrm{old}})\\\\ J&=\\mathbb E\\left[\\frac1G\\sum_i\\frac1T\\sum_t\\left(\\min(\\rho_{i,t}\\hat A_i,\\mathrm{clip}(\\rho_{i,t},1-\\eta,1+\\eta)\\hat A_i)-\\beta D_{\\mathrm{KL}}(\\pi_\\theta\\Vert\\pi_{\\mathrm{ref}})\\right)\\right]\\end{aligned}",
         "pitfalls": [
           "采样时间递减时噪声用sqrt(-dt)，不能把负dt直接开平方；同边缘分布也不意味着同轨迹或同转移分布。",
@@ -869,13 +884,24 @@
         "XHS26-PFLOW-GRPO",
         "XHS26-PFLOW-SAMPLER",
         "XHS26-PFLOW-TRAIN",
-        "XHS26-PSCORE-SDE"
+        "XHS26-PSCORE-SDE",
+        "R3-VID-FLOW"
       ],
       "community_evidence": [
         {
           "source_id": "XHS26-S005",
           "support": "reported_question",
           "note": "已读完整笔记文字正文，作者明确记录问题；公司为笔记自述的小红书。"
+        },
+        {
+          "source_id": "XHS26-S016",
+          "support": "reported_question",
+          "note": "美团面经明确追问视频生成GRPO流程；现有Flow-GRPO推导保留，仅补视频迁移适用条件与证据。"
+        },
+        {
+          "source_id": "XHS26-S018",
+          "support": "reported_question",
+          "note": "主代理完整读取快手面经图1–6页；公司为作者标题自述，以下仅关联该帖明确提问。明确追问diffusion/GRPO与连续去噪策略梯度。"
         }
       ],
       "editorial": false,
@@ -890,27 +916,33 @@
         "DDPM",
         "扩散模型",
         "图像生成",
-        "噪声预测"
+        "噪声预测",
+        "随机时间步",
+        "Monte Carlo估计",
+        "importance sampling"
       ],
       "company_tags": [
         "小红书",
-        "腾讯"
+        "腾讯",
+        "百度"
       ],
       "answer": {
-        "body": "DDPM定义固定的前向高斯加噪链，再学习反向生成链。设每步噪声方差为$\\beta_t$、$\\alpha_t=1-\\beta_t$、$\\bar\\alpha_t=\\prod_{s=1}^t\\alpha_s$，则可以从干净图像直接采样任意$x_t$，无需训练时逐步运行全部前向链。每次随机选时间$t$和高斯噪声$\\epsilon$，让网络预测加入的噪声；常用简化目标是噪声预测MSE，它来自变分目标的重参数化与重新加权，不能说未经加权的MSE与完整ELBO完全相等。\n\n反向时从$x_T\\sim\\mathcal N(0,I)$开始，循环$t=T,\\ldots,1$。网络输入当前$x_t$与时间编码，输出$\\epsilon_\\theta$；先用它估计$x_0$，再将估计值代入可解析的$q(x_{t-1}\\mid x_t,x_0)$后验均值，得到下式$\\mu_\\theta$。注意$q(x_{t-1}\\mid x_t)$本身一般不能直接解析得到，训练中可解析的是额外给定$x_0$的后验。\n\n采样用$x_{t-1}=\\mu_\\theta+\\sigma_t z$。固定方差的经典选项包括$\\beta_t$或后验方差$\\tilde\\beta_t=\\beta_t(1-\\bar\\alpha_{t-1})/(1-\\bar\\alpha_t)$，也有学习方差的扩展；不能把这些设置混用。原算法在$t=1$时令$z=0$，最后展示预测均值。实现需核对0-based代码下标与1..T数学下标、同一个噪声日程和训练时的prediction type，不能把epsilon、x0或v预测输出直接互换。\n\n图文生成可把文本条件$c$输入去噪网络，但预测目标依然取决于图像生成参数化，与VQA的回答token交叉熵不同。标准DDPM的反向链是随机采样；Flow Matching常学习连续速度、用ODE积分。两者可在score/SDE视角联系，但不能把DDPM噪声预测均值公式直接当成Flow-GRPO的速度更新式。",
-        "formula": "\\begin{aligned}q(x_t\\mid x_{t-1})&=\\mathcal N(\\sqrt{\\alpha_t}x_{t-1},\\beta_t I),\\quad \\bar\\alpha_t=\\prod_{s=1}^t\\alpha_s\\\\ x_t&=\\sqrt{\\bar\\alpha_t}x_0+\\sqrt{1-\\bar\\alpha_t}\\,\\epsilon,\\quad \\epsilon\\sim\\mathcal N(0,I)\\\\ \\mathcal L_{\\mathrm{simple}}&=\\mathbb E_{x_0,t,\\epsilon}\\left[\\|\\epsilon-\\epsilon_\\theta(x_t,t)\\|_2^2\\right]\\\\ \\hat x_0&=\\frac{x_t-\\sqrt{1-\\bar\\alpha_t}\\epsilon_\\theta(x_t,t)}{\\sqrt{\\bar\\alpha_t}}\\\\ \\mu_\\theta(x_t,t)&=\\frac1{\\sqrt{\\alpha_t}}\\left(x_t-\\frac{\\beta_t}{\\sqrt{1-\\bar\\alpha_t}}\\epsilon_\\theta(x_t,t)\\right)\\\\ \\tilde\\beta_t&=\\frac{1-\\bar\\alpha_{t-1}}{1-\\bar\\alpha_t}\\beta_t,\\quad \\bar\\alpha_0=1\\\\ x_{t-1}&=\\mu_\\theta(x_t,t)+\\sigma_t z,\\quad z\\sim\\mathcal N(0,I)\\ (t>1),\\quad z=0\\ (t=1)\\end{aligned}",
+        "body": "DDPM定义固定的前向高斯加噪链，再学习反向生成链。设每步噪声方差为$\\beta_t$、$\\alpha_t=1-\\beta_t$、$\\bar\\alpha_t=\\prod_{s=1}^t\\alpha_s$，则可以从干净图像直接采样任意$x_t$，无需训练时逐步运行全部前向链。每次随机选时间$t$和高斯噪声$\\epsilon$，让网络预测加入的噪声；常用简化目标是噪声预测MSE，它来自变分目标的重参数化与重新加权，不能说未经加权的MSE与完整ELBO完全相等。\n\n反向时从$x_T\\sim\\mathcal N(0,I)$开始，循环$t=T,\\ldots,1$。网络输入当前$x_t$与时间编码，输出$\\epsilon_\\theta$；先用它估计$x_0$，再将估计值代入可解析的$q(x_{t-1}\\mid x_t,x_0)$后验均值，得到下式$\\mu_\\theta$。注意$q(x_{t-1}\\mid x_t)$本身一般不能直接解析得到，训练中可解析的是额外给定$x_0$的后验。\n\n采样用$x_{t-1}=\\mu_\\theta+\\sigma_t z$。固定方差的经典选项包括$\\beta_t$或后验方差$\\tilde\\beta_t=\\beta_t(1-\\bar\\alpha_{t-1})/(1-\\bar\\alpha_t)$，也有学习方差的扩展；不能把这些设置混用。原算法在$t=1$时令$z=0$，最后展示预测均值。实现需核对0-based代码下标与1..T数学下标、同一个噪声日程和训练时的prediction type，不能把epsilon、x0或v预测输出直接互换。\n\n图文生成可把文本条件$c$输入去噪网络，但预测目标依然取决于图像生成参数化，与VQA的回答token交叉熵不同。标准DDPM的反向链是随机采样；Flow Matching常学习连续速度、用ODE积分。两者可在score/SDE视角联系，但不能把DDPM噪声预测均值公式直接当成Flow-GRPO的速度更新式。\n\n随机时间步训练的理由是时间维目标本身可写成各噪声级loss的平均：均匀抽一个t、按闭式边缘直接构造x_t并回归噪声，单样本loss在期望上估计这一平均目标，长期训练覆盖各噪声级，无须先实际加噪1000次再全链反传。1000是原论文的离散日程设置，不是每条训练样本必须执行的网络次数。生成没有真实x_0可代入前向闭式，只能从噪声按所选反向sampler逐步生成，两者计算流程不同。这里无偏指对所选时间平均/MSE目标的Monte Carlo估计，不是说未加权MSE等于完整ELBO；若改成非均匀采样t而又要保持原均匀目标，须按采样概率作importance correction，否则时间权重和优化目标会改变。",
+        "formula": "\\begin{aligned}q(x_t\\mid x_{t-1})&=\\mathcal N(\\sqrt{\\alpha_t}x_{t-1},\\beta_t I),\\quad \\bar\\alpha_t=\\prod_{s=1}^t\\alpha_s\\\\ x_t&=\\sqrt{\\bar\\alpha_t}x_0+\\sqrt{1-\\bar\\alpha_t}\\,\\epsilon,\\quad \\epsilon\\sim\\mathcal N(0,I)\\\\ \\mathcal L_{\\mathrm{simple}}&=\\mathbb E_{x_0,t,\\epsilon}\\left[\\|\\epsilon-\\epsilon_\\theta(x_t,t)\\|_2^2\\right]\\\\ \\hat x_0&=\\frac{x_t-\\sqrt{1-\\bar\\alpha_t}\\epsilon_\\theta(x_t,t)}{\\sqrt{\\bar\\alpha_t}}\\\\ \\mu_\\theta(x_t,t)&=\\frac1{\\sqrt{\\alpha_t}}\\left(x_t-\\frac{\\beta_t}{\\sqrt{1-\\bar\\alpha_t}}\\epsilon_\\theta(x_t,t)\\right)\\\\ \\tilde\\beta_t&=\\frac{1-\\bar\\alpha_{t-1}}{1-\\bar\\alpha_t}\\beta_t,\\quad \\bar\\alpha_0=1\\\\ x_{t-1}&=\\mu_\\theta(x_t,t)+\\sigma_t z,\\quad z\\sim\\mathcal N(0,I)\\ (t>1),\\quad z=0\\ (t=1)\\end{aligned}\\qquad \\begin{aligned}\\mathcal L_{\\mathrm{time\\ mean}}&=\\frac1T\\sum_{t=1}^T\\mathbb E_{x_0,\\epsilon}[\\ell_t(\\theta;x_0,\\epsilon)]\\\\ \\mathbb E_{t\\sim\\mathrm{Uniform}(1,\\ldots,T),x_0,\\epsilon}[\\ell_t]&=\\mathcal L_{\\mathrm{time\\ mean}}\\\\ \\mathbb E_{t\\sim p,x_0,\\epsilon}\\!\\left[\\frac{\\ell_t}{Tp(t)}\\right]&=\\mathcal L_{\\mathrm{time\\ mean}},\\qquad p(t)>0\\end{aligned}",
         "pitfalls": [
           "反向去噪不是把当前噪声简单减掉；缩放系数、累计噪声日程和方差都来自所选参数化。",
           "少步采样、DDIM或其他solver需要各自的更新式，不能直接在原DDPM循环跳过时间步而保持原系数不变。"
         ],
         "followups": [
           "为什么训练可以随机采样一个时间步，而生成需要多步迭代？",
-          "如果网络输出改成x0或v prediction，scheduler需要怎样转换？"
+          "如果网络输出改成x0或v prediction，scheduler需要怎样转换？",
+          "t采样分布从均匀改为偏向高噪声，怎样保持原时间平均目标？"
         ]
       },
       "reference_ids": [
         "XHS26-PDDPM",
-        "XHS26-PDDPM-CODE"
+        "XHS26-PDDPM-CODE",
+        "R3-VID-DDPM"
       ],
       "community_evidence": [
         {
@@ -927,6 +959,11 @@
           "source_id": "XHS26-S015",
           "support": "reported_topic",
           "note": "已读正文或清晰题目图涉及该问题，按题意与现有题合并。"
+        },
+        {
+          "source_id": "XHS26-S020",
+          "support": "reported_question",
+          "note": "主代理完整读取百度面经图2/2，作者明确记录随机t与加噪1000次区别的提问；不将该证据扩散到未提到的视频奖励或控制题。"
         }
       ],
       "editorial": false,
@@ -944,7 +981,8 @@
         "融合"
       ],
       "company_tags": [
-        "小红书"
+        "小红书",
+        "阿里巴巴"
       ],
       "answer": {
         "body": "先按任务区分：CLIP式双塔分别编码图像和文本，用共享表示做相似度、检索或零样本分类；生成式视觉语言模型则需要把视觉信息交给语言模型，在文本条件下回答、描述或推理。两者的输出接口与训练目标不同，不能把图文embedding对齐直接当成具备对话能力。\n\n一种常见生成路线是视觉编码器、连接器、语言模型：视觉编码器将图像或视频变成特征序列，连接器将其映射或压缩到LLM可处理的表示，语言模型融合视觉与文本后生成答案。LLaVA可用投影连接器接入视觉token，BLIP-2用可学习query与Q-Former提取视觉信息；其他路线也可以通过跨注意力将视觉特征作为独立记忆读取。因此MLP、Q-Former、跨注意力是不同接口选择，并无所有模型统一的一套实现。\n\n介绍具体模型时按固定版本说明输入预处理与分辨率、视觉token数、编码器与连接器、位置/时间编码、更新哪些模块、数据和损失，再给一个场景解释为何这样设计。例如Qwen2-VL的动态分辨率和视觉token预算更适合讨论细节与成本，视频还要说明时间对齐。最后讲评测与失败边界：看图依赖、OCR、关系/计数、幻觉和吞吐，不用模型名列表代替机制。",
@@ -969,6 +1007,11 @@
           "source_id": "XHS26-S005",
           "support": "reported_question",
           "note": "已读笔记明确问题；答案独立整理。"
+        },
+        {
+          "source_id": "XHS26-S017",
+          "support": "reported_question",
+          "note": "已读正文或清晰配图涉及该题意；与标准化答案合并，厂商按作者描述关联。"
         }
       ],
       "editorial": false,
