@@ -15,6 +15,11 @@ def bullet(items):
     return '\n'.join('- ' + markdown_prose(item) for item in items)
 
 
+def company_suffix(question):
+    companies = question.get('company_tags', [])
+    return ' · ' + ' / '.join(companies) if companies else ''
+
+
 def main():
     sources, questions = load_bank()
     errors = validate(sources, questions) + validate_supplement(questions, sources)
@@ -43,10 +48,13 @@ def main():
             lines.extend(['', f'<a id="topic-{n}"></a>', f'## {topic}'])
             for q in members:
                 a = q['answer']
-                lines.extend(['', f'<a id="{q["id"].lower()}"></a>', f"### {q['id']} · {q['title']}", '', f"**{q['level']}**", '', '#### 答案', '', markdown_prose(a['body'])])
+                lines.extend(['', f'<a id="{q["id"].lower()}"></a>', f"### {q['id']} · {q['title']}", '', f"**{q['level']}**{company_suffix(q)}", '', '#### 答案', '', markdown_prose(a['body'])])
                 if a.get('formula'):
                     # Physical newlines can gain an extra backslash in GitHub's math parser.
                     lines.extend(['', '```math', markdown_formula(a['formula']), '```'])
+                if q.get('code_links'):
+                    links = [f"[{link['function']}](../{link['path']}#L{link['line']})" for link in q['code_links']]
+                    lines.extend(['', '代码：' + ' · '.join(links)])
                 for figure in q.get('figures', []):
                     lines.extend(['', f"![{figure['alt']}](../{figure['path']})"])
                     if figure.get('caption'):
@@ -64,9 +72,9 @@ def main():
     for q in questions:
         slug, title = CATEGORIES[q['category']]
         qtitle = q['title'].replace('|', ' / ')
-        index.append(f"| {q['id']} | {title} | {q['topic']} | {q['level']} | [{qtitle}](chapters/{slug}.md#{q['id'].lower()}) |")
+        index.append(f"| {q['id']} | {title} | {q['topic']} | {q['level']} | [{qtitle}](chapters/{slug}.md#{q['id'].lower()}){company_suffix(q)} |")
     write(ROOT / 'QUESTION-INDEX.md', '\n'.join(index) + '\n')
-    public_questions = [{key: q[key] for key in ('id', 'category', 'topic', 'level', 'title', 'tags')} | {'answer_html': answer_html(q['answer'], q.get('figures', [])), 'search_text': '\n'.join([q['answer']['body'], *q['answer']['pitfalls'], *q['answer']['followups']])} for q in questions]
+    public_questions = [{key: q[key] for key in ('id', 'category', 'topic', 'level', 'title', 'tags')} | {'company_tags': q.get('company_tags', []), 'answer_html': answer_html(q['answer'], q.get('figures', []), q.get('code_links', [])), 'search_text': '\n'.join([q['answer']['body'], *q['answer']['pitfalls'], *q['answer']['followups']])} for q in questions]
     payload = json.dumps({'questions': public_questions, 'categories': CATEGORIES, 'topics': TOPICS}, ensure_ascii=False).replace('<', '\\u003c').replace('\u2028', '\\u2028').replace('\u2029', '\\u2029')
     template = (ROOT / 'tools' / 'explorer-template.html').read_text(encoding='utf-8')
     write(ROOT / 'index.html', template.replace('__BANK_JSON__', payload))

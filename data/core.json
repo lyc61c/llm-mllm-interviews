@@ -1462,13 +1462,21 @@
           "source_id": "CORE-S002",
           "support": "reported_question",
           "note": "公开帖子列出架构、LoRA、量化原理；仅保留问题主题，未采纳社区答案。"
+        },
+        {
+          "source_id": "XHS26-S002",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
       "article_supplement_keys": [
         "Z25"
       ],
-      "topic": "架构范式与参数"
+      "topic": "架构范式与参数",
+      "company_tags": [
+        "腾讯"
+      ]
     },
     {
       "id": "TFM-005",
@@ -1733,10 +1741,18 @@
           "source_id": "CORE-S009",
           "support": "search_snippet",
           "note": "搜索摘录列出复杂度、GPTQ 或投机解码主题；未采用其自报次数/职级概率，公司归属为汇编者自述。"
+        },
+        {
+          "source_id": "XHS26-S002",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
-      "topic": "复杂度与实现机制"
+      "topic": "复杂度与实现机制",
+      "company_tags": [
+        "腾讯"
+      ]
     },
     {
       "id": "TFM-012",
@@ -2120,10 +2136,18 @@
           "source_id": "CORE-S004",
           "support": "reported_topic",
           "note": "README 目录提供分词与评测备考主题；此题将主题具体化，不是已认证公司真题。"
+        },
+        {
+          "source_id": "XHS26-S002",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
-      "topic": "分词与文本表示"
+      "topic": "分词与文本表示",
+      "company_tags": [
+        "腾讯"
+      ]
     },
     {
       "id": "PRE-003",
@@ -2585,13 +2609,21 @@
           "source_id": "CORE-S010",
           "support": "search_snippet",
           "note": "代码备考仓库摘要列出注意力和 Pretrain/SFT 训练损失；题库按主题整理，不是公司真题证据。"
+        },
+        {
+          "source_id": "XHS26-S005",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
       "user_supplement_keys": [
         "U09"
       ],
-      "topic": "指令数据与训练目标"
+      "topic": "指令数据与训练目标",
+      "company_tags": [
+        "小红书"
+      ]
     },
     {
       "id": "FT-002",
@@ -2939,9 +2971,18 @@
         "CORE-S050",
         "CORE-S044"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "指令数据与训练目标"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S004",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "指令数据与训练目标",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "FT-011",

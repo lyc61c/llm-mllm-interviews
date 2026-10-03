@@ -1,6 +1,7 @@
 // A DOM smoke test, not a visual browser/screenshot acceptance test.
 const fs=require('node:fs'), path=require('node:path'), vm=require('node:vm'), assert=require('node:assert/strict');
-const text=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
+const published=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
+const text=process.argv.includes('--template')?fs.readFileSync(path.join(__dirname,'explorer-template.html'),'utf8').replace('__BANK_JSON__',published.match(/<script id="bank" type="application\/json">([\s\S]*?)<\/script>/)[1]):published;
 const payload=text.match(/<script id="bank" type="application\/json">([\s\S]*?)<\/script>/)[1];
 const scripts=[...text.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(x=>x[1]);
 assert.equal(scripts.length,1);
@@ -43,5 +44,14 @@ element('reset').onclick();
 element('search').value='this-never-exists-8711';element('search').listeners.input();
 assert.equal(run('filtered().length'),0);assert(element('cards').innerHTML.includes('没有匹配题目'));
 assert(run('escapeHtml("<img onerror=alert(1)>")').startsWith('&lt;img'));
+assert.equal(element('company').hidden,run('companies.length===0'));
+run('bank.questions[0].company_tags=["公司筛选测试甲","公司筛选测试乙"];bank.questions[1].company_tags=["公司筛选测试乙"]');
+element('reset').onclick();element('company').value='公司筛选测试甲';element('company').listeners.change();
+assert.equal(run('filtered().length'),1);assert(element('cards').innerHTML.includes('aria-label="面试公司">公司筛选测试甲'));
+element('company').value='公司筛选测试乙';element('company').listeners.change();assert.equal(run('filtered().length'),2);
+element('reset').onclick();assert.equal(element('company').value,'');
+element('search').value='公司筛选测试甲';element('search').listeners.input();assert.equal(run('filtered().length'),1);
+run('bank.questions[0].company_tags=["<img onerror=alert(1)>"]');element('search').value='';element('search').listeners.input();
+assert(element('cards').innerHTML.includes('&lt;img onerror=alert(1)&gt;'));
 element('reset').onclick();element('next').onclick();assert(element('pageinfo').textContent.startsWith('2 /'));
-console.log(`PASS: explorer DOM smoke tests; ${total} unified answers; search, categories, topics, quiz, sampling, stars, paging, MathML and escaping`);
+console.log(`PASS: explorer DOM smoke tests; ${total} unified answers; search, categories, topics, company tags and filters, quiz, sampling, stars, paging, MathML and escaping`);

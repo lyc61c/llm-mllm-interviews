@@ -30,7 +30,7 @@
   - [ALN-018 · IPO 等 DPO 变种主要试图解决什么问题？](#aln-018)
   - [ALN-019 · 离线偏好优化和在线 RL 的分布差异是什么？](#aln-019)
 - [GRPO 与在线优化](#topic-4)
-  - [ALN-010 · GRPO 为什么不需要独立价值模型？](#aln-010)
+  - [ALN-010 · GRPO 与 PPO 怎样计算优势，reward 和 advantage 有什么区别？](#aln-010)
   - [ALN-011 · GRPO 组内标准差归一化带来哪些问题？](#aln-011)
   - [ALN-012 · GRPO 的长度偏差与 Dr. GRPO 有什么关系？](#aln-012)
   - [ALN-013 · RLVR 的可验证奖励如何设计？](#aln-013)
@@ -41,6 +41,7 @@
   - [ALN-030 · GRPO 数据必须标注 Thought 吗，完整训练数据与 rollout 怎样组织？](#aln-030)
   - [ALN-031 · GRPO 不收敛或训练奖励升高但能力退化，怎样排查和调参？](#aln-031)
   - [ALN-032 · 正负样本不对称设计有哪些方式，和 PPO/DAPO 的不对称 clip 有何区别？](#aln-032)
+  - [ALN-040 · Flow-GRPO 怎样训练图像生成模型，如何把 ODE 转成保持边缘分布的 SDE？](#aln-040)
 - [奖励与对齐策略](#topic-5)
   - [ALN-002 · 奖励模型如何用成对偏好训练？](#aln-002)
   - [ALN-015 · 如何识别和缓解 reward hacking？](#aln-015)
@@ -308,7 +309,7 @@ Agent SFT相当于示范轨迹上的行为学习；数据应包含工具选择�
 <a id="aln-001"></a>
 ### ALN-001 · SFT、RLHF 与 DPO 分别解决什么问题？
 
-**L1**
+**L1** · 字节跳动
 
 #### 答案
 
@@ -352,7 +353,7 @@ L^{\mathrm{clip}}=\mathbb{E}\left[\min\left(\rho_t A_t,\mathrm{clip}(\rho_t,1-\e
 <a id="aln-004"></a>
 ### ALN-004 · GAE 如何计算，λ 与 γ 如何影响优势估计？
 
-**L2**
+**L2** · 字节跳动 / 小红书
 
 #### 答案
 
@@ -417,7 +418,7 @@ RLHF 的参考策略 KL 惩罚用于约束模型相对行为锚点的漂移，�
 <a id="aln-025"></a>
 ### ALN-025 · RLHF-PPO 的四模型完整流程是什么？Critic 的 V_target 从哪里来？
 
-**L2**
+**L2** · 字节跳动
 
 #### 答案
 
@@ -574,23 +575,31 @@ DPO 变种主要调整偏好概率映射、正则化或数据使用方式。IPO 
 ## GRPO 与在线优化
 
 <a id="aln-010"></a>
-### ALN-010 · GRPO 为什么不需要独立价值模型？
+### ALN-010 · GRPO 与 PPO 怎样计算优势，reward 和 advantage 有什么区别？
 
-**L2**
+**L2** · 小红书
 
 #### 答案
 
-GRPO 对同一问题采样一组回答，以组内平均奖励作为基线并标准化相对优势，从而替代 PPO 中独立价值模型的优势估计，节省 critic 参数和训练成本。它仍需要生成 rollout、计算奖励，具体实现还可能保留参考模型。
+Reward是任务给出的评分，advantage是某个动作或响应相对基线的好坏。理论优势为$`A^\pi(s,a)=Q^\pi(s,a)-V^\pi(s)`$，不是直接把奖励改个名字；一个得到正奖励的响应若低于同组均值，GRPO优势仍可为负。
 
-采用结果奖励时，一条回答的最终优势通常分配给该回答的各个 token，再用新旧策略的 token 概率比构造裁剪目标。整体显存并非只由 critic 决定，还取决于组大小、回答长度、优化器状态、激活和生成 KV cache。
+常见PPO用critic预测前缀价值，再以逐步奖励、终止信息与value构造TD残差和GAE，因此同一响应的不同token可以有不同优势。结果奖励GRPO则对同一prompt采样G条响应，减组内平均奖励、除组内标准差，以相对优势替代独立critic；一条响应的组内优势通常广播到它的各个有效token。它估计的是组内相对表现，不能把它称为GAE或精确的逐状态Q-V，也不能从最终结果奖励断言各token的因果贡献相同。
+
+训练时两者都可用新旧策略概率比与clip。GRPO仍需要rollout和奖励器，奖励器可以是可验证规则、奖励模型或环境反馈，具体方案也可能保留reference模型。G=1或组内奖励全部相同没有有效相对信号；epsilon只防止除零。整体显存仍取决于组大小、回答长度、优化器、激活及KV cache，去掉critic不意味着生成与训练成本可以忽略。
+
+```math
+\begin{aligned}A^\pi(s,a)&=Q^\pi(s,a)-V^\pi(s)\\ \delta_t&=r_t+\gamma V(s_{t+1})-V(s_t),\quad \hat A_t^{\mathrm{PPO}}=\sum_{l\geq0}(\gamma\lambda)^l\delta_{t+l}\\ \hat A_{i,t}^{\mathrm{GRPO}}&=\frac{R_i-\bar R}{\mathrm{std}(R_1,\ldots,R_G)+\epsilon}\quad\mathrm{(outcome\ reward)}\end{aligned}
+```
 
 #### 易错点
 
 - 去掉 critic 不等于没有 baseline，也不等于没有奖励模型。
+- GRPO的零均值优势不代表整个batch平均质量提高；评价能力必须另看原始reward与独立评测。
 
 #### 追问
 
 - 如何分离 rollout 显存和训练显存预算？
+- 组内奖励是0.7、0.8、0.9时，0.7的奖励为何为正但优势为负？
 
 <a id="aln-011"></a>
 ### ALN-011 · GRPO 组内标准差归一化带来哪些问题？
@@ -744,7 +753,7 @@ J\propto\frac{\sum_{i,t}m_{i,t}\min(\rho_{i,t}\hat A_i,\mathrm{clip}(\rho_{i,t},
 <a id="aln-030"></a>
 ### ALN-030 · GRPO 数据必须标注 Thought 吗，完整训练数据与 rollout 怎样组织？
 
-**L2**
+**L2** · 小红书
 
 #### 答案
 
@@ -765,7 +774,7 @@ GRPO 的训练基本输入是prompt及奖励计算所需的任务元数据，不
 <a id="aln-031"></a>
 ### ALN-031 · GRPO 不收敛或训练奖励升高但能力退化，怎样排查和调参？
 
-**L3**
+**L3** · 小红书
 
 #### 答案
 
@@ -808,6 +817,39 @@ PPO/DAPO的clip取决于优势符号：正优势只限制过度增加概率，�
 
 - 高风险拒答任务怎样验证提高负类权重没有导致过度拒答？
 
+<a id="aln-040"></a>
+### ALN-040 · Flow-GRPO 怎样训练图像生成模型，如何把 ODE 转成保持边缘分布的 SDE？
+
+**L3** · 小红书
+
+#### 答案
+
+Flow-GRPO把图像去噪看作多步MDP：状态是prompt、时间和当前latent，动作是下一个latent，策略是它的条件转移密度，最终图像提供结果奖励。同一prompt采样多条轨迹，计算组内相对优势，缓存旧log-prob，再固定这些轨迹计算当前策略的log-prob，用GRPO裁剪目标与参考策略KL更新生成模型，不训练独立critic。奖励随任务选择：物体检测、属性与空间关系验证，OCR文字匹配，或PickScore人类偏好评分；GRPO本身不规定必须使用哪种奖励器。
+
+Rectified Flow取$`x_t=(1-t)x_0+t\epsilon`$，这里0是数据、1是噪声，模型学习噪声方向速度，生成时从1向0积分。不同初始噪声仍可产生不同图像，但固定当前状态后的ODE下一步是确定的Dirac转移，无法直接套用普通连续密度的PPO逐步概率比。ODE可以通过变量变换计算输出边缘密度，这与这里需要的转移密度不是一回事。
+
+保持边缘分布需要同时改漂移和加噪声。令递增采样时钟$`u=1-t`$、$`q_u=p_{1-u}`$、ODE漂移$`b_u=-v_{1-u}`$。在噪声系数只依赖时间时，选SDE漂移$`b_u+\sigma_t^2\nabla\log q_u/2`$；Fokker–Planck中的该score漂移与扩散项相消，得到原ODE的连续性方程。线性高斯插值满足$`\nabla\log p_t(x)=-[x+(1-t)v_t(x)]/t`$：由条件高斯score等于$`-\epsilon/t`$取条件期望，再联立$`x=(1-t)\mathbb E[x_0\mid x]+t\mathbb E[\epsilon\mid x]`$与$`v_t=\mathbb E[\epsilon-x_0\mid x]`$即可导出。
+
+用正步长$`h>0`$更新到$`t-h`$，均值取下式，噪声标准差为$`\sigma_t\sqrt h`$，因而每步策略是可计算log-prob的高斯。论文采用$`\sigma_t=a\sqrt{t/(1-t)}`$控制探索。连续时间、精确score与相同初始分布下才有上述同边缘分布结论；学到的近似速度、有限步Euler采样及端点修正会引入误差，不能说离散实现严格保持每一步分布，更不能只加高斯噪声而省略漂移修正。
+
+工程上必须处理$`t=1`$的噪声系数发散和$`t=0`$的除法：官方sde分支在起点用调度表下一个时间值替代分母中的1，只从正时间计算更新；均值与log-prob转FP32。零方差的确定性步不能当普通高斯算log-prob或ratio。原实现还对latent各维log-prob求平均，所以代码的比例是完整联合密度比的维度归一化版本，改变归约时不能直接沿用同样的clip和KL尺度。
+
+训练采样可减少去噪步数，评测仍使用原推理日程，这是denoising reduction；不是直接把训练中的低步数图像质量等同于最终推理质量。检查分组、采样/训练scheduler与CFG一致性、旧策略同权重时ratio接近1，并同时评测任务奖励、画质和多样性，避免奖励涨了却只会制造评分器喜欢的伪图像。
+
+```math
+\begin{aligned}q_u&=p_{1-u},\quad b_u=-v_{1-u},\quad s_t=\nabla\log p_t\\ \partial_u q_u&=-\nabla\!\cdot[(b_u+\tfrac12\sigma_t^2\nabla\log q_u)q_u]+\tfrac12\sigma_t^2\Delta q_u=-\nabla\!\cdot(b_uq_u)\\ \mu_\theta(x_t,t,h,c)&=x_t-h\left[v_\theta(x_t,t,c)+\frac{\sigma_t^2}{2t}\big(x_t+(1-t)v_\theta(x_t,t,c)\big)\right]\\ x_{t-h}&=\mu_\theta+\sigma_t\sqrt h\,z,\quad z\sim\mathcal N(0,I),\quad h\gt 0\\ \pi_\theta(x_{t-h}\mid x_t,t,c)&=\mathcal N(\mu_\theta,\sigma_t^2hI)\\ \hat A_i&=\frac{R_i-\bar R}{\mathrm{std}(R)+\epsilon},\quad \rho_{i,t}=\exp(\log\pi_\theta-\log\pi_{\mathrm{old}})\\ J&=\mathbb E\left[\frac1G\sum_i\frac1T\sum_t\left(\min(\rho_{i,t}\hat A_i,\mathrm{clip}(\rho_{i,t},1-\eta,1+\eta)\hat A_i)-\beta D_{\mathrm{KL}}(\pi_\theta\Vert\pi_{\mathrm{ref}})\right)\right]\end{aligned}
+```
+
+#### 易错点
+
+- 采样时间递减时噪声用sqrt(-dt)，不能把负dt直接开平方；同边缘分布也不意味着同轨迹或同转移分布。
+- 旧轨迹与旧log-prob必须固定，策略梯度更新不要求把最终评分器梯度穿过整条ODE；奖励函数可能不可微。
+
+#### 追问
+
+- 若只在部分步加噪声，哪些步能参与概率比更新，和原始全SDE方案有何区别？
+- 把latent维log-prob的mean换成sum，为什么概率比、clip fraction和KL尺度都会改变？
+
 <a id="topic-5"></a>
 ## 奖励与对齐策略
 
@@ -839,7 +881,7 @@ PPO/DAPO的clip取决于优势符号：正优势只限制过度增加概率，�
 <a id="aln-015"></a>
 ### ALN-015 · 如何识别和缓解 reward hacking？
 
-**L2**
+**L2** · 小红书
 
 #### 答案
 
@@ -848,6 +890,8 @@ Reward hacking 指模型过度优化奖励代理，却降低了真实任务质�
 常见表现包括重复关键词、迎合裁判、空泛安全回答或绕过弱验证器。参考 KL、提前停止和多样反馈可降低风险，但不能证明问题已经消除。工程上应保留 rollout 与分项奖励，聚类分析高分失败案例，再改进评分器和验证流程。
 
 回答模式化、奉承或内容空洞时，构造事实正确但朴素、华丽却无信息等控制样本，检查RM是否主要奖励风格或长度。比较训练RM与独立人工/judge，排查偏好数据窄、优化过量及KL不足；在新偏好数据中加入反例并保留通用能力回归。模式崩溃、谄媚与对齐税相关但不是同义词。
+
+多模态生成还要排查针对物体检测、OCR和偏好评分器的投机：比如计数检测高分但画面重复失真，OCR匹配成功却破坏构图，偏好分提高但图像趋同。将这些作为待检验的失败模式，用独立检测/OCR、人工盲评、画质与多样性指标交叉检查，并分析分项reward和高分失败样本。参考KL限制策略漂移，不能修补奖励器本身的漏洞；同组相对优势也会放大一个坏代理奖励。
 
 #### 易错点
 
@@ -955,11 +999,13 @@ DPO适合已有同一问题、同一证据上下文下的可靠chosen/rejected�
 - [Direct Preference Optimization](https://arxiv.org/abs/2305.18290)
 - [UltraFeedback](https://arxiv.org/html/2310.01377v1)
 - [DeepSeekMath](https://arxiv.org/html/2402.03300v3)
+- [DeepSeekMath](https://arxiv.org/abs/2402.03300)
 - [GRPO Trainer — TRL](https://huggingface.co/docs/trl/grpo_trainer)
 - [Understanding R1-Zero-Like Training: A Critical Perspective](https://arxiv.org/html/2503.20783v2)
 - [DeepSeek-R1](https://arxiv.org/html/2501.12948v1)
 - [Let's Verify Step by Step](https://arxiv.org/abs/2305.20050)
 - [Scaling Laws for Reward Model Overoptimization](https://arxiv.org/abs/2210.10760)
+- [Flow-GRPO: Training Flow Matching Models via Online RL](https://arxiv.org/html/2505.05470v2)
 - [Constitutional AI](https://arxiv.org/abs/2212.08073)
 - [A General Theoretical Paradigm to Understand Learning from Human Preferences](https://arxiv.org/abs/2310.12036)
 - [Online DPO Trainer — TRL](https://huggingface.co/docs/trl/online_dpo_trainer)
@@ -971,7 +1017,6 @@ DPO适合已有同一问题、同一证据上下文下的可靠chosen/rejected�
 - [Group Sequence Policy Optimization](https://arxiv.org/html/2507.18071v2)
 - [DAPO: An Open-Source LLM Reinforcement Learning System at Scale](https://arxiv.org/html/2503.14476v2)
 - [verl DAPO recipe](https://verl.readthedocs.io/en/latest/algo/dapo.html)
-- [DeepSeekMath](https://arxiv.org/abs/2402.03300)
 - [verl GRPO documentation](https://verl.readthedocs.io/en/latest/algo/grpo.html)
 - [Trust Region Policy Optimization](https://arxiv.org/abs/1502.05477)
 - [Spinning Up: Deep Deterministic Policy Gradient](https://spinningup.openai.com/en/latest/algorithms/ddpg.html)
@@ -984,3 +1029,6 @@ DPO适合已有同一问题、同一证据上下文下的可靠chosen/rejected�
 - [Policy invariance under reward transformations](https://people.eecs.berkeley.edu/~russell/papers/icml99-shaping.pdf)
 - [A Reduction of Imitation Learning and Structured Prediction to No-Regret Online Learning](https://arxiv.org/abs/1011.0686)
 - [Generative Adversarial Imitation Learning](https://arxiv.org/abs/1606.03476)
+- [Flow-GRPO official SDE sampler with log probabilities](https://github.com/yifan123/flow_grpo/blob/main/flow_grpo/diffusers_patch/sd3_sde_with_logprob.py)
+- [Flow-GRPO official SD3 training loop](https://github.com/yifan123/flow_grpo/blob/main/scripts/train_sd3.py)
+- [Score-Based Generative Modeling through Stochastic Differential Equations](https://arxiv.org/html/2011.13456)

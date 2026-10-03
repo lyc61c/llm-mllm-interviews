@@ -8,6 +8,7 @@
   - [SYS-001 · 设计企业文档问答系统，先明确哪些约束？](#sys-001)
   - [SYS-004 · Agent 上下文溢出，怎样压缩而保持任务连续性？](#sys-004)
   - [SYS-013 · 多模态服务图片/PDF 输入成本失控，怎么优化？](#sys-013)
+  - [SYS-019 · 企业 Agent 中 BFF、编排器、Tool Server 与 Worker 如何拆分？](#sys-019)
 - [性能、缓存与并发](#topic-2)
   - [SYS-002 · LLM 服务 P95 延迟突然升高，如何定位？](#sys-002)
   - [SYS-003 · 如何测吞吐、并发、TTFT、TPOT，并避免错误比较？](#sys-003)
@@ -86,6 +87,29 @@
 #### 追问
 
 - 如果主要问题是视觉 encoder 耗时而非 decode，量化 LLM 是否能解决？
+
+<a id="sys-019"></a>
+### SYS-019 · 企业 Agent 中 BFF、编排器、Tool Server 与 Worker 如何拆分？
+
+**L3** · 米哈游
+
+#### 答案
+
+一种可落地的拆分是：BFF负责会话入口、认证、租户和请求校验，向前端流式返回进度；编排器保存任务状态、选择模型与工具、分配预算并检查停止条件；Tool Server提供带schema的业务能力并执行服务端授权；Worker消费队列，承接长耗时检索、解析或工具执行。Worker可以是普通作业进程，不必每个都包装成独立Agent；规模小时也可先在单服务中保持这些逻辑边界。
+
+每次工具调用携带经服务端验证的用户/租户上下文、任务ID和追踪ID。授权在执行端再次检查，模型提出参数不等于已获权限；敏感凭据由服务管理，不放入模型上下文。任务checkpoint用于恢复编排状态，队列采用确认、租约和幂等键控制重复执行；有外部副作用的操作需记录执行结果，不能靠重新生成一句话保证只执行一次。
+
+数据读取和工具结果均按租户隔离，记录版本、输入摘要、工具耗时、权限判定和副作用结果，日志对敏感内容做最小化。给工具设置超时、重试、熔断、并发及取消边界，失败后重试、降级或交给用户的条件应可测。MCP可以统一工具接口，但业务鉴权、任务队列与审计仍由系统负责；验收同时测任务成功率、隔离、恢复、P95延迟和成本。
+
+#### 易错点
+
+- BFF/Tool Server/Worker是实现角色，不是MCP规定的一套固定架构。
+- 队列投递保证与业务副作用的幂等保证不同，重试不可直接等同于恰好一次。
+
+#### 追问
+
+- Worker完成了副作用但回传丢失，编排器如何恢复？
+- 用户权限变更后，已排队任务和旧checkpoint如何失效？
 
 <a id="topic-2"></a>
 ## 性能、缓存与并发
@@ -320,7 +344,7 @@ FastAPI 负责应用 HTTP 接口、鉴权、请求校验、业务路由和流式
 <a id="sys-006"></a>
 ### SYS-006 · 设计 Agent 可观测性：日志里应该记录什么？
 
-**L2**
+**L2** · 米哈游
 
 #### 答案
 
@@ -339,7 +363,7 @@ FastAPI 负责应用 HTTP 接口、鉴权、请求校验、业务路由和流式
 <a id="sys-007"></a>
 ### SYS-007 · 多租户 RAG 如何保证权限隔离？
 
-**L3**
+**L3** · 米哈游
 
 #### 答案
 
@@ -424,3 +448,6 @@ FastAPI 负责应用 HTTP 接口、鉴权、请求校验、业务路由和流式
 - [vLLM: Quickstart](https://docs.vllm.ai/en/latest/getting_started/quickstart/)
 - [Efficient Memory Management for Large Language Model Serving with PagedAttention](https://arxiv.org/abs/2309.06180)
 - [Orca: A Distributed Serving System for Transformer-Based Generative Models](https://www.usenix.org/conference/osdi22/presentation/yu)
+- [Building effective agents — Anthropic](https://www.anthropic.com/engineering/building-effective-agents)
+- [MCP 2025-11-25 Transports](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports)
+- [How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system)

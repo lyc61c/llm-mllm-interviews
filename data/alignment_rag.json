@@ -1165,10 +1165,18 @@
           "source_id": "APP-S009",
           "support": "reported_question",
           "note": "正文问过 SFT/DPO 的选择及 SFT 无法解决的 bad case。"
+        },
+        {
+          "source_id": "XHS26-S001",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
-      "topic": "RLHF 与 PPO"
+      "topic": "RLHF 与 PPO",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "ALN-002",
@@ -1263,10 +1271,24 @@
           "source_id": "APP-S008",
           "support": "secondary_report",
           "note": "汇总出现 advantage 计算及“GRPO 的 GAE”措辞；答案明确纠正概念。"
+        },
+        {
+          "source_id": "XHS26-S001",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S005",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
-      "topic": "RLHF 与 PPO"
+      "topic": "RLHF 与 PPO",
+      "company_tags": [
+        "字节跳动",
+        "小红书"
+      ]
     },
     {
       "id": "ALN-005",
@@ -1426,7 +1448,7 @@
     {
       "id": "ALN-010",
       "category": "ALN",
-      "title": "GRPO 为什么不需要独立价值模型？",
+      "title": "GRPO 与 PPO 怎样计算优势，reward 和 advantage 有什么区别？",
       "level": "L2",
       "tags": [
         "GRPO",
@@ -1434,25 +1456,38 @@
       ],
       "answer": {
         "pitfalls": [
-          "去掉 critic 不等于没有 baseline，也不等于没有奖励模型。"
+          "去掉 critic 不等于没有 baseline，也不等于没有奖励模型。",
+          "GRPO的零均值优势不代表整个batch平均质量提高；评价能力必须另看原始reward与独立评测。"
         ],
         "followups": [
-          "如何分离 rollout 显存和训练显存预算？"
+          "如何分离 rollout 显存和训练显存预算？",
+          "组内奖励是0.7、0.8、0.9时，0.7的奖励为何为正但优势为负？"
         ],
-        "body": "GRPO 对同一问题采样一组回答，以组内平均奖励作为基线并标准化相对优势，从而替代 PPO 中独立价值模型的优势估计，节省 critic 参数和训练成本。它仍需要生成 rollout、计算奖励，具体实现还可能保留参考模型。\n\n采用结果奖励时，一条回答的最终优势通常分配给该回答的各个 token，再用新旧策略的 token 概率比构造裁剪目标。整体显存并非只由 critic 决定，还取决于组大小、回答长度、优化器状态、激活和生成 KV cache。"
+        "body": "Reward是任务给出的评分，advantage是某个动作或响应相对基线的好坏。理论优势为$A^\\pi(s,a)=Q^\\pi(s,a)-V^\\pi(s)$，不是直接把奖励改个名字；一个得到正奖励的响应若低于同组均值，GRPO优势仍可为负。\n\n常见PPO用critic预测前缀价值，再以逐步奖励、终止信息与value构造TD残差和GAE，因此同一响应的不同token可以有不同优势。结果奖励GRPO则对同一prompt采样G条响应，减组内平均奖励、除组内标准差，以相对优势替代独立critic；一条响应的组内优势通常广播到它的各个有效token。它估计的是组内相对表现，不能把它称为GAE或精确的逐状态Q-V，也不能从最终结果奖励断言各token的因果贡献相同。\n\n训练时两者都可用新旧策略概率比与clip。GRPO仍需要rollout和奖励器，奖励器可以是可验证规则、奖励模型或环境反馈，具体方案也可能保留reference模型。G=1或组内奖励全部相同没有有效相对信号；epsilon只防止除零。整体显存仍取决于组大小、回答长度、优化器、激活及KV cache，去掉critic不意味着生成与训练成本可以忽略。",
+        "formula": "\\begin{aligned}A^\\pi(s,a)&=Q^\\pi(s,a)-V^\\pi(s)\\\\ \\delta_t&=r_t+\\gamma V(s_{t+1})-V(s_t),\\quad \\hat A_t^{\\mathrm{PPO}}=\\sum_{l\\geq0}(\\gamma\\lambda)^l\\delta_{t+l}\\\\ \\hat A_{i,t}^{\\mathrm{GRPO}}&=\\frac{R_i-\\bar R}{\\mathrm{std}(R_1,\\ldots,R_G)+\\epsilon}\\quad\\mathrm{(outcome\\ reward)}\\end{aligned}"
       },
       "reference_ids": [
-        "APP-S106"
+        "APP-S106",
+        "JUN26-P006",
+        "JUN26-P004"
       ],
       "community_evidence": [
         {
           "source_id": "APP-S006",
           "support": "reported_topic",
           "note": "README 列 GRPO 与 RL 显存主题。"
+        },
+        {
+          "source_id": "XHS26-S005",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
-      "topic": "GRPO 与在线优化"
+      "topic": "GRPO 与在线优化",
+      "company_tags": [
+        "小红书"
+      ]
     },
     {
       "id": "ALN-011",
@@ -1578,15 +1613,25 @@
         "followups": [
           "如果训练奖励上升、独立胜率下降，你先停哪一环？"
         ],
-        "body": "Reward hacking 指模型过度优化奖励代理，却降低了真实任务质量。识别时应联合观察独立指标、回答长度、套话和异常工具行为，并对高分样本做人类或对抗复核；只看奖励上涨无法判断能力是否改善。\n\n常见表现包括重复关键词、迎合裁判、空泛安全回答或绕过弱验证器。参考 KL、提前停止和多样反馈可降低风险，但不能证明问题已经消除。工程上应保留 rollout 与分项奖励，聚类分析高分失败案例，再改进评分器和验证流程。\n\n回答模式化、奉承或内容空洞时，构造事实正确但朴素、华丽却无信息等控制样本，检查RM是否主要奖励风格或长度。比较训练RM与独立人工/judge，排查偏好数据窄、优化过量及KL不足；在新偏好数据中加入反例并保留通用能力回归。模式崩溃、谄媚与对齐税相关但不是同义词。"
+        "body": "Reward hacking 指模型过度优化奖励代理，却降低了真实任务质量。识别时应联合观察独立指标、回答长度、套话和异常工具行为，并对高分样本做人类或对抗复核；只看奖励上涨无法判断能力是否改善。\n\n常见表现包括重复关键词、迎合裁判、空泛安全回答或绕过弱验证器。参考 KL、提前停止和多样反馈可降低风险，但不能证明问题已经消除。工程上应保留 rollout 与分项奖励，聚类分析高分失败案例，再改进评分器和验证流程。\n\n回答模式化、奉承或内容空洞时，构造事实正确但朴素、华丽却无信息等控制样本，检查RM是否主要奖励风格或长度。比较训练RM与独立人工/judge，排查偏好数据窄、优化过量及KL不足；在新偏好数据中加入反例并保留通用能力回归。模式崩溃、谄媚与对齐税相关但不是同义词。\n\n多模态生成还要排查针对物体检测、OCR和偏好评分器的投机：比如计数检测高分但画面重复失真，OCR匹配成功却破坏构图，偏好分提高但图像趋同。将这些作为待检验的失败模式，用独立检测/OCR、人工盲评、画质与多样性指标交叉检查，并分析分项reward和高分失败样本。参考KL限制策略漂移，不能修补奖励器本身的漏洞；同组相对优势也会放大一个坏代理奖励。"
       },
       "reference_ids": [
         "APP-S112",
-        "JUN26-P005"
+        "JUN26-P005",
+        "XHS26-PFLOW-GRPO"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "奖励与对齐策略"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S005",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "奖励与对齐策略",
+      "company_tags": [
+        "小红书"
+      ]
     },
     {
       "id": "ALN-016",
@@ -1776,7 +1821,7 @@
     {
       "id": "RAG-002",
       "category": "RAG",
-      "title": "RAG、微调和 prompt engineering 如何选择？",
+      "title": "RAG、微调与 Prompt/CoT 如何选择？VQA 中有何取舍？",
       "level": "L1",
       "tags": [
         "RAG",
@@ -1784,26 +1829,41 @@
         "选型"
       ],
       "answer": {
+        "body": "Prompt engineering 改变当次任务约束，RAG 在推理时提供外部证据，微调则改变模型的行为分布。知识更新频繁、需要权限控制或溯源时，可优先评估 RAG；稳定输出格式或专门能力可考虑微调。微调不能充当可靠数据库，事实未必能精确写入、更新或撤回。\n\n三者可以组合，例如训练模型更好地读取证据或改善检索能力，但 RAG 仍依赖解析、召回与证据质量。应使用代表性业务样本，在同等预算下对 prompt、RAG、SFT 及其组合做消融，比较效果、时延、数据维护与成本。\n\n先按错误类型选择：看不清文字、漏检物体或混淆空间关系是感知问题，优先检查分辨率、裁剪、视觉编码与证据输入；缺少外部知识或需要更新事实时评估 RAG；已有足够事实但步骤组合失败时可以尝试分解问题、CoT 提示或受约束的多步推理。推理文本看似合理不代表视觉证据被正确使用。\n\nCoT主要改变推理时的生成过程，部署快但增加 token 和时延，也可能放大初始感知错误。RAG 引入可追溯的外部证据，需要对图像对象/OCR、问题与文档进行检索和重排；召回错误与图文错配会把错误证据带给模型。SFT用稳定、可信的图文示范改变模型行为，适合反复出现的域内任务和输出格式，但需要标注、数据清洗和域外回归，也会有遗忘风险。\n\n三者可组合：检索知识后生成答案，或用SFT教模型读取图文证据和适时调用检索。资源充足仍不意味着自动选SFT；数据少、业务事实频繁变化、根因是输入缺失时，继续训练不一定解决问题。用同一测试集与预算比较直接回答、CoT、RAG、SFT及组合，并分开报告感知、知识、推理错误、视觉幻觉、准确率和延迟。训练样本及评测按图片/文档来源分组去重，避免同图不同问法泄露。",
+        "formula": "",
         "pitfalls": [
-          "“RAG 只学知识、微调只学能力”是粗略划分，不是严格理论。"
+          "“RAG 只学知识、微调只学能力”是粗略划分，不是严格理论。",
+          "CoT、RAG、SFT是可组合的方法，不是互斥的模型架构。",
+          "资源足够不能替代高质量监督、可靠证据和受控消融。"
         ],
         "followups": [
-          "客服政策每天更新但答复格式严格，该怎么组合？"
-        ],
-        "body": "Prompt engineering 改变当次任务约束，RAG 在推理时提供外部证据，微调则改变模型的行为分布。知识更新频繁、需要权限控制或溯源时，可优先评估 RAG；稳定输出格式或专门能力可考虑微调。微调不能充当可靠数据库，事实未必能精确写入、更新或撤回。\n\n三者可以组合，例如训练模型更好地读取证据或改善检索能力，但 RAG 仍依赖解析、召回与证据质量。应使用代表性业务样本，在同等预算下对 prompt、RAG、SFT 及其组合做消融，比较效果、时延、数据维护与成本。"
+          "如何设计遮图、换图和人工OCR输入的消融？",
+          "知识每天变化，但答案格式很稳定，该怎样组合检索与微调？"
+        ]
       },
       "reference_ids": [
-        "APP-S122"
+        "APP-S122",
+        "JUN26-P024",
+        "XHS26-PR04",
+        "MM-S026"
       ],
       "community_evidence": [
         {
           "source_id": "APP-S004",
           "support": "search_snippet",
           "note": "知乎搜索摘要包含 RAG 与微调区别。"
+        },
+        {
+          "source_id": "XHS26-S004",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
-      "topic": "文档切分与索引"
+      "topic": "文档切分与索引",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "RAG-003",
@@ -2191,10 +2251,18 @@
           "source_id": "APP-S005",
           "support": "search_snippet",
           "note": "文章标题和摘要明确覆盖多模态 RAG 与多轮多模态检索。"
+        },
+        {
+          "source_id": "XHS26-S006",
+          "support": "reported_topic",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
-      "topic": "评测、权限与多模态 RAG"
+      "topic": "评测、权限与多模态 RAG",
+      "company_tags": [
+        "商汤"
+      ]
     },
     {
       "id": "AGT-001",
@@ -2223,10 +2291,18 @@
           "source_id": "APP-S006",
           "support": "reported_topic",
           "note": "README 有 ReAct 论文与工具使用主题。"
+        },
+        {
+          "source_id": "XHS26-S007",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
-      "topic": "提示、推理与规划"
+      "topic": "提示、推理与规划",
+      "company_tags": [
+        "米哈游"
+      ]
     },
     {
       "id": "AGT-002",
@@ -2372,21 +2448,31 @@
         "followups": [
           "升级协议后，你会验证哪些能力与授权边界？"
         ],
-        "body": "Function calling 是模型表达结构化工具意图的方式，MCP 是宿主、客户端与服务器交换工具和上下文的协议，统一工具、资源等接口；模型厂商仍可能采用不同调用格式，宿主仍负责执行与授权。工具列表本身不授予业务访问权，权限边界需由宿主和服务器共同执行。\n\n讨论实现应固定协议版本，因为请求、能力与生命周期机制会随修订变化。例如官方 2025-06-18 与 2026-07-28 架构在会话和请求机制上有差异，升级需按兼容版本测试，不能直接沿用旧握手流程。MCP 并非 Agent 的推理算法，也不天然保证工具安全可靠。"
+        "body": "Function calling 是模型表达结构化工具意图的方式，MCP 是宿主、客户端与服务器交换工具和上下文的协议，统一工具、资源等接口；模型厂商仍可能采用不同调用格式，宿主仍负责执行与授权。工具列表本身不授予业务访问权，权限边界需由宿主和服务器共同执行。\n\n讨论实现应固定协议版本，因为请求、能力与生命周期机制会随修订变化。例如官方 2025-06-18 与 2026-07-28 架构在会话和请求机制上有差异，升级需按兼容版本测试，不能直接沿用旧握手流程。MCP 并非 Agent 的推理算法，也不天然保证工具安全可靠。\n\n以固定2025-11-25规范为例，标准传输有stdio与Streamable HTTP：stdio由客户端启动本地子进程，标准输出只传协议消息、日志写标准错误；Streamable HTTP用于独立远程服务，以HTTP请求通信，可用SSE流式返回。SSE是流的传输格式，不是与Streamable HTTP完全互斥的能力；旧HTTP+SSE双端点方案来自2024-11-05。开发服务先定义工具schema、参数校验、鉴权、错误/超时和能力支持，再按目标SDK及协议版本做客户端互通测试。2026-07-28修订改变了GET流和会话机制，必须区分版本，不应把旧版本实现细节写成恒定规则。"
       },
       "reference_ids": [
         "APP-S140",
-        "APP-S158"
+        "APP-S158",
+        "XHS26-PR06",
+        "XHS26-PR08"
       ],
       "community_evidence": [
         {
           "source_id": "APP-S006",
           "support": "reported_topic",
           "note": "README 明列 Function Call & MCP。"
+        },
+        {
+          "source_id": "XHS26-S007",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
-      "topic": "工具调用与协议"
+      "topic": "工具调用与协议",
+      "company_tags": [
+        "米哈游"
+      ]
     },
     {
       "id": "AGT-007",
@@ -2409,9 +2495,18 @@
       "reference_ids": [
         "APP-S141"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "可靠性与评测"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S007",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "可靠性与评测",
+      "company_tags": [
+        "米哈游"
+      ]
     },
     {
       "id": "AGT-008",

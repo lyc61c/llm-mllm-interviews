@@ -8,8 +8,11 @@
 |---|---|---|
 | [reference.py](reference.py) | 稳定 Softmax/CE、单头 Attention、缓存 mask、RoPE、InfoNCE、采样、LoRA、DPO、GRPO、TopK、岛屿、编辑距离、LRU、KV 估算 | Python 标准库 |
 | [torch_primitives.py](torch_primitives.py) | 可训练 MHA、RoPE、LoRA Linear、InfoNCE、回答 token logprob、DPO loss | 可选 PyTorch |
-| [test_reference.py](test_reference.py) | 14 组边界、不变量和独立算法对照测试 | Python 标准库 |
-| [test_torch_primitives.py](test_torch_primitives.py) | 6 组前向、mask、梯度和冻结测试 | 无 PyTorch 时明确 skip |
+| [two_sum](reference.py#L150) | 两数之和：单遍哈希表、返回不同元素的下标 | Python 标准库 |
+| [longest_common_subsequence](reference.py#L161) | 最长公共子序列长度：滚动行动态规划 | Python 标准库 |
+| [MLP](torch_primitives.py#L12) / [ImageMLP](torch_primitives.py#L25) | 两层 MLP、逐 token 投影、固定尺寸图像分类 | 可选 PyTorch |
+| [test_reference.py](test_reference.py) | 16 组边界、不变量和独立算法对照测试 | Python 标准库 |
+| [test_torch_primitives.py](test_torch_primitives.py) | 8 组前向、mask、梯度和冻结测试 | 无 PyTorch 时明确 skip |
 
 重要约定：
 

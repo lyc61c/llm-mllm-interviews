@@ -64,10 +64,13 @@ def prose_html(text):
     return ''.join(result)
 
 
-def answer_html(answer, figures=()):
+def answer_html(answer, figures=(), code_links=()):
     result = ['<div class="answer-body">', prose_html(answer['body'])]
     if answer.get('formula'):
         result.append('<div class="formula">' + math_html(answer['formula'], True) + '</div>')
+    if code_links:
+        links = ['<a href="' + html.escape(link['path'] + '#L' + str(link['line']), quote=True) + '"><code>' + html.escape(link['function']) + '</code></a>' for link in code_links]
+        result.append('<p>代码：' + ' · '.join(links) + '</p>')
     for figure in figures:
         image_data = base64.b64encode((ROOT / figure['path']).read_bytes()).decode('ascii')
         result.append('<figure><img src="data:image/svg+xml;base64,' + image_data + '" alt="' + html.escape(figure['alt'], quote=True) + '">')

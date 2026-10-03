@@ -1041,8 +1041,14 @@
         "JUN26-P004",
         "JUN26-P005"
       ],
-      "community_evidence": [],
-      "editorial": true,
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S001",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
       "topic": "RLHF 与 PPO",
       "figures": [
         {
@@ -1050,6 +1056,9 @@
           "alt": "RLHF-PPO 的 Actor、Reference、Reward Model 和 Critic",
           "caption": "四个角色不要求四份独立物理模型；图示经典 Actor 与 Critic 分开训练的流程。"
         }
+      ],
+      "company_tags": [
+        "字节跳动"
       ]
     },
     {
@@ -1187,9 +1196,18 @@
         "JUN26-P006",
         "JUN26-P010"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "GRPO 与在线优化"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S005",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "GRPO 与在线优化",
+      "company_tags": [
+        "小红书"
+      ]
     },
     {
       "id": "ALN-031",
@@ -1215,9 +1233,18 @@
         "JUN26-P010",
         "JUN26-P007"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "GRPO 与在线优化"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S005",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "GRPO 与在线优化",
+      "company_tags": [
+        "小红书"
+      ]
     },
     {
       "id": "ALN-032",
@@ -1817,7 +1844,7 @@
     {
       "id": "EVA-018",
       "category": "EVA",
-      "title": "怎样使用评测框架建立可复现的 LLM、RAG 与 Agent 验收？",
+      "title": "怎样设计可靠的 benchmark，并用评测框架建立可复现验收？",
       "level": "L2",
       "tags": [
         "Evaluation Harness",
@@ -1826,7 +1853,7 @@
         "验收"
       ],
       "answer": {
-        "body": "评测框架负责加载任务、调用模型、解析输出与汇总指标，不替代任务定义。LM Evaluation Harness把标准任务与模型后端分离，适合控制few-shot、log-likelihood/生成协议和答案过滤；RAG/Agent还需要证据、工具轨迹及环境结果验证，不能仅复用文本匹配分数。\n\n固定任务定义/数据版本、模型checkpoint、tokenizer/template、生成预算与停止规则，保存原始输出及评分中间结果。明确每个指标的分母、失败/超时处理与任务权重，按语言、难度、长度等分层；将实验开发集与最终验收集分开。\n\n新增模型或prompt先跑小批次确认输入与答案解析，再运行冻结回归集。重跑随机任务以估计不确定度，并抽查评分器与人工结果的一致性。对RAG记录所用证据版本，对Agent重置初态并校验副作用；最后核对业务阈值、成本与延迟，而非只保存一个平均分。",
+        "body": "评测框架负责加载任务、调用模型、解析输出与汇总指标，不替代任务定义。LM Evaluation Harness把标准任务与模型后端分离，适合控制few-shot、log-likelihood/生成协议和答案过滤；RAG/Agent还需要证据、工具轨迹及环境结果验证，不能仅复用文本匹配分数。\n\n固定任务定义/数据版本、模型checkpoint、tokenizer/template、生成预算与停止规则，保存原始输出及评分中间结果。明确每个指标的分母、失败/超时处理与任务权重，按语言、难度、长度等分层；将实验开发集与最终验收集分开。\n\n新增模型或prompt先跑小批次确认输入与答案解析，再运行冻结回归集。重跑随机任务以估计不确定度，并抽查评分器与人工结果的一致性。对RAG记录所用证据版本，对Agent重置初态并校验副作用；最后核对业务阈值、成本与延迟，而非只保存一个平均分。\n\n一个好的benchmark还应清楚定义目标能力和适用人群，覆盖真实任务与难例，并给出一致、可复核的标签和评分规则。训练/开发/验收数据要分开，控制污染、模板捷径与语言先验；对多模态设置遮图、换图、人工转写等对照，检查题目是否确实依赖视觉。报告分任务得分和置信区间，识别饱和、标注歧义及成本差异；冻结榜单之外保留新域回归，避免把反复调过的测试集当独立验证。",
         "pitfalls": [
           "评测脚本运行成功不代表协议一致，模型输出解析错误可造成虚假零分或高分。"
         ],
@@ -1837,9 +1864,18 @@
       "reference_ids": [
         "JUN26-P045"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "评测协议与基准"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S002",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "评测协议与基准",
+      "company_tags": [
+        "腾讯"
+      ]
     }
   ]
 }

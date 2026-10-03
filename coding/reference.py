@@ -147,6 +147,31 @@ def kth_largest(values, k):
     return heap[0]
 
 
+def two_sum(values, target):
+    # Lookup before insertion: one array element cannot be used twice.
+    seen = {}
+    for index, value in enumerate(values):
+        complement = target - value
+        if complement in seen:
+            return [seen[complement], index]
+        seen.setdefault(value, index)
+    raise ValueError("no pair of distinct indices has the target sum")
+
+
+def longest_common_subsequence(left, right):
+    # Return the length; subsequence characters need not be contiguous.
+    # Rolling rows: O(m*n) time, O(min(m,n)) auxiliary space.
+    if len(left) < len(right):
+        left, right = right, left
+    previous = [0] * (len(right) + 1)
+    for a in left:
+        current = [0]
+        for j, b in enumerate(right, 1):
+            current.append(previous[j-1] + 1 if a == b else max(previous[j], current[j-1]))
+        previous = current
+    return previous[-1]
+
+
 def number_of_islands(grid):
     if not grid:
         return 0

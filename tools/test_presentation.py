@@ -66,7 +66,7 @@ class PresentationTests(unittest.TestCase):
         self.assertEqual(set(published), {q['id'] for q in questions})
         for question in questions:
             with self.subTest(question=question['id']):
-                self.assertEqual(published[question['id']]['answer_html'], answer_html(question['answer'], question.get('figures', [])))
+                self.assertEqual(published[question['id']]['answer_html'], answer_html(question['answer'], question.get('figures', []), question.get('code_links', [])))
                 self.assertEqual(published[question['id']]['topic'], question['topic'])
 
     def test_all_math_renders_without_literal_commands(self):

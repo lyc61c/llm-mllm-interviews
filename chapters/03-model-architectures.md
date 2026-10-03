@@ -38,7 +38,7 @@
 <a id="tfm-004"></a>
 ### TFM-004 · Encoder-only、Decoder-only 与 Encoder-Decoder 怎样选择？
 
-**L1**
+**L1** · 腾讯
 
 #### 答案
 

@@ -79,6 +79,16 @@ def validate(sources, questions, require_complete=True):
         check(re.fullmatch(r'(?:'+'|'.join(CATEGORIES)+r')-\d{3}', qid), f"{qid}: invalid ID")
         check(q.get("level") in {"L1", "L2", "L3"}, f"{qid}: invalid level")
         check(bool(q.get("title", "").strip()), f"{qid}: empty title")
+        companies = q.get("company_tags", [])
+        valid_companies = isinstance(companies, list) and all(
+            isinstance(company, str) and 0 < len(company) <= 40
+            and company == company.strip()
+            and not re.search(r'[\x00-\x1f<>|$`\[\]*]', company)
+            for company in companies
+        )
+        check(valid_companies, f"{qid}: company_tags must be a list of plain company names")
+        if valid_companies:
+            check(len(companies) == len(set(companies)), f"{qid}: duplicate company tag")
         a = q.get("answer", {})
         check(isinstance(a.get("body"), str) and len(a.get("body", "")) >= 80, f"{qid}: short or missing answer")
         check("quick" not in a and "detail" not in a, f"{qid}: answer must be a single body")
@@ -86,6 +96,16 @@ def validate(sources, questions, require_complete=True):
         for key in ("pitfalls", "followups"):
             check(isinstance(a.get(key), list) and bool(a[key]), f"{qid}: missing {key}")
         check(isinstance(a.get("formula", ""), str), f"{qid}: formula must be LaTeX text")
+        for link in q.get('code_links', []):
+            path = link.get('path', '')
+            line = link.get('line', 0)
+            function = link.get('function', '')
+            valid = bool(re.fullmatch(r'coding/[a-z0-9_]+\.py', path)) and isinstance(line, int) and line > 0 and bool(re.fullmatch(r'[A-Za-z_]\w*', function))
+            check(valid, f'{qid}: invalid code link')
+            if valid:
+                file = ROOT / path
+                contents = file.read_text(encoding='utf-8').splitlines() if file.is_file() else []
+                check(line <= len(contents) and bool(re.match(r'(?:def|class)\s+' + re.escape(function) + r'\b', contents[line-1])) if line <= len(contents) else False, f'{qid}: code link does not point to its function or class')
         check('$' not in a.get('formula', ''), f'{qid}: formula must not contain math delimiters')
         math_expressions = [a.get('formula', '')]
         for value in (a.get('body', ''), *a.get('pitfalls', []), *a.get('followups', [])):

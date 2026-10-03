@@ -510,7 +510,7 @@ Dropout 在训练时随机置零激活，inverted dropout 把保留值除以保�
 <a id="tfm-011"></a>
 ### TFM-011 · Transformer 一层的时间、空间复杂度如何估算？
 
-**L2**
+**L2** · 腾讯
 
 #### 答案
 

@@ -1134,10 +1134,24 @@
           "source_id": "MM-S001",
           "support": "reported_question",
           "note": "公开面经明确要求介绍 CLIP；此处将其拆成架构与目标。"
+        },
+        {
+          "source_id": "XHS26-S002",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S006",
+          "support": "reported_topic",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
-      "topic": "图文表示与预训练"
+      "topic": "图文表示与预训练",
+      "company_tags": [
+        "腾讯",
+        "商汤"
+      ]
     },
     {
       "id": "VLM-002",
@@ -1396,9 +1410,24 @@
         "MM-S016",
         "JUN26-P063"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "视觉连接器与训练"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S002",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S005",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "视觉连接器与训练",
+      "company_tags": [
+        "腾讯",
+        "小红书"
+      ]
     },
     {
       "id": "VLM-010",
@@ -1453,27 +1482,43 @@
     {
       "id": "VLM-012",
       "category": "VLM",
-      "title": "Qwen2-VL 的动态分辨率解决了什么问题？",
+      "title": "Qwen2-VL 如何实现动态分辨率，哪些参数控制视觉 token 预算？",
       "level": "L2",
       "tags": [
         "Qwen2-VL",
-        "视觉token"
+        "视觉token",
+        "动态分辨率",
+        "processor"
       ],
       "answer": {
-        "body": "固定尺寸缩放可能损失小字或扭曲长宽比，Qwen2-VL 的动态分辨率将不同输入尺寸映射为可变长度的视觉序列，ViT 用二维位置表达处理不同空间大小，再将邻近 `2×2` 视觉 token 合并以控制进入 LLM 的序列长度。\n\n图像越大通常 token 越多，细节和成本的权衡仍存在。部署要设置像素与视觉 token 上限，并按任务评估；显存不能仅按图像张数估计，动态分辨率也并非无限分辨率或完全不缩放。",
+        "body": "固定尺寸缩放可能损失小字或扭曲长宽比。Qwen2-VL 的动态分辨率让不同输入尺寸形成可变长度视觉序列，视觉 ViT 用二维 RoPE 处理空间位置，再将邻近 2×2 patch 特征合并，控制送入 LLM 的长度。动态分辨率仍会按预算 resize，并不是无限分辨率或完全不缩放。\n\n直接控制图像预算的主要是 processor 的 min_pixels、max_pixels，以及部分输入接口可指定的 resize 尺寸；图像张数、视频帧数也影响总长度。以 Qwen2-VL-7B-Instruct 的 patch_size=14、spatial_merge_size=2 为例，processor 将高宽对齐到 28 的倍数，resize 后 H′×W′ 图像的视觉 token 数为 H′W′/28²。若设 max_pixels=1024×28²，就将单图预算控制在约 1024 个视觉 token；实际应读 image_grid_thw 并除以空间 merge_size 的平方，不能只按原图像素估计。224×224 输入对应 64 个视觉 token，加两个视觉边界标记后为 66 个序列 token，文本和其他模板 token 另计。\n\npatch、空间 merge 和时间 patch 是 checkpoint 的不同配置，不应当作任意推理旋钮。这里空间步长 28 来自 14×2 的空间合并；视频的 temporal_patch_size=2 则改变时间 grid，不能用它解释单图的空间压缩。提高像素预算通常改善细节，却增加视觉编码、LLM prefill 和 KV 成本，需要按 OCR、小目标与自然图片任务分别评估。",
+        "formula": "\\begin{aligned}\nN_{\\mathrm{image}}&=\\frac{H'W'}{(ps)^2}=\\frac{g_tg_hg_w}{s^2},\\qquad p=14,\\ s=2,\\ g_t=1\\\\\nN_{\\mathrm{video}}&=\\frac{g_tg_hg_w}{s^2}\n\\end{aligned}",
         "pitfalls": [
-          "动态分辨率不是无限分辨率，也不等于完全不缩放。"
+          "min_pixels/max_pixels 以像素面积计，不能误写成图像长边的像素值。",
+          "视觉 patch 数、合并后视觉 token 数和包含边界标记的总序列长度应分开计算。"
         ],
         "followups": [
-          "OCR 与自然图片如何设置不同预算？"
+          "降低 max_pixels 和减少视频 FPS 分别会损失什么证据？",
+          "多图请求如何同时限制单图预算与总上下文长度？"
         ]
       },
       "reference_ids": [
-        "MM-S018"
+        "MM-S018",
+        "XHS26-PV06",
+        "XHS26-PV07"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "动态分辨率与位置编码"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S001",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "动态分辨率与位置编码",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "VLM-013",
@@ -1526,10 +1571,24 @@
           "source_id": "MM-S007",
           "support": "search_snippet",
           "note": "搜索片段含 Qwen2.5-VL 结构问法；答案以作者技术报告校对。"
+        },
+        {
+          "source_id": "XHS26-S001",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S005",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
-      "topic": "模型结构与版本对比"
+      "topic": "模型结构与版本对比",
+      "company_tags": [
+        "字节跳动",
+        "小红书"
+      ]
     },
     {
       "id": "VLM-015",
@@ -1644,10 +1703,18 @@
           "source_id": "MM-S006",
           "support": "reported_question",
           "note": "题目列表包含 VLM 生成事实错误图像描述的排查场景。"
+        },
+        {
+          "source_id": "XHS26-S006",
+          "support": "reported_topic",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
-      "topic": "感知、文档与视觉评测"
+      "topic": "感知、文档与视觉评测",
+      "company_tags": [
+        "商汤"
+      ]
     },
     {
       "id": "VLM-019",
@@ -1732,10 +1799,24 @@
           "source_id": "MM-S006",
           "support": "reported_question",
           "note": "公开题目列表包含 vision-language model fine-tuning。"
+        },
+        {
+          "source_id": "XHS26-S002",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S005",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
-      "topic": "视觉连接器与训练"
+      "topic": "视觉连接器与训练",
+      "company_tags": [
+        "腾讯",
+        "小红书"
+      ]
     },
     {
       "id": "VLM-022",
@@ -1811,9 +1892,30 @@
         "ZH26-P08",
         "MM-S026"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "视觉连接器与训练"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S002",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S004",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S005",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "视觉连接器与训练",
+      "company_tags": [
+        "腾讯",
+        "字节跳动",
+        "小红书"
+      ]
     },
     {
       "id": "VLM-025",
@@ -1837,9 +1939,18 @@
       "reference_ids": [
         "MM-S030"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "感知、文档与视觉评测"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S006",
+          "support": "reported_topic",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "感知、文档与视觉评测",
+      "company_tags": [
+        "商汤"
+      ]
     },
     {
       "id": "VLM-026",
@@ -1886,14 +1997,14 @@
     {
       "id": "OMM-001",
       "category": "OMM",
-      "title": "视频 VLM 为什么不能简单无限堆叠视频帧？",
+      "title": "视频 VLM 怎样构建与训练，帧数和 token 预算如何控制？",
       "level": "L2",
       "tags": [
         "视频",
         "抽帧"
       ],
       "answer": {
-        "body": "增加视频帧会增加视觉 token 和语言上下文开销，而相邻帧常含大量重复信息。抽帧要兼顾事件覆盖与细节，可按任务比较均匀采样、变化采样或分段检索，并保留时间戳；盲目增帧可能更慢，也仍会遗漏短事件。\n\n按帧数、每帧 token 和文本长度估计总序列。均匀抽帧覆盖时间范围，关键帧策略可能偏向视觉变化；图像视频联合训练还需统一表示和输入协议。",
+        "body": "增加视频帧会增加视觉 token 和语言上下文开销，而相邻帧常含大量重复信息。抽帧要兼顾事件覆盖与细节，可按任务比较均匀采样、变化采样或分段检索，并保留时间戳；盲目增帧可能更慢，也仍会遗漏短事件。\n\n按帧数、每帧 token 和文本长度估计总序列。均匀抽帧覆盖时间范围，关键帧策略可能偏向视觉变化；图像视频联合训练还需统一表示和输入协议。\n\n视频预训练网络可以从逐帧或时空视觉编码器提取特征，再通过时序聚合和连接器接入语言模型；帧顺序与真实时间必须保留。任务决定监督：视频文本对齐可用对比目标，视频描述/问答可用文本生成目标，动作识别可用分类目标，不存在所有视频预训练都只做一种loss的统一答案。采样和token压缩改变可见信息，要用短事件、动作顺序和时间定位任务验证。",
         "pitfalls": [
           "抽帧序号不能代替真实时间，尤其对可变帧率视频。"
         ],
@@ -1904,9 +2015,18 @@
       "reference_ids": [
         "MM-S031"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "视频采样与时序"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S002",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "视频采样与时序",
+      "company_tags": [
+        "腾讯"
+      ]
     },
     {
       "id": "OMM-002",
@@ -1961,14 +2081,14 @@
     {
       "id": "OMM-004",
       "category": "OMM",
-      "title": "视频 moment retrieval 与视频问答如何评估？",
+      "title": "视频定位如何输出准确时间点，怎样评估？",
       "level": "L2",
       "tags": [
         "视频定位",
         "tIoU"
       ],
       "answer": {
-        "body": "视频问答通常评估答案，moment retrieval 还需输出与语言查询对应的起止时刻。Moment-DETR 将片段坐标与显著性作为不同目标，评测可用时间区间交并比 tIoU 和阈值召回衡量定位，并与显著性评分分开报告。\n\n设预测和真实区间分别为 $[s_p,e_p]$ 与 $[s_g,e_g]$，交集长度为 $I$，tIoU 是交集长度除以并集长度，适用于两个非零时长区间。按短片段、重复动作和多个正确片段分别检查；答案正确不代表定位正确。",
+        "body": "视频问答通常评估答案，moment retrieval 还需输出与语言查询对应的起止时刻。Moment-DETR 将片段坐标与显著性作为不同目标，评测可用时间区间交并比 tIoU 和阈值召回衡量定位，并与显著性评分分开报告。\n\n设预测和真实区间分别为 $[s_p,e_p]$ 与 $[s_g,e_g]$，交集长度为 $I$，tIoU 是交集长度除以并集长度，适用于两个非零时长区间。按短片段、重复动作和多个正确片段分别检查；答案正确不代表定位正确。\n\n要输出可信时间点，输入侧应保留采样帧的真实PTS或秒级时间戳，训练数据给出事件区间或时间标签，模型学习时间坐标/时间token与视觉事件的对应。稀疏采样只给出粗候选时，可在候选区间二次密集采样细化；逐帧索引不能直接当秒数，可变帧率更不能用固定FPS强行换算。校验起止顺序、视频时长边界和采样对齐，并以定位误差/tIoU测精度；更细数字表示本身不会增加未被采样到的视觉证据。",
         "formula": "\\begin{aligned}\nI&=\\max\\left(0,\\min(e_p,e_g)-\\max(s_p,s_g)\\right)\\\\\n\\mathrm{tIoU}&=\\frac{I}{(e_p-s_p)+(e_g-s_g)-I}\n\\end{aligned}",
         "pitfalls": [
           "不要把时间 IoU 当作逐帧分类准确率。"
@@ -1980,9 +2100,18 @@
       "reference_ids": [
         "MM-S033"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "视频采样与时序"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S002",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "视频采样与时序",
+      "company_tags": [
+        "腾讯"
+      ]
     },
     {
       "id": "OMM-005",
@@ -2084,7 +2213,7 @@
         "音频表示"
       ],
       "answer": {
-        "body": "连续音频特征常用于理解与跨模态对齐，强调语义和任务信息；离散 codec token 将波形压缩成可生成的符号序列，强调重建质量，适合语音语言模型。\n\n残差向量量化逐层编码剩余误差，形成多个码本。增加码本可改善重建细节，也增加生成预测负担；比较表示时需同时看帧率、码本数量、时延、可懂度、音色、失真与 token 预算。",
+        "body": "连续音频特征常用于理解与跨模态对齐，强调语义和任务信息；离散 codec token 将波形压缩成可生成的符号序列，强调重建质量，适合语音语言模型。\n\n残差向量量化逐层编码剩余误差，形成多个码本。增加码本可改善重建细节，也增加生成预测负担；比较表示时需同时看帧率、码本数量、时延、可懂度、音色、失真与 token 预算。\n\n理解型音频分支可用波形前端或log-Mel频谱编码，再按时序特征接入下游任务；ASR常以文本生成/CTC为监督，音频语义对齐可用配对对比损失，codec则围绕波形重建与码率设计。跨模态对齐还需明确配对数据、投影与共享表示；编码形式、对齐目标和语音生成目标应分开回答。",
         "pitfalls": [
           "离散音频 token 不是字符 token，也不天然只保留语义。"
         ],
@@ -2093,17 +2222,27 @@
         ]
       },
       "reference_ids": [
-        "MM-S037"
+        "MM-S037",
+        "XHS26-PV01",
+        "XHS26-PV02"
       ],
       "community_evidence": [
         {
           "source_id": "MM-S005",
           "support": "reported_topic",
           "note": "社区多模态备考材料讨论神经 codec 表示。"
+        },
+        {
+          "source_id": "XHS26-S002",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
-      "topic": "语音识别与编码"
+      "topic": "语音识别与编码",
+      "company_tags": [
+        "腾讯"
+      ]
     },
     {
       "id": "OMM-009",

@@ -75,6 +75,42 @@ class ReferenceTests(unittest.TestCase):
             k = rng.randrange(1, len(values)+1)
             self.assertEqual(kth_largest(values, k), sorted(values, reverse=True)[k-1])
 
+    def test_two_sum_against_exhaustive_pairs(self):
+        self.assertEqual(two_sum([2, 7, 11, 15], 9), [0, 1])
+        self.assertEqual(two_sum([3, 3], 6), [0, 1])
+        self.assertEqual(two_sum([-3, 0, 3], 0), [0, 2])
+        rng = random.Random(17)
+        for _ in range(200):
+            values = [rng.randrange(-5, 6) for _ in range(rng.randrange(9))]
+            target = rng.randrange(-10, 11)
+            pairs = [(i, j) for i in range(len(values)) for j in range(i+1, len(values))
+                     if values[i] + values[j] == target]
+            if pairs:
+                i, j = two_sum(values, target)
+                self.assertIn((i, j), pairs)
+            else:
+                with self.assertRaises(ValueError):
+                    two_sum(values, target)
+        with self.assertRaises(ValueError):
+            two_sum([3], 6)
+
+    def test_lcs_against_exhaustive_subsequences(self):
+        from itertools import combinations
+        def subsequences(text):
+            return {''.join(text[i] for i in positions)
+                    for length in range(len(text)+1)
+                    for positions in combinations(range(len(text)), length)}
+        for a, b, expected in (('abcde', 'ace', 3), ('abc', 'def', 0),
+                               ('', 'abc', 0), ('aaaa', 'aa', 2), ('abc', 'abc', 3)):
+            self.assertEqual(longest_common_subsequence(a, b), expected)
+        rng = random.Random(18)
+        for _ in range(120):
+            a = ''.join(rng.choice('abc') for _ in range(rng.randrange(7)))
+            b = ''.join(rng.choice('abc') for _ in range(rng.randrange(7)))
+            expected = max(map(len, subsequences(a) & subsequences(b)))
+            self.assertEqual(longest_common_subsequence(a, b), expected)
+            self.assertEqual(longest_common_subsequence(b, a), expected)
+
     def test_islands_against_union_find_random(self):
         rng = random.Random(8)
         for _ in range(50):

@@ -28,6 +28,7 @@
   - [BAS-012 · 反向传播怎样使用链式法则？线性层、MSE 与 Softmax 交叉熵如何求梯度？](#bas-012)
   - [BAS-013 · 过拟合、欠拟合与数据泄露怎样区分，L1/L2、早停和 Dropout 分别做什么？](#bas-013)
   - [BAS-014 · Xavier、He 初始化与 embedding 乘 √d_model 的目的是什么？](#bas-014)
+  - [BAS-016 · 分类为什么通常用交叉熵而非 MSE？MSE 在数学上可行吗？](#bas-016)
 
 <a id="topic-1"></a>
 ## 分词与文本表示
@@ -35,7 +36,7 @@
 <a id="bas-001"></a>
 ### BAS-001 · 中文分词有哪些难点？jieba 的 DAG、动态规划和 HMM 如何配合？
 
-**L1**
+**L1** · 腾讯
 
 #### 答案
 
@@ -187,7 +188,7 @@ TF-IDF依赖背景语料统计，对同义词和词序不敏感；TextRank依赖
 <a id="pre-002"></a>
 ### PRE-002 · BPE、WordPiece、Unigram 与 SentencePiece 分别是什么？
 
-**L1**
+**L1** · 腾讯
 
 #### 答案
 
@@ -553,6 +554,33 @@ L2 惩罚连续压小参数，L1 鼓励部分坐标变零；在自适应优化�
 - 残差分支叠加为什么可能需要额外的深度缩放？
 - 均匀分布和正态分布怎样匹配同一目标方差？
 
+<a id="bas-016"></a>
+### BAS-016 · 分类为什么通常用交叉熵而非 MSE？MSE 在数学上可行吗？
+
+**L2** · 字节跳动
+
+#### 答案
+
+多分类把模型输出视为类别概率，交叉熵对应分类分布的负对数似然，对真实类别的概率直接施加惩罚。令 logits 为 $`z`$、$`p=\mathrm{softmax}(z)`$、目标为 one-hot $`y`$，交叉熵对 logits 的梯度是 $`p-y`$；模型非常自信地分错时，梯度仍能给出有力纠正。PyTorch `CrossEntropyLoss` 接收未归一化 logits，内部完成稳定的 log-softmax，通常不应先手动 softmax。
+
+MSE 可以用于分类：对概率向量与 one-hot 做平方误差就是 Brier 类目标，在条件期望意义下也可学习真实概率，不是数学上错误。但反传到 logits 时还要乘 softmax 的 Jacobian；在错误类别上饱和时梯度可能很小，优化行为与交叉熵不同，不能只比较损失数值大小。
+
+直接把类别编号当连续回归目标则引入任意距离关系，例如编号1与2被当成比1与9更接近；无序类别通常不应这样建模。回归连续值时 MSE 合理，分类可按校准、标签噪声和训练动态比较 CE 与概率平方损失。二分类/多标签还应区分 softmax 多类 CE 与逐类 sigmoid BCE。
+
+```math
+\begin{aligned}p&=\mathrm{softmax}(z),\quad L_{\mathrm{CE}}=-\sum_i y_i\log p_i\\\frac{\partial L_{\mathrm{CE}}}{\partial z_j}&=p_j-y_j\\L_{\mathrm{sq}}&=\frac12\sum_i(p_i-y_i)^2\\\frac{\partial L_{\mathrm{sq}}}{\partial z_j}&=p_j\left[(p_j-y_j)-\sum_i p_i(p_i-y_i)\right]\end{aligned}
+```
+
+#### 易错点
+
+- MSE不是只能做回归；对概率的平方误差与对类别编号的回归含义不同。
+- 上述平方损失取半和；使用类别均值等 reduction 时梯度还会有相应常数。
+
+#### 追问
+
+- 二分类模型自信地预测错误时，比较 CE 和概率 MSE 对 logits 的梯度。
+- 带 label smoothing 或软标签时，CE 的 logits 梯度怎样变化？
+
 ## 参考资料
 
 - [jieba 官方算法说明](https://github.com/fxsjy/jieba)
@@ -575,6 +603,8 @@ L2 惩罚连续压小参数，L1 鼓励部分坐标变零；在自适应优化�
 - [Delving Deep into Rectifiers](https://arxiv.org/abs/1502.01852)
 - [Attention Is All You Need](https://arxiv.org/pdf/1706.03762)
 - [TextRank: Bringing Order into Text](https://aclanthology.org/W04-3252/)
+- [PyTorch CrossEntropyLoss](https://docs.pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html)
+- [PyTorch MSELoss](https://docs.pytorch.org/docs/2.14/generated/torch.nn.MSELoss.html)
 - [SentencePiece: A simple and language independent subword tokenizer and detokenizer for Neural Text Processing](https://arxiv.org/abs/1808.06226)
 - [Neural Machine Translation of Rare Words with Subword Units](https://aclanthology.org/P16-1162.pdf)
 - [Hugging Face：WordPiece tokenization](https://huggingface.co/learn/llm-course/chapter6/6)

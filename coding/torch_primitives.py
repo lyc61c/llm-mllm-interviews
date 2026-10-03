@@ -9,6 +9,34 @@ from torch import nn
 from torch.nn import functional as F
 
 
+class MLP(nn.Module):
+    def __init__(self, input_features, hidden_features, output_features):
+        super().__init__()
+        if min(input_features, hidden_features, output_features) <= 0:
+            raise ValueError("feature dimensions must be positive")
+        self.first = nn.Linear(input_features, hidden_features)
+        self.second = nn.Linear(hidden_features, output_features)
+
+    def forward(self, x):
+        # Linear transforms the last dimension, preserving leading dimensions.
+        return self.second(F.gelu(self.first(x)))
+
+
+class ImageMLP(nn.Module):
+    def __init__(self, image_shape, hidden_features, classes):
+        super().__init__()
+        self.image_shape = tuple(image_shape)
+        if len(self.image_shape) != 3 or any(size <= 0 for size in self.image_shape):
+            raise ValueError("image_shape must be positive (channels, height, width)")
+        self.mlp = MLP(math.prod(self.image_shape), hidden_features, classes)
+
+    def forward(self, images):
+        if images.ndim != 4 or tuple(images.shape[1:]) != self.image_shape:
+            raise ValueError("images must be [batch, channels, height, width] with the configured shape")
+        # Fixed-resolution image classifier; output logits, not probabilities.
+        return self.mlp(images.flatten(start_dim=1))
+
+
 class MultiHeadAttention(nn.Module):
     def __init__(self, dimension, heads, dropout=0.0):
         super().__init__()

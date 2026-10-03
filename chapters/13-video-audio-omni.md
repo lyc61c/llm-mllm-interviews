@@ -5,10 +5,10 @@
 ## 目录
 
 - [视频采样与时序](#topic-1)
-  - [OMM-001 · 视频 VLM 为什么不能简单无限堆叠视频帧？](#omm-001)
+  - [OMM-001 · 视频 VLM 怎样构建与训练，帧数和 token 预算如何控制？](#omm-001)
   - [OMM-002 · 视频时间位置编码为什么要考虑真实时间与 FPS？](#omm-002)
   - [OMM-003 · 长视频理解怎样压缩视觉 token，又有什么代价？](#omm-003)
-  - [OMM-004 · 视频 moment retrieval 与视频问答如何评估？](#omm-004)
+  - [OMM-004 · 视频定位如何输出准确时间点，怎样评估？](#omm-004)
 - [语音识别与编码](#topic-2)
   - [OMM-005 · Whisper 的输入、架构和多任务接口是什么？](#omm-005)
   - [OMM-006 · WER 怎样计算？为什么中文 ASR 常同时报 CER？](#omm-006)
@@ -23,20 +23,23 @@
 - [Omni 融合与评测](#topic-4)
   - [OMM-011 · Qwen2.5-Omni 的 Thinker-Talker 如何协作？](#omm-011)
   - [OMM-015 · Omni 模型怎样评估是否真的融合了声音与视觉？](#omm-015)
+  - [OMM-016 · ImageBind 如何用图像桥接多个模态，音频又如何编码？](#omm-016)
 
 <a id="topic-1"></a>
 ## 视频采样与时序
 
 <a id="omm-001"></a>
-### OMM-001 · 视频 VLM 为什么不能简单无限堆叠视频帧？
+### OMM-001 · 视频 VLM 怎样构建与训练，帧数和 token 预算如何控制？
 
-**L2**
+**L2** · 腾讯
 
 #### 答案
 
 增加视频帧会增加视觉 token 和语言上下文开销，而相邻帧常含大量重复信息。抽帧要兼顾事件覆盖与细节，可按任务比较均匀采样、变化采样或分段检索，并保留时间戳；盲目增帧可能更慢，也仍会遗漏短事件。
 
 按帧数、每帧 token 和文本长度估计总序列。均匀抽帧覆盖时间范围，关键帧策略可能偏向视觉变化；图像视频联合训练还需统一表示和输入协议。
+
+视频预训练网络可以从逐帧或时空视觉编码器提取特征，再通过时序聚合和连接器接入语言模型；帧顺序与真实时间必须保留。任务决定监督：视频文本对齐可用对比目标，视频描述/问答可用文本生成目标，动作识别可用分类目标，不存在所有视频预训练都只做一种loss的统一答案。采样和token压缩改变可见信息，要用短事件、动作顺序和时间定位任务验证。
 
 #### 易错点
 
@@ -85,15 +88,17 @@
 - 怎样设计时间顺序交换的消融测试？
 
 <a id="omm-004"></a>
-### OMM-004 · 视频 moment retrieval 与视频问答如何评估？
+### OMM-004 · 视频定位如何输出准确时间点，怎样评估？
 
-**L2**
+**L2** · 腾讯
 
 #### 答案
 
 视频问答通常评估答案，moment retrieval 还需输出与语言查询对应的起止时刻。Moment-DETR 将片段坐标与显著性作为不同目标，评测可用时间区间交并比 tIoU 和阈值召回衡量定位，并与显著性评分分开报告。
 
 设预测和真实区间分别为 $`[s_p,e_p]`$ 与 $`[s_g,e_g]`$，交集长度为 $`I`$，tIoU 是交集长度除以并集长度，适用于两个非零时长区间。按短片段、重复动作和多个正确片段分别检查；答案正确不代表定位正确。
+
+要输出可信时间点，输入侧应保留采样帧的真实PTS或秒级时间戳，训练数据给出事件区间或时间标签，模型学习时间坐标/时间token与视觉事件的对应。稀疏采样只给出粗候选时，可在候选区间二次密集采样细化；逐帧索引不能直接当秒数，可变帧率更不能用固定FPS强行换算。校验起止顺序、视频时长边界和采样对齐，并以定位误差/tIoU测精度；更细数字表示本身不会增加未被采样到的视觉证据。
 
 ```math
 \begin{aligned} I&=\max\left(0,\min(e_p,e_g)-\max(s_p,s_g)\right)\\ \mathrm{tIoU}&=\frac{I}{(e_p-s_p)+(e_g-s_g)-I} \end{aligned}
@@ -178,13 +183,15 @@ CTC 对所有能折叠成目标文本的单调对齐路径求和，用 blank 连
 <a id="omm-008"></a>
 ### OMM-008 · 音频连续特征与离散 codec token 分别适合什么？
 
-**L2**
+**L2** · 腾讯
 
 #### 答案
 
 连续音频特征常用于理解与跨模态对齐，强调语义和任务信息；离散 codec token 将波形压缩成可生成的符号序列，强调重建质量，适合语音语言模型。
 
 残差向量量化逐层编码剩余误差，形成多个码本。增加码本可改善重建细节，也增加生成预测负担；比较表示时需同时看帧率、码本数量、时延、可懂度、音色、失真与 token 预算。
+
+理解型音频分支可用波形前端或log-Mel频谱编码，再按时序特征接入下游任务；ASR常以文本生成/CTC为监督，音频语义对齐可用配对对比损失，codec则围绕波形重建与码率设计。跨模态对齐还需明确配对数据、投影与共享表示；编码形式、对齐目标和语音生成目标应分开回答。
 
 #### 易错点
 
@@ -333,6 +340,33 @@ Qwen2.5-Omni 的 Thinker 用音频和图像编码器接入文本解码主干，�
 
 - 声音与画面相矛盾时应输出什么？
 
+<a id="omm-016"></a>
+### OMM-016 · ImageBind 如何用图像桥接多个模态，音频又如何编码？
+
+**L2** · 腾讯
+
+#### 答案
+
+ImageBind 为图像/视频、文本、音频、深度、热成像和 IMU 分别设置编码器与投影头，将输出映射到同维度的归一化表示。训练不要求每条样本同时含六个模态，也不需要覆盖所有模态配对：以图像为共同桥梁，使用图文、视频音频、图像深度等自然配对，分别做双向 InfoNCE，拉近同源配对并区分 batch 中其他样本。原始主要设置冻结已有 OpenCLIP 的图像和文本编码器，训练音频、深度、热成像与 IMU 分支。
+
+音频先由波形转成 Mel 频谱，再切时频 patch 送入 Transformer，最后池化、投影和归一化。原始方案将 16 kHz 的两秒音频转为 128 个 Mel 频带，音频 ViT 使用 patch16、stride10；时间与频率位置不能混成文本词的位置。
+
+当音频与文本各自对齐图像空间时，可出现未经直接音频文本配对训练的跨模态检索和零样本分类。这个涌现是实验观察，不能视为任意模态间精确对齐的保证；声画错配、视觉不可见的声音和假负例都可能损害结果。ImageBind 本体提供表征，生成文本或音频还需接相应解码器或 LLM。
+
+```math
+\begin{aligned} \ell_{I\to M}&=-\frac{1}{B}\sum_{i=1}^{B}\log\frac{\exp(z_i^{I\top}z_i^M/\tau_M)}{\sum_{j=1}^{B}\exp(z_i^{I\top}z_j^M/\tau_M)}\\ \mathcal L&=\sum_M\left(\ell_{I\to M}+\ell_{M\to I}\right),\qquad \|z_i^M\|_2=1 \end{aligned}
+```
+
+#### 易错点
+
+- 不需要六模态共现，仍需要真实配对监督；不能说完全没有监督信号。
+- 对齐到共同空间不代表共享一个编码器，也不直接提供自回归生成能力。
+
+#### 追问
+
+- 同一视频中的声音来自画外时，怎样过滤配对噪声？
+- 如何设计去除图像桥梁或加入直接音频文本配对的消融？
+
 ## 参考资料
 
 - [Video-LLaVA: Learning United Visual Representation by Alignment Before Projection](https://arxiv.org/abs/2311.10122)
@@ -343,6 +377,8 @@ Qwen2.5-Omni 的 Thinker 用音频和图像编码器接入文本解码主干，�
 - [Hugging Face Evaluate WER 官方实现](https://huggingface.co/spaces/evaluate-metric/wer/blob/main/wer.py)
 - [PyTorch CTCLoss 文档](https://docs.pytorch.org/docs/2.14/generated/torch.nn.CTCLoss.html)
 - [High Fidelity Neural Audio Compression](https://arxiv.org/abs/2210.13438)
+- [ImageBind: One Embedding Space To Bind Them All](https://arxiv.org/html/2305.05665)
+- [ImageBind 官方模型实现](https://github.com/facebookresearch/ImageBind/blob/main/imagebind/models/imagebind_model.py)
 - [Neural Codec Language Models are Zero-Shot Text to Speech Synthesizers](https://arxiv.org/abs/2301.02111)
 - [Qwen2-Audio Technical Report](https://arxiv.org/abs/2407.10759)
 - [Qwen2.5-Omni Technical Report](https://arxiv.org/html/2503.20215v1)

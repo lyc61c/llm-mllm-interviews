@@ -634,7 +634,7 @@
         "mask"
       ],
       "answer": {
-        "body": "输入形状为 `[B,T,D]`，Q/K/V 投影后拆成 `[B,H,T,d]`，其中 $D=Hd$。可以使用一个 `D→3D` 线性层一次生成三组投影，但它们仍有各自的参数。\n\n计算缩放点积后，分数形状为 `[B,H,Tq,Tk]`。先加因果或 padding mask，再沿 `Tk` 轴做 softmax，与 V 相乘；各头输出拼接回 `[B,T,D]`，最后经过输出投影。用输出形状和“未来 token 改变不影响较早位置”的性质检查实现。教学代码可显式生成二次方大小的分数矩阵，生产 SDPA 通常用融合内核；训练与推理的 dropout 设置也要区分。",
+        "body": "输入形状为 `[B,T,D]`，Q/K/V 投影后拆成 `[B,H,T,d]`，其中 $D=Hd$。可以使用一个 `D→3D` 线性层一次生成三组投影，但它们仍有各自的参数。\n\n计算缩放点积后，分数形状为 `[B,H,Tq,Tk]`。先加因果或 padding mask，再沿 `Tk` 轴做 softmax，与 V 相乘；各头输出拼接回 `[B,T,D]`，最后经过输出投影。用输出形状和“未来 token 改变不影响较早位置”的性质检查实现。教学代码可显式生成二次方大小的分数矩阵，生产 SDPA 通常用融合内核；训练与推理的 dropout 设置也要区分。\n\n若追问原始Transformer还包括什么，应根据层级说明：注意力子层内部有缩放、mask、softmax/dropout、多头拼接和输出投影；完整block还包括残差、LayerNorm与FFN，输入序列还需位置表达。题目未指名“关键一步”时先澄清是在问注意力算子还是整个block，不能把位置编码硬塞进softmax，或把后续模型的RoPE当作原始Transformer的实现。",
         "formula": "\\mathrm{Attention}(Q,K,V)=\\mathrm{softmax}\\!\\left(\\frac{QK^\\top}{\\sqrt d}+M\\right)V",
         "pitfalls": [
           "把布尔 mask 语义弄反；PyTorch 不同 API 的 True 可能表示允许或屏蔽。"
@@ -651,10 +651,24 @@
           "source_id": "ENG-C01",
           "support": "reported_question",
           "note": "公开正文列出 multi-head-attention 手撕题；本题为重述与独立答案。"
+        },
+        {
+          "source_id": "XHS26-S004",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S002",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
-      "topic": "模型算子与数值实现"
+      "topic": "模型算子与数值实现",
+      "company_tags": [
+        "字节跳动",
+        "腾讯"
+      ]
     },
     {
       "id": "COD-003",
@@ -1219,9 +1233,18 @@
         "ENG-P17",
         "ENG-P26"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "权限、容错与可观测性"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S007",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "权限、容错与可观测性",
+      "company_tags": [
+        "米哈游"
+      ]
     },
     {
       "id": "SYS-007",
@@ -1246,9 +1269,18 @@
       "reference_ids": [
         "ENG-P24"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "权限、容错与可观测性"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S007",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "权限、容错与可观测性",
+      "company_tags": [
+        "米哈游"
+      ]
     },
     {
       "id": "SYS-008",
@@ -1528,10 +1560,23 @@
           "source_id": "ENG-C02",
           "support": "reported_topic",
           "note": "公开项目题多次询问动机、业务问题和最终提升；本题提供组织回答方法。"
+        },
+        {
+          "source_id": "XHS26-S001",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S004",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
-      "topic": "项目贡献与实验设计"
+      "topic": "项目贡献与实验设计",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "PRJ-002",
@@ -1561,10 +1606,23 @@
           "source_id": "ENG-C03",
           "support": "secondary_report",
           "note": "小红书二手报告保留项目分工/实现细节题目线索；答案为编辑建议。"
+        },
+        {
+          "source_id": "XHS26-S001",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        },
+        {
+          "source_id": "XHS26-S004",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
         }
       ],
       "editorial": false,
-      "topic": "项目贡献与实验设计"
+      "topic": "项目贡献与实验设计",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "PRJ-003",

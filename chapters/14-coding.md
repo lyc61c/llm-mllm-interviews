@@ -9,6 +9,7 @@
   - [COD-002 · 手撕 Multi-Head Attention：形状、缩放与 mask 怎么写？](#cod-002)
   - [COD-004 · 手写 RoPE，并证明旋转保持范数与相对位置内积。](#cod-004)
   - [COD-007 · 实现 LoRA Linear 并证明 merge 前后输出一致。](#cod-007)
+  - [COD-018 · 用 PyTorch 实现两层 MLP，图像输入应该怎样组织？](#cod-018)
 - [损失函数与训练代码](#topic-2)
   - [COD-005 · 手写 InfoNCE：正样本标签与 in-batch negatives 如何组织？](#cod-005)
   - [COD-008 · 实现 DPO loss，怎样避免符号和序列概率错误？](#cod-008)
@@ -23,6 +24,8 @@
   - [COD-012 · 手写编辑距离，并压缩到 O(min(m,n)) 空间。](#cod-012)
   - [COD-013 · 实现 O(1) 的 LRU Cache，更新已有 key 怎么处理？](#cod-013)
   - [COD-015 · 手撕代码时怎样设计能揭露错误的测试？](#cod-015)
+  - [COD-016 · 手写最长公共子序列：怎样定义状态、推导转移并压缩空间？](#cod-016)
+  - [COD-017 · 手写两数之和：怎样用单遍哈希表返回两个不同元素的下标？](#cod-017)
 
 <a id="topic-1"></a>
 ## 模型算子与数值实现
@@ -55,13 +58,15 @@ Softmax 对所有 logits 加同一常数不变，因为分子与分母中的公�
 <a id="cod-002"></a>
 ### COD-002 · 手撕 Multi-Head Attention：形状、缩放与 mask 怎么写？
 
-**L1**
+**L1** · 字节跳动 / 腾讯
 
 #### 答案
 
 输入形状为 `[B,T,D]`，Q/K/V 投影后拆成 `[B,H,T,d]`，其中 $`D=Hd`$。可以使用一个 `D→3D` 线性层一次生成三组投影，但它们仍有各自的参数。
 
 计算缩放点积后，分数形状为 `[B,H,Tq,Tk]`。先加因果或 padding mask，再沿 `Tk` 轴做 softmax，与 V 相乘；各头输出拼接回 `[B,T,D]`，最后经过输出投影。用输出形状和“未来 token 改变不影响较早位置”的性质检查实现。教学代码可显式生成二次方大小的分数矩阵，生产 SDPA 通常用融合内核；训练与推理的 dropout 设置也要区分。
+
+若追问原始Transformer还包括什么，应根据层级说明：注意力子层内部有缩放、mask、softmax/dropout、多头拼接和输出投影；完整block还包括残差、LayerNorm与FFN，输入序列还需位置表达。题目未指名“关键一步”时先澄清是在问注意力算子还是整个block，不能把位置编码硬塞进softmax，或把后续模型的RoPE当作原始Transformer的实现。
 
 ```math
 \mathrm{Attention}(Q,K,V)=\mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt d}+M\right)V
@@ -116,6 +121,41 @@ RoPE 将偶数维向量按二维对旋转，每对使用不同频率。位置 $`
 #### 追问
 
 - B 随机、A 零是否也能让初始更新为零？
+
+<a id="cod-018"></a>
+### COD-018 · 用 PyTorch 实现两层 MLP，图像输入应该怎样组织？
+
+**L2** · 字节跳动
+
+#### 答案
+
+两层 MLP 通常指两个可学习的线性层，中间加入非线性：Linear(d,h) → GELU → Linear(h,c)。继承 nn.Module，在 __init__ 中定义子层并调用 super().__init__，在 forward 中组合计算；这样权重和偏置会被自动注册，优化器才能找到它们。若两个线性层之间没有非线性，整体仍可合并成一次仿射变换。
+
+PyTorch 的 Linear 只变换最后一个维度，权重形状是 [out_features,in_features]，其余前导维保持不变。普通向量批次 [B,d] 会得到 [B,c]；对视觉 patch/token 特征 [B,N,d] 使用同一 MLP，会得到 [B,N,c]，每个 token 共用参数，但这一步不会让不同 patch 之间交换信息。
+
+若任务是最简单的固定尺寸图像分类，可以将 [B,C,H,W] 用 flatten(start_dim=1) 变成 [B,CHW]，再送入 MLP，输出 [B,num_classes] 的 logits。例如 ImageMLP((3,32,32),128,10) 接收32×32的RGB图像并输出10类分数；训练时可把原始 logits 直接传给 CrossEntropyLoss。不能把 batch 维一起摊平，也不能把 NCHW 图像直接交给 Linear 后误以为它会自动处理整个图像——它实际只会映射最后的 W 维。
+
+整图 flatten 的第一层参数量随 CHW 增长，且固定输入尺寸；它保留了像素在向量中的顺序，但没有 CNN 的局部连接等空间归纳偏置。实际视觉模型常先提取 patch 或编码器特征，再用逐 token MLP 做投影，若需要跨 patch 交互，还要加入注意力、卷积或其他空间混合模块。
+
+参考类 `MLP` 实现逐向量或逐 token 映射，`ImageMLP` 封装固定尺寸的整图分类。验证时用手工矩阵乘法与 erf 形式的 GELU 对照前向结果，检查 token 维保持、参数梯度、图像分辨率错误和非连续张量输入。
+
+```math
+H=\mathrm{GELU}(XW_1^{\mathsf T}+b_1),\qquad Y=HW_2^{\mathsf T}+b_2,\qquad W_1\in\mathbb R^{h\times d},\quad W_2\in\mathbb R^{c\times h}
+```
+
+代码：[MLP](../coding/torch_primitives.py#L12) · [ImageMLP](../coding/torch_primitives.py#L25)
+
+#### 易错点
+
+- MLP 的线性层要定义在 __init__ 中；在 forward 每次重新创建会重置参数且可能不被优化器管理。
+- 整图 flatten 必须保留 batch 维；逐 patch MLP 与整图分类 MLP 的输入维和输出语义不同。
+- 对非连续张量直接使用 view 可能报错；flatten/reshape 可以在必要时复制，复制也会带来开销。
+- 逐 token MLP 会共享参数，但不能单独承担 token 之间的关系建模。
+
+#### 追问
+
+- 输入分辨率翻倍时，整图 flatten MLP 第一层参数量会如何变化？
+- 如何把整图 MLP 改成 patch 投影，并让不同 patch 之间进行信息交互？
 
 <a id="topic-2"></a>
 ## 损失函数与训练代码
@@ -359,6 +399,70 @@ Attention 检查 shape、未来 token 不影响早期输出、cache decode 与 p
 
 - 浮点比较为什么应采用相对/绝对容差？
 
+<a id="cod-016"></a>
+### COD-016 · 手写最长公共子序列：怎样定义状态、推导转移并压缩空间？
+
+**L2** · 字节跳动
+
+#### 答案
+
+先确认要求返回公共子序列的长度。子序列可以不连续，但字符的相对顺序必须保持；例如 abcde 与 ace 的答案是3，不能按最长公共子串的连续匹配来解。
+
+设 D[i][j] 表示第一个字符串前 i 个字符与第二个字符串前 j 个字符的 LCS 长度。任意一方为空时结果为0。如果当前末尾字符相同，就在两个更短前缀的最优结果后追加此字符；若不同，至少要舍弃其中一个末尾字符，取 D[i-1][j] 与 D[i][j-1] 的较大值。按行推进即可保证三个依赖状态已经算好。
+
+完整二维表的时间和空间都是 O(mn)。只求长度时，每格只依赖上一行的同列、上一行的左上角和当前行的左邻，可只保留 previous/current 两行，并把较短字符串放在列方向，将额外空间降到 O(min(m,n))；时间仍是 O(mn)。如果改成单行，覆盖前必须额外保存左上角旧值，否则会把当前行与上一行混用。
+
+参考函数 `longest_common_subsequence` 返回长度，支持空字符串。验证时覆盖相同字符串、完全不相交、重复字符、空输入及参数互换，并对短字符串穷举所有子序列，用交集中的最大长度作为独立基线。若要求输出一个具体 LCS，最直接的方法是保留二维表并从右下角回溯：匹配则记录字符并走左上，不匹配则沿较大值方向移动，最后反转记录；两条方向同分时可能对应不同的合法最优子序列。
+
+```math
+D_{i,j}=\begin{cases}0,&i=0\text{ or }j=0\\D_{i-1,j-1}+1,&a_i=b_j\\\max(D_{i-1,j},D_{i,j-1}),&a_i\ne b_j\end{cases}
+```
+
+代码：[longest_common_subsequence](../coding/reference.py#L161)
+
+#### 易错点
+
+- 最长公共子序列允许跳过字符；最长公共子串要求连续，不匹配时的转移不同。
+- 滚动行适合返回长度；直接丢弃历史行后，不能按普通二维表回溯恢复实际序列。
+- 遇到重复字符不能用集合交集大小代替答案，字符出现次数和先后顺序都影响结果。
+
+#### 追问
+
+- 怎样输出一个实际的最长公共子序列，出现多个最优解时如何处理？
+- 若只用一行数组，哪个变量必须保存旧的左上角状态？
+
+<a id="cod-017"></a>
+### COD-017 · 手写两数之和：怎样用单遍哈希表返回两个不同元素的下标？
+
+**L1** · 腾讯
+
+#### 答案
+
+输入是整数数组 nums 和目标值 target，返回两个不同下标 i、j，使 nums[i]+nums[j]=target。官方题目保证存在唯一解，答案下标顺序不限；实现时要先确认返回的是下标而不是两个数，也不能把同一个数组元素用两次。
+
+单遍遍历数组，维护“此前出现过的数值 → 下标”的哈希表。处理下标 j 的值 x 时，先查询补数 target-x 是否已经存在；存在就返回它的下标与 j，不存在才保存 x。先查后存可以自然保证两个下标不同，也能正确处理 [3,3]、target=6 这种两个值相同的情况。负数和0仍遵循同样逻辑，无须特殊分支。
+
+平均时间复杂度为 O(n)，额外空间为 O(n)，比枚举所有下标对的 O(n²) 时间更好。排序加双指针也是可行路线，但排序会打乱原下标，必须同时保存值和原位置，且时间为 O(n log n)。如果要求找到所有答案，还需要明确重复值、重复下标对的输出规则，单个值只保存一个下标的写法不能直接照搬。
+
+参考函数 `two_sum` 返回两个下标组成的列表；为了练习边界，仓库实现对不存在解的输入抛出 ValueError，对多个解则返回遍历中首先找到的合法下标对。测试不仅检查经典示例，还用随机小数组枚举全部 i<j 的合法对作为独立基线，确认返回值确实在合法集合中，并覆盖重复值、负数、单元素与无解输入。
+
+```math
+\mathrm{nums}_i+\mathrm{nums}_j=t,\quad i\ne j,\qquad c=t-\mathrm{nums}_j
+```
+
+代码：[two_sum](../coding/reference.py#L150)
+
+#### 易错点
+
+- 先把当前元素放入哈希表再查询，可能在 target=2x 时把同一个下标返回两次。
+- 返回数值而非下标，或排序后直接返回排序数组的位置，都会违反原题输入输出契约。
+- 哈希表查询的 O(1) 是平均复杂度；不要将其表述成对任意输入都保证常数时间。
+
+#### 追问
+
+- 如果数组已排序，双指针怎样移动，怎样证明不会漏掉答案？
+- 如果要求返回所有合法下标对，如何处理大量重复值和输出规模？
+
 ## 参考资料
 
 - [PyTorch CrossEntropyLoss](https://docs.pytorch.org/docs/2.14/generated/torch.nn.CrossEntropyLoss.html)
@@ -378,3 +482,6 @@ Attention 检查 shape、未来 token 不影响早期输出、cache decode 与 p
 - [vLLM Metrics](https://docs.vllm.ai/en/latest/design/metrics/)
 - [vLLM Paged Attention](https://docs.vllm.ai/en/latest/design/paged_attention/)
 - [PyTorch Reproducibility](https://docs.pytorch.org/docs/2.14/notes/randomness.html)
+- [LeetCode 1143：Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/)
+- [LeetCode 1：Two Sum](https://leetcode.com/problems/two-sum/)
+- [PyTorch nn.Linear：仿射变换、权重与输入输出形状](https://docs.pytorch.org/docs/stable/generated/torch.nn.Linear.html)

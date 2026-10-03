@@ -11,6 +11,9 @@
   - [VLM-004 · SigLIP 与 CLIP 的损失主要区别是什么？](#vlm-004)
   - [VLM-005 · BLIP 的 ITC、ITM、LM 三个目标各做什么？](#vlm-005)
   - [VLM-006 · BLIP 的 CapFilt 为什么同时需要 captioner 和 filter？](#vlm-006)
+  - [VLM-033 · ViT 如何将图像变成序列，patch 共享映射会不会丢失位置？](#vlm-033)
+  - [VLM-036 · DDPM 的前向加噪、训练目标和反向去噪怎样实现？](#vlm-036)
+  - [VLM-037 · 多模态大模型有哪些常见架构，如何介绍自己熟悉的 MLLM？](#vlm-037)
 - [视觉连接器与训练](#topic-2)
   - [VLM-007 · BLIP-2 的 Q-Former 为什么能连接冻结的视觉编码器和 LLM？](#vlm-007)
   - [VLM-008 · Q-Former 与两层 MLP 连接器怎样选，MLP 已普遍淘汰 Q-Former 吗？](#vlm-008)
@@ -19,8 +22,9 @@
   - [VLM-021 · 微调 VLM 时，视觉骨干、连接器和 LLM 该怎样冻结？](#vlm-021)
   - [VLM-024 · 多模态预训练和 SFT 的数据配比怎样设计？](#vlm-024)
   - [VLM-028 · Qwen3-VL 四阶段预训练分别训练什么模块、数据和目标？](#vlm-028)
+  - [VLM-035 · 游戏交互训练怎样迁移到通用多模态能力，怎样证明发生了泛化？](#vlm-035)
 - [动态分辨率与位置编码](#topic-3)
-  - [VLM-012 · Qwen2-VL 的动态分辨率解决了什么问题？](#vlm-012)
+  - [VLM-012 · Qwen2-VL 如何实现动态分辨率，哪些参数控制视觉 token 预算？](#vlm-012)
   - [VLM-013 · M-RoPE 如何统一文本、图像和视频位置？](#vlm-013)
   - [VLM-015 · InternVL 的动态切图与全局缩略图各有什么作用？](#vlm-015)
   - [VLM-029 · 不同版本 Qwen-VL 的视觉压缩比例和连接器层数如何确认？](#vlm-029)
@@ -32,6 +36,7 @@
   - [VLM-026 · 以 LLaVA-1.5-7B 与 InternVL2.5-8B 为例，除骨干和训练之外有哪些差异？](#vlm-026)
   - [VLM-027 · Qwen3-VL 的基本模块与相较 Qwen2.5-VL 的结构变化是什么？](#vlm-027)
   - [VLM-031 · Qwen3-VL 的 DeepStack 如何注入多层视觉特征，是否把视觉 token 翻倍？](#vlm-031)
+  - [VLM-034 · ViT 与 CNN 作为图像编码器，分别有哪些优势和代价？](#vlm-034)
 - [感知、文档与视觉评测](#topic-5)
   - [VLM-016 · OCR/文档问答差，怎样判断是视觉瓶颈还是语言瓶颈？](#vlm-016)
   - [VLM-017 · 单图 VLM 怎样扩展到多页文档问答？](#vlm-017)
@@ -48,7 +53,7 @@
 <a id="vlm-001"></a>
 ### VLM-001 · CLIP 的结构和双向对比损失是什么？
 
-**L1**
+**L1** · 腾讯 / 商汤
 
 #### 答案
 
@@ -163,6 +168,85 @@ BLIP 的三个目标分别负责整体匹配、细粒度对应和条件生成：
 
 - 如何测量过滤后的长尾覆盖损失？
 
+<a id="vlm-033"></a>
+### VLM-033 · ViT 如何将图像变成序列，patch 共享映射会不会丢失位置？
+
+**L1** · 腾讯
+
+#### 答案
+
+原始 ViT 把 H×W×C 图像划分为 N 个不重叠的 P×P patch，将每块按固定顺序展平为 P²C 维向量，再用同一个可训练矩阵映射到 D 维。所有 patch 共享映射参数，不是每块各训练一层；这一步等价于 kernel_size=stride=P 的卷积。随后加入 CLS token 和位置向量，经过多层 Pre-LN、自注意力、FFN 与残差连接，用 CLS 的最终表示做分类。它主要沿用 Transformer Encoder，图像理解通常使用双向注意力，不需要文本生成时的因果 mask。
+
+切 patch 本身并没有打乱块内像素的固定顺序，但展平后的序列索引不会自动成为注意力的位置条件。不加位置信息且不引入其他位置相关结构时，自注意力对 patch 排列具有置换等变性，CLS 的聚合无法稳定区分跨 patch 的上下左右关系。原始 ViT 加可学习一维位置表；提高分辨率时通常先将旧表还原成二维网格再插值。现代视觉编码器也可使用二维 RoPE 或相对位置偏置。
+
+共享映射与位置丢失是两件事。若投影维度不足，线性映射可能丢失块内细节；位置编码解决的是跨块空间关系，也不会恢复缩放时已消失的小字和纹理。
+
+```math
+\begin{aligned} N&=\frac{HW}{P^2},\qquad E\in\mathbb R^{P^2C\times D}\\ z_0&=[x_{\mathrm{CLS}};x_p^1E;\cdots;x_p^NE]+E_{\mathrm{pos}}\\ z'_\ell&=z_{\ell-1}+\mathrm{MSA}(\mathrm{LN}(z_{\ell-1}))\\ z_\ell&=z'_\ell+\mathrm{MLP}(\mathrm{LN}(z'_\ell)) \end{aligned}
+```
+
+#### 易错点
+
+- 共享 patch 投影不会让每个位置拥有相同特征，输入内容和位置向量仍不同。
+- 没有位置编码时应说置换等变，不能说注意力输出完全不随输入排列改变。
+
+#### 追问
+
+- 224×224 图像按 patch16 划分有多少 token，CLS 是否要额外计入？
+- 交换两块图像内容时，怎样区分连同位置向量一起交换和固定位置交换内容？
+
+<a id="vlm-036"></a>
+### VLM-036 · DDPM 的前向加噪、训练目标和反向去噪怎样实现？
+
+**L2** · 小红书
+
+#### 答案
+
+DDPM定义固定的前向高斯加噪链，再学习反向生成链。设每步噪声方差为$`\beta_t`$、$`\alpha_t=1-\beta_t`$、$`\bar\alpha_t=\prod_{s=1}^t\alpha_s`$，则可以从干净图像直接采样任意$`x_t`$，无需训练时逐步运行全部前向链。每次随机选时间$`t`$和高斯噪声$`\epsilon`$，让网络预测加入的噪声；常用简化目标是噪声预测MSE，它来自变分目标的重参数化与重新加权，不能说未经加权的MSE与完整ELBO完全相等。
+
+反向时从$`x_T\sim\mathcal N(0,I)`$开始，循环$`t=T,\ldots,1`$。网络输入当前$`x_t`$与时间编码，输出$`\epsilon_\theta`$；先用它估计$`x_0`$，再将估计值代入可解析的$`q(x_{t-1}\mid x_t,x_0)`$后验均值，得到下式$`\mu_\theta`$。注意$`q(x_{t-1}\mid x_t)`$本身一般不能直接解析得到，训练中可解析的是额外给定$`x_0`$的后验。
+
+采样用$`x_{t-1}=\mu_\theta+\sigma_t z`$。固定方差的经典选项包括$`\beta_t`$或后验方差$`\tilde\beta_t=\beta_t(1-\bar\alpha_{t-1})/(1-\bar\alpha_t)`$，也有学习方差的扩展；不能把这些设置混用。原算法在$`t=1`$时令$`z=0`$，最后展示预测均值。实现需核对0-based代码下标与1..T数学下标、同一个噪声日程和训练时的prediction type，不能把epsilon、x0或v预测输出直接互换。
+
+图文生成可把文本条件$`c`$输入去噪网络，但预测目标依然取决于图像生成参数化，与VQA的回答token交叉熵不同。标准DDPM的反向链是随机采样；Flow Matching常学习连续速度、用ODE积分。两者可在score/SDE视角联系，但不能把DDPM噪声预测均值公式直接当成Flow-GRPO的速度更新式。
+
+```math
+\begin{aligned}q(x_t\mid x_{t-1})&=\mathcal N(\sqrt{\alpha_t}x_{t-1},\beta_t I),\quad \bar\alpha_t=\prod_{s=1}^t\alpha_s\\ x_t&=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\,\epsilon,\quad \epsilon\sim\mathcal N(0,I)\\ \mathcal L_{\mathrm{simple}}&=\mathbb E_{x_0,t,\epsilon}\left[\|\epsilon-\epsilon_\theta(x_t,t)\|_2^2\right]\\ \hat x_0&=\frac{x_t-\sqrt{1-\bar\alpha_t}\epsilon_\theta(x_t,t)}{\sqrt{\bar\alpha_t}}\\ \mu_\theta(x_t,t)&=\frac1{\sqrt{\alpha_t}}\left(x_t-\frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(x_t,t)\right)\\ \tilde\beta_t&=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t,\quad \bar\alpha_0=1\\ x_{t-1}&=\mu_\theta(x_t,t)+\sigma_t z,\quad z\sim\mathcal N(0,I)\ (t\gt 1),\quad z=0\ (t=1)\end{aligned}
+```
+
+#### 易错点
+
+- 反向去噪不是把当前噪声简单减掉；缩放系数、累计噪声日程和方差都来自所选参数化。
+- 少步采样、DDIM或其他solver需要各自的更新式，不能直接在原DDPM循环跳过时间步而保持原系数不变。
+
+#### 追问
+
+- 为什么训练可以随机采样一个时间步，而生成需要多步迭代？
+- 如果网络输出改成x0或v prediction，scheduler需要怎样转换？
+
+<a id="vlm-037"></a>
+### VLM-037 · 多模态大模型有哪些常见架构，如何介绍自己熟悉的 MLLM？
+
+**L1** · 小红书
+
+#### 答案
+
+先按任务区分：CLIP式双塔分别编码图像和文本，用共享表示做相似度、检索或零样本分类；生成式视觉语言模型则需要把视觉信息交给语言模型，在文本条件下回答、描述或推理。两者的输出接口与训练目标不同，不能把图文embedding对齐直接当成具备对话能力。
+
+一种常见生成路线是视觉编码器、连接器、语言模型：视觉编码器将图像或视频变成特征序列，连接器将其映射或压缩到LLM可处理的表示，语言模型融合视觉与文本后生成答案。LLaVA可用投影连接器接入视觉token，BLIP-2用可学习query与Q-Former提取视觉信息；其他路线也可以通过跨注意力将视觉特征作为独立记忆读取。因此MLP、Q-Former、跨注意力是不同接口选择，并无所有模型统一的一套实现。
+
+介绍具体模型时按固定版本说明输入预处理与分辨率、视觉token数、编码器与连接器、位置/时间编码、更新哪些模块、数据和损失，再给一个场景解释为何这样设计。例如Qwen2-VL的动态分辨率和视觉token预算更适合讨论细节与成本，视频还要说明时间对齐。最后讲评测与失败边界：看图依赖、OCR、关系/计数、幻觉和吞吐，不用模型名列表代替机制。
+
+#### 易错点
+
+- CLIP双塔和生成式VLM的对齐目标、输出能力不同。
+- “视觉编码器+连接器+LLM”是一条常见路线，不能排除跨注意力或统一token等设计。
+
+#### 追问
+
+- 图文对齐、指令微调和偏好训练各解决什么问题？
+- 增加视觉token数量为什么不必然提高推理能力？
+
 <a id="topic-2"></a>
 ## 视觉连接器与训练
 
@@ -234,7 +318,7 @@ MLP 通常保留输入 token 数；固定查询的 Q-Former 可压缩视觉序�
 <a id="vlm-009"></a>
 ### VLM-009 · 原始 LLaVA 的两阶段训练分别更新哪些模块？
 
-**L1**
+**L1** · 腾讯 / 小红书
 
 #### 答案
 
@@ -274,7 +358,7 @@ MiniGPT-4复用带ViT与Q-Former的BLIP-2视觉部分，以可训练线性层接
 <a id="vlm-021"></a>
 ### VLM-021 · 微调 VLM 时，视觉骨干、连接器和 LLM 该怎样冻结？
 
-**L3**
+**L3** · 腾讯 / 小红书
 
 #### 答案
 
@@ -293,7 +377,7 @@ MiniGPT-4复用带ViT与Q-Former的BLIP-2视觉部分，以可训练线性层接
 <a id="vlm-024"></a>
 ### VLM-024 · 多模态预训练和 SFT 的数据配比怎样设计？
 
-**L3**
+**L3** · 腾讯 / 字节跳动 / 小红书
 
 #### 答案
 
@@ -341,27 +425,62 @@ MiniGPT-4复用带ViT与Q-Former的BLIP-2视觉部分，以可训练线性层接
 - 为什么不从第一步就全部使用 256K 序列？
 - 如何验证长上下文扩展没有损害纯文本与短图文能力？
 
+<a id="vlm-035"></a>
+### VLM-035 · 游戏交互训练怎样迁移到通用多模态能力，怎样证明发生了泛化？
+
+**L3** · 阿里巴巴
+
+#### 答案
+
+游戏提供视觉观察、动作和后续结果，适合学习目标定位、空间关系、时序状态变化和指令到行动的对应。可迁移的是这些能力；具体按键、物品合成规则和游戏界面通常具有域依赖。因此游戏内得分变高只能说明任务表现改善，不能自动推出通用 VLM 或现实操作能力提升。
+
+数据应覆盖多个环境、不同视角与外观、任务目标和组合方式，并保存动作前后的观察及目标描述。相同画面配不同指令、相同目标配不同初始状态，有助于检查模型是否真正依据语言决策，避免只凭画面中最显眼的对象执行固定行为。失败、纠正与目标切换也应纳入训练，而非只给成功终点。
+
+训练上可以共享视觉语言骨干，保留游戏动作头，联合图文问答、时序理解和行为克隆，控制各类数据与损失权重，防止游戏训练损伤原有 OCR、问答和指令遵循能力。游戏视频也可用于表征学习，但仅预测画面不直接教会动作；增加动作监督或环境反馈后是否更好，需要消融验证。SIMA 的跨环境研究提供了检验语言条件策略迁移的例子，结论范围仍是其评测环境与技能。
+
+评测要分层：游戏内新地图和新任务组合、完全未训练的游戏、自然图像/视频任务，以及确有需求时的 GUI 或机器人交互。按游戏、场景、轨迹和任务模板隔离训练评测，不能随机切相邻帧后声称跨域泛化；还要检查预训练视觉骨干是否已用过所谓留出环境。新域继续微调后的成绩属于适配，不是零样本迁移。
+
+用同等训练预算比较只做通用训练、加入游戏观察数据、再加入动作和反馈监督的版本，同时报告目标域增益与原能力退化。只有在独立目标域获得稳定改进，且排除了额外数据量、评测泄漏与特权状态的解释，才有充分理由说游戏训练带来了通用能力收益。
+
+#### 易错点
+
+- 跨游戏迁移和游戏到真实世界迁移的距离不同，应分别报告，不能相互替代。
+- 留出的策略训练环境如果出现在视觉骨干微调数据中，就不是完全未见环境。
+
+#### 追问
+
+- 加入游戏动作数据后 OCR 变差，应怎样调整训练配比或参数更新范围？
+- 怎样设计实验区分视觉表示提升与游戏专用技能记忆？
+
 <a id="topic-3"></a>
 ## 动态分辨率与位置编码
 
 <a id="vlm-012"></a>
-### VLM-012 · Qwen2-VL 的动态分辨率解决了什么问题？
+### VLM-012 · Qwen2-VL 如何实现动态分辨率，哪些参数控制视觉 token 预算？
 
-**L2**
+**L2** · 字节跳动
 
 #### 答案
 
-固定尺寸缩放可能损失小字或扭曲长宽比，Qwen2-VL 的动态分辨率将不同输入尺寸映射为可变长度的视觉序列，ViT 用二维位置表达处理不同空间大小，再将邻近 `2×2` 视觉 token 合并以控制进入 LLM 的序列长度。
+固定尺寸缩放可能损失小字或扭曲长宽比。Qwen2-VL 的动态分辨率让不同输入尺寸形成可变长度视觉序列，视觉 ViT 用二维 RoPE 处理空间位置，再将邻近 2×2 patch 特征合并，控制送入 LLM 的长度。动态分辨率仍会按预算 resize，并不是无限分辨率或完全不缩放。
 
-图像越大通常 token 越多，细节和成本的权衡仍存在。部署要设置像素与视觉 token 上限，并按任务评估；显存不能仅按图像张数估计，动态分辨率也并非无限分辨率或完全不缩放。
+直接控制图像预算的主要是 processor 的 min_pixels、max_pixels，以及部分输入接口可指定的 resize 尺寸；图像张数、视频帧数也影响总长度。以 Qwen2-VL-7B-Instruct 的 patch_size=14、spatial_merge_size=2 为例，processor 将高宽对齐到 28 的倍数，resize 后 H′×W′ 图像的视觉 token 数为 H′W′/28²。若设 max_pixels=1024×28²，就将单图预算控制在约 1024 个视觉 token；实际应读 image_grid_thw 并除以空间 merge_size 的平方，不能只按原图像素估计。224×224 输入对应 64 个视觉 token，加两个视觉边界标记后为 66 个序列 token，文本和其他模板 token 另计。
+
+patch、空间 merge 和时间 patch 是 checkpoint 的不同配置，不应当作任意推理旋钮。这里空间步长 28 来自 14×2 的空间合并；视频的 temporal_patch_size=2 则改变时间 grid，不能用它解释单图的空间压缩。提高像素预算通常改善细节，却增加视觉编码、LLM prefill 和 KV 成本，需要按 OCR、小目标与自然图片任务分别评估。
+
+```math
+\begin{aligned} N_{\mathrm{image}}&=\frac{H'W'}{(ps)^2}=\frac{g_tg_hg_w}{s^2},\qquad p=14,\ s=2,\ g_t=1\\ N_{\mathrm{video}}&=\frac{g_tg_hg_w}{s^2} \end{aligned}
+```
 
 #### 易错点
 
-- 动态分辨率不是无限分辨率，也不等于完全不缩放。
+- min_pixels/max_pixels 以像素面积计，不能误写成图像长边的像素值。
+- 视觉 patch 数、合并后视觉 token 数和包含边界标记的总序列长度应分开计算。
 
 #### 追问
 
-- OCR 与自然图片如何设置不同预算？
+- 降低 max_pixels 和减少视频 FPS 分别会损失什么证据？
+- 多图请求如何同时限制单图预算与总上下文长度？
 
 <a id="vlm-013"></a>
 ### VLM-013 · M-RoPE 如何统一文本、图像和视频位置？
@@ -404,7 +523,7 @@ InternVL 动态切图先根据原图长宽比选择网格，再裁成多个固�
 <a id="vlm-029"></a>
 ### VLM-029 · 不同版本 Qwen-VL 的视觉压缩比例和连接器层数如何确认？
 
-**L2**
+**L2** · 字节跳动
 
 #### 答案
 
@@ -431,7 +550,7 @@ N_{\mathrm{spatial}}\approx\frac{HW}{(ps)^2},\qquad s=2
 <a id="vlm-030"></a>
 ### VLM-030 · Interleaved M-RoPE 怎样改善频率分配？与文本 Qwen3 的 RoPE 有何区别？
 
-**L3**
+**L3** · 字节跳动
 
 #### 答案
 
@@ -458,7 +577,7 @@ N_{\mathrm{spatial}}\approx\frac{HW}{(ps)^2},\qquad s=2
 <a id="vlm-032"></a>
 ### VLM-032 · Qwen3-VL 为什么用文本时间戳表示视频时间，采样后怎样保证对齐？
 
-**L2**
+**L2** · 字节跳动
 
 #### 答案
 
@@ -507,7 +626,7 @@ LLaVA-1.5 在原始 LLaVA 基础上，将线性连接器改为两层 MLP，采�
 <a id="vlm-014"></a>
 ### VLM-014 · Qwen2.5-VL 的视觉编码器和时间建模有哪些变化？
 
-**L2**
+**L2** · 字节跳动 / 小红书
 
 #### 答案
 
@@ -554,7 +673,7 @@ Qwen2.5-VL 的视觉编码器在多数层使用窗口注意力，在四层保留
 <a id="vlm-027"></a>
 ### VLM-027 · Qwen3-VL 的基本模块与相较 Qwen2.5-VL 的结构变化是什么？
 
-**L2**
+**L2** · 字节跳动
 
 #### 答案
 
@@ -601,6 +720,33 @@ h_{\ell}^{\mathrm{vis}}\leftarrow h_{\ell}^{\mathrm{vis}}+\mathrm{Merger}_{\ell}
 - 多图输入怎样保证 visual_pos_masks 与各图特征顺序一致？
 - 冻结视觉骨干时，中间特征分支需要怎样设置计算图？
 
+<a id="vlm-034"></a>
+### VLM-034 · ViT 与 CNN 作为图像编码器，分别有哪些优势和代价？
+
+**L2** · 腾讯
+
+#### 答案
+
+CNN 通过局部连接、卷积权重共享和多层下采样引入空间归纳偏置，通常能较高效地提取局部纹理并建立多尺度特征；感受野可以随深度扩大，所以不能说 CNN 无法表示全局关系。平移等变也会受到边界、步长和池化影响，不能直接等同于分类的平移不变。
+
+原始全局 ViT 用内容相关注意力直接联系远处 patch，图文预训练与序列接口方便，但视觉归纳偏置更弱，训练效果依赖数据、增强和预训练。全局注意力的配对计算随 patch 数平方增长，图像边长翻倍且 patch 大小不变时，patch 数约变四倍，注意力部分约变十六倍；投影与 FFN 成本还要另计。窗口注意力、层级 ViT 或更强位置结构会改变这一比较。
+
+选型应在同一任务、输入分辨率、数据和实际预算下比较精度、细节保留、延迟、显存与迁移能力。OCR 和文档场景尤其需要核对 patch 粒度与 token 压缩；小数据、端侧或密集预测可以考虑 CNN 或混合骨干，大规模图文预训练可以考虑已有 ViT。ConvNeXt 的结果说明现代 CNN 仍可有竞争力，不能把架构名称当成效果结论。
+
+```math
+\mathrm{Cost}_{\mathrm{Attention}}=O(N^2D),\qquad N=\frac{HW}{P^2}
+```
+
+#### 易错点
+
+- 全局 ViT、窗口 ViT 和混合编码器不是同一种复杂度或归纳偏置。
+- 骨干参数量相近不代表视觉 token 数、语言侧 prefill 成本和部署速度相近。
+
+#### 追问
+
+- 如何用相同预训练和增广区分架构收益与训练配方收益？
+- 在固定 LLM 视觉 token 预算下，如何比较高分辨率编码和后续压缩？
+
 <a id="topic-5"></a>
 ## 感知、文档与视觉评测
 
@@ -645,7 +791,7 @@ h_{\ell}^{\mathrm{vis}}\leftarrow h_{\ell}^{\mathrm{vis}}+\mathrm{Merger}_{\ell}
 <a id="vlm-018"></a>
 ### VLM-018 · 视觉幻觉怎样定义、评测和缓解？
 
-**L2**
+**L2** · 商汤
 
 #### 答案
 
@@ -740,7 +886,7 @@ h_{\ell}^{\mathrm{vis}}\leftarrow h_{\ell}^{\mathrm{vis}}+\mathrm{Merger}_{\ell}
 <a id="vlm-025"></a>
 ### VLM-025 · 多模态检索模型与生成式 VLM 问答怎样分工？
 
-**L2**
+**L2** · 商汤
 
 #### 答案
 
@@ -773,6 +919,8 @@ h_{\ell}^{\mathrm{vis}}\leftarrow h_{\ell}^{\mathrm{vis}}+\mathrm{Merger}_{\ell}
 - [Visual Instruction Tuning](https://arxiv.org/html/2304.08485v2)
 - [MiniGPT-4: Enhancing Vision-Language Understanding with Advanced Large Language Models](https://arxiv.org/abs/2304.10592)
 - [Qwen2-VL: Enhancing Vision-Language Model's Perception of the World at Any Resolution](https://arxiv.org/html/2409.12191v2)
+- [Transformers v4.57.1 Qwen2-VL 图像 processor 实现](https://raw.githubusercontent.com/huggingface/transformers/v4.57.1/src/transformers/models/qwen2_vl/image_processing_qwen2_vl.py)
+- [Qwen2-VL-7B-Instruct 官方模型配置](https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct/blob/main/config.json)
 - [Qwen2.5-VL Technical Report](https://arxiv.org/html/2502.13923v1)
 - [InternVL2 Quick Start 官方文档](https://internvl.readthedocs.io/en/latest/internvl2.0/quick_start.html)
 - [DocVQA: A Dataset for VQA on Document Images](https://arxiv.org/abs/2007.00398)
@@ -796,3 +944,10 @@ h_{\ell}^{\mathrm{vis}}\leftarrow h_{\ell}^{\mathrm{vis}}+\mathrm{Merger}_{\ell}
 - [Qwen-VL Technical Report](https://arxiv.org/html/2308.12966v3)
 - [Qwen3 Technical Report](https://arxiv.org/html/2505.09388v1)
 - [Transformers v4.57.1 Qwen3-VL processor code](https://github.com/huggingface/transformers/blob/v4.57.1/src/transformers/models/qwen3_vl/processing_qwen3_vl.py)
+- [An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale](https://arxiv.org/html/2010.11929v2)
+- [Google Vision Transformer 官方 JAX 模型实现](https://raw.githubusercontent.com/google-research/vision_transformer/main/vit_jax/models_vit.py)
+- [A ConvNet for the 2020s](https://arxiv.org/html/2201.03545)
+- [Scaling Instructable Agents Across Many Simulated Worlds](https://arxiv.org/abs/2404.10179)
+- [MineDojo: Building Open-Ended Embodied Agents with Internet-Scale Knowledge](https://arxiv.org/abs/2206.08853)
+- [Denoising Diffusion Probabilistic Models](https://arxiv.org/pdf/2006.11239)
+- [DDPM original diffusion utilities](https://github.com/hojonathanho/diffusion/blob/master/diffusion_tf/diffusion_utils_2.py)

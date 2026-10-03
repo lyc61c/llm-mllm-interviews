@@ -6,7 +6,7 @@
 
 - [文档切分与索引](#topic-1)
   - [RAG-001 · 一个可落地的 RAG 系统有哪些环节？](#rag-001)
-  - [RAG-002 · RAG、微调和 prompt engineering 如何选择？](#rag-002)
+  - [RAG-002 · RAG、微调与 Prompt/CoT 如何选择？VQA 中有何取舍？](#rag-002)
   - [RAG-003 · chunk 大小、overlap 与父子、链式、树式索引怎样设计？](#rag-003)
   - [RAG-008 · HNSW 的 M、ef_construction 和 ef_search 怎样权衡？](#rag-008)
   - [RAG-017 · IVF_FLAT、IVF_PQ 与 HNSW 如何检索，nlist/nprobe 和 PQ 有何权衡？](#rag-017)
@@ -53,9 +53,9 @@ RAG 的离线链路包括文档解析、清洗、切分和建立带元数据的�
 - 怎样定位是没检索到还是模型没用好证据？
 
 <a id="rag-002"></a>
-### RAG-002 · RAG、微调和 prompt engineering 如何选择？
+### RAG-002 · RAG、微调与 Prompt/CoT 如何选择？VQA 中有何取舍？
 
-**L1**
+**L1** · 字节跳动
 
 #### 答案
 
@@ -63,13 +63,22 @@ Prompt engineering 改变当次任务约束，RAG 在推理时提供外部证据
 
 三者可以组合，例如训练模型更好地读取证据或改善检索能力，但 RAG 仍依赖解析、召回与证据质量。应使用代表性业务样本，在同等预算下对 prompt、RAG、SFT 及其组合做消融，比较效果、时延、数据维护与成本。
 
+先按错误类型选择：看不清文字、漏检物体或混淆空间关系是感知问题，优先检查分辨率、裁剪、视觉编码与证据输入；缺少外部知识或需要更新事实时评估 RAG；已有足够事实但步骤组合失败时可以尝试分解问题、CoT 提示或受约束的多步推理。推理文本看似合理不代表视觉证据被正确使用。
+
+CoT主要改变推理时的生成过程，部署快但增加 token 和时延，也可能放大初始感知错误。RAG 引入可追溯的外部证据，需要对图像对象/OCR、问题与文档进行检索和重排；召回错误与图文错配会把错误证据带给模型。SFT用稳定、可信的图文示范改变模型行为，适合反复出现的域内任务和输出格式，但需要标注、数据清洗和域外回归，也会有遗忘风险。
+
+三者可组合：检索知识后生成答案，或用SFT教模型读取图文证据和适时调用检索。资源充足仍不意味着自动选SFT；数据少、业务事实频繁变化、根因是输入缺失时，继续训练不一定解决问题。用同一测试集与预算比较直接回答、CoT、RAG、SFT及组合，并分开报告感知、知识、推理错误、视觉幻觉、准确率和延迟。训练样本及评测按图片/文档来源分组去重，避免同图不同问法泄露。
+
 #### 易错点
 
 - “RAG 只学知识、微调只学能力”是粗略划分，不是严格理论。
+- CoT、RAG、SFT是可组合的方法，不是互斥的模型架构。
+- 资源足够不能替代高质量监督、可靠证据和受控消融。
 
 #### 追问
 
-- 客服政策每天更新但答复格式严格，该怎么组合？
+- 如何设计遮图、换图和人工OCR输入的消融？
+- 知识每天变化，但答案格式很稳定，该怎样组合检索与微调？
 
 <a id="rag-003"></a>
 ### RAG-003 · chunk 大小、overlap 与父子、链式、树式索引怎样设计？
@@ -400,7 +409,7 @@ Lost in the Middle指某些实验中证据放在中段比首尾更难利用。�
 <a id="rag-015"></a>
 ### RAG-015 · 多模态 RAG 怎样检索图表、扫描 PDF 与视频？
 
-**L3**
+**L3** · 商汤
 
 #### 答案
 
@@ -442,6 +451,9 @@ DSPy强调用声明的程序/模块与指标优化提示、示例或模型权重
 - [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)
 - [Microsoft GraphRAG Local Search](https://github.com/microsoft/graphrag/blob/main/docs/query/local_search.md)
 - [RAG for Large Language Models: A Survey](https://arxiv.org/abs/2312.10997)
+- [Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903)
+- [OK-VQA: A Visual Question Answering Benchmark Requiring External Knowledge](https://arxiv.org/abs/1906.00067)
+- [LLaVA 官方仓库](https://github.com/haotian-liu/LLaVA)
 - [Chunk Documents — Azure AI Search](https://learn.microsoft.com/en-us/azure/search/vector-search-how-to-chunk-documents)
 - [LlamaIndex: How Each Index Works](https://developers.llamaindex.ai/python/framework/module_guides/indexing/index_guide/)
 - [Dense Passage Retrieval](https://arxiv.org/abs/2004.04906)

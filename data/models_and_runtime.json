@@ -723,9 +723,18 @@
         "ZH26-P27",
         "ZH26-P10"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "模型结构与版本对比"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S001",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "模型结构与版本对比",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "VLM-028",
@@ -787,9 +796,18 @@
         "MM-S018",
         "MM-S019"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "动态分辨率与位置编码"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S001",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "动态分辨率与位置编码",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "VLM-030",
@@ -818,9 +836,18 @@
         "ZH26-P09",
         "ZH26-P06"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "动态分辨率与位置编码"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S001",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "动态分辨率与位置编码",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "VLM-031",
@@ -879,9 +906,18 @@
         "ZH26-P11",
         "ZH26-P09"
       ],
-      "community_evidence": [],
-      "editorial": true,
-      "topic": "动态分辨率与位置编码"
+      "community_evidence": [
+        {
+          "source_id": "XHS26-S001",
+          "support": "reported_question",
+          "note": "笔记已读范围明确涉及此题，已与原题合并。"
+        }
+      ],
+      "editorial": false,
+      "topic": "动态分辨率与位置编码",
+      "company_tags": [
+        "字节跳动"
+      ]
     },
     {
       "id": "INF-016",
