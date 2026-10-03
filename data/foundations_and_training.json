@@ -1,0 +1,2552 @@
+{
+  "sources": [
+    {
+      "id": "WD26-JIEBA",
+      "title": "jieba 官方算法说明",
+      "url": "https://github.com/fxsjy/jieba",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "DAG",
+        "HMM",
+        "中文分词"
+      ]
+    },
+    {
+      "id": "WD26-SEQ",
+      "title": "Speech and Language Processing：序列标注",
+      "url": "https://web.stanford.edu/~jurafsky/slp3/18.pdf",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "POS",
+        "NER",
+        "CRF"
+      ]
+    },
+    {
+      "id": "WD26-HMM",
+      "title": "Speech and Language Processing：隐马尔可夫模型",
+      "url": "https://web.stanford.edu/~jurafsky/slp3/A.pdf",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "HMM",
+        "Viterbi"
+      ]
+    },
+    {
+      "id": "WD26-CONST",
+      "title": "Speech and Language Processing：成分句法",
+      "url": "https://web.stanford.edu/~jurafsky/slp3/19.pdf",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "CFG",
+        "句法分析"
+      ]
+    },
+    {
+      "id": "WD26-DEP",
+      "title": "Speech and Language Processing：依存句法",
+      "url": "https://web.stanford.edu/~jurafsky/slp3/20.pdf",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "依存句法",
+        "UAS",
+        "LAS"
+      ]
+    },
+    {
+      "id": "WD26-EMB",
+      "title": "Speech and Language Processing：词嵌入",
+      "url": "https://web.stanford.edu/~jurafsky/slp3/5.pdf",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "静态词向量",
+        "分布语义"
+      ]
+    },
+    {
+      "id": "WD26-W2V",
+      "title": "Efficient Estimation of Word Representations in Vector Space",
+      "url": "https://arxiv.org/abs/1301.3781",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "CBOW",
+        "Skip-gram"
+      ]
+    },
+    {
+      "id": "WD26-NS",
+      "title": "Distributed Representations of Words and Phrases and their Compositionality",
+      "url": "https://arxiv.org/abs/1310.4546",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "负采样",
+        "层次Softmax",
+        "subsampling"
+      ]
+    },
+    {
+      "id": "WD26-NGRAM",
+      "title": "Speech and Language Processing：N-gram语言模型",
+      "url": "https://web.stanford.edu/~jurafsky/slp3/3.pdf",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "语言模型",
+        "平滑"
+      ]
+    },
+    {
+      "id": "WD26-RNN",
+      "title": "Speech and Language Processing：RNN与LSTM",
+      "url": "https://web.stanford.edu/~jurafsky/slp3/14.pdf",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "RNN",
+        "LSTM",
+        "GRU"
+      ]
+    },
+    {
+      "id": "WD26-NN",
+      "title": "Speech and Language Processing：神经网络",
+      "url": "https://web.stanford.edu/~jurafsky/slp3/6.pdf",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "反向传播",
+        "激活函数"
+      ]
+    },
+    {
+      "id": "WD26-ADAM",
+      "title": "Adam: A Method for Stochastic Optimization",
+      "url": "https://arxiv.org/abs/1412.6980",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "SGD",
+        "Adam"
+      ]
+    },
+    {
+      "id": "WD26-GELU",
+      "title": "Gaussian Error Linear Units",
+      "url": "https://arxiv.org/abs/1606.08415",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "GELU",
+        "激活函数"
+      ]
+    },
+    {
+      "id": "WD26-INIT",
+      "title": "Delving Deep into Rectifiers",
+      "url": "https://arxiv.org/abs/1502.01852",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "He初始化",
+        "ReLU"
+      ]
+    },
+    {
+      "id": "WD26-BERT",
+      "title": "BERT: Pre-training of Deep Bidirectional Transformers",
+      "url": "https://arxiv.org/html/1810.04805v2",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "MLM",
+        "NSP",
+        "BERT"
+      ]
+    },
+    {
+      "id": "WD26-ROB",
+      "title": "RoBERTa: A Robustly Optimized BERT Pretraining Approach",
+      "url": "https://arxiv.org/html/1907.11692v1",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "动态mask",
+        "RoBERTa"
+      ]
+    },
+    {
+      "id": "WD26-ALB",
+      "title": "ALBERT: A Lite BERT",
+      "url": "https://arxiv.org/html/1909.11942v6",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "参数共享",
+        "SOP"
+      ]
+    },
+    {
+      "id": "WD26-SPAN",
+      "title": "SpanBERT: Improving Pre-training by Representing and Predicting Spans",
+      "url": "https://arxiv.org/abs/1907.10529",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "span masking",
+        "SBO"
+      ]
+    },
+    {
+      "id": "WD26-XLNET",
+      "title": "XLNet: Generalized Autoregressive Pretraining",
+      "url": "https://arxiv.org/abs/1906.08237",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "排列语言模型",
+        "双流注意力"
+      ]
+    },
+    {
+      "id": "WD26-GLM",
+      "title": "GLM: General Language Model Pretraining with Autoregressive Blank Infilling",
+      "url": "https://arxiv.org/abs/2103.10360",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "空白填充",
+        "二维位置编码"
+      ]
+    },
+    {
+      "id": "WD26-LLAMA1",
+      "title": "LLaMA: Open and Efficient Foundation Language Models",
+      "url": "https://arxiv.org/abs/2302.13971",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "LLaMA",
+        "RMSNorm",
+        "SwiGLU"
+      ]
+    },
+    {
+      "id": "WD26-LLAMA2",
+      "title": "Llama 2: Open Foundation and Fine-Tuned Chat Models",
+      "url": "https://arxiv.org/abs/2307.09288",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "Llama2",
+        "GQA"
+      ]
+    },
+    {
+      "id": "WD26-LLAMA3",
+      "title": "The Llama 3 Herd of Models",
+      "url": "https://arxiv.org/abs/2407.21783",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "Llama3",
+        "tokenizer"
+      ]
+    },
+    {
+      "id": "WD26-SWITCH",
+      "title": "Switch Transformers",
+      "url": "https://arxiv.org/abs/2101.03961",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "MoE",
+        "capacity",
+        "负载均衡"
+      ]
+    },
+    {
+      "id": "WD26-STMOE",
+      "title": "ST-MoE: Designing Stable and Transferable Sparse Expert Models",
+      "url": "https://arxiv.org/abs/2202.08906",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "router z-loss",
+        "MoE稳定性"
+      ]
+    },
+    {
+      "id": "WD26-T5",
+      "title": "Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer",
+      "url": "https://arxiv.org/abs/1910.10683",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "span corruption",
+        "T5"
+      ]
+    },
+    {
+      "id": "WD26-BART",
+      "title": "BART: Denoising Sequence-to-Sequence Pre-training",
+      "url": "https://arxiv.org/abs/1910.13461",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "BART",
+        "去噪重建"
+      ]
+    },
+    {
+      "id": "WD26-NAT",
+      "title": "Non-Autoregressive Neural Machine Translation",
+      "url": "https://arxiv.org/abs/1711.02281",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "非自回归",
+        "多模态分布"
+      ]
+    },
+    {
+      "id": "WD26-REPEAT",
+      "title": "Scaling Data-Constrained Language Models",
+      "url": "https://arxiv.org/abs/2305.16264",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "重复语料",
+        "多epoch"
+      ]
+    },
+    {
+      "id": "WD26-EMERGE",
+      "title": "Emergent Abilities of Large Language Models",
+      "url": "https://arxiv.org/abs/2206.07682",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "涌现",
+        "规模"
+      ]
+    },
+    {
+      "id": "WD26-MIRAGE",
+      "title": "Are Emergent Abilities of Large Language Models a Mirage?",
+      "url": "https://arxiv.org/abs/2304.15004",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "评估指标",
+        "涌现"
+      ]
+    },
+    {
+      "id": "WD26-BITFIT",
+      "title": "BitFit: Simple Parameter-efficient Fine-tuning",
+      "url": "https://arxiv.org/abs/2106.10199",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "bias tuning",
+        "BitFit"
+      ]
+    },
+    {
+      "id": "WD26-PT1",
+      "title": "GPT Understands, Too",
+      "url": "https://arxiv.org/abs/2103.10385",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "P-Tuning",
+        "soft prompt"
+      ]
+    },
+    {
+      "id": "WD26-PT2",
+      "title": "P-Tuning v2",
+      "url": "https://arxiv.org/abs/2110.07602",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "deep prompt",
+        "P-Tuningv2"
+      ]
+    },
+    {
+      "id": "WD26-ADALORA",
+      "title": "AdaLoRA: Adaptive Budget Allocation for Parameter-Efficient Fine-Tuning",
+      "url": "https://arxiv.org/abs/2303.10512",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "AdaLoRA",
+        "动态rank"
+      ]
+    },
+    {
+      "id": "WD26-AFUSION",
+      "title": "AdapterFusion: Non-Destructive Task Composition",
+      "url": "https://arxiv.org/abs/2005.00247",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "AdapterFusion"
+      ]
+    },
+    {
+      "id": "WD26-ADROP",
+      "title": "AdapterDrop: On the Efficiency of Adapters in Transformers",
+      "url": "https://arxiv.org/abs/2010.11918",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "AdapterDrop"
+      ]
+    },
+    {
+      "id": "WD26-UNIFIED",
+      "title": "Towards a Unified View of Parameter-Efficient Transfer Learning",
+      "url": "https://arxiv.org/abs/2110.04366",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "MAM Adapter",
+        "PEFT组合"
+      ]
+    },
+    {
+      "id": "WD26-UNIPELT",
+      "title": "UniPELT: A Unified Framework for Parameter-Efficient Language Model Tuning",
+      "url": "https://arxiv.org/abs/2110.07577",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "UniPELT",
+        "门控"
+      ]
+    },
+    {
+      "id": "WD26-KD",
+      "title": "Distilling the Knowledge in a Neural Network",
+      "url": "https://arxiv.org/abs/1503.02531",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "知识蒸馏",
+        "温度"
+      ]
+    },
+    {
+      "id": "WD26-SEQKD",
+      "title": "Sequence-Level Knowledge Distillation",
+      "url": "https://arxiv.org/abs/1606.07947",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "序列蒸馏"
+      ]
+    },
+    {
+      "id": "WD26-PKD",
+      "title": "Patient Knowledge Distillation for BERT Model Compression",
+      "url": "https://arxiv.org/abs/1908.09355",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "隐藏层蒸馏"
+      ]
+    },
+    {
+      "id": "WD26-TINY",
+      "title": "TinyBERT: Distilling BERT for Natural Language Understanding",
+      "url": "https://arxiv.org/abs/1909.10351",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "attention蒸馏",
+        "隐藏层蒸馏"
+      ]
+    },
+    {
+      "id": "WD26-PROMPT",
+      "title": "Pre-train, Prompt, and Predict",
+      "url": "https://arxiv.org/abs/2107.13586",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "Template",
+        "Verbalizer"
+      ]
+    },
+    {
+      "id": "WD26-GEN",
+      "title": "Transformers：Generation strategies",
+      "url": "https://huggingface.co/docs/transformers/main/en/generation_strategies",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "beam search",
+        "采样"
+      ]
+    },
+    {
+      "id": "WD26-DEGEN",
+      "title": "The Curious Case of Neural Text Degeneration",
+      "url": "https://arxiv.org/abs/1904.09751",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "复读",
+        "beam search",
+        "top-p"
+      ]
+    },
+    {
+      "id": "WD26-COMPILE",
+      "title": "PyTorch：torch.compile",
+      "url": "https://docs.pytorch.org/docs/stable/generated/torch.compile.html",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "编译",
+        "graph breaks"
+      ]
+    },
+    {
+      "id": "WD26-CUDA",
+      "title": "PyTorch：CUDA semantics",
+      "url": "https://docs.pytorch.org/docs/main/notes/cuda.html",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "CUDA Graphs",
+        "TF32"
+      ]
+    },
+    {
+      "id": "WD26-GRAMMAR",
+      "title": "XGrammar: Flexible and Efficient Structured Generation Engine",
+      "url": "https://arxiv.org/abs/2411.15100",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "结构化生成",
+        "grammar"
+      ]
+    },
+    {
+      "id": "WD26-WANDA",
+      "title": "A Simple and Effective Pruning Approach for Large Language Models",
+      "url": "https://arxiv.org/abs/2306.11695",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "剪枝",
+        "Wanda"
+      ]
+    },
+    {
+      "id": "WD26-TRT",
+      "title": "NVIDIA TensorRT：Advanced Topics",
+      "url": "https://docs.nvidia.com/deeplearning/tensorrt/latest/inference-library/advanced.html",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "结构化稀疏",
+        "2:4"
+      ]
+    },
+    {
+      "id": "WD26-MTF",
+      "title": "Mesh-TensorFlow: Deep Learning for Supercomputers",
+      "url": "https://arxiv.org/abs/1811.02084",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "混合并行",
+        "device mesh"
+      ]
+    },
+    {
+      "id": "WD26-GSPMD",
+      "title": "GSPMD: General and Scalable Parallelization",
+      "url": "https://arxiv.org/abs/2105.04663",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "自动并行",
+        "sharding"
+      ]
+    },
+    {
+      "id": "WD26-FLEXFLOW",
+      "title": "Beyond Data and Model Parallelism for Deep Neural Networks",
+      "url": "https://arxiv.org/abs/1807.05358",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "自动并行",
+        "SOAP"
+      ]
+    },
+    {
+      "id": "WD26-ALPA",
+      "title": "Alpa: Automating Inter- and Intra-Operator Parallelism",
+      "url": "https://arxiv.org/abs/2201.12023",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "自动并行",
+        "Alpa"
+      ]
+    },
+    {
+      "id": "WD26-GPIPE",
+      "title": "GPipe: Efficient Training of Giant Neural Networks",
+      "url": "https://arxiv.org/abs/1811.06965",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "GPipe",
+        "流水线"
+      ]
+    },
+    {
+      "id": "WD26-PIPEDREAM",
+      "title": "PipeDream: Generalized Pipeline Parallelism for DNN Training",
+      "url": "https://aaronharlap.github.io/papers/sosp19-pipedream.pdf",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "PipeDream",
+        "weight stashing"
+      ]
+    },
+    {
+      "id": "WD26-TF32",
+      "title": "PyTorch：Numerical accuracy",
+      "url": "https://docs.pytorch.org/docs/main/notes/numerical_accuracy.html",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "TF32",
+        "数值精度"
+      ]
+    },
+    {
+      "id": "WD26-NCCL",
+      "title": "NVIDIA NCCL：Performance and tuning",
+      "url": "https://docs.nvidia.com/deeplearning/nccl/archives/nccl_2307/user-guide/docs/troubleshooting/performance_and_tuning.html",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "拓扑",
+        "网络",
+        "带宽"
+      ]
+    },
+    {
+      "id": "WD26-TP25",
+      "title": "Colossal-AI：2.5D Tensor Parallelism",
+      "url": "https://colossalai.org/docs/features/2p5D_tensor_parallel/",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "2D",
+        "2.5D",
+        "3D张量并行"
+      ]
+    },
+    {
+      "id": "WD26-FIM",
+      "title": "Efficient Training of Language Models to Fill in the Middle",
+      "url": "https://arxiv.org/abs/2207.14255",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "FIM",
+        "代码填空"
+      ]
+    },
+    {
+      "id": "WD26-CODELLAMA",
+      "title": "Code Llama: Open Foundation Models for Code",
+      "url": "https://arxiv.org/abs/2308.12950",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "代码预训练",
+        "infill"
+      ]
+    },
+    {
+      "id": "WD26-TEXTRANK",
+      "title": "TextRank: Bringing Order into Text",
+      "url": "https://aclanthology.org/W04-3252/",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "TextRank",
+        "关键词"
+      ]
+    },
+    {
+      "id": "WD26-WORDPIECE",
+      "title": "Hugging Face：WordPiece tokenization",
+      "url": "https://huggingface.co/learn/llm-course/chapter6/6",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "WordPiece",
+        "tokenizer"
+      ]
+    },
+    {
+      "id": "WD26-DDP",
+      "title": "PyTorch：DistributedDataParallel",
+      "url": "https://docs.pytorch.org/docs/main/generated/torch.nn.parallel.DistributedDataParallel.html",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "DP",
+        "DDP"
+      ]
+    },
+    {
+      "id": "WD26-SVD",
+      "title": "PyTorch：torch.linalg.svd",
+      "url": "https://docs.pytorch.org/docs/main/generated/torch.linalg.svd.html",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "SVD",
+        "低秩近似"
+      ]
+    },
+    {
+      "id": "WD26-DEEPNORM",
+      "title": "DeepNet: Scaling Transformers to 1,000 Layers",
+      "url": "https://arxiv.org/abs/2203.00555",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "DeepNorm",
+        "残差缩放"
+      ]
+    },
+    {
+      "id": "WD26-GROUPNORM",
+      "title": "Group Normalization",
+      "url": "https://arxiv.org/abs/1803.08494",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "GroupNorm",
+        "归一化轴"
+      ]
+    },
+    {
+      "id": "WD26-INSTNORM",
+      "title": "Instance Normalization",
+      "url": "https://arxiv.org/abs/1607.08022",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "InstanceNorm",
+        "归一化轴"
+      ]
+    },
+    {
+      "id": "WD26-ADDITIVE",
+      "title": "Neural Machine Translation by Jointly Learning to Align and Translate",
+      "url": "https://arxiv.org/abs/1409.0473",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "加性attention"
+      ]
+    },
+    {
+      "id": "WD26-RMSNORM",
+      "title": "Root Mean Square Layer Normalization",
+      "url": "https://arxiv.org/abs/1910.07467",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "RMSNorm",
+        "pRMSNorm"
+      ]
+    },
+    {
+      "id": "WD26-GLM2",
+      "title": "ChatGLM2-6B 官方仓库",
+      "url": "https://github.com/THUDM/ChatGLM2-6B",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "ChatGLM2",
+        "MQA"
+      ]
+    },
+    {
+      "id": "WD26-GLM3",
+      "title": "ChatGLM3 官方仓库",
+      "url": "https://github.com/THUDM/ChatGLM3",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "用于核对原理、公式与适用边界；答案重新组织编写。",
+      "topics": [
+        "ChatGLM3",
+        "工具调用"
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "BAS-001",
+      "category": "BAS",
+      "title": "中文分词有哪些难点？jieba 的 DAG、动态规划和 HMM 如何配合？",
+      "level": "L1",
+      "tags": [
+        "中文分词",
+        "DAG",
+        "HMM"
+      ],
+      "answer": {
+        "body": "中文文本缺少天然空格边界，难点是切分标准、歧义与未登录词，例如“研究生命起源”不能仅靠最长匹配决定词界。jieba 精确模式先用前缀词典枚举各位置可能结束的词，构成有向无环图，再以词频估计的对数概率做动态规划，选全句得分最大的路径。它优化整体路径，局部最长词不一定最好。\n\n对词典无法可靠覆盖的片段，默认可用字符级 HMM，以 B/M/E/S 表示词首、词中、词尾和单字词，Viterbi 找最高概率标签路径。搜索模式会进一步切开长词以提高召回，全模式则枚举候选，通常不适合作唯一精确切分。业务中加入领域词典、检查频率与歧义例句，并分别测词界 F1 和下游检索效果；词级分词与 LLM 子词 tokenizer 的目标不同。",
+        "formula": "D(i)=\\max_{j\\in\\operatorname{DAG}(i)}\\{\\log P(x_{i:j})+D(j+1)\\},\\qquad D(n+1)=0",
+        "pitfalls": [
+          "把 jieba 的最大概率路径等同于最长词优先。",
+          "把中文分词的词界直接当作模型 tokenizer 的 token 边界。"
+        ],
+        "followups": [
+          "为什么新增领域词频会影响相邻词的切分？",
+          "词典法与序列标注法怎样处理未登录词？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-JIEBA",
+        "WD26-HMM"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "分词与文本表示"
+    },
+    {
+      "id": "BAS-002",
+      "category": "BAS",
+      "title": "POS、NER 如何做序列标注？HMM、独立分类与 CRF 有什么区别？",
+      "level": "L2",
+      "tags": [
+        "NER",
+        "POS",
+        "CRF"
+      ],
+      "answer": {
+        "body": "词性标注为每个词分配语法类别，NER 通常用 BIO/BIOES 描述实体类别和边界。HMM 建模标签转移与观测发射的联合概率，利用生成式条件独立假设；神经编码器加逐位置 softmax 直接学习标签概率，但独立 argmax 可能得到非法 BIO 转移。线性链 CRF 在整条标签序列上归一化，把发射分数与相邻标签转移分数共同训练，能显式表达转移偏好。\n\n训练用真实序列分数减 log-partition，分母通过前向动态规划的 logsumexp 计算；预测用 Viterbi，把求和换成 max 并保存回溯指针，复杂度通常为 O(TK²)。CRF 不会自动理解实体语义，质量仍依赖编码器和标注。需要正确 mask padding、约束非法转移、区分 token accuracy 与实体级 precision/recall/F1；嵌套实体未必能用单条 BIO 标签表达。",
+        "formula": "\\begin{aligned}s(x,y)&=\\sum_t e_t(y_t)+\\sum_t A_{y_{t-1},y_t}\\\\p(y\\mid x)&=\\frac{e^{s(x,y)}}{\\sum_{y'}e^{s(x,y')}}\\\\\\mathcal L&=-s(x,y)+\\log\\sum_{y'}e^{s(x,y')}\\end{aligned}",
+        "pitfalls": [
+          "把 CRF 的训练归一化当作逐 token softmax。",
+          "只报 token 准确率而忽略实体边界错误。"
+        ],
+        "followups": [
+          "CRF 前向算法与 Viterbi 的递推有什么不同？",
+          "子词 tokenizer 后如何对齐词级标签？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-SEQ",
+        "WD26-HMM"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "序列任务与经典 NLP"
+    },
+    {
+      "id": "BAS-003",
+      "category": "BAS",
+      "title": "成分句法与依存句法分别预测什么，怎样评价解析结果？",
+      "level": "L2",
+      "tags": [
+        "句法分析",
+        "CFG",
+        "依存句法"
+      ],
+      "answer": {
+        "body": "成分句法把连续片段组织为短语树，例如名词短语、动词短语，常以 CFG 或概率 CFG 表示；依存句法在词之间建立有向中心词关系，例如主语、宾语。两者描述同一句子的不同结构，不能把依存边直接视为短语标签。\n\n成分解析可通过 chart/CKY 动态规划组合跨度，标准二元 CFG 的 CKY 复杂度约 O(n³|G|)，神经 span parser 为跨度打分后施加树约束。依存解析常见转移式解析或图式解析，后者为 head-dependent 边打分，再求满足单一中心词、连通与无环约束的树。成分结果常测标注跨度 F1；依存结果测 UAS（中心词正确）与 LAS（中心词和关系都正确），须说明标点与分词口径。解析能提供结构信号，但通用 LLM 不必先跑显式句法分析才能理解语言。",
+        "formula": "\\operatorname{UAS}=\\frac{\\#\\{i:\\hat h_i=h_i\\}}{N},\\qquad\\operatorname{LAS}=\\frac{\\#\\{i:\\hat h_i=h_i,\\hat r_i=r_i\\}}{N}",
+        "pitfalls": [
+          "混淆 constituency 的跨度标签与 dependency 的中心词边。",
+          "把不同分词口径的 UAS/LAS 直接比较。"
+        ],
+        "followups": [
+          "图式解析为何不能对每个词独立选最优 head 后结束？",
+          "非投射依存树和投射树有什么差别？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-CONST",
+        "WD26-DEP"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "序列任务与经典 NLP"
+    },
+    {
+      "id": "BAS-004",
+      "category": "BAS",
+      "title": "one-hot、静态词向量与上下文 embedding 的区别是什么？",
+      "level": "L1",
+      "tags": [
+        "词表示",
+        "embedding",
+        "ELMo"
+      ],
+      "answer": {
+        "body": "one-hot 为每个词分配独立坐标，没有编码语义相似性。静态词向量用一个查表矩阵把词映射到低维密集向量，共现或上下文预测目标使相似使用环境的词接近；同一个词形通常只有一个向量，难直接区分一词多义。上下文 embedding 则由序列编码器计算，词在“苹果发布新品”和“吃苹果”中能得到不同表示。\n\n计数式向量可由共现矩阵、PPMI 和低秩分解得到，预测式向量可用 Word2Vec 学习；它们都依赖语料和上下文定义。ELMo 拼接分别训练的双向语言模型特征，BERT 在每层联合融合双向上下文，GPT 隐状态只依赖可见前缀。词向量平均或原始 BERT 的 CLS 并不自动成为高质量句向量，检索通常还需句级训练、pooling 与归一化。余弦相似度描述所选表示空间中的角度相似，不能单独证明事实一致。",
+        "formula": "\\begin{aligned}e(w)&=E^\\top\\operatorname{onehot}(w)\\\\h_t&=f_\\theta(x_{1:T})_t\\\\\\operatorname{cos}(u,v)&=\\frac{u^\\top v}{\\lVert u\\rVert\\lVert v\\rVert}\\end{aligned}",
+        "pitfalls": [
+          "把词 embedding、上下文 token 隐状态和检索用句向量混为一谈。",
+          "认为向量加减类比对任何语料与词汇都成立。"
+        ],
+        "followups": [
+          "为什么静态词向量很难表达多义词？",
+          "均值 pooling 为什么需要正确排除 padding？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-EMB",
+        "WD26-BERT"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "分词与文本表示"
+    },
+    {
+      "id": "BAS-005",
+      "category": "BAS",
+      "title": "Word2Vec 的 CBOW 和 Skip-gram 如何训练，有哪些关键细节？",
+      "level": "L1",
+      "tags": [
+        "Word2Vec",
+        "CBOW",
+        "Skip-gram"
+      ],
+      "answer": {
+        "body": "CBOW 用窗口内上下文词向量的平均或求和预测中心词，Skip-gram 用中心词分别预测窗口中的上下文词。两者都有输入向量表和输出向量表，并非仅有一个 embedding 矩阵。完整 softmax 下，Skip-gram 对每个中心—上下文词对最大化条件概率；实际可换成负采样或层次 softmax 以减少输出端计算。\n\nCBOW 聚合上下文，计算较便宜；Skip-gram 从一个中心词生成多个训练对，常用于学习较少见词的表示，但优劣取决于数据与训练配方。常见技巧包括高频词 subsampling、随机窗口宽度和词频阈值，减少功能词支配训练；均值聚合通常丢失词序。训练后可取输入向量或组合两表，需明确口径。增量训练要正确更新词表和频率，并保留旧领域数据，否则新语料会改变已有向量空间；这不等同于冻结老向量只添新词。",
+        "formula": "\\begin{aligned}p(o\\mid c)&=\\frac{\\exp(u_o^\\top v_c)}{\\sum_{w\\in V}\\exp(u_w^\\top v_c)}\\\\\\mathcal L_{\\rm SG}&=-\\sum_{(c,o)}\\log p(o\\mid c)\\\\\\bar v_C&=\\frac1{|C|}\\sum_{w\\in C}v_w\\quad(\\mathrm{CBOW})\\end{aligned}",
+        "pitfalls": [
+          "把 Skip-gram 说成“多个上下文预测中心词”。",
+          "把窗口共现关系等同于全局语义真值。"
+        ],
+        "followups": [
+          "为什么需要输入、输出两张向量表？",
+          "随机缩小窗口如何改变近邻词的训练权重？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-W2V",
+        "WD26-NS"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "分词与文本表示"
+    },
+    {
+      "id": "BAS-006",
+      "category": "BAS",
+      "title": "负采样与层次 Softmax 怎样加速 Word2Vec，是否等价于原始 Softmax？",
+      "level": "L2",
+      "tags": [
+        "负采样",
+        "Hierarchical Softmax",
+        "Word2Vec"
+      ],
+      "answer": {
+        "body": "完整 softmax 需要遍历整个输出词表。层次 softmax 用二叉树的路径概率表示词概率，只更新目标词路径上的节点；Huffman 树让高频词路径较短，典型路径长度约 log|V|，并保持一个归一化的分布。负采样把观察到的词对作为正例，从噪声分布抽 K 个负例，对每个词对做 sigmoid 二分类，只更新这些输出向量。\n\n负采样不是完整 softmax 的精确无偏梯度，也不直接产生所有词的归一化条件概率；它换了训练目标，以高效学习词表示。原始 Word2Vec 常用词频的 3/4 次方构造噪声分布，K 和噪声质量影响效果。负例不等于“语义上完全无关的词”，误负例应通过统计而非绝对断言理解。层次 softmax 的树结构、负采样的随机种子和输入/输出向量选择都会影响复现。",
+        "formula": "\\begin{aligned}\\mathcal L_{\\rm NS}&=-\\log\\sigma(u_o^\\top v_c)-\\sum_{k=1}^{K}\\log\\sigma(-u_{n_k}^\\top v_c)\\\\n_k&\\sim P_n(w)\\propto f(w)^{3/4}\\\\p_{\\rm HS}(w\\mid c)&=\\prod_{j\\in\\operatorname{path}(w)}\\sigma(b_j u_j^\\top v_c),\\quad b_j\\in\\{-1,1\\}\\end{aligned}",
+        "pitfalls": [
+          "宣称负采样是原始多分类 softmax 的完全等价实现。",
+          "把所有抽出的负例都视为确定无关。"
+        ],
+        "followups": [
+          "层次 softmax 为什么能够定义归一化词概率？",
+          "SGNS 与 PMI 矩阵分解有什么联系？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-NS",
+        "WD26-W2V"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "分词与文本表示"
+    },
+    {
+      "id": "BAS-007",
+      "category": "BAS",
+      "title": "N-gram 与神经语言模型怎样估计序列概率，平滑解决什么问题？",
+      "level": "L1",
+      "tags": [
+        "语言模型",
+        "N-gram",
+        "平滑"
+      ],
+      "answer": {
+        "body": "语言模型为 token 序列赋予概率，概率链式法则本身是精确的；N-gram 额外作有限阶 Markov 近似，只看前 N−1 个词，通过计数估计条件概率。未经平滑的最大似然估计会给未见组合零概率，使测试文本整体概率为零、perplexity 无穷。加法平滑、插值/回退和 Kneser-Ney 等方法为未见事件分配质量，同时调整已见事件。\n\n神经语言模型用共享向量和网络预测分布，能在不同上下文间泛化；RNN 顺序更新状态，Transformer 按 mask 聚合上下文，仍须受训练数据和上下文窗口限制。N-gram 通常便宜、可解释且适合作基线，但稀疏性和长依赖弱；神经模型规模大不保证特定分布上更可靠。比较 perplexity 要固定 tokenizer、测试集、上下文和计分 token，否则其数值不具可比性。\n\nNLP是处理人类语言的研究领域，LLM是其中一类语言建模技术，不能把二者视为互斥类别。传统方案常为分类、抽取等任务训练专门模型；LLM通过通用预训练、指令微调和上下文示例支持多任务，但小型专用模型也可能在固定任务的成本与精度上更合适。LLM没有统一的百亿参数起点，参数规模本身也不证明具备推理或指令能力。",
+        "formula": "\\begin{aligned}p(x_{1:T})&=\\prod_{t=1}^T p(x_t\\mid x_{<t})\\\\p_{N\\text{-gram}}(x_t\\mid x_{<t})&\\approx\\frac{C(x_{t-N+1:t})}{C(x_{t-N+1:t-1})}\\\\p_{\\rm add\\text{-}\\alpha}(w\\mid h)&=\\frac{C(h,w)+\\alpha}{C(h)+\\alpha |V|}\\end{aligned}",
+        "pitfalls": [
+          "把概率链式法则和 N-gram 截断近似当作同一假设。",
+          "为平滑分配额外质量却不重归一化。"
+        ],
+        "followups": [
+          "为什么 Kneser-Ney 更关注不同上下文中的出现次数？",
+          "N-gram 和神经模型的 OOV 策略如何影响 PPL？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-NGRAM"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "分词与文本表示"
+    },
+    {
+      "id": "BAS-008",
+      "category": "BAS",
+      "title": "CNN、RNN 与 Transformer 在序列建模、长依赖和并行性上怎样比较？",
+      "level": "L1",
+      "tags": [
+        "CNN",
+        "RNN",
+        "Transformer"
+      ],
+      "answer": {
+        "body": "CNN 用共享局部卷积核提取邻近片段模式，堆叠、空洞卷积或较大卷积核可扩大感受野；RNN 把上一时刻状态传给下一时刻，天然支持在线顺序处理；Transformer 的注意力直接连接可见位置，再以 FFN 做逐位置变换。三者都能共享参数，差别在跨位置的信息传递规则。\n\nRNN 的训练在时间轴有顺序依赖，长路径容易遇到梯度问题；CNN 的独立位置可并行，但远距离需要更多层或设计；全注意力的远距离路径较短，训练可在位置轴并行，代价是标准注意力的二次交互计算。Decoder Transformer 的 teacher forcing 训练可并行，普通自回归生成仍依赖前一个输出；这与层间串行是不同维度。不存在脱离数据、长度、硬件的固定效果排名，流式和边缘任务中 RNN/CNN 仍有合理应用。",
+        "formula": "\\begin{aligned}h_t^{\\rm RNN}&=\\phi(W_xx_t+W_hh_{t-1}+b)\\\\h_t^{\\rm CNN}&=\\phi\\!\\left(\\sum_{j=-k}^{k}W_jx_{t+j}+b\\right)\\\\H^{\\rm attn}&=\\operatorname{softmax}(QK^\\top/\\sqrt{d_k}+M)V\\end{aligned}",
+        "pitfalls": [
+          "把 Transformer 的训练并行推广为所有生成步骤并行。",
+          "以某次机器翻译结果宣称 CNN/RNN/Transformer 的效果排名永远固定。"
+        ],
+        "followups": [
+          "空洞卷积怎样扩大感受野？",
+          "causal RNN 与 bidirectional RNN 的在线使用条件有何区别？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-RNN",
+        "WD26-LLAMA1"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "序列任务与经典 NLP"
+    },
+    {
+      "id": "BAS-009",
+      "category": "BAS",
+      "title": "LSTM 与 GRU 怎样缓解普通 RNN 的梯度问题，有何结构区别？",
+      "level": "L2",
+      "tags": [
+        "LSTM",
+        "GRU",
+        "BPTT"
+      ],
+      "answer": {
+        "body": "普通 RNN 的反向梯度跨时间连续乘 Jacobian，谱尺度持续小于或大于 1 时容易消失或爆炸。LSTM 维护 cell state，用遗忘门保留旧状态、输入门写入候选、输出门控制暴露的 hidden state；沿 cell 的直接路径是加法更新，能减轻长依赖的优化困难。GRU 通常只有一个状态，更新门在旧状态与候选之间插值，重置门调节生成候选时使用多少旧状态，参数通常较少。\n\n门控并不保证任意长度无损记忆，门接近关闭时仍会阻断梯度，梯度裁剪也只控制爆炸。GRU 的更新门定义和重置门应用位置在不同文献/框架里可能不同，手写前先固定约定。LSTM/GRU 都在时间轴递归，双向版本能利用左右上下文但不能直接用于未知未来的在线预测。选择应根据序列长度、流式要求、吞吐和任务验证。",
+        "formula": "\\begin{aligned}c_t&=f_t\\odot c_{t-1}+i_t\\odot\\tilde c_t,\\quad h_t=o_t\\odot\\tanh(c_t)\\\\\\tilde h_t^{\\rm GRU}&=\\tanh(W_xx_t+W_h(r_t\\odot h_{t-1})+b)\\\\h_t^{\\rm GRU}&=(1-z_t)\\odot h_{t-1}+z_t\\odot\\tilde h_t\\end{aligned}",
+        "pitfalls": [
+          "说门控能彻底消除所有梯度消失。",
+          "忘记不同 GRU 实现可能把 z 与 1−z 的角色互换。"
+        ],
+        "followups": [
+          "LSTM 的 cell state 和 hidden state 为什么分开？",
+          "截断 BPTT 会牺牲什么梯度信息？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-RNN"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "序列任务与经典 NLP"
+    },
+    {
+      "id": "BAS-010",
+      "category": "BAS",
+      "title": "Sigmoid、Tanh、ReLU、GELU 与 SiLU 的公式和梯度特点是什么？",
+      "level": "L1",
+      "tags": [
+        "激活函数",
+        "GELU",
+        "SiLU"
+      ],
+      "answer": {
+        "body": "没有非线性时，多层线性映射仍可合成一个线性映射。Sigmoid 将值压到 (0,1)，适合二元概率或门；Tanh 输出在 (−1,1)，但两者在绝对值大时都易饱和。ReLU 对正值梯度为 1、负值为 0，计算简单，但神经元可能长期落在负区间；Leaky ReLU/PReLU 用固定或可学习的小负侧斜率减轻这一问题。\n\nGELU 为 xΦ(x)，平滑地按标准正态 CDF 调节输入；SiLU 为 xσ(x)，Swish 常写 xσ(βx)，β=1 时就是 SiLU。它们保留部分负输入，常用于 Transformer FFN；GLU/SwiGLU 是两个投影分支相乘的门控结构，不是仅替换一个标量激活。激活选择要和初始化、归一化、精度与 FFN 中间维度一起比较，不能因负值可通过就推断一定收敛更快。\n\nELU 在正侧为 x、负侧为 α(exp(x)−1)，负侧会饱和，α=1 时零点处一阶导数连续。RReLU 则在训练时随机取负侧斜率、推理时常用其期望值；PReLU 的斜率是学习得到的参数。三者的参数和随机性不同，早期 CNN 实验的优劣不能直接推广为所有 LLM 的结论。",
+        "formula": "\\begin{aligned}\\sigma(x)&=(1+e^{-x})^{-1},\\quad\\sigma'(x)=\\sigma(x)(1-\\sigma(x))\\\\\\tanh'(x)&=1-\\tanh^2(x)\\\\\\operatorname{ReLU}(x)&=\\max(0,x)\\\\\\operatorname{GELU}(x)&=x\\Phi(x)\\\\\\operatorname{SiLU}(x)&=x\\sigma(x),\\quad\\operatorname{SiLU}'(x)=\\sigma(x)+x\\sigma(x)(1-\\sigma(x))\\end{aligned}",
+        "pitfalls": [
+          "把 SwiGLU 当作只含一个投影的 SiLU 激活。",
+          "把 ReLU 在 0 点的实现导数约定说成唯一数学导数。"
+        ],
+        "followups": [
+          "GELU 的近似式为什么与精确式略有差异？",
+          "ReLU 的死亡问题与梯度爆炸分别如何识别？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-NN",
+        "WD26-GELU",
+        "WD26-ELU",
+        "WD26-RRELU"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "深度学习与优化基础"
+    },
+    {
+      "id": "BAS-011",
+      "category": "BAS",
+      "title": "SGD、Momentum、AdaGrad、RMSProp 与 Adam 的更新规则怎样理解？",
+      "level": "L2",
+      "tags": [
+        "优化器",
+        "SGD",
+        "Momentum",
+        "Adam"
+      ],
+      "answer": {
+        "body": "Mini-batch SGD 用当前批次的梯度更新参数，动量用过去梯度的指数滑动累积减少振荡、维持方向。AdaGrad 累积平方梯度，为频繁更新坐标降低有效学习率，适合某些稀疏问题但学习率可能持续衰减；RMSProp 用平方梯度的指数平均缓解无界累积。Adam 同时维护一阶与二阶矩估计，并在零初始化时做偏差校正。\n\nAdam 中二阶矩是未中心化平方梯度的平均，不等同于梯度方差；除以其平方根也不意味着把所有坐标真实曲率准确求出。实现要区分 optimizer step 与 microbatch、明确 epsilon 放置和权重衰减；AdamW 的解耦衰减另见预训练题。Nesterov 动量在前瞻位置估计方向，AdaDelta 利用更新量与梯度量的滑动统计调节尺度，这些方法没有统一适用所有任务的排名。",
+        "formula": "\\begin{aligned}m_t&=\\beta_1m_{t-1}+(1-\\beta_1)g_t\\\\v_t&=\\beta_2v_{t-1}+(1-\\beta_2)g_t^2\\\\\\hat m_t&=m_t/(1-\\beta_1^t),\\quad\\hat v_t=v_t/(1-\\beta_2^t)\\\\\\theta_{t+1}&=\\theta_t-\\eta_t\\hat m_t/(\\sqrt{\\hat v_t}+\\epsilon)\\end{aligned}",
+        "pitfalls": [
+          "把二阶矩 v 当作已减均值的方差。",
+          "每个 microbatch 都更新 Adam 状态却称它等价梯度累积。"
+        ],
+        "followups": [
+          "为什么初始化的动量需要偏差校正？",
+          "AdaGrad 的有效学习率为什么通常随训练下降？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-ADAM"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "深度学习与优化基础"
+    },
+    {
+      "id": "BAS-012",
+      "category": "BAS",
+      "title": "反向传播怎样使用链式法则？线性层、MSE 与 Softmax 交叉熵如何求梯度？",
+      "level": "L1",
+      "tags": [
+        "反向传播",
+        "链式法则",
+        "梯度"
+      ],
+      "answer": {
+        "body": "反向传播按计算图的逆拓扑顺序把上游梯度乘局部 Jacobian，并累加所有分支对同一变量的贡献。它不是数值差分，也不是每次显式构造整个 Jacobian；自动微分通常计算 vector-Jacobian product。线性层 Y=XW+b 的梯度为 XᵀG、GWᵀ，bias 梯度沿样本维求和；共享参数必须累加每次使用的贡献。\n\nMSE 用预测误差驱动回归，softmax 加交叉熵的 logits 梯度则是 p−y（在规范标签和相同归一化条件下）。mean reduction 会引入对应样本或 token 数的除数，loss mask 使未监督项梯度为零，但这些输入仍可能通过注意力影响被监督输出。定位梯度错误可用小尺寸有限差分核对、检查 detach/in-place 修改和梯度清零；有限差分只作验证，步长过小会受浮点消减影响。",
+        "formula": "\\begin{aligned}Y&=XW+b,\\quad G=\\partial\\mathcal L/\\partial Y\\\\\\nabla_W\\mathcal L&=X^\\top G,\\quad\\nabla_X\\mathcal L=GW^\\top,\\quad\\nabla_b\\mathcal L=\\sum_iG_i\\\\\\mathcal L_{\\rm MSE}&=\\frac1n\\sum_i(\\hat y_i-y_i)^2\\\\\\frac{\\partial\\mathcal L_{\\rm CE}}{\\partial z_i}&=p_i-y_i\\quad\\text{(single example)}\\end{aligned}",
+        "pitfalls": [
+          "共享参数仅保留最后一次调用的梯度。",
+          "混淆 sum、按样本 mean 和按有效 token mean 的尺度。"
+        ],
+        "followups": [
+          "为什么 logsoftmax 与 NLL 合并后的梯度比单看 softmax Jacobian 更直接？",
+          "梯度检查应该如何选择有限差分步长？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-NN"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "深度学习与优化基础"
+    },
+    {
+      "id": "BAS-013",
+      "category": "BAS",
+      "title": "过拟合、欠拟合与数据泄露怎样区分，L1/L2、早停和 Dropout 分别做什么？",
+      "level": "L2",
+      "tags": [
+        "泛化",
+        "过拟合",
+        "正则化"
+      ],
+      "answer": {
+        "body": "训练与验证都差可能是欠拟合、目标不合适或优化失败；训练好而独立验证差常提示过拟合或分布差异，不能只由两条 loss 曲线确定原因。数据泄露会让验证异常乐观，例如相同文档的相邻块落到训练和验证、预处理在全数据拟合，或反复根据测试集调参。应按文档、用户、时间或实体分组切分，保留真正未参与选择的测试集。\n\nL2 惩罚连续压小参数，L1 鼓励部分坐标变零；在自适应优化器里显式 L2 与解耦 weight decay 不等价。早停依据验证趋势选择 checkpoint，dropout 在训练中随机屏蔽与缩放激活以正则化；它们都无法替代高质量数据或消除分布漂移。实际排查先核对数据切分和评测实现，再比较训练曲线、数据量消融、容量与正则强度，不通过单纯增加训练 epoch“解决”泄露。",
+        "formula": "\\mathcal L_{L_1}=\\mathcal L_{\\rm data}+\\lambda\\lVert\\theta\\rVert_1,\\qquad\\mathcal L_{L_2}=\\mathcal L_{\\rm data}+\\frac\\lambda2\\lVert\\theta\\rVert_2^2",
+        "pitfalls": [
+          "把验证集反复用于决策后仍视为最终无偏测试。",
+          "只凭 train/val gap 断言问题必然是参数太多。"
+        ],
+        "followups": [
+          "为什么同文档的 chunk 应避免跨训练/验证集合？",
+          "L1 的零点处应该使用什么梯度概念？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-NN",
+        "WD26-ADAM"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "深度学习与优化基础"
+    },
+    {
+      "id": "BAS-014",
+      "category": "BAS",
+      "title": "Xavier、He 初始化与 embedding 乘 √d_model 的目的是什么？",
+      "level": "L2",
+      "tags": [
+        "初始化",
+        "Xavier",
+        "He",
+        "embedding"
+      ],
+      "answer": {
+        "body": "初始化要控制深层网络前向激活和反向梯度的尺度。对近似独立零均值输入，线性层的输出方差与 fan-in、权重方差相乘；Xavier 综合 fan-in/fan-out，适用于近似线性或对称激活的分析；He 对 ReLU 丢弃约一半输入的情形使用约 2/fan-in 的权重方差。假设会受相关性、残差、归一化和门控影响，所以这是设计起点而非任意网络的稳定性证明。\n\n原始 Transformer 将输入 embedding 乘 √d_model 后加位置编码，用来调节词表示相对于位置表示的尺度，并配合其共享 embedding 的参数化。现代模型可能直接使用未缩放 embedding，具体要看初始化和前向代码。输出 logits 是否缩放、Norm 放置和 residual 缩放是不同机制；不能见到“√d”就一概归因于注意力的缩放点积。初始化后可测各层激活 RMS、logits 和梯度范数，验证是否稳定。",
+        "formula": "\\begin{aligned}\\operatorname{Var}(Wx)_i&\\approx\\operatorname{fan\\_in}\\operatorname{Var}(W_{ij})\\operatorname{Var}(x_j)\\\\\\operatorname{Var}(W)_{\\rm Xavier}&\\approx\\frac{2}{\\operatorname{fan\\_in}+\\operatorname{fan\\_out}}\\\\\\operatorname{Var}(W)_{\\rm He}&\\approx\\frac{2}{\\operatorname{fan\\_in}}\\end{aligned}",
+        "pitfalls": [
+          "把 embedding 的 √d_model 缩放说成所有 Transformer 的必需组件。",
+          "把初始化方差的独立性分析当作训练全过程成立。"
+        ],
+        "followups": [
+          "残差分支叠加为什么可能需要额外的深度缩放？",
+          "均匀分布和正态分布怎样匹配同一目标方差？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-INIT",
+        "WD26-LLAMA1",
+        "CORE-S020"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "深度学习与优化基础"
+    },
+    {
+      "id": "ARC-001",
+      "category": "ARC",
+      "title": "BERT 的 MLM 与 NSP 怎么训练，15% 和 80/10/10 代表什么？",
+      "level": "L1",
+      "tags": [
+        "BERT",
+        "MLM",
+        "NSP"
+      ],
+      "answer": {
+        "body": "原始 BERT 是双向 Transformer encoder。MLM 先选择约 15% 的 WordPiece 位置作为监督集合，在被选位置中约 80% 换为 MASK、10% 换为随机词、10% 保留原词，并对这些位置预测原始 token；未选位置不直接计 MLM loss。80/10/10 缓解预训练与下游没有 MASK 的输入差异，同时保持主要去噪信号，并不是理论最优比例。\n\nNSP 为句对判别任务，原配方约一半用相邻片段、一半用随机片段；利用 CLS 表示预测 IsNext/NotNext，与 MLM loss 组合。MLM 的“遮蔽”是输入 token 扰动，双向 attention 仍可访问被扰动位置及两侧上下文，和 causal attention mask 完全不同。CLS 表示通过预训练任务与下游监督学会聚合信息，不天然是最佳通用句向量。BERT 可接分类、序列标注或起止位置预测头，不能直接把其双向 MLM 当作普通左到右生成器。",
+        "formula": "\\mathcal L_{\\rm MLM}=-\\sum_{i\\in\\mathcal M}\\log p_\\theta(x_i\\mid\\tilde x),\\qquad\\mathcal L_{\\rm BERT}=\\mathcal L_{\\rm MLM}+\\mathcal L_{\\rm NSP}",
+        "pitfalls": [
+          "把“15%被选用于预测”说成全部15%都换成 MASK。",
+          "用 causal attention mask 代替 MLM 的输入扰动。"
+        ],
+        "followups": [
+          "保留原词的10%是否等同于取消所有去噪训练？",
+          "为什么后来的方法可以去掉 NSP？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-BERT"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "预训练模型与家族对比"
+    },
+    {
+      "id": "ARC-002",
+      "category": "ARC",
+      "title": "BERT 的 token、segment、position embedding 为何相加？512 是数学上限吗？",
+      "level": "L2",
+      "tags": [
+        "BERT",
+        "embedding",
+        "长文本"
+      ],
+      "answer": {
+        "body": "原始 BERT 输入为 WordPiece embedding、token-type/segment embedding 和可学习绝对位置 embedding 的和，再做 LayerNorm 与 dropout。它们共享 hidden 维度，相加能保持后续层输入大小；参数会共同学习各信息如何使用，并不存在“相加必然毁掉语义”的结论。CLS 常用于句级任务，SEP 标识分隔；segment 的 A/B 标签用来区分句对，许多单句任务都用同一个 segment。\n\n512 是原始模型的最大位置表与训练长度配置，不是 Transformer 的普遍数学上限，也不是512个中文词。超长输入可截断、滑窗分块加聚合，或扩位置表并继续训练；直接补随机位置或插值不能保证效果，成本仍受注意力和激活规模限制。若是抽取问答，要保留块到原文的offset与跨块答案处理；若是句向量，验证池化和训练目标。BERT 输入加法与 RoPE 旋转 Q/K 属于不同位置参数化。",
+        "formula": "h_i^{(0)}=\\operatorname{LN}(E_{x_i}+S_{a_i}+P_i),\\qquad E_{x_i},S_{a_i},P_i\\in\\mathbb R^d",
+        "pitfalls": [
+          "把最大位置表大小当作算法不能改变的理论上限。",
+          "把 token 数等同于空格词数或汉字数。"
+        ],
+        "followups": [
+          "没有句对任务时 token-type embedding 能否省略？",
+          "滑窗问答的答案横跨两个块时该怎样处理？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-BERT"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "预训练模型与家族对比"
+    },
+    {
+      "id": "ARC-003",
+      "category": "ARC",
+      "title": "RoBERTa、ALBERT 与 SpanBERT 分别改进了 BERT 的什么？",
+      "level": "L2",
+      "tags": [
+        "RoBERTa",
+        "ALBERT",
+        "SpanBERT"
+      ],
+      "answer": {
+        "body": "RoBERTa 重点改训练配方：更多数据和训练、较大 batch、动态 MLM mask、去掉 NSP，并采用 byte-level BPE。它说明训练条件会影响架构对比，不能把其提升全归因于一个新模块。ALBERT 分解词 embedding 的参数：先映射到较小 embedding 维度再投影到 hidden 维度，并可跨层共享 Transformer 参数；它用 SOP 判别连续片段的顺序，尽量减少 NSP 通过主题差异取巧。\n\nSpanBERT 对连续 span 进行遮蔽，并用两端表示及相对位置预测 span 内 token，使表示更适合抽取式问答、指代等 span 任务。三者都以双向表示为核心，但压参数、改训练和改监督目标解决的问题不同。ALBERT 的层共享减少独立参数和模型状态，不等于执行层数减少；SpanBERT 的连续遮蔽也不同于 T5 直接生成被删 span。评价需固定数据、算力、模型规模与任务。",
+        "formula": "P_{\\rm embed}^{\\rm BERT}=|V|d,\\qquad P_{\\rm embed}^{\\rm ALBERT}=|V|e+ed,\\quad e\\ll d",
+        "pitfalls": [
+          "认为 ALBERT 减少参数就必然同比减少 FLOPs。",
+          "把所有去掉 NSP 的模型视为同一训练目标。"
+        ],
+        "followups": [
+          "SOP 怎样让负例更难仅靠主题区分？",
+          "SpanBERT 的边界预测为何适合跨度任务？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-ROB",
+        "WD26-ALB",
+        "WD26-SPAN"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "预训练模型与家族对比"
+    },
+    {
+      "id": "ARC-004",
+      "category": "ARC",
+      "title": "XLNet 的排列语言建模和双流注意力是什么，是否把输入词序打乱？",
+      "level": "L2",
+      "tags": [
+        "XLNet",
+        "排列LM",
+        "Transformer-XL"
+      ],
+      "answer": {
+        "body": "XLNet 对位置的不同因子分解顺序取期望，让模型在不同预测顺序下利用左右文信息，输入仍保留原始位置与序列顺序，并非把句子随机打乱后学习。给定某个排列，当前位置只依赖排列中已出现的内容；不同排列覆盖不同可见上下文。\n\n若用于预测某个位置的表示直接包含其 token，模型就能泄露标签。双流注意力因此区分 content stream 和 query stream：content stream 含位置内容用于后续上下文，query stream 只携带目标位置信息并访问已知位置的content，不读目标 token 本身。XLNet 还继承 Transformer-XL 的跨段记忆与相对位置思路，记忆常作为停止梯度的旧段状态；这和推理 KV cache 的含义不同。它通过条件概率表达预测项之间的关系，但实际训练部分预测、记忆和排列采样是计算折中，不宜宣称天然解决所有 MLM 局限。",
+        "formula": "\\mathcal L=-\\mathbb E_{z\\sim\\mathcal Z_T}\\sum_{t=1}^{T}\\log p_\\theta(x_{z_t}\\mid x_{z_{<t}})",
+        "pitfalls": [
+          "把排列因子分解等同于打乱文本原始词序。",
+          "预测目标的 query stream 直接读取目标 token 内容。"
+        ],
+        "followups": [
+          "双流的 query 和 content 更新各有哪些可见项？",
+          "跨段记忆为什么还需要相对位置表示？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-XLNET"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "预训练模型与家族对比"
+    },
+    {
+      "id": "ARC-005",
+      "category": "ARC",
+      "title": "GLM 的自回归空白填充、二维位置编码与 ChatGLM 系列怎样理解？",
+      "level": "L2",
+      "tags": [
+        "GLM",
+        "ChatGLM",
+        "blank infilling"
+      ],
+      "answer": {
+        "body": "原始 GLM 从文本中删去若干连续 span，在剩余文本中用 mask 占位，再自回归生成缺失片段。未被删的部分互相双向可见，生成部分可访问未删文本和此前已生成内容，因此一个模型可支持理解、条件生成与无条件生成等目标。二维位置通常分别描述原文中的位置/遮蔽点以及缺失span内部的生成步，帮助在没有完整缺失内容时定位生成 token。\n\nChatGLM 是基于 GLM 思路发展出的对话模型系列，具体 checkpoint 的架构和训练已发生变化，不能把初代的二维位置、激活和 mask 规则套到全部后续版本。初代 ChatGLM-6B 以中英对话为重点，ChatGLM2 引入 MQA 等改动，ChatGLM3 进一步提供工具、代码等能力；回答对比时应明确版本并检查 config、attention mask 与 tokenizer，而非靠模型家族名猜公式。GLM 的 blank infilling 也不等于只在普通 causal LM 前面加一个 prompt。",
+        "formula": "p_\\theta(S\\mid A)=\\prod_{j}p_\\theta(S_j\\mid A,S_{<j}),\\qquad\\operatorname{pos}(S_j)=(\\operatorname{anchor}(S),j)",
+        "pitfalls": [
+          "将 ChatGLM1 的组件断言为所有 GLM/ChatGLM 版本的共同配置。",
+          "忽略空白填充中未删文本的双向可见性。"
+        ],
+        "followups": [
+          "GLM 生成span的顺序与原文顺序有什么关系？",
+          "如何从实现确认一个模型使用 causal mask 还是 prefix mask？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-GLM",
+        "WD26-GLM2",
+        "WD26-GLM3"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "预训练模型与家族对比"
+    },
+    {
+      "id": "ARC-006",
+      "category": "ARC",
+      "title": "LLaMA 1、Llama 2 与 Llama 3 的结构和训练配方有哪些关键变化？",
+      "level": "L2",
+      "tags": [
+        "LLaMA",
+        "Llama2",
+        "Llama3"
+      ],
+      "answer": {
+        "body": "三者都以 decoder-only Transformer 为基础，RMSNorm、RoPE 和 SwiGLU 是其常见结构。LLaMA1 用 SentencePiece tokenizer、Pre-Norm 与较长时间的 next-token 预训练；Llama2 增加训练数据与上下文长度，较大型号采用 GQA，并提供经 SFT/RLHF 后训练的 Chat 版本。不能把“Llama2”简化为全部型号都新增 GQA，原始7B/13B与70B配置有区别。\n\n2024年首发 Llama3 8B/70B 采用约128K词表的 tokenizer、GQA 和更大、更精细过滤的预训练数据；首发窗口为8K，后来的 Llama3.1 等扩到128K，面试时须分开。架构小改与数据量、混合比例、去重、后训练都影响效果，不能据参数量推断能力。扩词表降低某些语言的 token 长度，但增加 embedding/LM head 成本；GQA 减少 KV 头和缓存负担，RoPE 参数与训练窗口共同决定外推表现。给具体比较应引用 checkpoint 配置而非使用家族级固定数字。",
+        "formula": "P_{\\rm vocab}=|V|d\\quad(\\text{one table}),\\qquad M_{\\rm KV}\\propto L\\,T\\,n_{\\rm kv}\\,d_h",
+        "pitfalls": [
+          "把 Llama2 所有大小都说成 GQA，或把首发 Llama3 的窗口说成128K。",
+          "把后训练改进与 Transformer 模块变化混为一谈。"
+        ],
+        "followups": [
+          "为何较大的词表同时可能减少序列长度并增加模型参数？",
+          "比较两个型号时如何确认 KV 头数？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-LLAMA1",
+        "WD26-LLAMA2",
+        "WD26-LLAMA3"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "预训练模型与家族对比"
+    },
+    {
+      "id": "ARC-007",
+      "category": "ARC",
+      "title": "Prefix LM 与 Causal LM 的 attention mask 有何区别，KV cache 有什么限制？",
+      "level": "L2",
+      "tags": [
+        "Prefix LM",
+        "causal mask",
+        "KV cache"
+      ],
+      "answer": {
+        "body": "Causal LM 的每个位置只访问自身及之前位置；Prefix LM 的前缀内部双向可见，而待生成部分访问整个前缀和此前生成位置。它们都能逐 token 生成后缀，真正差别在前缀表示是否依赖前缀中的未来 token，而不是“只有Prefix LM能带prompt”。\n\n固定前缀计算完成后，两者都可缓存可复用的 K/V 并增量生成后缀。若向双向前缀里插入或追加仍属于前缀的内容，旧前缀表示可能改变，必须重新计算相应缓存；causal 前缀的旧位置则不依赖新增后续内容，通常可复用。训练还须指定前缀/后缀划分、loss范围和position ids，Prefix LM 的结构不要求全部前缀都计算语言建模 loss。适合条件生成和填空的选择应结合预训练目标与任务验证。",
+        "formula": "M_{ij}=\\begin{cases}0,&i\\le p,\\ j\\le p\\\\0,&i>p,\\ (j\\le p\\text{ or }j\\le i)\\\\-\\infty,&\\text{otherwise}\\end{cases}",
+        "pitfalls": [
+          "说 causal LM 不能用给定 prompt 生成。",
+          "对改变了双向前缀的输入盲目复用旧 KV cache。"
+        ],
+        "followups": [
+          "固定 prefix 生成后缀时为什么仍能缓存？",
+          "prefix attention mask 与只对回答计loss是否等价？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-GLM",
+        "WD26-T5"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "架构范式与参数"
+    },
+    {
+      "id": "ARC-008",
+      "category": "ARC",
+      "title": "MoE 路由、Top-k、capacity factor 与 token dropping 分别做什么？",
+      "level": "L2",
+      "tags": [
+        "MoE",
+        "routing",
+        "capacity"
+      ],
+      "answer": {
+        "body": "稀疏 MoE 常把 FFN 替换成多个专家，router 根据 token 隐状态产生专家分数，只激活 Top-k 专家，按选中权重聚合输出。不同实现对选中概率是否重归一化有差异；Switch 使用Top-1，原始稀疏门控工作也研究噪声Top-k。总参数含全部专家，单 token 计算只涉及所选专家，因此 active参数与总参数必须分开。\n\ncapacity 对每个专家设置可接收 token 的预算，常按平均负载乘 capacity factor 取整；负载超过容量时传统实现可 drop 溢出分支、回退或走残差，不能简单理解为从语料删掉该token。提高容量减轻溢出但增加buffer、计算与通信，dropless方案避免drop却须面对不均衡显存和调度。Top-k 的离散选择不是处处可微，router梯度主要来自被选专家的门权重及辅助目标。选型需联合看质量、负载、通信与实际吞吐。",
+        "formula": "\\begin{aligned}p(x)&=\\operatorname{softmax}(W_rx)\\\\y&=\\sum_{e\\in\\operatorname{TopK}(p,k)}\\tilde p_e(x)E_e(x)\\\\C&=\\left\\lceil\\operatorname{capacity\\_factor}\\cdot\\frac{Tk}{E}\\right\\rceil\\end{aligned}",
+        "pitfalls": [
+          "只报总参数量就推断每 token FLOPs。",
+          "把专家溢出drop说成完全删除序列位置。"
+        ],
+        "followups": [
+          "dropless MoE 为什么仍可能出现负载瓶颈？",
+          "Top-1 门控概率保留原softmax值与重归一化为1会有何差别？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-SWITCH",
+        "WD26-STMOE"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "MoE 路由、训练与压缩"
+    },
+    {
+      "id": "ARC-009",
+      "category": "ARC",
+      "title": "MoE 的负载均衡损失与 router z-loss 有何区别？",
+      "level": "L3",
+      "tags": [
+        "MoE",
+        "负载均衡",
+        "router z-loss"
+      ],
+      "answer": {
+        "body": "负载均衡项避免大量 token 拥挤到少数专家，使容量与通信更可控。Switch 的辅助项用每个专家实际接收比例 f_e 与平均门控概率 P_e 的乘积和，f_e 来自离散路由，梯度主要经过 P_e；它鼓励分配平衡，但系数过大可能牺牲任务特化。除这种形式外还有importance/load、expert-choice或无显式辅助loss的设计，公式不能混用。\n\nST-MoE 的 router z-loss 对 router logits 的 logsumexp 平方加惩罚，约束其尺度、改善数值稳定性，与把每个专家均匀使用不是同一目标。训练需同时记录专家负载、溢出率、熵、router logits和主loss，不能只看到辅助loss低就认为质量好。router可能用FP32计算敏感归一化；专家FFN仍可用低精度。辅助项大小还依赖token数、Top-k和是否按序列/批次归一化。",
+        "formula": "\\begin{aligned}\\mathcal L_{\\rm balance}&=\\alpha E\\sum_{e=1}^{E}f_eP_e\\\\f_e&=\\frac1T\\sum_t\\mathbf1\\{\\operatorname{route}(t)=e\\},\\quad P_e=\\frac1T\\sum_t p_e(x_t)\\\\\\mathcal L_z&=\\frac\\beta T\\sum_t\\left(\\log\\sum_e e^{z_{t,e}}\\right)^2\\end{aligned}",
+        "pitfalls": [
+          "把 z-loss 说成专家负载均衡的另一种名字。",
+          "把上式 f_e 定义直接用于任意Top-k实现而不改归一化。"
+        ],
+        "followups": [
+          "为什么对logits加同一常数不改变softmax却会改变z-loss？",
+          "负载均衡与专家特化之间有什么张力？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-SWITCH",
+        "WD26-STMOE"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "MoE 路由、训练与压缩"
+    },
+    {
+      "id": "ARC-010",
+      "category": "ARC",
+      "title": "怎样由 config 估算 Transformer 参数量，12Ld² 为什么只是近似？",
+      "level": "L2",
+      "tags": [
+        "参数量",
+        "config",
+        "GQA"
+      ],
+      "answer": {
+        "body": "标准MHA的Q/K/V/O四个投影约4d²参数，普通两层FFN约2dd_ff；若d_ff=4d，单层约12d²。L层加输入embedding与输出head、norm和bias，得到常用粗估。GQA/MQA改变K/V投影宽度，SwiGLU含三个矩阵，MoE含全部专家和router，跨层共享或输入输出权重共享都会改变独立参数量。\n\n以head_dim=d_h、query头数h_q、KV头数h_kv表示，Q输出宽度为h_qd_h，K/V为h_kvd_h，O映射回d；只有h_qd_h=d时常用4d²简化才直接成立。共享embedding/head只计一次独立张量，切勿按module路径重复计数。模型磁盘大小约参数字节加元数据/量化scale，训练显存还包括梯度、优化器与激活；参数量、FLOPs、模型文件与显存分别回答。最终核对state_dict的shape及共享storage，避免只读模型名。",
+        "formula": "\\begin{aligned}P_{\\rm attn}&=2d(h_q+h_{\\rm kv})d_h\\\\P_{\\rm FFN}&=2dd_{\\rm ff}\\ (\\mathrm{MLP}),\\quad3dd_{\\rm ff}\\ (\\mathrm{SwiGLU})\\\\P_{\\rm total}&\\approx L(P_{\\rm attn}+P_{\\rm FFN})+n_{\\rm table}|V|d+P_{\\rm other}\\end{aligned}",
+        "pitfalls": [
+          "把12Ld²用于任意GQA/SwiGLU/MoE而不改矩阵形状。",
+          "对共享权重按state_dict名称重复计参数。"
+        ],
+        "followups": [
+          "MoE模型怎样分别报告总参数与每token激活参数？",
+          "量化后为何磁盘大小不等于参数数乘4bit？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-LLAMA1",
+        "WD26-LLAMA2",
+        "WD26-SWITCH"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "架构范式与参数"
+    },
+    {
+      "id": "ARC-011",
+      "category": "ARC",
+      "title": "T5 与 BART 怎样做去噪预训练，与 BERT MLM 有何区别？",
+      "level": "L2",
+      "tags": [
+        "T5",
+        "BART",
+        "去噪预训练"
+      ],
+      "answer": {
+        "body": "T5 将任务统一成文本到文本，常见span corruption把连续片段替换成不同sentinel，decoder按顺序生成被删片段和对应sentinel；BART 用双向encoder与自回归decoder，从被扰动的文本重建完整原文，研究过text infilling、句序打乱等噪声。两者encoder可看到被破坏输入，decoder仍通过causal mask训练条件生成。\n\nBERT的MLM在被选位置接词表分类头，通常不生成整个目标序列；T5/BART的目标在decoder序列上做自回归交叉熵。连续遮蔽、目标格式、目标长度和可见上下文均会影响计算量，不能仅因使用mask就称为同一目标。encoder-decoder很适合输入输出分离的翻译、摘要和条件生成，也能缓存encoder输出及decoder历史；decoder-only的流行并不证明这些结构无效。",
+        "formula": "\\mathcal L_{\\rm denoise}=-\\sum_{t=1}^{|y|}\\log p_\\theta(y_t\\mid y_{<t},\\operatorname{corrupt}(x))",
+        "pitfalls": [
+          "把T5生成缺失span与BART重建全文的target格式混为一谈。",
+          "认为encoder-decoder无法复用任何KV缓存。"
+        ],
+        "followups": [
+          "改变span平均长度会怎样改变目标序列长度？",
+          "BART为何能用于文本生成而原始BERT不能直接等价使用？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-T5",
+        "WD26-BART"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "预训练模型与家族对比"
+    },
+    {
+      "id": "ARC-012",
+      "category": "ARC",
+      "title": "自回归与非自回归生成有什么区别，为什么并行输出可能牺牲质量？",
+      "level": "L2",
+      "tags": [
+        "AR",
+        "NAT",
+        "并行生成"
+      ],
+      "answer": {
+        "body": "自回归模型把输出联合概率分解为逐步条件概率，每一步依赖此前输出；非自回归模型尝试同时预测多个位置，常需先决定长度或结构。最简单NAT近似让位置在给定输入后条件独立，减少串行解码，但难表达多个合法答案之间的相关性，例如不同表达组合可能拼成不一致句子。\n\n改进包括引入latent/fertility、知识蒸馏、反复mask-and-refine、插入/编辑式解码或其他并行生成目标；它们不等于一次前向就生成任意长度的精确AR分布。AR训练用teacher forcing也可并行计算各位置loss，串行瓶颈主要在常规生成。比较速度要报质量、迭代次数、长度、batch与硬件；减少解码轮数不保证所有任务的端到端收益。用于固定格式或延迟敏感任务时，可以接受一定质量折中，而自由文本生成常仍依赖强输出相关性。",
+        "formula": "p_{\\rm AR}(y\\mid x)=\\prod_t p(y_t\\mid x,y_{<t}),\\qquad p_{\\rm NAT}(y\\mid x)=p(T\\mid x)\\prod_{t=1}^{T}p(y_t\\mid x,T)",
+        "pitfalls": [
+          "把AR训练并行性与AR生成的条件依赖混为一谈。",
+          "宣称简单NAT与同一AR模型的联合分布精确等价。"
+        ],
+        "followups": [
+          "多模态输出分布为什么容易造成NAT位置间不一致？",
+          "多轮refinement的延迟应该怎样比较？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-NAT"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "架构范式与参数"
+    },
+    {
+      "id": "PRE-016",
+      "category": "PRE",
+      "title": "预训练语料有限时能否重复多 epoch，如何识别收益递减与过拟合？",
+      "level": "L2",
+      "tags": [
+        "数据受限",
+        "多epoch",
+        "Scaling Law"
+      ],
+      "answer": {
+        "body": "重复数据能继续降低训练损失，也可能在有限语料下带来有效学习，但边际收益通常弱于新增多样且同质量的数据；多epoch并非必然立刻损害质量。数据受限的scaling研究在特定实验预算中观察到少量重复接近独特数据的loss，再多重复收益逐渐减小，这不能直接外推成所有模型通用的epoch阈值。\n\n先比较独立验证集loss、下游任务、成员推断/记忆风险及训练—验证差距，再看固定算力下重复次数、模型规模与数据混合的消融。清除偶然重复文档不等同于禁止训练计划中的多次采样；高质量领域数据可有意上采样，但要记录有效独特token、总token和各源曝光次数。可用更广覆盖的数据、适当正则、不同mask/目标和混合回放降低退化，不能靠继续增加epoch保证知识获得。",
+        "formula": "D_{\\rm seen}=E\\,D_{\\rm unique},\\qquad D_{\\rm effective}\\ne D_{\\rm seen}\\ \\text{in general}",
+        "pitfalls": [
+          "把重复token的数量当作同等数量的新信息。",
+          "断言第2个epoch以后所有大模型都会变差。"
+        ],
+        "followups": [
+          "去重和有意上采样为什么并不矛盾？",
+          "如何固定FLOPs比较增模型与重复数据？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-REPEAT"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "语言建模与规模规律"
+    },
+    {
+      "id": "PRE-017",
+      "category": "PRE",
+      "title": "大模型的“涌现能力”怎样定义，指标突变是否证明机制相变？",
+      "level": "L3",
+      "tags": [
+        "涌现",
+        "Grokking",
+        "评估指标"
+      ],
+      "answer": {
+        "body": "规模研究中“涌现”常指某能力在小模型表现接近随机、扩大后明显出现，且难从小模型曲线外推；它不是“模型开始创造新内容”的泛称。观察到的跳变可能来自exact-match、全步骤正确等非线性指标：底层每步能力平滑增长，严格全对率仍可呈现显著门槛。\n\n因此应同时报告连续分数、部分正确、序列概率或校准指标，增加规模采样点，并控制数据、训练预算、prompt和评估样本。指标效应能解释部分现象，不意味着已证明所有新能力都是幻觉；grokking是训练时间轴上延迟泛化的现象，与跨模型规模的能力曲线也不是同一定义。提出机制相变还需可重复干预、表示或计算过程证据，不能仅凭榜单折线。用于选型时直接验证任务质量和资源成本比争论标签更有价值。",
+        "formula": "P(\\text{all }m\\text{ steps correct})=p^m\\quad\\text{under an independence toy assumption}",
+        "pitfalls": [
+          "把一个离散指标的跳变当作内部算法突变的充分证据。",
+          "把grokking、规模涌现和生成创造性当作同一概念。"
+        ],
+        "followups": [
+          "换成部分正确评分为何可能使能力曲线更平滑？",
+          "如何验证观察不是prompt或数据混杂造成的？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-EMERGE",
+        "WD26-MIRAGE"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "语言建模与规模规律"
+    },
+    {
+      "id": "FT-016",
+      "category": "FT",
+      "title": "领域 SFT 应从 Base 还是 Instruct/Chat 模型开始？",
+      "level": "L2",
+      "tags": [
+        "Base",
+        "Instruct",
+        "领域微调"
+      ],
+      "answer": {
+        "body": "Base模型主要学语言建模，适合希望完全控制指令、格式和领域行为、且有足够高质量SFT数据的情况；Instruct/Chat已有对话和工具等行为，数据或算力较少时常能更快适配。但继续微调可能覆盖原有安全、格式与能力，不能假设Chat版本永远优于Base，也不能认为SFT只是在已有知识上换说话方式。\n\n选型先固定目标任务、评测集、成本和数据，再用小规模相同配方比较；检查许可证、chat template、special tokens、上下文窗口与底座是否适合语言/领域。训练Chat模型要沿用其消息格式、assistant标签与EOS规则，Base则需一致定义并教会该协议。密集领域文本可用继续预训练获得语言与知识分布，指令SFT教任务接口，两者都可能注入或改变知识，知识更新/权限查询也可用RAG。上线前检查领域收益和通用能力回归。",
+        "formula": "",
+        "pitfalls": [
+          "把Base/Chat选择当作无需任务验证的固定规则。",
+          "给Chat模型更换模板却未同步训练和推理。"
+        ],
+        "followups": [
+          "数据很少时怎样比较PEFT与直接prompt的收益？",
+          "如何防止领域SFT损坏原先工具调用格式？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-LLAMA2",
+        "WD26-LLAMA3"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "指令数据与训练目标"
+    },
+    {
+      "id": "FT-017",
+      "category": "FT",
+      "title": "BitFit 为什么只调 bias，适用条件和局限是什么？",
+      "level": "L2",
+      "tags": [
+        "BitFit",
+        "bias tuning",
+        "PEFT"
+      ],
+      "answer": {
+        "body": "BitFit冻结大部分预训练权重，仅训练模型中的bias项或其子集，通常再训练任务输出头。线性层Wx+b中的bias改变神经元偏移和激活阈值，用很少参数重新激活或组合已有特征；它不等于低秩更新，也不会增加一个adapter分支。原论文主要研究BERT类masked LM在小到中等任务数据上的效果，不应把结论无条件推广到任意LLM生成任务。\n\n参数和optimizer状态小、存储与切任务成本低，但表达能力受可调bias的位置和数量限制。很多现代decoder使用无bias线性层和RMSNorm，没有对应bias就几乎无可调参数，此时BitFit不能凭方法名直接套用。实践应打印requires_grad参数列表，确认没有误解冻整层，比较任务表现、遗忘和训练显存；冻结权重仍可能需要反向经过它们来计算bias梯度。",
+        "formula": "\\min_{b,\\theta_{\\rm head}}\\mathcal L\\big(f_{W_0,b}(x),y\\big),\\qquad W_0\\ \\text{fixed}",
+        "pitfalls": [
+          "对bias-free模型宣称与BERT一样能直接BitFit。",
+          "认为可训练参数少就意味着全部激活都不需要反向保存。"
+        ],
+        "followups": [
+          "哪些bias最可能改变attention或FFN行为？",
+          "训练输出头应不应该计入可训练参数比例？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-BITFIT"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "LoRA 与其他 PEFT"
+    },
+    {
+      "id": "FT-018",
+      "category": "FT",
+      "title": "P-Tuning v1、P-Tuning v2 与 Prompt/Prefix Tuning 怎样区分？",
+      "level": "L2",
+      "tags": [
+        "P-Tuning",
+        "deep prompt",
+        "PEFT"
+      ],
+      "answer": {
+        "body": "Prompt Tuning通常只学习输入端连续virtual token；Prefix Tuning把可学习前缀注入各层的attention表示，常实现为前缀K/V。P-Tuning v1在模板中插入连续提示，并常用prompt encoder（如BiLSTM/MLP）重参数化，与离散提示共同用于NLU；原方法既有冻结也有联合微调设置，不能只凭名称推断底座一定冻结。\n\nP-Tuning v2将连续提示放到多个层，适配不同规模和序列标注等任务，可视为经过优化的deep prompt tuning，与Prefix Tuning有密切联系。两者究竟增加输入token还是K/V、是否用重参数化网络、任务head是否训练，要看具体实现。冻结底座只减少权重和optimizer更新，前缀到loss的梯度仍穿过网络；更长prompt会增加有效上下文或KV成本。选型需固定可训练参数预算、长度和任务，不能把v2的经验效果解读为所有场景都等价全参微调。",
+        "formula": "\\theta^*=\\arg\\min_{\\theta_p,\\theta_h}\\mathcal L\\big(f_{\\theta_0,\\theta_p,\\theta_h}(x),y\\big),\\qquad\\theta_0\\ \\text{fixed in the frozen setting}",
+        "pitfalls": [
+          "把所有方法的virtual token都理解为普通文本可解码词。",
+          "把P-Tuningv2说成只是v1换了更大的MLP。"
+        ],
+        "followups": [
+          "层级前缀为什么比只放输入端有更短的梯度作用路径？",
+          "deep prompt对KV cache和上下文预算有哪些影响？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-PT1",
+        "WD26-PT2"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "LoRA 与其他 PEFT"
+    },
+    {
+      "id": "FT-019",
+      "category": "FT",
+      "title": "AdaLoRA 如何自适应分配低秩预算，与固定 rank LoRA 有何区别？",
+      "level": "L2",
+      "tags": [
+        "AdaLoRA",
+        "动态rank",
+        "PEFT"
+      ],
+      "answer": {
+        "body": "固定LoRA为选中的矩阵指定rank，可能把同样容量分配给重要程度不同的层。AdaLoRA以类似SVD的增量参数化ΔW=PΛQ，跟踪奇异三元组的敏感性/重要性，在全局预算下逐步裁剪不重要的方向，把有效rank留给更需要的矩阵；Λ是可学习的对角尺度，不是每步对完整大矩阵精确做SVD。\n\n训练常从较大预算开始，逐渐降到目标预算，配合正交正则让方向更可辨识。动态重要性依赖当前任务、梯度与训练阶段，不能只根据某层权重范数决定rank。它需要预算调度和更多状态管理，未必比简单LoRA更稳定或更快；比较时保持总参数预算、target modules和数据相同。最终可像低秩增量一样合并到同形状全精度权重，但若底座量化，合并和再量化要单独验证。",
+        "formula": "\\Delta W=P\\Lambda Q,\\qquad\\mathcal L_{\\rm orth}=\\lVert P^\\top P-I\\rVert_F^2+\\lVert QQ^\\top-I\\rVert_F^2",
+        "pitfalls": [
+          "把SVD式参数化说成每step分解完整基座权重。",
+          "忽略rank预算调度而直接比较不同参数量的结果。"
+        ],
+        "followups": [
+          "何时裁剪方向会造成不可逆的容量损失？",
+          "正交约束为何有助于比较不同奇异方向的重要性？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-ADALORA"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "LoRA 与其他 PEFT"
+    },
+    {
+      "id": "FT-020",
+      "category": "FT",
+      "title": "AdapterFusion 和 AdapterDrop 如何组合知识或降低 adapter 开销？",
+      "level": "L2",
+      "tags": [
+        "AdapterFusion",
+        "AdapterDrop",
+        "多任务"
+      ],
+      "answer": {
+        "body": "普通adapter是在主干中加入较小可训练模块，任务通常保存单独adapter。AdapterFusion先分别训练多个任务adapter并冻结，再训练融合模块，让当前token表示选择性地组合各adapter的输出；把知识提取与组合分成两阶段，有助于复用已有任务知识。它不是直接平均checkpoint，也不等于把全部任务重新做一次共享全参训练。\n\nAdapterDrop根据策略跳过部分层的adapter，训练时让模型适应不同保留范围，推理可减少adapter执行开销；应区分跳过adapter分支和删除整个Transformer层。融合多个adapter会额外增加前向成本和存储，Drop则可能牺牲精度。多任务服务要评价任务切换、并发batch、融合数量与延迟，确认减少adapter分支后实际瓶颈是否改善；对深度与任务敏感的能力不能只凭“下层较不重要”固定删除。",
+        "formula": "h'=h+\\sum_{a=1}^{A}\\alpha_a(h)\\,\\operatorname{Adapter}_a(h),\\qquad\\sum_a\\alpha_a(h)=1",
+        "pitfalls": [
+          "把多个adapter融合误称为权重平均。",
+          "把AdapterDrop说成删除Transformer主体层。"
+        ],
+        "followups": [
+          "冻结多个adapter后融合层需要哪些训练数据？",
+          "多个任务adapter在一个batch内如何调度？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-AFUSION",
+        "WD26-ADROP"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "LoRA 与其他 PEFT"
+    },
+    {
+      "id": "FT-021",
+      "category": "FT",
+      "title": "MAM Adapter、UniPELT 等组合 PEFT 方法为什么要混合不同模块？",
+      "level": "L2",
+      "tags": [
+        "MAM Adapter",
+        "UniPELT",
+        "PEFT组合"
+      ],
+      "answer": {
+        "body": "PEFT方法可按修改的位置、形式与组合方式统一理解：adapter增加hidden变换，prefix改变attention可见信息，LoRA更新线性投影。不同分支对模型行为的作用和容量不同，因此同一小参数预算下组合互补模块可能有效。MAM Adapter（Mix-And-Match）把attention侧prefix与FFN侧并行adapter组合；UniPELT把adapter、prefix和LoRA等模块放入统一框架，并用门控调整各分支参与程度。\n\n它们不是同一个算法，也不意味着把所有PEFT叠上去总会更好。模块叠加可能增加前向算子、上下文、KV和超参数，门控还可能塌缩到少数分支。比较需控制总可训练参数、推理成本与训练预算，做逐模块消融；保存时明确每个分支配置和底座版本，若某种分支可merge，其他需要执行的prefix/adapter并不会因此自动消失。",
+        "formula": "h'=h+\\sum_{m\\in\\mathcal M}g_m(h)\\,\\Delta_m(h)",
+        "pitfalls": [
+          "把UniPELT门控混合与MAM固定搭配说成同一方法。",
+          "认为LoRA可merge就意味着所有组合PEFT模块都无推理开销。"
+        ],
+        "followups": [
+          "如何设计消融证明组合收益不是单纯参数更多？",
+          "输入相关门控与任务固定门控有什么区别？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-UNIFIED",
+        "WD26-UNIPELT"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "LoRA 与其他 PEFT"
+    },
+    {
+      "id": "FT-022",
+      "category": "FT",
+      "title": "知识蒸馏中的 logits、隐藏层和生成答案监督各有什么作用？",
+      "level": "L2",
+      "tags": [
+        "蒸馏",
+        "KD",
+        "soft targets"
+      ],
+      "answer": {
+        "body": "logits蒸馏让学生拟合教师的软概率分布，温度提高时能显露非最大类之间的关系；常用KL或soft-target交叉熵，加T²使大温度下的梯度尺度更可比。对语言模型逐token做logits蒸馏，需要同一位置的上下文和可对齐词表；不同tokenizer不能直接按词表下标对KL。生成答案蒸馏把教师采样或搜索的回复作为学生SFT数据，兼容不同tokenizer，但丢掉完整分布，并继承教师错误、风格与覆盖偏差。\n\n隐藏层/attention蒸馏用层映射和投影对齐中间表示，PKD、TinyBERT在BERT压缩中采用此类信号，不能简单要求不同深度学生逐层等形状相等。实际还需混合真实标签、过滤教师答案、覆盖学生可能访问的前缀，并独立评测质量/幻觉与成本。蒸馏不保证学生超过教师，也不保证所有知识能在更小容量中保留。",
+        "formula": "\\begin{aligned}p_T&=\\operatorname{softmax}(z_T/T),\\quad p_S=\\operatorname{softmax}(z_S/T)\\\\\\mathcal L&=(1-\\lambda)\\mathcal L_{\\rm hard}+\\lambda T^2D_{\\rm KL}(p_T\\Vert p_S)\\\\\\mathcal L_{\\rm hidden}&=\\sum_\\ell\\lVert H_S^{(\\ell)}P_\\ell-H_T^{(m(\\ell))}\\rVert_F^2\\end{aligned}",
+        "pitfalls": [
+          "不同tokenizer的词表下标未经对齐就直接算KL。",
+          "把教师生成数据无条件当作正确标签。"
+        ],
+        "followups": [
+          "为什么学生自己生成的前缀可能需要教师再标注？",
+          "温度变大时T²补偿的近似前提是什么？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-KD",
+        "WD26-SEQKD",
+        "WD26-PKD",
+        "WD26-TINY"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "知识蒸馏与模型编辑"
+    },
+    {
+      "id": "FT-023",
+      "category": "FT",
+      "title": "Prompt learning 中 template、verbalizer 与连续提示分别是什么？",
+      "level": "L2",
+      "tags": [
+        "Template",
+        "Verbalizer",
+        "prompt learning"
+      ],
+      "answer": {
+        "body": "Template把任务输入改造成模型熟悉的填空或生成格式，例如情感分类提示“这段评论的情感是MASK”；verbalizer把模型预测的标签词映射回类别，例如“好/差”对应正/负。分类结果会受模板措辞、标签词语义、词频和分词长度影响，模型原生概率不自动成为校准类别概率。\n\n离散prompt可人工设计、搜索或由模型生成；连续prompt直接优化可学习向量，不要求能解释为人类可读词。多标签词verbalizer需定义聚合与归一化，生成式模型对多token标签常算序列概率，还要防止长度偏差；在MLM里多MASK和多token标签的处理也须明确。用验证集选模板和标签词，测试集保持独立，比较多seed、样本顺序和格式扰动。Prompt engineering无需更新权重，prompt tuning则需要训练可学习提示，不能把两者混称“写几句话”。\n\n自动提示搜索可用输入梯度提出离散 trigger 候选，再在验证目标上筛选，例如 AutoPrompt；它不等同于直接优化连续 prompt embedding。KPT 借助外部知识扩展 verbalizer 的标签词，再用语言模型筛选和校准；虚拟标签词还可用可学习向量表示类别。PPT 则先预训练软提示以改善少样本初始化。模板搜索、标签空间设计与提示参数初始化是三个不同优化对象，均需防止在测试集上反复选择。",
+        "formula": "p(c\\mid x)=\\frac{\\sum_{w\\in\\mathcal V_c}p_\\theta(w\\mid\\operatorname{template}(x))}{\\sum_{c'}\\sum_{w\\in\\mathcal V_{c'}}p_\\theta(w\\mid\\operatorname{template}(x))}",
+        "pitfalls": [
+          "把prompt engineering与训练soft prompt混为一谈。",
+          "类别标签长短不同却直接比较未经处理的序列分数。"
+        ],
+        "followups": [
+          "verbalizer校准怎样减小标签词频偏差？",
+          "连续提示需要怎样保存并与底座配套加载？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-PROMPT",
+        "WD26-PT1",
+        "WD26-AUTOPROMPT",
+        "WD26-KPT",
+        "WD26-PPT"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "LoRA 与其他 PEFT"
+    },
+    {
+      "id": "INF-031",
+      "category": "INF",
+      "title": "Greedy、Beam Search 与采样分别优化什么，beam 越大越好吗？",
+      "level": "L2",
+      "tags": [
+        "Beam Search",
+        "Greedy",
+        "解码"
+      ],
+      "answer": {
+        "body": "Greedy每步选最大条件概率token；beam保留B条得分最高的候选前缀，扩展后再筛选，是联合序列最大概率搜索的近似；温度/top-k/top-p采样按经过变换的分布抽样，更注重输出多样性。Greedy的局部最优不保证全局最优，有限beam也不保证找到真正最优序列。\n\n序列得分通常为log概率和，长度越长更容易累计负值，因此beam常配length penalty、EOS规则或任务约束；这些会改变搜索目标。beam增大提高搜索覆盖却增加KV/cache、重排和计算，可能更偏向高概率但重复/空泛的文本，也未必提升任务质量。翻译等输入强约束任务常可用beam，自由生成常更适合合理采样；选择要看事实性、可复现性、多样性和成本。流式beam还须处理候选共享前缀、终止和cache重排。",
+        "formula": "S(y)=\\sum_{t=1}^{|y|}\\log p_\\theta(y_t\\mid x,y_{<t}),\\qquad S_{\\rm norm}(y)=S(y)/|y|^\\alpha",
+        "pitfalls": [
+          "说Greedy总能最大化整个序列概率。",
+          "把beam越宽等同于任何生成任务质量越高。"
+        ],
+        "followups": [
+          "beam候选被重新排序时KV cache怎样同步？",
+          "长度惩罚为什么会改变最优输出而非仅加快搜索？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-GEN",
+        "WD26-DEGEN"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "解码与采样策略"
+    },
+    {
+      "id": "INF-032",
+      "category": "INF",
+      "title": "LLM 为什么会复读或不停生成，重复惩罚应怎样正确使用？",
+      "level": "L2",
+      "tags": [
+        "复读",
+        "repetition penalty",
+        "EOS"
+      ],
+      "answer": {
+        "body": "复读可能来自数据中的重复模式、模型在某些前缀上的高概率循环、EOS/模板错配、KV或position实现bug，以及过强的确定性搜索；先区分输入回显、短语循环和未正常终止。检查训练EOS、stop tokens、max_new_tokens、chat template及缓存正确性，再在同一prompt下比较greedy和采样，避免把所有问题归因于temperature低。\n\n常见repetition penalty对已出现token的logit按符号处理：正值除以r、负值乘r，r>1时两者都降低相对概率；frequency/presence penalty分别按次数或是否出现减去分数，no_repeat_ngram则硬禁重复片段。这些方法改变模型分布，可能误伤代码、引文、必要术语和正常重复，不能保障事实正确。应按任务调节、保留必要EOS并回归质量，数据或模板根因优先在训练和协议层修复。",
+        "formula": "z_i'=\\begin{cases}z_i/r,&z_i>0\\text{ and }i\\text{ repeated}\\\\rz_i,&z_i<0\\text{ and }i\\text{ repeated}\\\\z_i,&\\text{otherwise}\\end{cases},\\quad r>1",
+        "pitfalls": [
+          "只对正logit除r，导致负logit除r后反而增加该token概率。",
+          "为消除复读过度惩罚所有重复术语。"
+        ],
+        "followups": [
+          "presence与frequency penalty对反复出现一个词的区别是什么？",
+          "如果EOS没被训练，增大temperature为何未必能修复？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-GEN",
+        "WD26-DEGEN"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "解码与采样策略"
+    },
+    {
+      "id": "INF-033",
+      "category": "INF",
+      "title": "算子融合、torch.compile 与 CUDA Graphs 分别降低什么开销？",
+      "level": "L2",
+      "tags": [
+        "算子融合",
+        "torch.compile",
+        "CUDA Graphs"
+      ],
+      "answer": {
+        "body": "算子融合把连续的点操作或归约组合进较少kernel，减少launch次数和中间张量读写，但过度融合可能增加寄存器压力、降低occupancy。编译系统追踪计算图、特化shape并生成或选择kernel，还能做图级优化；它不会自动消除所有数据依赖或改成完全不同的模型。CUDA Graphs记录一组GPU操作并重放，主要减少CPU调度与kernel launch开销，尤其适合decode的小算子路径。\n\nGraph replay通常要求captured地址和执行结构稳定；动态batch/长度可用shape bucket、固定buffer或partial capture，相关框架有不同支持。数据相关控制流、CPU同步、内存分配和graph break会削弱收益，compile和CUDA Graphs也可能叠加。先profile确定launch/访存/计算瓶颈，区分首次编译/捕获时间与warm稳态，核对输出误差、显存增长及真实输入分布；不能只跑一个固定shape就宣称端到端总能加速。",
+        "formula": "t_{\\rm eager}\\approx t_{\\rm compute}+N_{\\rm launch}t_{\\rm launch}+t_{\\rm memory},\\qquad t_{\\rm replay}\\approx t_{\\rm compute}+t_{\\rm graph\\ launch}+t_{\\rm memory}",
+        "pitfalls": [
+          "把CUDA Graphs说成压缩KV cache的算法。",
+          "把首次编译成本混入稳态结果或隐去生产中频繁recompile成本。"
+        ],
+        "followups": [
+          "shape bucketing怎样在浪费padding和graph重用之间权衡？",
+          "融合为什么有时反而变慢？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-COMPILE",
+        "WD26-CUDA"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "注意力与算子加速"
+    },
+    {
+      "id": "INF-034",
+      "category": "INF",
+      "title": "JSON Schema、正则或 CFG 约束生成如何实现，能否保证内容正确？",
+      "level": "L2",
+      "tags": [
+        "结构化生成",
+        "JSON Schema",
+        "CFG"
+      ],
+      "answer": {
+        "body": "约束解码维护当前输出对应的语法状态，确定哪些下一token的字节串仍能延伸成合法结果，将不允许token的logits屏蔽后再采样。正则可用有限状态机，嵌套JSON等结构通常需要CFG/栈式解析或等价引擎，Schema还可限制键、类型和枚举；必须基于token到字节串的真实映射，而非按单个字符简单处理。\n\n它比生成后repair更直接保证已完成输出的语法，但实际保证取决于引擎支持的Schema子集、终止、长度和tokenizer规则。遇到空允许集合、截断或工具取消时仍需显式错误处理。合法JSON不保证字段事实正确、业务一致或工具执行安全，因此还应在应用层做类型、范围、权限和业务校验。grammar编译与每步mask有开销，可缓存固定schema和常见语法状态；约束越复杂越应实测延迟和准确率。",
+        "formula": "p'(i\\mid s)=\\frac{\\mathbf1\\{i\\in A(s)\\}\\exp(z_i)}{\\sum_{j\\in A(s)}\\exp(z_j)},\\qquad A(s)\\ne\\varnothing",
+        "pitfalls": [
+          "把“格式合法”当成“事实正确且可直接执行”。",
+          "忽略一个token可能包含多个字符或部分UTF-8字节。"
+        ],
+        "followups": [
+          "no allowed token与达到max_new_tokens应该怎样向调用方报告？",
+          "约束解码会如何改变原模型采样分布？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-GRAMMAR"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "解码与采样策略"
+    },
+    {
+      "id": "DST-021",
+      "category": "DST",
+      "title": "DP、TP、PP、SP/CP 与 EP 如何组合，为什么网络拓扑决定并行方案？",
+      "level": "L2",
+      "tags": [
+        "混合并行",
+        "3D并行",
+        "拓扑"
+      ],
+      "answer": {
+        "body": "先用参数、optimizer和激活估算显存，再用profile确定计算、通信和数据供给瓶颈。DP复制模型分处理数据，TP分同层矩阵，PP分层，SP/CP分token或上下文，EP分专家；它们可以组合，但不同维度要建立对应通信组，不能把world_size分别除多次后重复计算同一组设备。基本DP×TP×PP mesh可写W=DTP，实际CP/EP与DP是否嵌套取决于框架。\n\nTP每层通信频繁，常放在高带宽节点内；PP跨阶段传activation和gradient，适合相对慢的节点间链路；DP通信量依赖梯度/ZeRO阶段，EP有token all-to-all，长上下文还要考虑CP环通信。ZeRO节省状态显存却不替代TP算子切分或PP层分布，因此“有ZeRO就无需混合并行”不成立。选择DeepSpeed/Megatron/FSDP等框架要看所需并行、模型算子、checkpoint和运维支持，先做小规模稳定性/吞吐基线再扩展。",
+        "formula": "W=D\\times T\\times P,\\qquad B_{\\rm global}=D\\times B_{\\rm micro}\\times N_{\\rm accumulation}",
+        "pitfalls": [
+          "把张量并行度也乘进数据样本数量。",
+          "不考虑网络拓扑就把同一通信组跨慢链路拆散。"
+        ],
+        "followups": [
+          "TP通信与EP通信为什么可能争抢同一链路？",
+          "为什么低带宽多机ZeRO-3可能不如单机LoRA？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-MTF",
+        "WD26-ALPA"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "并行策略与通信"
+    },
+    {
+      "id": "DST-022",
+      "category": "DST",
+      "title": "自动并行怎样搜索或传播分片方案，GSPMD、FlexFlow 与 Alpa 有何区别？",
+      "level": "L3",
+      "tags": [
+        "自动并行",
+        "GSPMD",
+        "Alpa"
+      ],
+      "answer": {
+        "body": "自动并行需要把模型计算图、设备mesh、算子合法分片和通信成本结合，找满足显存约束的低时延执行计划。Mesh-TensorFlow让张量维度映射到mesh轴；GSPMD依据少量sharding标注传播分片并插入通信，不等于对所有硬件组合做穷举全局最优搜索。FlexFlow在sample/operator/attribute/parameter（SOAP）维度搜索并用模拟器估成本；Alpa把算子内并行与算子间/流水线规划分层求解。\n\n划分改变时可能产生reshape/reshard通信，最小化单算子时间不一定最小化完整step。成本模型还受网络争用、kernel实现、dynamic shape与activation内存影响，模拟计划需实测校准。系统能降低手工设计负担，但不能保证任意图、拓扑和实际负载达到数学全局最优；支持的算子、编译耗时、计划稳定性和checkpoint可移植性同样重要。",
+        "formula": "\\min_{\\pi}\\ t_{\\rm step}(\\pi)\\quad\\text{s.t.}\\quad M_i(\\pi)\\le M_i^{\\rm available}\\ \\forall i",
+        "pitfalls": [
+          "把sharding传播与全局穷举最优搜索混为一谈。",
+          "忽略计划中的reshard通信与峰值显存。"
+        ],
+        "followups": [
+          "为什么单算子最优分片不一定是全图最优？",
+          "动态shape如何影响自动规划的复用？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-GSPMD",
+        "WD26-FLEXFLOW",
+        "WD26-ALPA",
+        "WD26-MTF"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "并行策略与通信"
+    },
+    {
+      "id": "DST-023",
+      "category": "DST",
+      "title": "GPipe、同步 1F1B 与异步 PipeDream 的梯度语义和权重版本怎样区分？",
+      "level": "L3",
+      "tags": [
+        "GPipe",
+        "1F1B",
+        "PipeDream",
+        "weight stashing"
+      ],
+      "answer": {
+        "body": "GPipe的典型调度先完成多个microbatch前向，再集中反向并累积梯度，最后同步更新；它保持一个batch使用同一权重，但保存较多在途activation。同步1F1B在warmup后交替前向/反向，仍在完整batch边界更新，因此可减少activation驻留，不必引入陈旧权重。1F1B描述调度顺序，不自动说明是否异步更新。\n\n原始PipeDream允许流水线各stage异步推进更新，microbatch的前向和反向可能跨权重版本，weight stashing保存对应版本以保持该microbatch局部计算一致；即使局部版本匹配，仍存在跨stage/时间的陈旧梯度，不等价普通同步SGD。PipeDream-Flush等同步变体在边界flush以恢复同步语义，2BW降低保留版本的成本但也有自己的约束。比较应报告bubble、activation、权重版本内存、收敛和global batch，不能只凭调度图判断数值等价。",
+        "formula": "\\theta_{k+1}=\\theta_k-\\eta\\sum_m g_m(\\theta_k)\\quad\\text{(synchronous accumulation)}",
+        "pitfalls": [
+          "认为所有1F1B都是异步或都存在同样的weight staleness。",
+          "认为保存前向权重版本就保证整体等价同步SGD。"
+        ],
+        "followups": [
+          "1F1B为何通常能降低activation峰值？",
+          "增加microbatch数时bubble与kernel效率如何权衡？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-GPIPE",
+        "WD26-PIPEDREAM"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "并行策略与通信"
+    },
+    {
+      "id": "DST-024",
+      "category": "DST",
+      "title": "TF32 与 FP32、FP16、BF16 有何区别，TF32 会把模型存成19位吗？",
+      "level": "L2",
+      "tags": [
+        "TF32",
+        "混合精度",
+        "Tensor Core"
+      ],
+      "answer": {
+        "body": "TF32是支持硬件上Tensor Core执行某些FP32矩阵乘/卷积时采用的计算精度模式，使用近似FP32指数范围和约10bit显式尾数输入精度，通常以FP32累加；FP32输入和输出tensor仍占32bit。把符号、指数与有效尾数加成19位是描述计算格式，不能据此估算PyTorch参数存储为19bit，也不能把它当作torch.float16那样常规存储dtype。\n\nFP16尾数较细但指数范围较窄，BF16尾数较粗而指数范围接近FP32，二者可降低权重/activation存储和带宽。TF32主要加速受支持FP32运算，实际收益和误差依赖硬件、shape与后端开关；数学上乘单位矩阵也未必逐bit保持输入。数值敏感任务应比较收敛、输出误差和必要FP32路径，且查所用PyTorch版本的API，不把过去默认设置当永久规则。",
+        "formula": "\\operatorname{storage}(X_{\\rm FP32})=4\\,\\operatorname{numel}(X)\\ \\text{bytes even when TF32 computation is enabled}",
+        "pitfalls": [
+          "把TF32内部计算精度当作模型文件的存储位宽。",
+          "把某一版本框架的TF32默认值当作所有版本的固定行为。"
+        ],
+        "followups": [
+          "TF32为何可能改变X乘单位矩阵的结果？",
+          "低精度输入、累加精度和输出dtype为何要分别说明？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-TF32",
+        "WD26-CUDA"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "精度与激活优化"
+    },
+    {
+      "id": "DST-025",
+      "category": "DST",
+      "title": "怎样检查 GPU/NVLink/网络拓扑，区分算力不足和通信瓶颈？",
+      "level": "L2",
+      "tags": [
+        "NCCL",
+        "网络",
+        "拓扑",
+        "profiling"
+      ],
+      "answer": {
+        "body": "先核对GPU型号、数量、驱动/CUDA/NCCL及每个rank绑定，用nvidia-smi查看GPU状态、topo -m查看节点内互连，再确认NIC/NUMA亲和性和实际使用的网络接口。名义网卡速率不等于collective有效带宽，GPU utilization高也不证明有用矩阵计算或MFU高。\n\n分别测节点内GPU点对点带宽、节点间RDMA带宽和nccl-tests的collective，扫描从小到大消息，比较all_reduce/all_gather等真实通信模式。algorithm bandwidth与bus bandwidth使用不同口径，不直接混比。再用训练timeline查看计算与通信重叠、长尾rank、数据加载及同步等待，配合MFU和step time判断瓶颈；Deepspeed环境报告可确认安装能力，不能代替实际链路测量。保留拓扑、并行组、消息大小和测试版本，避免通过盲目改NCCL环境变量掩盖根因。",
+        "formula": "t_{\\rm comm}\\approx\\alpha+\\frac{n_{\\rm bytes}}{B_{\\rm effective}}",
+        "pitfalls": [
+          "把nvidia-smi的GPU utilization当成MFU。",
+          "只测一个消息尺寸就判断所有collective的性能。"
+        ],
+        "followups": [
+          "小消息与大消息分别更受延迟还是带宽限制？",
+          "NUMA/NIC亲和性为什么可能影响跨机吞吐？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-NCCL"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "并行策略与通信"
+    },
+    {
+      "id": "DST-026",
+      "category": "DST",
+      "title": "2D、2.5D、3D 张量并行与 DP×TP×PP 的“3D 并行”有什么区别？",
+      "level": "L3",
+      "tags": [
+        "多维张量并行",
+        "2.5D",
+        "3D并行"
+      ],
+      "answer": {
+        "body": "多维张量并行把同一矩阵乘及其操作数映射到多维设备网格，沿不同轴分块、广播或归约，以改变每卡存储和通信。2D常用q×q网格分布矩阵块；2.5D增加一个复制深度，用额外存储或设备复本换更少部分通信；3D沿三维网格安排输入、权重和输出的分布与通信。具体矩阵形状、网格和算法决定公式，不是“维度越高总越快”。\n\nDP×TP×PP的3D混合并行则是三个不同策略组合：数据、同层算子、不同层。两处“3D”完全不同，2D TP也能作为混合并行里的TP维度。多维TP可能减少特定大矩阵的通信，却增加分片约束、拓扑要求和reshard开销，小规模或不匹配shape未必值得；框架版本对这些方案的支持也不同。回答应给实际sharding与collective路径，不只背1D/2D/3D名词。",
+        "formula": "P_{\\rm 2D}=q^2,\\qquad P_{\\rm 2.5D}=q^2c,\\qquad P_{\\rm 3D}=q^3\\quad\\text{for common square/cubic meshes}",
+        "pitfalls": [
+          "把3D tensor parallel等同DP×TP×PP。",
+          "把2.5D中的复制深度理解为半个物理维度。"
+        ],
+        "followups": [
+          "额外复制为什么可以减少某些通信却增加内存？",
+          "矩阵shape与网格轴不整除时怎样处理？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-TP25",
+        "WD26-MTF"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "并行策略与通信"
+    },
+    {
+      "id": "BAS-015",
+      "category": "BAS",
+      "title": "TF-IDF 与 TextRank 如何提取关键词，各有哪些局限？",
+      "level": "L2",
+      "tags": [
+        "TF-IDF",
+        "TextRank",
+        "关键词"
+      ],
+      "answer": {
+        "body": "TF-IDF给词赋予文档内频率与逆文档频率的乘积：当前文档频繁、在全语料较少见的词更显著。tf可以原始计数、归一化或log变换，idf常加平滑；实现需固定分词、停用词和语料范围，不能把高分直接理解为事实重要性。TextRank把词的局部共现构成图，通过PageRank式迭代累积邻接节点的重要性，不要求已标注关键词；也可用句子相似图提取摘要。\n\nTF-IDF依赖背景语料统计，对同义词和词序不敏感；TextRank依赖窗口和图边，可能偏向连接度高的常见词，也不保证覆盖语义关键但罕见的实体。jieba提供这两类工具，添加领域词典可影响候选，但不能单靠工具名保证质量。评估可用人工关键词覆盖、冗余率及检索/分类的下游收益，对单篇短文本尤其要检查分词和停用词规则。",
+        "formula": "\\begin{aligned}\\operatorname{TFIDF}(w,d)&=\\operatorname{tf}(w,d)\\log\\frac{N+1}{\\operatorname{df}(w)+1}\\\\S(v)&=(1-a)+a\\sum_{u\\to v}\\frac{w_{uv}}{\\sum_k w_{uk}}S(u)\\end{aligned}",
+        "pitfalls": [
+          "把tf-idf或中心性分数当作语义正确性的概率。",
+          "用测试集拟合idf却称没有数据泄露。"
+        ],
+        "followups": [
+          "共现窗口变大如何改变TextRank的边与得分？",
+          "为什么关键词提取与LLM tokenizer分词目标不同？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-JIEBA",
+        "WD26-TEXTRANK"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "分词与文本表示"
+    },
+    {
+      "id": "PRE-018",
+      "category": "PRE",
+      "title": "Fill-in-the-Middle 预训练怎样让 causal LM 根据前后文补全代码？",
+      "level": "L2",
+      "tags": [
+        "FIM",
+        "代码补全",
+        "预训练"
+      ],
+      "answer": {
+        "body": "FIM把文档切成prefix、middle和suffix，使用特殊标记把前后文排到待补全middle之前，再用普通next-token目标训练。例如PSM布局为prefix标记+prefix+suffix标记+suffix+middle标记+middle；也可以混合SPM等布局。生成middle时前后文已在可见前缀中，因此causal mask仍足够，并不需要改成双向decoder。\n\n数据需随机选择合法切点、保留特殊token和语言边界，控制FIM比例与常规左到右训练的混合。代码补全要检查AST/缩进、tokenizer和跨文件上下文，同时单独测续写与infilling，不能仅用普通PPL验收。Code Llama等checkpoint对FIM支持并不完全相同，必须核对对应版本和prompt标记。FIM学的是按转换序列条件化的生成，和BERT在原位置并行预测MASK、GLM的空白填充参数化都有差异。",
+        "formula": "p(M\\mid P,S)=\\prod_{t=1}^{|M|}p(M_t\\mid\\operatorname{format}(P,S),M_{<t})",
+        "pitfalls": [
+          "认为causal LM永远无法使用后缀文本作为条件。",
+          "对未学过FIM标记的模型直接拼标记并假设已获得infill能力。"
+        ],
+        "followups": [
+          "切点在token化之前还是之后有什么差别？",
+          "如何验证FIM训练没有破坏普通左到右续写？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-FIM",
+        "WD26-CODELLAMA"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "语言建模与规模规律"
+    }
+  ]
+}

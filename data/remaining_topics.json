@@ -1,0 +1,451 @@
+{
+  "sources": [
+    {
+      "id": "WD26-FLOATER",
+      "title": "Learning to Encode Position for Transformer with Continuous Dynamical Model",
+      "url": "https://arxiv.org/abs/2003.09229",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-COMPLEX",
+      "title": "Encoding word order in complex embeddings",
+      "url": "https://arxiv.org/abs/1912.12333",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-CNNPOSITION",
+      "title": "How Much Position Information Do Convolutional Neural Networks Encode?",
+      "url": "https://arxiv.org/abs/2001.08248",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-RPR",
+      "title": "Self-Attention with Relative Position Representations",
+      "url": "https://arxiv.org/abs/1803.02155",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-TXL",
+      "title": "Transformer-XL: Attentive Language Models Beyond a Fixed-Length Context",
+      "url": "https://arxiv.org/abs/1901.02860",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-DEBERTA",
+      "title": "DeBERTa: Decoding-enhanced BERT with Disentangled Attention",
+      "url": "https://arxiv.org/pdf/2006.03654",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-TUPE",
+      "title": "Rethinking Positional Encoding in Language Pre-training",
+      "url": "https://arxiv.org/abs/2006.15595",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-MOEBERT",
+      "title": "MoEBERT: from BERT to Mixture-of-Experts via Importance-Guided Adaptation",
+      "url": "https://arxiv.org/html/2204.07675v2",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-WIDENET",
+      "title": "Go Wider Instead of Deeper",
+      "url": "https://arxiv.org/abs/2107.11817",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-NAS",
+      "title": "Neural Architecture Search: A Survey",
+      "url": "https://arxiv.org/abs/1808.05377",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-DARTS",
+      "title": "DARTS: Differentiable Architecture Search",
+      "url": "https://arxiv.org/html/1806.09055v2",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-NASGAP",
+      "title": "Weight-Sharing Neural Architecture Search: A Battle to Shrink the Optimization Gap",
+      "url": "https://arxiv.org/abs/2008.01475",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-ROME",
+      "title": "Locating and Editing Factual Associations in GPT",
+      "url": "https://rome.baulab.info/",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-MEMIT",
+      "title": "Mass Editing Memory in a Transformer",
+      "url": "https://memit.baulab.info/",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-MEND",
+      "title": "Fast Model Editing at Scale",
+      "url": "https://arxiv.org/abs/2110.11309",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-ELU",
+      "title": "Fast and Accurate Deep Network Learning by Exponential Linear Units",
+      "url": "https://arxiv.org/abs/1511.07289",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-RRELU",
+      "title": "Empirical Evaluation of Rectified Activations in Convolutional Network",
+      "url": "https://arxiv.org/abs/1505.00853",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-AUTOPROMPT",
+      "title": "AutoPrompt: Eliciting Knowledge from Language Models with Automatically Generated Prompts",
+      "url": "https://arxiv.org/abs/2010.15980",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-KPT",
+      "title": "Knowledgeable Prompt-tuning: Incorporating Knowledge into Prompt Verbalizer for Text Classification",
+      "url": "https://arxiv.org/abs/2108.02035",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "WD26-PPT",
+      "title": "PPT: Pre-trained Prompt Tuning for Few-shot Learning",
+      "url": "https://arxiv.org/abs/2109.04332",
+      "platform": "论文或官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "核对方法与适用边界；答案原创整理。",
+      "topics": []
+    },
+    {
+      "id": "RT26-T5-IMPLEMENTATION",
+      "title": "T5 original Mesh TensorFlow attention implementation",
+      "url": "https://github.com/tensorflow/mesh/blob/master/mesh_tensorflow/transformer/attention.py",
+      "platform": "GitHub",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "Verified direct q/k logits and the default fold_scaling_into_initializer convention; model-specific scaling is distinct from generic scaled dot-product attention.",
+      "topics": [
+        "T5",
+        "attention scaling",
+        "relative position bias"
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "TFM-024",
+      "category": "TFM",
+      "title": "递归、乘性、卷积与复数位置表示怎样提供顺序信息？",
+      "level": "L2",
+      "tags": [
+        "位置编码",
+        "FLOATER",
+        "Complex Order"
+      ],
+      "answer": {
+        "body": "位置表示可以通过不同结构注入顺序。递归方案由初始状态逐步生成位置向量，FLOATER 进一步用神经 ODE 描述位置上的连续演化；参数可学习，但数值求解或递推有计算成本，能生成更远位置不保证可靠外推。乘性方案用位置相关向量调制 token 表示，例如逐元素相乘，改变的是特征幅度或相位；这只是一类构造，不能据此断言一定优于加法。\n\n卷积核的偏移提供局部相对顺序，零填充边界还可能让 CNN 学到绝对位置线索；它与显式位置表不同，平移等变性也受边界条件影响。Complex Order 用复数的模与相位同时表示词和顺序，可写为 r·exp(i(ωm+θ))，原方法研究复数网络。RoPE 则在实数 Q/K 的二维子空间旋转，也可用复数乘法解释，但不要求整个 Transformer 改成复数模型。比较时检查位置作用于输入、分数还是 Q/K，是否影响并行、缓存和长度泛化。",
+        "formula": "p_{m+1}=f_\\theta(p_m),\\qquad \\frac{dp(t)}{dt}=h_\\theta(p(t),t),\\qquad z_{w,j}(m)=r_{w,j}e^{\\mathrm{i}(\\omega_{w,j}m+\\theta_{w,j})}",
+        "pitfalls": [
+          "把所有复数位置表示都等同于 RoPE。",
+          "把卷积零填充带来的绝对位置线索理解为无边界条件下也严格成立。"
+        ],
+        "followups": [
+          "位置相乘为什么不必然得到只依赖位置差的点积？",
+          "ODE 位置表示如何影响预计算与推理缓存？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-FLOATER",
+        "WD26-COMPLEX",
+        "WD26-CNNPOSITION"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "位置编码与长上下文"
+    },
+    {
+      "id": "TFM-025",
+      "category": "TFM",
+      "title": "Shaw、Transformer-XL、T5、DeBERTa 与 TUPE 如何建模位置信息？",
+      "level": "L2",
+      "tags": [
+        "相对位置",
+        "Transformer-XL",
+        "DeBERTa"
+      ],
+      "answer": {
+        "body": "Shaw 的相对位置表示把截断的距离向量加入 key，并可加入 value，所以不仅改变权重，也改变被聚合的内容。Transformer-XL 使用内容与相对位置的多个打分项和全局可学习偏置，配合跨片段缓存，避免把缓存 token 的绝对位置编号机械重复；XLNet 使用这一结构，relative shift 是高效对齐相对分数的实现技巧。\n\nT5 在注意力 logit 上加可学习距离桶偏置，近距离区分细，远距离合并，value 通常保持内容表示。T5 的常见实现不在 logits 上再次除以根号维度，尺度由投影初始化等约定处理；不能把标准 attention 的缩放机械套进每个模型实现。DeBERTa 将内容与位置解耦，核心打分包含内容—内容、内容—位置、位置—内容三项；预训练的 enhanced mask decoder 再利用绝对位置，它的“decoder”不表示常规自回归生成解码器。TUPE 则分别计算内容相关性与位置相关性，减少两者的混合交互，并特殊处理 CLS；TUPE-A 使用解耦的绝对位置相关性，TUPE-R 在此基础上再加相对位置偏置，不应把 TUPE 的所有版本都称为相对位置编码。分桶、截断和相对旋转是不同设计，能计算任意距离不意味着对任意长文本都保留分辨率或任务精度。",
+        "formula": "s_{ij}^{\\mathrm{T5}}=q_i^{\\top}k_j+b_{\\operatorname{bucket}(j-i)},\\qquad s_{ij}^{\\mathrm{DeBERTa}}\\propto (q_i^c)^{\\top}k_j^c+(q_i^c)^{\\top}k^r_{\\delta(i,j)}+(q^r_{\\delta(j,i)})^{\\top}k_j^c",
+        "pitfalls": [
+          "认为相对位置只能修改 logit，不能修改 value。",
+          "把 DeBERTa enhanced mask decoder 当成 Encoder-Decoder 生成架构。"
+        ],
+        "followups": [
+          "距离桶合并会损失哪些长距离信息？",
+          "Transformer-XL 缓存与普通 decoder KV cache 的训练语义有什么区别？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-RPR",
+        "WD26-TXL",
+        "WD26-T5",
+        "WD26-DEBERTA",
+        "WD26-TUPE",
+        "WD26-XLNET",
+        "RT26-T5-IMPLEMENTATION"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "位置编码与长上下文"
+    },
+    {
+      "id": "ARC-013",
+      "category": "ARC",
+      "title": "MoE 怎样用于模型压缩，WideNet 与 MoEBERT 的思路有什么不同？",
+      "level": "L2",
+      "tags": [
+        "MoE",
+        "模型压缩",
+        "蒸馏"
+      ],
+      "answer": {
+        "body": "MoE 可以增加总容量、限制每个 token 的激活计算，也可结合参数共享或蒸馏压缩模型；“稀疏”不自动等于权重文件更小。WideNet 在深度方向共享 Transformer 参数，在宽度方向使用 MoE 增加表达容量，同时让不同层使用独立的归一化参数，以减轻完全共享的表达限制。\n\nMoEBERT 从预训练 BERT 的 FFN 适配出多个较小专家，以神经元重要性指导分配，并用层级蒸馏保留教师表示；推理只选择一个专家，以降低激活计算。它不是先独立训练多个完整 BERT 再投票。评估应同时报告总参数、激活参数、权重常驻显存、路由/通信开销和真实延迟，在相同任务质量下比较。专家很小、batch 很小或路由分散时，额外调度可能抵消理论 FLOPs 收益。",
+        "formula": "",
+        "pitfalls": [
+          "把 MoE 激活 FLOPs 变少直接等同于总存储变少。",
+          "把跨层共享和 token 路由当作同一种稀疏机制。"
+        ],
+        "followups": [
+          "共享 FFN 而不共享 LayerNorm 有什么作用？",
+          "怎样设计 dense 学生与 MoE 学生的公平蒸馏对照？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-WIDENET",
+        "WD26-MOEBERT",
+        "WD26-KD"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "MoE 路由、训练与压缩"
+    },
+    {
+      "id": "ARC-014",
+      "category": "ARC",
+      "title": "MoE 微调为什么容易过拟合，专家一定按语言或领域自动分工吗？",
+      "level": "L2",
+      "tags": [
+        "MoE",
+        "微调",
+        "专家特化"
+      ],
+      "answer": {
+        "body": "MoE 在较小下游数据集上可能很快拟合训练集，而验证集改善有限；总参数多、专家更新数据不均、路由分布变化都要观察。z-loss 控制 router 数值尺度，负载均衡改善容量分配，不能代替泛化控制。可分别调专家内部 dropout、学习率、batch、训练步数，并对比冻结专家、更新非 MoE 子层或全量更新，检查训练—验证差距与路由统计。\n\nSwitch 研究了更强的专家 dropout；ST-MoE 则发现更强 dropout 的收益有限，部分参数微调有时能保持质量，而仅更新专家在其配置下明显变差。这些是具体规模和任务下的证据，不是“永远冻结专家”的规则。专家分工也不能按名称推断：ST-MoE 的 encoder 专家表现出某些句法、语义等特化，decoder 未呈现同样模式，多语言专家也不简单按语言一一划分。应按 token 类型、路由频率、负载、消融后的质量和跨域泛化来验证分工。",
+        "formula": "",
+        "pitfalls": [
+          "把 expert dropout 误解成总是随机删除整个专家；常见含义是专家隐状态的 dropout。",
+          "认为每个专家天然等于一个人类定义的领域，或 experts 越多下游效果必然越好。"
+        ],
+        "followups": [
+          "仅更新专家为什么可能比更新较少非专家参数效果差？",
+          "怎样区分专家特化、路由偏置与专家塌缩？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-SWITCH",
+        "WD26-STMOE"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "MoE 路由、训练与压缩"
+    },
+    {
+      "id": "ARC-015",
+      "category": "ARC",
+      "title": "NAS 怎样搜索模型架构，DARTS 与权重共享有哪些取舍？",
+      "level": "L2",
+      "tags": [
+        "NAS",
+        "DARTS",
+        "权重共享"
+      ],
+      "answer": {
+        "body": "NAS 要定义搜索空间、搜索策略和候选评估方式。搜索空间可包含深度、宽度、算子、连接和注意力配置；策略可用随机搜索、进化、强化学习或梯度方法；评估需同时考虑质量、参数量、显存及目标设备延迟。只搜索某个固定结构的学习率属于超参数优化，两者可以联合但不完全相同。\n\nDARTS 用 softmax 权重将离散算子混合成可微结构，训练模型权重和架构参数，再离散选择候选；典型目标是双层优化，训练集拟合权重、验证集优化结构。共享 supernet 避免每个候选从头训练，节省搜索成本，但子结构在共享权重下的排名可能与独立训练不一致。最终候选应重新训练或按统一协议校准，在独立测试集上测性能，并把搜索本身的算力计入成本。FLOPs 与硬件时延不一一对应，不能用单个代理指标宣称最优。",
+        "formula": "\\min_{\\alpha}\\mathcal L_{\\mathrm{val}}(w^*(\\alpha),\\alpha),\\quad w^*(\\alpha)=\\arg\\min_w\\mathcal L_{\\mathrm{train}}(w,\\alpha),\\qquad \\bar o(x)=\\sum_{o\\in\\mathcal O}\\operatorname{softmax}(\\alpha)_o\\,o(x)",
+        "pitfalls": [
+          "把连续混合结构的验证分数当成离散结构的最终测试分数。",
+          "用测试集反复挑结构，或漏报搜索与重训成本。"
+        ],
+        "followups": [
+          "为什么 shared weights 会改变候选排序？",
+          "如何在目标 GPU 上把延迟或显存约束纳入搜索？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-NAS",
+        "WD26-DARTS",
+        "WD26-NASGAP"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "架构范式与参数"
+    },
+    {
+      "id": "FT-024",
+      "category": "FT",
+      "title": "模型编辑与继续训练、RAG 有何区别？ROME、MEMIT 与 MEND 如何修改知识？",
+      "level": "L2",
+      "tags": [
+        "模型编辑",
+        "ROME",
+        "MEMIT",
+        "MEND"
+      ],
+      "answer": {
+        "body": "模型编辑希望用少量事实更正定向改变模型行为，同时保留无关能力。继续训练通常面向更广的数据分布和目标；RAG 在推理时提供外部证据，无需修改底座权重。编辑方法主要改变参数或加入可检索编辑记忆，不能保证一次更新就让所有表述、推理链和关联事实都同步正确。\n\nROME 把特定 MLP 的事实关联视为 key—value 映射，用带保留约束的秩一更新写入目标关联；MEMIT 将批量编辑分配到多个 MLP 层；MEND 学习小型编辑网络，转换局部微调梯度以生成可控参数更新。它们的低秩对象、训练需求与适用层不同，不能因出现低秩矩阵就等同于 LoRA。\n\n评估至少看目标事实的编辑成功率、同义改写泛化、无关邻近事实的 locality，以及连续/批量编辑后的累计退化；需要跨实体、反向关系和多跳问题测试。先保存可回滚权重，对比单纯微调和 RAG，再验证困惑度与通用任务。模型编辑是定向纠错工具，不是已证明能无副作用维护完整知识库的保证。",
+        "formula": "\\Delta W=u v^{\\top}\\quad(\\text{rank-one update}),\\qquad (W+\\Delta W)k_*\\approx v_*",
+        "pitfalls": [
+          "把一个提示上更正成功等同于事实在所有上下文和推理中都已一致更新。",
+          "把 ROME 的秩一编辑、MEND 的梯度分解与 LoRA 的训练参数化混为一谈。"
+        ],
+        "followups": [
+          "怎样构造 locality 测试而不只测编辑样例？",
+          "为什么批量编辑需要关注累计遗忘和更新顺序？"
+        ]
+      },
+      "reference_ids": [
+        "WD26-ROME",
+        "WD26-MEMIT",
+        "WD26-MEND"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "知识蒸馏与模型编辑"
+    }
+  ]
+}

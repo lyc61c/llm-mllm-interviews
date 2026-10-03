@@ -6,20 +6,40 @@ from collections import Counter
 
 ROOT = Path(__file__).resolve().parents[1]
 CATEGORIES = {
-    "TFM": ("01-transformer", "Transformer 与数学基础"),
-    "PRE": ("02-pretraining", "预训练、数据与优化"),
-    "FT": ("03-finetuning", "SFT、LoRA 与参数高效微调"),
-    "INF": ("04-inference", "推理、KV Cache 与量化"),
-    "ALN": ("05-alignment", "RLHF、DPO、PPO 与 GRPO"),
-    "RAG": ("06-rag", "RAG、检索与重排"),
-    "AGT": ("07-agents", "Agent、工具与上下文工程"),
-    "EVA": ("08-evaluation", "评测、幻觉与安全"),
-    "VLM": ("09-vision-language", "视觉语言与图文多模态"),
-    "OMM": ("10-video-audio-omni", "视频、语音与 Omni"),
-    "DST": ("11-distributed", "分布式训练与显存工程"),
-    "COD": ("12-coding", "手撕代码与算法"),
-    "SYS": ("13-system-design", "系统设计与线上故障"),
-    "PRJ": ("14-project", "项目、论文与行为追问"),
+    "BAS": ("01-fundamentals", "NLP、数学与深度学习基础"),
+    "TFM": ("02-transformer", "Transformer、Attention 与位置编码"),
+    "ARC": ("03-model-architectures", "模型架构、MoE 与模型家族"),
+    "PRE": ("04-pretraining", "预训练、语料与优化"),
+    "FT": ("05-finetuning", "SFT、PEFT、蒸馏与模型编辑"),
+    "ALN": ("06-alignment", "强化学习、RLHF 与偏好优化"),
+    "INF": ("07-inference", "推理、解码、量化与服务引擎"),
+    "DST": ("08-distributed", "分布式训练、并行与显存"),
+    "RAG": ("09-rag", "RAG、检索、重排与图检索"),
+    "AGT": ("10-agents", "Agent、规划、工具与多智能体"),
+    "EVA": ("11-evaluation", "评测、幻觉、安全与鲁棒性"),
+    "VLM": ("12-vision-language", "视觉语言模型与图文多模态"),
+    "OMM": ("13-video-audio-omni", "视频、语音与 Omni"),
+    "COD": ("14-coding", "手撕代码与算法"),
+    "SYS": ("15-system-design", "系统设计、性能与可靠性"),
+    "PRJ": ("16-project", "项目、论文与工程实践"),
+}
+TOPICS = {
+    'BAS': ('分词与文本表示', '序列任务与经典 NLP', '数学、概率与统计', '深度学习与优化基础'),
+    'TFM': ('注意力机制与掩码', '位置编码与长上下文', '归一化、FFN 与残差', '复杂度与实现机制'),
+    'ARC': ('架构范式与参数', '预训练模型与家族对比', 'MoE 路由、训练与压缩', '推理模型与 MLA'),
+    'PRE': ('语言建模与规模规律', '语料清洗与数据配比', '训练精度与优化', '继续预训练与域适配'),
+    'FT': ('指令数据与训练目标', 'LoRA 与其他 PEFT', '训练技巧与排错', '知识蒸馏与模型编辑'),
+    'ALN': ('强化学习基础', 'RLHF 与 PPO', 'DPO 与偏好数据', 'GRPO 与在线优化', '奖励与对齐策略'),
+    'INF': ('KV Cache 与服务调度', '解码与采样策略', '注意力与算子加速', '量化与稀疏推理'),
+    'DST': ('训练显存与状态分片', '并行策略与通信', '精度与激活优化', '训练故障与可靠性'),
+    'RAG': ('文档切分与索引', '召回、融合与重排', '查询优化与图检索', '评测、权限与多模态 RAG'),
+    'AGT': ('提示、推理与规划', '工具调用与协议', '记忆与上下文', '多 Agent 协同与训练', '可靠性与评测'),
+    'EVA': ('评测协议与基准', '指标与统计检验', '幻觉与可信度', '安全与鲁棒性'),
+    'VLM': ('图文表示与预训练', '视觉连接器与训练', '动态分辨率与位置编码', '模型结构与版本对比', '感知、文档与视觉评测'),
+    'OMM': ('视频采样与时序', '语音识别与编码', '语音生成与流式', 'Omni 融合与评测'),
+    'COD': ('模型算子与数值实现', '损失函数与训练代码', '采样与缓存实现', '通用算法与数据结构'),
+    'SYS': ('系统设计与资源预算', '性能、缓存与并发', '质量诊断与版本治理', '权限、容错与可观测性'),
+    'PRJ': ('项目贡献与实验设计', '调试、数据与复现', '论文、视野与工程习惯'),
 }
 SUPPORT = {"reported_question", "reported_topic", "search_snippet", "secondary_report"}
 
@@ -27,7 +47,7 @@ SUPPORT = {"reported_question", "reported_topic", "search_snippet", "secondary_r
 def load_bank():
     sources, questions = [], []
     for path in sorted((ROOT / "data").glob("*.json")):
-        # One canonical shard per owner; generated exports live in exports/.
+        # Canonical shards hold original answers and internal reference data.
         data = json.loads(path.read_text(encoding="utf-8-sig"))
         sources.extend(data["sources"])
         questions.extend(data["questions"])
@@ -55,7 +75,8 @@ def validate(sources, questions, require_complete=True):
     for q in questions:
         qid = q["id"]
         check(q.get("category") in CATEGORIES, f"{qid}: invalid category")
-        check(re.fullmatch(re.escape(q.get("category", "")) + r"-\d{3}", qid), f"{qid}: invalid ID")
+        check(q.get('topic') in TOPICS.get(q.get('category'), ()), f'{qid}: invalid topic')
+        check(re.fullmatch(r'(?:'+'|'.join(CATEGORIES)+r')-\d{3}', qid), f"{qid}: invalid ID")
         check(q.get("level") in {"L1", "L2", "L3"}, f"{qid}: invalid level")
         check(bool(q.get("title", "").strip()), f"{qid}: empty title")
         a = q.get("answer", {})
@@ -66,6 +87,14 @@ def validate(sources, questions, require_complete=True):
             check(isinstance(a.get(key), list) and bool(a[key]), f"{qid}: missing {key}")
         check(isinstance(a.get("formula", ""), str), f"{qid}: formula must be LaTeX text")
         check('$' not in a.get('formula', ''), f'{qid}: formula must not contain math delimiters')
+        for value in (a.get('body', ''), a.get('formula', ''), *a.get('pitfalls', []), *a.get('followups', [])):
+            check(not re.search(r'[\x00-\x09\x0b-\x1f]', value), f'{qid}: unexpected control character in answer')
+        for figure in q.get('figures', []):
+            figure_path = figure.get('path', '')
+            check(bool(re.fullmatch(r'assets/[a-z0-9-]+\.svg', figure_path)), f'{qid}: invalid figure path')
+            check(bool(figure.get('alt', '').strip()), f'{qid}: missing figure description')
+            resolved = (ROOT / figure_path).resolve()
+            check(resolved.is_relative_to((ROOT / 'assets').resolve()) and resolved.is_file(), f'{qid}: missing or external figure')
         check(bool(q.get("reference_ids")), f"{qid}: no technical reference")
         for sid in q.get("reference_ids", []):
             check(sid in smap, f"{qid}: dangling reference {sid}")

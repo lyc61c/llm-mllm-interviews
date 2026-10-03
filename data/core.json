@@ -1320,7 +1320,7 @@
         "数值稳定"
       ],
       "answer": {
-        "body": "缩放点积注意力先用 $Q$ 与 $K$ 的匹配分数，在 key 轴做 softmax，再加权汇聚 $V$。设 $Q\\in\\mathbb R^{L_q\\times d_k}$、$K\\in\\mathbb R^{L_k\\times d_k}$、$V\\in\\mathbb R^{L_k\\times d_v}$，则 $S=QK^\\top/\\sqrt{d_k}+M$、$A=\\operatorname{softmax}(S)$，输出 $AV\\in\\mathbb R^{L_q\\times d_v}$。Self-attention 常取 $Q=XW_Q$、$K=XW_K$、$V=XW_V$，cross-attention 的 $Q$ 与 $K/V$ 可来自不同序列。\n\n缩放的尺度分析假设各分量零均值、单位方差，$q_i$ 与 $k_i$ 独立，且不同维的乘积互不相关：此时 $\\operatorname{Var}(q_i k_i)=1$，$\\operatorname{Var}(q\\cdot k)=d_k$，除以 $\\sqrt{d_k}$ 后方差为 1。实际训练后的相关性和方差未必满足这些假设。分数差过大会使分布过于尖锐，softmax 的 Jacobian $\\partial A_i/\\partial S_j=A_i(\\delta_{ij}-A_j)$ 部分元素变小；这不表示所有后续梯度必然消失，softmax 与交叉熵合并时 logits 梯度仍为预测概率减目标概率。\n\n允许的连接加 0，禁止连接加 $-\\infty$，再做 softmax。实现常先减去每行最大有限分数以避免指数溢出；全屏蔽行须单独处理，并检查 dtype、广播和内核的 mask 约定。有限且未屏蔽的 logits 在精确计算下得到严格为正、和为 1 的权重，所以 softmax 本身没有硬稀疏；数值下溢和 mask 产生的零是另外的机制。权重适合描述加权汇聚，但不能直接当作因果重要性。",
+        "body": "缩放点积注意力先用 $Q$ 与 $K$ 的匹配分数，在 key 轴做 softmax，再加权汇聚 $V$。设 $Q\\in\\mathbb R^{L_q\\times d_k}$、$K\\in\\mathbb R^{L_k\\times d_k}$、$V\\in\\mathbb R^{L_k\\times d_v}$，则 $S=QK^\\top/\\sqrt{d_k}+M$、$A=\\operatorname{softmax}(S)$，输出 $AV\\in\\mathbb R^{L_q\\times d_v}$。Self-attention 常取 $Q=XW_Q$、$K=XW_K$、$V=XW_V$，cross-attention 的 $Q$ 与 $K/V$ 可来自不同序列。\n\n缩放的尺度分析假设各分量零均值、单位方差，$q_i$ 与 $k_i$ 独立，且不同维的乘积互不相关：此时 $\\operatorname{Var}(q_i k_i)=1$，$\\operatorname{Var}(q\\cdot k)=d_k$，除以 $\\sqrt{d_k}$ 后方差为 1。实际训练后的相关性和方差未必满足这些假设。分数差过大会使分布过于尖锐，softmax 的 Jacobian $\\partial A_i/\\partial S_j=A_i(\\delta_{ij}-A_j)$ 部分元素变小；这不表示所有后续梯度必然消失，softmax 与交叉熵合并时 logits 梯度仍为预测概率减目标概率。\n\n允许的连接加 0，禁止连接加 $-\\infty$，再做 softmax。实现常先减去每行最大有限分数以避免指数溢出；全屏蔽行须单独处理，并检查 dtype、广播和内核的 mask 约定。有限且未屏蔽的 logits 在精确计算下得到严格为正、和为 1 的权重，所以 softmax 本身没有硬稀疏；数值下溢和 mask 产生的零是另外的机制。权重适合描述加权汇聚，但不能直接当作因果重要性。\n\n除了固定除以根号维度，也可对 Q/K 做适当归一化并设置温度、学习 logit scale，或使用加性注意力的评分网络。它们改变评分分布及参数化，并不是把原模型的分母随意删掉的等价替换。改变温度只控制分布尖锐度，不替代所有输入范数与训练稳定性问题；应重新分析方差并配套训练。",
         "formula": "\\begin{aligned}\\operatorname{Attention}(Q,K,V)&=\\operatorname{softmax}\\!\\left(\\frac{QK^\\top}{\\sqrt{d_k}}+M\\right)V\\\\ \\operatorname{Var}(q\\cdot k)&=d_k\\\\ \\frac{\\partial p_i}{\\partial s_j}&=p_i(\\delta_{ij}-p_j)\\end{aligned}",
         "pitfalls": [
           "把缩放分母写成 $d_{\\rm model}$ 或 $d_k$，或省略独立/方差假设后把 $\\operatorname{Var}(q\\cdot k)=d_k$ 当普遍定律。",
@@ -1333,7 +1333,8 @@
       },
       "reference_ids": [
         "CORE-S020",
-        "CORE-S074"
+        "CORE-S074",
+        "ZH26-P06"
       ],
       "community_evidence": [
         {
@@ -1348,7 +1349,8 @@
         "Z02",
         "Z11",
         "Z27"
-      ]
+      ],
+      "topic": "注意力机制与掩码"
     },
     {
       "id": "TFM-002",
@@ -1381,7 +1383,8 @@
       "article_supplement_keys": [
         "Z03",
         "Z12"
-      ]
+      ],
+      "topic": "注意力机制与掩码"
     },
     {
       "id": "TFM-003",
@@ -1422,11 +1425,12 @@
       "article_supplement_keys": [
         "Z26",
         "Z28"
-      ]
+      ],
+      "topic": "注意力机制与掩码"
     },
     {
       "id": "TFM-004",
-      "category": "TFM",
+      "category": "ARC",
       "title": "Encoder-only、Decoder-only 与 Encoder-Decoder 怎样选择？",
       "level": "L1",
       "tags": [
@@ -1436,7 +1440,7 @@
         "GPT"
       ],
       "answer": {
-        "body": "Encoder-Decoder 先编码源序列，再由 decoder 自回归生成目标，两边长度可以不同。原始 Transformer 的 encoder 和 decoder 各有 6 层：encoder 每层含双向 self-attention 和 FFN，decoder 另含因果 self-attention 与 cross-attention。源输入被编码为 $H_{\\rm src}$，目标第 $t$ 步依赖源输入与目标历史。\n\nCross-attention 用 decoder hidden 作 $Q$、encoder memory 作 $K/V$，可访问完整已知源句并屏蔽源 padding；decoder 自身仍只看目标历史。源 memory 可一次编码，各层的 cross-attention K/V 投影可复用。条件概率分解为 $p(y\\mid x)=\\prod_t p(y_t\\mid y_{<t},x)$，训练时用右移目标和 teacher forcing 并行计算各位置损失。原模型使用 PostNorm，并在两边注入位置编码；后续架构不必固定 6 层或同一种归一化。\n\nBERT 等 encoder-only 常用双向表示和 MLM，适合理解及表示任务；GPT 类 decoder-only 用因果目标训练，可把输入与输出串到同一上下文。Prefix LM 的分段可见性不等于具有独立 encoder 和 cross-attention。选型要结合任务形态、源/目标长度、memory 复用、缓存、吞吐与训练数据：encoder-only 可经额外设计用于生成，decoder-only 也能分类，结构标签本身不能保证任务效果。",
+        "body": "Encoder-Decoder 先编码源序列，再由 decoder 自回归生成目标，两边长度可以不同。原始 Transformer 的 encoder 和 decoder 各有 6 层：encoder 每层含双向 self-attention 和 FFN，decoder 另含因果 self-attention 与 cross-attention。源输入被编码为 $H_{\\rm src}$，目标第 $t$ 步依赖源输入与目标历史。\n\nCross-attention 用 decoder hidden 作 $Q$、encoder memory 作 $K/V$，可访问完整已知源句并屏蔽源 padding；decoder 自身仍只看目标历史。源 memory 可一次编码，各层的 cross-attention K/V 投影可复用。条件概率分解为 $p(y\\mid x)=\\prod_t p(y_t\\mid y_{<t},x)$，训练时用右移目标和 teacher forcing 并行计算各位置损失。原模型使用 PostNorm，并在两边注入位置编码；后续架构不必固定 6 层或同一种归一化。\n\nBERT 等 encoder-only 常用双向表示和 MLM，适合理解及表示任务；GPT 类 decoder-only 用因果目标训练，可把输入与输出串到同一上下文。Prefix LM 的分段可见性不等于具有独立 encoder 和 cross-attention。选型要结合任务形态、源/目标长度、memory 复用、缓存、吞吐与训练数据：encoder-only 可经额外设计用于生成，decoder-only 也能分类，结构标签本身不能保证任务效果。\n\nDecoder-only 把各种任务统一成前缀后的 next-token 预测，可直接利用大量无标注连续文本做因果训练，推理再按相同概率分解配合 KV cache 逐步生成，输入/示例/对话也可用同一序列接口组织。这种统一目标、数据与部署方式是其常见优势，不是“Encoder 完全不能生成”的数学定理。Encoder-Decoder 在条件生成、较长源输入和 memory 复用等条件下仍有优势，训练并行能力也不能与自回归生成必须按步进行混淆。",
         "formula": "\\begin{aligned}H_{\\rm src}&=\\operatorname{Encoder}(x)\\\\p_\\theta(y\\mid x)&=\\prod_t p_\\theta(y_t\\mid y_{<t},H_{\\rm src})\\\\Q&=H_{\\rm dec}W_Q,\\quad K=H_{\\rm src}W_K,\\quad V=H_{\\rm src}W_V\\end{aligned}",
         "pitfalls": [
           "把 source 与 target 强制要求等长，或把 cross-attention 也无条件设置成目标三角 mask。",
@@ -1463,7 +1467,8 @@
       "editorial": false,
       "article_supplement_keys": [
         "Z25"
-      ]
+      ],
+      "topic": "架构范式与参数"
     },
     {
       "id": "TFM-005",
@@ -1476,7 +1481,7 @@
         "归一化"
       ],
       "answer": {
-        "body": "LayerNorm 对每个 token 的 hidden 维计算均值与方差，再用 $\\epsilon$ 和可学习的 $\\gamma,\\beta$ 做标准化与仿射变换。对 `X:[B,T,D]`、`normalized_shape=D`，均值和方差形状为 `[B,T,1]`，$\\gamma,\\beta$ 为 `[D]`。方差使用分母 $D$ 的总体形式；$\\epsilon$ 加在方差内，避免分母为零并影响小方差时的尺度。\n\n归一化只覆盖指定的特征轴；若 `normalized_shape` 包含多个轴，统计范围也随之扩大。仿射或 bias 可由具体架构关闭。同一层各 token 共享这组参数，但不同层通常分别学习。LN 在训练与推理时都依据当前 token 重算统计，不依赖 batch size 或运行均值，适合变长、在线和自回归解码。\n\nBatchNorm 通常按通道聚合 batch 与其他指定轴，训练时用批统计，常规推理用估计的总体或运行统计。小 batch、分布变化、序列位置差异和 padding 混入会影响估计；变长序列也能使用 BN，但须明确统计轴和有效位置处理。LN 有助于稳定激活与优化，训练是否稳定还依赖残差、Pre/PostNorm、初始化和学习率，不能只由 LN 推出梯度永不爆炸或消失。",
+        "body": "LayerNorm 对每个 token 的 hidden 维计算均值与方差，再用 $\\epsilon$ 和可学习的 $\\gamma,\\beta$ 做标准化与仿射变换。对 `X:[B,T,D]`、`normalized_shape=D`，均值和方差形状为 `[B,T,1]`，$\\gamma,\\beta$ 为 `[D]`。方差使用分母 $D$ 的总体形式；$\\epsilon$ 加在方差内，避免分母为零并影响小方差时的尺度。\n\n归一化只覆盖指定的特征轴；若 `normalized_shape` 包含多个轴，统计范围也随之扩大。仿射或 bias 可由具体架构关闭。同一层各 token 共享这组参数，但不同层通常分别学习。LN 在训练与推理时都依据当前 token 重算统计，不依赖 batch size 或运行均值，适合变长、在线和自回归解码。\n\nBatchNorm 通常按通道聚合 batch 与其他指定轴，训练时用批统计，常规推理用估计的总体或运行统计。小 batch、分布变化、序列位置差异和 padding 混入会影响估计；变长序列也能使用 BN，但须明确统计轴和有效位置处理。LN 有助于稳定激活与优化，训练是否稳定还依赖残差、Pre/PostNorm、初始化和学习率，不能只由 LN 推出梯度永不爆炸或消失。\n\n以NCHW图像张量为例，BN对每个channel跨N/H/W统计，IN对每个样本每个channel跨H/W统计，GN对每个样本在一个channel组内跨组channel/H/W统计；GN不依赖batch大小。Transformer常见LN是每个token在hidden轴统计，而不是把整个序列当一条归一化轴。所谓“选择哪种Norm”先指定张量布局和normalized_shape，不能只背名称。",
         "formula": "\\begin{aligned}\\mu_{bt}&=\\frac1D\\sum_{d=1}^D x_{btd}\\\\\\sigma^2_{bt}&=\\frac1D\\sum_{d=1}^D(x_{btd}-\\mu_{bt})^2\\\\\\operatorname{LN}(x)_{btd}&=\\gamma_d\\frac{x_{btd}-\\mu_{bt}}{\\sqrt{\\sigma^2_{bt}+\\epsilon}}+\\beta_d\\end{aligned}",
         "pitfalls": [
           "对 `[B,T,D]` 在 T 轴归一化，或把每 token 均值误写成跨 batch 均值。",
@@ -1490,7 +1495,9 @@
       "reference_ids": [
         "CORE-S021",
         "CORE-S084",
-        "CORE-S087"
+        "CORE-S087",
+        "WD26-GROUPNORM",
+        "WD26-INSTNORM"
       ],
       "community_evidence": [
         {
@@ -1503,7 +1510,8 @@
       "article_supplement_keys": [
         "Z06",
         "Z16"
-      ]
+      ],
+      "topic": "归一化、FFN 与残差"
     },
     {
       "id": "TFM-006",
@@ -1516,7 +1524,7 @@
         "数值稳定"
       ],
       "answer": {
-        "body": "RMSNorm 按输入的均方根缩放，省去 LayerNorm 的减均值步骤，通常在根号内加入 $\\epsilon$，再乘可学习的逐通道权重 $\\gamma$。LN 使用中心化方差，RMSNorm 使用未经中心化的二阶矩。\n\n两者都有对整体尺度的归一化作用，但平移性质不同：输入统一加常数时，LN 的归一化部分基本不变，RMSNorm 通常会变化。RMSNorm 的计算较简单，归约常用更高精度以减少溢出和舍入误差；实际速度与质量仍取决于模型、dtype 和融合内核，不能直接套用论文中的收益比例。",
+        "body": "RMSNorm 按输入的均方根缩放，省去 LayerNorm 的减均值步骤，通常在根号内加入 $\\epsilon$，再乘可学习的逐通道权重 $\\gamma$。LN 使用中心化方差，RMSNorm 使用未经中心化的二阶矩。\n\n两者都有对整体尺度的归一化作用，但平移性质不同：输入统一加常数时，LN 的归一化部分基本不变，RMSNorm 通常会变化。RMSNorm 的计算较简单，归约常用更高精度以减少溢出和舍入误差；实际速度与质量仍取决于模型、dtype 和融合内核，不能直接套用论文中的收益比例。\n\npRMSNorm使用部分特征估计均方根以降低归一化开销，核心仍不做均值中心化；是否采用取决于采样误差、kernel和模型验证，不能把标准RMSNorm的公式直接标作pRMSNorm。",
         "formula": "\\operatorname{RMSNorm}(x)=\\frac{\\gamma\\odot x}{\\sqrt{D^{-1}\\sum_{i=1}^D x_i^2+\\epsilon}}",
         "pitfalls": [
           "把 RMSNorm 说成标准化到零均值。",
@@ -1528,7 +1536,8 @@
         ]
       },
       "reference_ids": [
-        "CORE-S022"
+        "CORE-S022",
+        "WD26-RMSNORM"
       ],
       "community_evidence": [
         {
@@ -1537,7 +1546,8 @@
           "note": "仅搜索摘要可见 RMSNorm/SwiGLU/QLoRA；正文未读到，不能核验提问完整上下文。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "归一化、FFN 与残差"
     },
     {
       "id": "TFM-007",
@@ -1550,7 +1560,7 @@
         "梯度"
       ],
       "answer": {
-        "body": "Pre-Norm 的结构是 $y=x+F(\\operatorname{Norm}(x))$，Post-Norm 是 $y=\\operatorname{Norm}(x+F(x))$。Pre-Norm 的残差主路径保留恒等连接，给梯度提供直接通道，深层训练通常更稳定，模型末端一般还会添加最终归一化。\n\nPost-Norm 的初始化分析显示部分层梯度可能较大，可解释其对 warmup 的敏感性，但该结论依赖分析条件。实际是否需要 warmup，还受深度、初始化与优化器影响；比较两者应匹配训练预算并分别调参，不能只用同一学习率下的 loss 判定优劣。",
+        "body": "Pre-Norm 的结构是 $y=x+F(\\operatorname{Norm}(x))$，Post-Norm 是 $y=\\operatorname{Norm}(x+F(x))$。Pre-Norm 的残差主路径保留恒等连接，给梯度提供直接通道，深层训练通常更稳定，模型末端一般还会添加最终归一化。\n\nPost-Norm 的初始化分析显示部分层梯度可能较大，可解释其对 warmup 的敏感性，但该结论依赖分析条件。实际是否需要 warmup，还受深度、初始化与优化器影响；比较两者应匹配训练预算并分别调参，不能只用同一学习率下的 loss 判定优劣。\n\nDeepNorm在Post-LN风格中引入与深度相关的残差放大及初始化缩放，例如LN(αx+F(x))，并配套特定网络深度/架构的参数初始化规则。它不是把Pre-Norm挪回Post-Norm即可获得相同稳定性；α/β依赖encoder/decoder设置，公式需按论文配方核对。",
         "formula": "\\begin{aligned}y_{\\rm pre}&=x+F(\\operatorname{Norm}(x))\\\\y_{\\rm post}&=\\operatorname{Norm}(x+F(x))\\end{aligned}",
         "pitfalls": [
           "说 Pre-Norm 必然不需要 warmup。",
@@ -1562,7 +1572,8 @@
         ]
       },
       "reference_ids": [
-        "CORE-S023"
+        "CORE-S023",
+        "WD26-DEEPNORM"
       ],
       "community_evidence": [
         {
@@ -1571,7 +1582,8 @@
           "note": "公开面经汇总直接列出 Pre/Post-Norm、RoPE 外推或首 token/吞吐权衡；个人频率不采纳。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "归一化、FFN 与残差"
     },
     {
       "id": "TFM-008",
@@ -1612,7 +1624,8 @@
       "editorial": false,
       "user_supplement_keys": [
         "U13"
-      ]
+      ],
+      "topic": "位置编码与长上下文"
     },
     {
       "id": "TFM-009",
@@ -1646,7 +1659,8 @@
           "note": "公开面经汇总直接列出 Pre/Post-Norm、RoPE 外推或首 token/吞吐权衡；个人频率不采纳。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "位置编码与长上下文"
     },
     {
       "id": "TFM-010",
@@ -1685,7 +1699,8 @@
       "article_supplement_keys": [
         "Z05",
         "Z15"
-      ]
+      ],
+      "topic": "归一化、FFN 与残差"
     },
     {
       "id": "TFM-011",
@@ -1720,7 +1735,8 @@
           "note": "搜索摘录列出复杂度、GPTQ 或投机解码主题；未采用其自报次数/职级概率，公司归属为汇编者自述。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "复杂度与实现机制"
     },
     {
       "id": "TFM-012",
@@ -1733,7 +1749,7 @@
         "稳定训练"
       ],
       "answer": {
-        "body": "残差连接 $y=x+F(x)$ 让子层学习输入表示的修正，并为信号和梯度提供直接路径。两支形状须一致；若改用投影支路 $y=P(x)+F(x)$，直接支路的 Jacobian 为 $J_P$。残差相加不会像 concat 一样扩大特征维，$F(x)\\approx0$ 时可接近恒等传递。\n\n简单块的 Jacobian 为 $I+J_F$，反传为 $\\partial L/\\partial x=(I+J_F)^\\top\\partial L/\\partial y$。多层仍需连乘各块导数，若 $J_F\\approx-I$ 还会相互抵消，所以恒等项并不保证梯度永远稳定。\n\n原始 Transformer 的 PostNorm 是 $\\operatorname{LN}(x+\\operatorname{Dropout}(F(x)))$，完整导数还含 LN 和 dropout；attention、FFN 各有残差与归一化。常见 PreNorm 为 $x+\\operatorname{Dropout}(F(\\operatorname{LN}(x)))$，直接支路不经过该块 LN，通常有助于深层优化。随深度增加仍应检查残差尺度、激活方差、溢出和梯度范数，并结合初始化、学习率与最终 norm 判断稳定性。",
+        "body": "残差连接 $y=x+F(x)$ 让子层学习输入表示的修正，并为信号和梯度提供直接路径。两支形状须一致；若改用投影支路 $y=P(x)+F(x)$，直接支路的 Jacobian 为 $J_P$。残差相加不会像 concat 一样扩大特征维，$F(x)\\approx0$ 时可接近恒等传递。\n\n简单块的 Jacobian 为 $I+J_F$，反传为 $\\partial L/\\partial x=(I+J_F)^\\top\\partial L/\\partial y$。多层仍需连乘各块导数，若 $J_F\\approx-I$ 还会相互抵消，所以恒等项并不保证梯度永远稳定。\n\n原始 Transformer 的 PostNorm 是 $\\operatorname{LN}(x+\\operatorname{Dropout}(F(x)))$，完整导数还含 LN 和 dropout；attention、FFN 各有残差与归一化。常见 PreNorm 为 $x+\\operatorname{Dropout}(F(\\operatorname{LN}(x)))$，直接支路不经过该块 LN，通常有助于深层优化。随深度增加仍应检查残差尺度、激活方差、溢出和梯度范数，并结合初始化、学习率与最终 norm 判断稳定性。\n\n原始 encoder 每层有 2 条围绕子层的残差，分别对应 self-attention 与 FFN；原始 encoder-decoder 中的 decoder 每层有 3 条，分别对应 masked self-attention、cross-attention 与 FFN。GPT 类 decoder-only 通常不含 cross-attention，所以常见块为 2 条。说“Transformer 有几个残差”要先指定每层还是全网以及具体架构，不能把 decoder-only 和原始 decoder 混算。",
         "formula": "\\begin{aligned}y&=x+F(x),\\quad J_y=I+J_F\\\\y_{\\rm post}&=\\operatorname{LN}(x+\\operatorname{Dropout}(F(x)))\\\\y_{\\rm pre}&=x+\\operatorname{Dropout}(F(\\operatorname{LN}(x)))\\end{aligned}",
         "pitfalls": [
           "声称残差能让任何深度和初始化的网络梯度恒为 1。",
@@ -1754,11 +1770,12 @@
       "article_supplement_keys": [
         "Z09",
         "Z17"
-      ]
+      ],
+      "topic": "归一化、FFN 与残差"
     },
     {
       "id": "TFM-013",
-      "category": "TFM",
+      "category": "BAS",
       "title": "交叉熵、KL 散度与 perplexity 的关系和实现注意点是什么？",
       "level": "L1",
       "tags": [
@@ -1797,11 +1814,12 @@
       "editorial": false,
       "user_supplement_keys": [
         "U05"
-      ]
+      ],
+      "topic": "数学、概率与统计"
     },
     {
       "id": "TFM-014",
-      "category": "TFM",
+      "category": "ARC",
       "title": "输入 embedding 与输出 LM head 权重共享有什么利弊？",
       "level": "L2",
       "tags": [
@@ -1832,11 +1850,12 @@
       "article_supplement_keys": [
         "Z10",
         "Z21"
-      ]
+      ],
+      "topic": "架构范式与参数"
     },
     {
       "id": "TFM-015",
-      "category": "TFM",
+      "category": "ARC",
       "title": "MoE 与 Dense 的参数量和计算量应怎样比较？",
       "level": "L2",
       "tags": [
@@ -1865,7 +1884,15 @@
           "note": "正文抓取失败，搜索摘要明确出现相关问题主题，保留摘要级证据。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "MoE 路由、训练与压缩",
+      "figures": [
+        {
+          "path": "assets/moe-routing.svg",
+          "alt": "MoE 单 token 的 Top-2 专家路由",
+          "caption": "示例为 4 个专家中激活 2 个；真实系统还需要处理负载、容量与通信。"
+        }
+      ]
     },
     {
       "id": "TFM-016",
@@ -1879,7 +1906,7 @@
         "多模态"
       ],
       "answer": {
-        "body": "Self-attention 的 $Q/K/V$ 来自同一序列；cross-attention 的 $Q$ 来自需要更新的目标表示，$K/V$ 来自另一组条件或 memory。设 $X\\in\\mathbb R^{L_q\\times d_x}$、$C\\in\\mathbb R^{L_k\\times d_c}$，取 $Q=XW_Q$、$K=CW_K$、$V=CW_V$。两边原始维度与长度可不同，只需投影后的 Q/K 维度都为 $d_k$；单头输出为 $L_q\\times d_v$，多头经 $W_O$ 回到目标 hidden 维。\n\nEncoder-Decoder 用 decoder 状态查询完整已知源 memory，同时 decoder 自身保持因果 self-attention，因此 cross-attention 无需三角 mask 也能保持自回归性。视觉/音频条件生成可让语言状态查询模态特征，也可让学习的 latent query 汇聚图像；查询方向决定更新哪一组表示。K/V 对应同一 memory 集合，来源不同本身不保证语义对齐。\n\n注意力乘法约需 $O(L_qL_kd)$，投影另计，分数矩阵是 $L_q\\times L_k$。Query 数决定输出 token 数，K/V 数决定条件粒度；压缩条件能省成本，也可能丢细节。固定 memory 的各层 K/V 投影可缓存，变化的 Q 仍需计算。应屏蔽条件 padding 与不可用内容，流式任务不能读取尚未到达的信息；权重大小也不保证事实正确或因果解释。",
+        "body": "Self-attention 的 $Q/K/V$ 来自同一序列；cross-attention 的 $Q$ 来自需要更新的目标表示，$K/V$ 来自另一组条件或 memory。设 $X\\in\\mathbb R^{L_q\\times d_x}$、$C\\in\\mathbb R^{L_k\\times d_c}$，取 $Q=XW_Q$、$K=CW_K$、$V=CW_V$。两边原始维度与长度可不同，只需投影后的 Q/K 维度都为 $d_k$；单头输出为 $L_q\\times d_v$，多头经 $W_O$ 回到目标 hidden 维。\n\nEncoder-Decoder 用 decoder 状态查询完整已知源 memory，同时 decoder 自身保持因果 self-attention，因此 cross-attention 无需三角 mask 也能保持自回归性。视觉/音频条件生成可让语言状态查询模态特征，也可让学习的 latent query 汇聚图像；查询方向决定更新哪一组表示。K/V 对应同一 memory 集合，来源不同本身不保证语义对齐。\n\n注意力乘法约需 $O(L_qL_kd)$，投影另计，分数矩阵是 $L_q\\times L_k$。Query 数决定输出 token 数，K/V 数决定条件粒度；压缩条件能省成本，也可能丢细节。固定 memory 的各层 K/V 投影可缓存，变化的 Q 仍需计算。应屏蔽条件 padding 与不可用内容，流式任务不能读取尚未到达的信息；权重大小也不保证事实正确或因果解释。\n\n加性attention可写s(q,k)=vᵀtanh(W_qq+W_kk+b)，点积attention则用qᵀk或带双线性投影的qᵀWk。前者在匹配网络里引入非线性，后者更容易批量组织成高效GEMM；两者都需归一化并聚合value，没有脱离维度、kernel和任务的恒定性能排名。传统RNN seq2seq的attention也是cross-attention，用decoder状态查询encoder各时刻状态，避免只依赖单一固定向量。",
         "formula": "\\operatorname{CrossAttn}(X,C)=\\operatorname{softmax}\\!\\left(\\frac{(XW_Q)(CW_K)^\\top}{\\sqrt{d_k}}+M\\right)CW_V",
         "pitfalls": [
           "要求 cross-attention 两边输入长度或原始 embedding 维度完全相同。",
@@ -1892,7 +1919,8 @@
       },
       "reference_ids": [
         "CORE-S020",
-        "CORE-S074"
+        "CORE-S074",
+        "WD26-ADDITIVE"
       ],
       "community_evidence": [],
       "editorial": true,
@@ -1901,11 +1929,12 @@
       ],
       "article_supplement_keys": [
         "Z14"
-      ]
+      ],
+      "topic": "注意力机制与掩码"
     },
     {
       "id": "TFM-017",
-      "category": "TFM",
+      "category": "BAS",
       "title": "熵衡量什么？离散熵、条件熵与模型输出熵怎样区分？",
       "level": "L1",
       "tags": [
@@ -1934,11 +1963,12 @@
       "editorial": true,
       "user_supplement_keys": [
         "U06"
-      ]
+      ],
+      "topic": "数学、概率与统计"
     },
     {
       "id": "TFM-018",
-      "category": "TFM",
+      "category": "BAS",
       "title": "矩阵的秩与特征值如何计算，和奇异值有什么关系？",
       "level": "L2",
       "tags": [
@@ -1949,7 +1979,7 @@
         "线性代数"
       ],
       "answer": {
-        "body": "矩阵的秩是行空间或列空间的维数，可由消元主元数或非零奇异值数求得。对 $A\\in\\mathbb R^{m\\times n}$，有 $\\operatorname{rank}(A)+\\dim\\ker A=n$。LoRA 的低秩分解满足 $\\operatorname{rank}(BA)\\le\\min(\\operatorname{rank}A,\\operatorname{rank}B)\\le r$，不要求底座 $W_0$ 低秩。\n\n方阵特征值可以为复数，满足 $Av=\\lambda v,v\\ne0$，手算可先解 $\\det(\\lambda I-A)=0$，再解特征向量。例 $A=\\begin{pmatrix}2&1\\\\0&3\\end{pmatrix}$ 的特征值为 2、3，对应向量可取 $(1,0)^\\top$、$(1,1)^\\top$，秩为 2。一般矩形矩阵没有这种标准特征值定义；$A^\\top A$ 的谱用于求奇异值，不能称为矩形 $A$ 自身的特征值。\n\n大矩阵通常不显式展开特征多项式：数值库可经 Hessenberg 化和 QR 等过程求 Schur 分解，复 Schur 对角给特征值，实 Schur 的 $2\\times2$ 块需另解。对称/Hermitian 矩阵可选专用求解器。\n\n若 $A=P\\Lambda P^{-1}$ 可对角化，秩等于按重数计的非零特征值个数；一般方阵不能这样数。例如 $\\begin{pmatrix}0&1\\\\0&0\\end{pmatrix}$ 的特征值全零，秩却为 1，且不可对角化。任意方阵仍满足行列式非零、全部特征值非零与满秩的等价关系。\n\n将奇异值和 $A^\\top A$ 的特征值分别按降序排列，令 $p=\\min(m,n)$。SVD 写为 $A=U\\Sigma V^\\top$，非零奇异值的平方构成 $A^\\top A$ 的非零谱，其余位置补零；实对称矩阵的奇异值为 $|\\lambda_i|$。浮点数值秩按 $\\sigma_i>\\max(\\mathrm{atol},\\mathrm{rtol}\\,\\sigma_{\\max})$ 判断，阈值取决于 dtype、规模与噪声，近零不能等同于精确零。",
+        "body": "矩阵的秩是行空间或列空间的维数，可由消元主元数或非零奇异值数求得。对 $A\\in\\mathbb R^{m\\times n}$，有 $\\operatorname{rank}(A)+\\dim\\ker A=n$。LoRA 的低秩分解满足 $\\operatorname{rank}(BA)\\le\\min(\\operatorname{rank}A,\\operatorname{rank}B)\\le r$，不要求底座 $W_0$ 低秩。\n\n方阵特征值可以为复数，满足 $Av=\\lambda v,v\\ne0$，手算可先解 $\\det(\\lambda I-A)=0$，再解特征向量。例 $A=\\begin{pmatrix}2&1\\\\0&3\\end{pmatrix}$ 的特征值为 2、3，对应向量可取 $(1,0)^\\top$、$(1,1)^\\top$，秩为 2。一般矩形矩阵没有这种标准特征值定义；$A^\\top A$ 的谱用于求奇异值，不能称为矩形 $A$ 自身的特征值。\n\n大矩阵通常不显式展开特征多项式：数值库可经 Hessenberg 化和 QR 等过程求 Schur 分解，复 Schur 对角给特征值，实 Schur 的 $2\\times2$ 块需另解。对称/Hermitian 矩阵可选专用求解器。\n\n若 $A=P\\Lambda P^{-1}$ 可对角化，秩等于按重数计的非零特征值个数；一般方阵不能这样数。例如 $\\begin{pmatrix}0&1\\\\0&0\\end{pmatrix}$ 的特征值全零，秩却为 1，且不可对角化。任意方阵仍满足行列式非零、全部特征值非零与满秩的等价关系。\n\n将奇异值和 $A^\\top A$ 的特征值分别按降序排列，令 $p=\\min(m,n)$。SVD 写为 $A=U\\Sigma V^\\top$，非零奇异值的平方构成 $A^\\top A$ 的非零谱，其余位置补零；实对称矩阵的奇异值为 $|\\lambda_i|$。浮点数值秩按 $\\sigma_i>\\max(\\mathrm{atol},\\mathrm{rtol}\\,\\sigma_{\\max})$ 判断，阈值取决于 dtype、规模与噪声，近零不能等同于精确零。\n\n截断SVD保留最大r个奇异值，得到秩至多r的近似A_r=U_rΣ_rV_rᵀ；在谱范数或Frobenius范数下它是最佳秩r近似，误差分别由第r+1个奇异值或尾部奇异值平方和确定。它压缩已经存在的矩阵，而LoRA训练一个低秩增量，二者目标不同；对权重做低秩分解的最优矩阵误差也不保证下游任务损失最小。",
         "formula": "\\begin{aligned}\\det(\\lambda I-A)&=0,\\quad(A-\\lambda I)v=0,\\quad v\\ne0\\\\\\operatorname{rank}(A)&=\\#\\{i:\\sigma_i(A)>0\\}\\\\\\lambda_i(A^\\top A)&=\\sigma_i(A)^2,\\quad1\\le i\\le p=\\min(m,n)\\\\\\lambda_i(A^\\top A)&=0,\\quad p<i\\le n\\\\A=P\\Lambda P^{-1}&\\implies\\operatorname{rank}(A)=\\#\\{i:\\lambda_i\\ne0\\}\\\\\\operatorname{rank}(BA)&\\le r\\end{aligned}",
         "pitfalls": [
           "所有矩阵的秩都等于非零特征值个数，或给非方阵直接定义标准特征值。",
@@ -1965,13 +1995,15 @@
         "CORE-S078",
         "CORE-S083",
         "CORE-S046",
-        "SUP-P001"
+        "SUP-P001",
+        "WD26-SVD"
       ],
       "community_evidence": [],
       "editorial": true,
       "user_supplement_keys": [
         "U07"
-      ]
+      ],
+      "topic": "数学、概率与统计"
     },
     {
       "id": "TFM-019",
@@ -2011,7 +2043,8 @@
       "article_supplement_keys": [
         "Z04",
         "Z13"
-      ]
+      ],
+      "topic": "位置编码与长上下文"
     },
     {
       "id": "PRE-001",
@@ -2053,12 +2086,13 @@
       "editorial": false,
       "article_supplement_keys": [
         "Z22"
-      ]
+      ],
+      "topic": "语言建模与规模规律"
     },
     {
       "id": "PRE-002",
-      "category": "PRE",
-      "title": "BPE、Unigram 与 SentencePiece 分别是什么？",
+      "category": "BAS",
+      "title": "BPE、WordPiece、Unigram 与 SentencePiece 分别是什么？",
       "level": "L1",
       "tags": [
         "Tokenizer",
@@ -2066,7 +2100,7 @@
         "Unigram"
       ],
       "answer": {
-        "body": "BPE 从较小单元出发，逐步合并高频相邻对，学习 merge 规则并按规则编码；子词表示能减少未知词问题。Unigram 为候选切分建立概率模型，逐步删减候选词表，用动态规划找高概率切分，也可采样切分。\n\nSentencePiece 是支持 BPE、Unigram 等模型的训练工具，不是与它们并列的单一算法。它可直接从原始文本训练，处理空白与归一化，减少对语言特定预分词的依赖。字符、byte 和 Unicode 归一化设定都会影响可逆性、序列长度及代码字符串表现。",
+        "body": "BPE 从较小单元出发，逐步合并高频相邻对，学习 merge 规则并按规则编码；子词表示能减少未知词问题。Unigram 为候选切分建立概率模型，逐步删减候选词表，用动态规划找高概率切分，也可采样切分。\n\nSentencePiece 是支持 BPE、Unigram 等模型的训练工具，不是与它们并列的单一算法。它可直接从原始文本训练，处理空白与归一化，减少对语言特定预分词的依赖。字符、byte 和 Unicode 归一化设定都会影响可逆性、序列长度及代码字符串表现。\n\nWordPiece 常按词表做最长前缀匹配，再对后续子词使用 continuation 标记；它通常保存最终词表，不按BPE的merge rank回放合并。训练目标/打分与实现并不唯一，Hugging Face课程的词对频率比是教学近似，不能当作Google未公开训练器的唯一公式。Byte-level BPE以字节为基本覆盖单元，可减轻未知字符问题，但normalization、预分词和special tokens仍影响精确可逆性。选择tokenizer要比较语言覆盖、序列长度、代码/空白保持与成本，不能先跑jieba替换原tokenizer而期待checkpoint仍兼容。",
         "pitfalls": [
           "把 SentencePiece 当作独立于 BPE、Unigram 的分词算法。",
           "认为 token 总是一个汉字或一个英文单词。"
@@ -2078,7 +2112,8 @@
       },
       "reference_ids": [
         "CORE-S035",
-        "CORE-S067"
+        "CORE-S067",
+        "WD26-WORDPIECE"
       ],
       "community_evidence": [
         {
@@ -2087,11 +2122,12 @@
           "note": "README 目录提供分词与评测备考主题；此题将主题具体化，不是已认证公司真题。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "分词与文本表示"
     },
     {
       "id": "PRE-003",
-      "category": "PRE",
+      "category": "BAS",
       "title": "词表越大越好吗，扩词表有哪些代价？",
       "level": "L2",
       "tags": [
@@ -2121,7 +2157,8 @@
           "note": "搜索摘要出现 tokenizer、Scaling Law、去重；只保留题库主题，未核验其大厂或高频说法。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "分词与文本表示"
     },
     {
       "id": "PRE-004",
@@ -2155,7 +2192,8 @@
           "note": "搜索摘要出现 tokenizer、Scaling Law、去重；只保留题库主题，未核验其大厂或高频说法。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "语言建模与规模规律"
     },
     {
       "id": "PRE-005",
@@ -2183,7 +2221,8 @@
         "CORE-S034"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "语言建模与规模规律"
     },
     {
       "id": "PRE-006",
@@ -2210,7 +2249,8 @@
         "CORE-S036"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "语料清洗与数据配比"
     },
     {
       "id": "PRE-007",
@@ -2244,7 +2284,8 @@
           "note": "搜索摘要出现 tokenizer、Scaling Law、去重；只保留题库主题，未核验其大厂或高频说法。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "语料清洗与数据配比"
     },
     {
       "id": "PRE-008",
@@ -2272,7 +2313,8 @@
         "CORE-S038"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "语料清洗与数据配比"
     },
     {
       "id": "PRE-009",
@@ -2299,11 +2341,12 @@
         "CORE-S039"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "语料清洗与数据配比"
     },
     {
       "id": "PRE-010",
-      "category": "PRE",
+      "category": "FT",
       "title": "SFT 数据 packing 怎样提高效率并保持跨样本隔离？",
       "level": "L2",
       "tags": [
@@ -2338,6 +2381,14 @@
       "editorial": true,
       "user_supplement_keys": [
         "U04"
+      ],
+      "topic": "指令数据与训练目标",
+      "figures": [
+        {
+          "path": "assets/causal-packing.svg",
+          "alt": "普通因果 mask 与样本隔离 packing mask",
+          "caption": "两段样本各有 3 个 token；隔离 attention 时，还要处理 shift 后的跨样本标签。"
+        }
       ]
     },
     {
@@ -2366,7 +2417,8 @@
         "CORE-S044"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "继续预训练与域适配"
     },
     {
       "id": "PRE-012",
@@ -2393,7 +2445,8 @@
         "CORE-S041"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "训练精度与优化"
     },
     {
       "id": "PRE-013",
@@ -2420,7 +2473,8 @@
         "CORE-S042"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "训练精度与优化"
     },
     {
       "id": "PRE-014",
@@ -2456,7 +2510,8 @@
         "Z07",
         "Z08",
         "Z18"
-      ]
+      ],
+      "topic": "训练精度与优化"
     },
     {
       "id": "PRE-015",
@@ -2490,7 +2545,8 @@
           "note": "README 目录提供分词与评测备考主题；此题将主题具体化，不是已认证公司真题。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "语言建模与规模规律"
     },
     {
       "id": "FT-001",
@@ -2534,7 +2590,8 @@
       "editorial": false,
       "user_supplement_keys": [
         "U09"
-      ]
+      ],
+      "topic": "指令数据与训练目标"
     },
     {
       "id": "FT-002",
@@ -2579,7 +2636,8 @@
       "editorial": false,
       "user_supplement_keys": [
         "U09"
-      ]
+      ],
+      "topic": "指令数据与训练目标"
     },
     {
       "id": "FT-003",
@@ -2607,7 +2665,8 @@
         "CORE-S044"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "指令数据与训练目标"
     },
     {
       "id": "FT-004",
@@ -2642,7 +2701,8 @@
           "note": "公开面经题目列表直接出现这一主题；题目已改写，答案独立整理，公司归属未独立认证。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "LoRA 与其他 PEFT"
     },
     {
       "id": "FT-005",
@@ -2655,19 +2715,23 @@
         "公式"
       ],
       "answer": {
-        "body": "LoRA 冻结 $W_0\\in\\mathbb R^{d_{\\rm out}\\times d_{\\rm in}}$，学习 $\\Delta W=(\\alpha/r)BA$，其中 $A\\in\\mathbb R^{r\\times d_{\\rm in}}$、$B\\in\\mathbb R^{d_{\\rm out}\\times r}$。更新秩至多为 $r$，可训练参数为 $r(d_{\\rm in}+d_{\\rm out})$，不要求底座或整个模型低秩。\n\n前向为 $W_0x+(\\alpha/r)BAx$，梯度能经过冻结底座传播到需要训练的模块。标准浮点部署可合并增量，免去额外小投影；需要多适配器切换时则未必合并。LoRA 主要节省权重梯度与优化器状态，长序列激活仍可能主导显存。",
+        "body": "LoRA 冻结 $W_0\\in\\mathbb R^{d_{\\rm out}\\times d_{\\rm in}}$，学习 $\\Delta W=(\\alpha/r)BA$，其中 $A\\in\\mathbb R^{r\\times d_{\\rm in}}$、$B\\in\\mathbb R^{d_{\\rm out}\\times r}$。更新秩至多为 $r$，可训练参数为 $r(d_{\\rm in}+d_{\\rm out})$，不要求底座或整个模型低秩。\n\n前向为 $W_0x+(\\alpha/r)BAx$，梯度能经过冻结底座传播到需要训练的模块。标准浮点部署可合并增量，免去额外小投影；需要多适配器切换时则未必合并。LoRA 主要节省权重梯度与优化器状态，长序列激活仍可能主导显存。\n\n合并要求底座与 adapter 的 checkpoint、目标层、缩放和 dtype 对齐，并在 eval 模式关闭 adapter dropout。浮点权重 $W_{\\mathrm{merged}}=W_0+sBA$ 免去额外低秩分支，通常减少内核调用；但不会把大模型权重变成“小 adapter 大小”。低精度舍入使结果未必逐 bit 相同，应比对 logits 与任务结果。保留未合并 adapter 有利于共享底座、多租户切换和回滚；merge_and_unload 后应保留独立原件。量化底座的合并受量化后端支持限制，不能把浮点增量直接加到整数码，必要时反量化合并并重新校准量化。",
         "formula": "\\begin{aligned}\\Delta W&=\\frac{\\alpha}{r}BA\\\\N_{\\rm train}&=r(d_{\\rm in}+d_{\\rm out})\\\\\\operatorname{rank}(\\Delta W)&\\le r\\end{aligned}",
         "pitfalls": [
           "把 LoRA 说成对原模型权重做截断 SVD。",
-          "漏掉不同目标模块的数量，误报总训练参数量。"
+          "漏掉不同目标模块的数量，误报总训练参数量。",
+          "“LoRA 无额外推理延迟”依赖合并或有效融合实现；未合并分支并非天然零开销。"
         ],
         "followups": [
           "如何估算同时对 Q/K/V/O 与 FFN 加 LoRA 的参数量？",
-          "量化底座合并 LoRA 有什么精度风险？"
+          "量化底座合并 LoRA 有什么精度风险？",
+          "多租户共享一个底座时，为什么离线合并每个 adapter 可能增加总权重内存？"
         ]
       },
       "reference_ids": [
-        "CORE-S046"
+        "CORE-S046",
+        "ZH26-P25",
+        "ZH26-P26"
       ],
       "community_evidence": [
         {
@@ -2679,6 +2743,14 @@
       "editorial": false,
       "user_supplement_keys": [
         "U10"
+      ],
+      "topic": "LoRA 与其他 PEFT",
+      "figures": [
+        {
+          "path": "assets/lora.svg",
+          "alt": "LoRA 冻结主权重与低秩增量分支",
+          "caption": "常用初始化使增量起始为零；图中采用列向量约定。"
+        }
       ]
     },
     {
@@ -2721,7 +2793,8 @@
       "editorial": false,
       "user_supplement_keys": [
         "U10"
-      ]
+      ],
+      "topic": "LoRA 与其他 PEFT"
     },
     {
       "id": "FT-007",
@@ -2763,7 +2836,8 @@
       "editorial": false,
       "user_supplement_keys": [
         "U10"
-      ]
+      ],
+      "topic": "LoRA 与其他 PEFT"
     },
     {
       "id": "FT-008",
@@ -2778,7 +2852,7 @@
         "StorageVsCompute"
       ],
       "answer": {
-        "body": "LoRA 本身不要求量化，通常在 FP16/BF16 底座上训练低秩分支；QLoRA 将冻结底座以 4-bit 形式存储，计算时按块反量化到较高精度，再与可训练 adapter 组合。梯度通过底座计算传到 adapter，但不更新量化底座；权重存储位宽与 GEMM 的 compute dtype 必须区分。\n\nNF4 为近似正态权重设计非均匀码本和块 scale，是有损量化，不等同于线性 INT4。Double Quantization 压缩第一层量化的 scale 等常数，不是再次量化同一权重以提高精度；加载 4-bit 权重也不自动意味着复现完整 QLoRA 配方。\n\nPaged optimizer 借助分页或统一内存管理优化器状态峰值，缓解瞬时显存压力，也可能产生 CPU/GPU 迁移开销；它不压缩激活。长序列的 attention 激活、反量化工作区、adapter 梯度和状态、batch 与 checkpoint 策略仍可决定是否 OOM。\n\nQLoRA 主要改善底座存储和训练可行性，速度与精度要按硬件、内核、权重分布和任务实测。合并部署可先反量化底座、加 $sBA$ 再量化，但会引入新误差，不能直接把浮点增量加到整数码；应比较未合并、合并与重新量化的输出。",
+        "body": "LoRA 本身不要求量化，通常在 FP16/BF16 底座上训练低秩分支；QLoRA 将冻结底座以 4-bit 形式存储，计算时按块反量化到较高精度，再与可训练 adapter 组合。梯度通过底座计算传到 adapter，但不更新量化底座；权重存储位宽与 GEMM 的 compute dtype 必须区分。\n\nNF4 为近似正态权重设计非均匀码本和块 scale，是有损量化，不等同于线性 INT4。Double Quantization 压缩第一层量化的 scale 等常数，不是再次量化同一权重以提高精度；加载 4-bit 权重也不自动意味着复现完整 QLoRA 配方。\n\nPaged optimizer 借助分页或统一内存管理优化器状态峰值，缓解瞬时显存压力，也可能产生 CPU/GPU 迁移开销；它不压缩激活。长序列的 attention 激活、反量化工作区、adapter 梯度和状态、batch 与 checkpoint 策略仍可决定是否 OOM。\n\nQLoRA 主要改善底座存储和训练可行性，速度与精度要按硬件、内核、权重分布和任务实测。合并部署可先反量化底座、加 $sBA$ 再量化，但会引入新误差，不能直接把浮点增量加到整数码；应比较未合并、合并与重新量化的输出。\n\n例如 NF4 存储配 BF16 compute 是“4-bit 冻结权重 + 较高精度算子”，并非全部运算采用 4 bit；BF16 指数范围较宽，FP16 要注意溢出与 loss scaling，选择取决于 GPU 和内核支持。LoRA 底座仍约占 $2P$ bytes；QLoRA 的理想权重码约 $P/2$ bytes，另外有 scale、未量化层和反量化工作区。两者的 adapter 参数量 $P_a$ 相同：若按低精度参数/梯度、FP32 master 和两个 Adam 状态估算，可训练状态约 $16P_a$ bytes，但实际 dtype 与优化器应逐项核对。冻结底座不会删除为训练 adapter 所需的中间激活，所以不能仅凭 $P/2$ 判断训练显存。",
         "formula": "h=\\operatorname{Dequantize}(Q(W_0))x+sBAx",
         "pitfalls": [
           "QLoRA 训练全部 INT4 权重，或把 4-bit 权重容量当作训练总显存。",
@@ -2786,13 +2860,16 @@
         ],
         "followups": [
           "LoRA/QLoRA 的公平比较要统一哪些模块、数据、初始化及评测条件？",
-          "为什么长上下文训练的显存瓶颈可能从权重转移到激活？"
+          "为什么长上下文训练的显存瓶颈可能从权重转移到激活？",
+          "长序列时，为什么 QLoRA 相对浮点 LoRA 的节省比例可能变小？"
         ]
       },
       "reference_ids": [
         "CORE-S047",
         "CORE-S046",
-        "CORE-S070"
+        "CORE-S070",
+        "ZH26-P26",
+        "ZH26-P25"
       ],
       "community_evidence": [
         {
@@ -2804,7 +2881,8 @@
       "editorial": false,
       "user_supplement_keys": [
         "U11"
-      ]
+      ],
+      "topic": "LoRA 与其他 PEFT"
     },
     {
       "id": "FT-009",
@@ -2833,7 +2911,8 @@
         "CORE-S069"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "LoRA 与其他 PEFT"
     },
     {
       "id": "FT-010",
@@ -2861,7 +2940,8 @@
         "CORE-S044"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "指令数据与训练目标"
     },
     {
       "id": "FT-011",
@@ -2888,7 +2968,8 @@
         "CORE-S051"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "指令数据与训练目标"
     },
     {
       "id": "FT-012",
@@ -2917,7 +2998,8 @@
         "CORE-S046"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "训练技巧与排错"
     },
     {
       "id": "FT-013",
@@ -2945,7 +3027,8 @@
         "CORE-S053"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "训练技巧与排错"
     },
     {
       "id": "FT-014",
@@ -2973,7 +3056,8 @@
         "CORE-S047"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "训练技巧与排错"
     },
     {
       "id": "FT-015",
@@ -3002,7 +3086,8 @@
         "CORE-S050"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "训练技巧与排错"
     },
     {
       "id": "INF-001",
@@ -3030,7 +3115,15 @@
         "CORE-S056"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "KV Cache 与服务调度",
+      "figures": [
+        {
+          "path": "assets/kv-cache.svg",
+          "alt": "自回归解码的 KV Cache 追加与复用",
+          "caption": "第 4 个位置新增 Q/K/V，复用已有 K/V，并输出第 5 个 token 的概率分布。"
+        }
+      ]
     },
     {
       "id": "INF-002",
@@ -3043,11 +3136,12 @@
         "GQA"
       ],
       "answer": {
-        "body": "推理显存应拆为权重、KV cache、激活/工作区和框架预留。全注意力 KV 约为 $2BLTH_{\\rm kv}d_hs$：$B$ 是并发序列数，$L$ 是层数，$T$ 是缓存长度，$H_{\\rm kv}$ 是 KV 头数，$d_h$ 是头维，$s$ 是每元素字节；应使用 KV 头数而非 query 头数。\n\n32 层、32 KV 头、头维 128、长度 4096、单序列 FP16 的 KV 为 2 GiB，改为 8 KV 头则为 0.5 GiB。70 亿参数 FP16 权重约 14 GB，即 13.0 GiB，仅指权重。请求长度不同时按 $\\sum_iT_i$ 累加，并检查并行布局是否均分或复制 KV；分页、量化 scale、对齐与碎片都可能增加实际占用，应与实测峰值比较。",
+        "body": "推理显存应拆为权重、KV cache、激活/工作区和框架预留。全注意力 KV 约为 $2BLTH_{\\rm kv}d_hs$：$B$ 是并发序列数，$L$ 是层数，$T$ 是缓存长度，$H_{\\rm kv}$ 是 KV 头数，$d_h$ 是头维，$s$ 是每元素字节；应使用 KV 头数而非 query 头数。\n\n32 层、32 KV 头、头维 128、长度 4096、单序列 FP16 的 KV 为 2 GiB，改为 8 KV 头则为 0.5 GiB。70 亿参数 FP16 权重约 14 GB，即 13.0 GiB，仅指权重。请求长度不同时按 $\\sum_iT_i$ 累加，并检查并行布局是否均分或复制 KV；分页、量化 scale、对齐与碎片都可能增加实际占用，应与实测峰值比较。\n\n以十进制 14B 即 $14\\times10^9$ 个参数为例，纯 FP16/BF16 权重约 28 GB，即 26.1 GiB；纯 INT8 码约 14 GB，即 13.0 GiB，还未计 scale、未量化模块与运行时开销。这不能直接推出“14 GB 卡可完整运行 14B INT8”。长回答会逐步增加每个请求的 KV；分页复用、准入限制、较低 KV dtype 或有效窗口可控制容量，裁掉上下文则会改变可见信息，需要质量评测。prefill 和 decode 峰值还可能不同，应记录生成到接近最大长度时的显存，而非只测模型刚加载完。",
         "formula": "M_{\\rm KV}\\approx2BLTH_{\\rm kv}d_hs",
         "pitfalls": [
           "把 GB 和 GiB 混为一谈。",
-          "用 MHA 的 query 头数计算 GQA 的 KV 大小。"
+          "用 MHA 的 query 头数计算 GQA 的 KV 大小。",
+          "纯 INT8 权重算例不是完整服务所需显存，也不是 INT8 训练的状态大小。"
         ],
         "followups": [
           "多模态视觉 token 怎样计入 KV 长度？",
@@ -3057,7 +3151,9 @@
       "reference_ids": [
         "CORE-S055",
         "CORE-S056",
-        "CORE-S058"
+        "CORE-S058",
+        "ZH26-P16",
+        "ZH26-P28"
       ],
       "community_evidence": [
         {
@@ -3066,7 +3162,8 @@
           "note": "二次汇编题目列表出现相应提问；原始公司面经未逐条核验。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "KV Cache 与服务调度"
     },
     {
       "id": "INF-003",
@@ -3108,7 +3205,8 @@
       "editorial": false,
       "user_supplement_keys": [
         "U03"
-      ]
+      ],
+      "topic": "KV Cache 与服务调度"
     },
     {
       "id": "INF-004",
@@ -3138,7 +3236,8 @@
         "CORE-S059"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "KV Cache 与服务调度"
     },
     {
       "id": "INF-005",
@@ -3172,7 +3271,8 @@
           "note": "公开面经题目列表直接出现这一主题；题目已改写，答案独立整理，公司归属未独立认证。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "注意力与算子加速"
     },
     {
       "id": "INF-006",
@@ -3200,7 +3300,8 @@
         "CORE-S057"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "KV Cache 与服务调度"
     },
     {
       "id": "INF-007",
@@ -3228,7 +3329,8 @@
         "CORE-S058"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "KV Cache 与服务调度"
     },
     {
       "id": "INF-008",
@@ -3256,7 +3358,8 @@
         "CORE-S068"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "解码与采样策略"
     },
     {
       "id": "INF-009",
@@ -3269,7 +3372,7 @@
         "QAT"
       ],
       "answer": {
-        "body": "PTQ 在训练后量化，QAT 在训练中模拟或考虑量化误差。W4A16 表示权重约 4 bit、激活约 16 bit，不表示全部算子都使用 INT4。仿射量化常取 $q=\\operatorname{clip}(\\operatorname{round}(x/s)+z)$，反量化为 $\\hat x=s(q-z)$，其中 $s$ 为 scale，$z$ 为 zero-point。\n\nPer-tensor、per-channel、per-group 分别是量化参数的共享粒度；组越小通常误差更低，也增加元数据和实现成本。总存储还含 scale、zero-point、未量化层与对齐，不能只按参数量乘位宽估算。校准要覆盖部署输入、长度和领域，速度也要结合硬件及内核实测。",
+        "body": "PTQ 在训练后量化，QAT 在训练中模拟或考虑量化误差。W4A16 表示权重约 4 bit、激活约 16 bit，不表示全部算子都使用 INT4。仿射量化常取 $q=\\operatorname{clip}(\\operatorname{round}(x/s)+z)$，反量化为 $\\hat x=s(q-z)$，其中 $s$ 为 scale，$z$ 为 zero-point。\n\nPer-tensor、per-channel、per-group 分别是量化参数的共享粒度；组越小通常误差更低，也增加元数据和实现成本。总存储还含 scale、zero-point、未量化层与对齐，不能只按参数量乘位宽估算。校准要覆盖部署输入、长度和领域，速度也要结合硬件及内核实测。\n\nINT8/INT4不必比FP16/BF16快：小batch decode若权重带宽是瓶颈，低bit可减少读取；较大batch或prefill若更受GEMM计算约束，反量化、scale和布局转换可能抵消收益。CPU与GPU的kernel支持、SIMD/Tensor Core、shape及线程配置不同，不能给一个脱离硬件的固定速度倍数。基于相同输入/输出长度、batch和质量约束测端到端延迟与吞吐，才能比较量化收益。",
         "formula": "\\begin{aligned}q&=\\operatorname{clip}(\\operatorname{round}(x/s)+z)\\\\\\hat x&=s(q-z)\\end{aligned}",
         "pitfalls": [
           "低 bit 一定比 FP16 更快。",
@@ -3284,7 +3387,8 @@
         "CORE-S047",
         "CORE-S061",
         "CORE-S062",
-        "CORE-S063"
+        "CORE-S063",
+        "WD26-TRT"
       ],
       "community_evidence": [
         {
@@ -3293,7 +3397,8 @@
           "note": "公开帖子列出架构、LoRA、量化原理；仅保留问题主题，未采纳社区答案。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "量化与稀疏推理"
     },
     {
       "id": "INF-010",
@@ -3306,7 +3411,7 @@
         "Calibration"
       ],
       "answer": {
-        "body": "GPTQ 用校准输入 $X$ 形成近似二阶信息，逐步量化权重，并补偿尚未量化权重的误差，目标是减少原层 $WX$ 与量化层 $\\hat WX$ 的输出差异。输入二阶统计反映权重误差对输出的敏感性，比独立 round-to-nearest 更有信息。\n\n工程上按列或块处理和更新以控制成本，通常属于低 bit 权重 PTQ。它仍是有损压缩，效果依赖校准覆盖、分组和阻尼；领域、长上下文或多模态校准错配须通过端到端回归检查。",
+        "body": "GPTQ 用校准输入 $X$ 形成近似二阶信息，逐步量化权重，并补偿尚未量化权重的误差，目标是减少原层 $WX$ 与量化层 $\\hat WX$ 的输出差异。输入二阶统计反映权重误差对输出的敏感性，比独立 round-to-nearest 更有信息。\n\n工程上按列或块处理和更新以控制成本，通常属于低 bit 权重 PTQ。它仍是有损压缩，效果依赖校准覆盖、分组和阻尼；领域、长上下文或多模态校准错配须通过端到端回归检查。\n\n和 AWQ 比较，GPTQ 用输入二阶统计近似层输出误差，逐步量化并补偿剩余权重；AWQ 用激活统计选择通道缩放，再搜索有利于低 bit 表示的尺度。两者都属于依赖校准数据的权重 PTQ，不能仅凭缩写判断谁更准或更快；公平比较要固定位宽、group size、校准数据、部署内核和真实任务，量化误差与推理速度分别测量。",
         "pitfalls": [
           "GPTQ 会更新底座进行完整反向训练。",
           "把论文中某模型的近乎无损结果推广到所有位宽和场景。"
@@ -3317,7 +3422,8 @@
         ]
       },
       "reference_ids": [
-        "CORE-S061"
+        "CORE-S061",
+        "CORE-S062"
       ],
       "community_evidence": [
         {
@@ -3326,7 +3432,8 @@
           "note": "搜索摘录列出复杂度、GPTQ 或投机解码主题；未采用其自报次数/职级概率，公司归属为汇编者自述。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "量化与稀疏推理"
     },
     {
       "id": "INF-011",
@@ -3353,7 +3460,8 @@
         "CORE-S062"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "量化与稀疏推理"
     },
     {
       "id": "INF-012",
@@ -3381,7 +3489,8 @@
         "CORE-S063"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "量化与稀疏推理"
     },
     {
       "id": "INF-013",
@@ -3415,7 +3524,8 @@
           "note": "搜索摘录列出复杂度、GPTQ 或投机解码主题；未采用其自报次数/职级概率，公司归属为汇编者自述。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "解码与采样策略"
     },
     {
       "id": "INF-014",
@@ -3443,7 +3553,8 @@
         "CORE-S058"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "KV Cache 与服务调度"
     },
     {
       "id": "INF-015",
@@ -3477,7 +3588,8 @@
           "note": "公开面经汇总直接列出 Pre/Post-Norm、RoPE 外推或首 token/吞吐权衡；个人频率不采纳。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "KV Cache 与服务调度"
     },
     {
       "id": "TFM-020",
@@ -3511,7 +3623,8 @@
       "editorial": true,
       "article_supplement_keys": [
         "Z19"
-      ]
+      ],
+      "topic": "归一化、FFN 与残差"
     },
     {
       "id": "TFM-021",
@@ -3526,7 +3639,7 @@
         "张量形状"
       ],
       "answer": {
-        "body": "标准点积注意力权重是输入经 Q/K 投影、点积和 softmax 动态计算的激活，不是独立可训练的注意力表。对 $X\\in\\mathbb R^{n\\times d_{\\rm model}}$，$Q=XW_Q$、$K=XW_K$、$V=XW_V$，$A=\\operatorname{softmax}_{\\rm row}(QK^\\top/\\sqrt{d_k}+M)$，$O=AV$；同一组参数在不同输入上产生不同 $A$。\n\n任务损失经汇聚、softmax 与点积反传。令 $G=\\partial L/\\partial A$，则 $D_{ij}=\\partial L/\\partial S_{ij}=A_{ij}(G_{ij}-\\sum_kA_{ik}G_{ik})$，随后 $\\partial L/\\partial Q=DK/\\sqrt{d_k}$、$\\partial L/\\partial K=D^\\top Q/\\sqrt{d_k}$，更新投影和上游表征。模型还可能学习位置偏置等参数，但训练目标未必直接监督注意力图；固定 mask 下，被屏蔽位置的分数梯度为零。\n\n高权重只说明该层该头的相对加权关系，$V$ 的方向与幅值、其他头、输出投影、残差和后续层都会改变最终影响。热力图可以描述局部计算，因果解释仍需消融、扰动和基线诊断，并注意扰动造成的分布变化。关于注意力解释性的研究存在不同诊断结论，其实验局限于具体模型与任务，不能概括为所有模型的注意力永远不能解释。",
+        "body": "标准点积注意力权重是输入经 Q/K 投影、点积和 softmax 动态计算的激活，不是独立可训练的注意力表。对 $X\\in\\mathbb R^{n\\times d_{\\rm model}}$，$Q=XW_Q$、$K=XW_K$、$V=XW_V$，$A=\\operatorname{softmax}_{\\rm row}(QK^\\top/\\sqrt{d_k}+M)$，$O=AV$；同一组参数在不同输入上产生不同 $A$。\n\n任务损失经汇聚、softmax 与点积反传。令 $G=\\partial L/\\partial A$，则 $D_{ij}=\\partial L/\\partial S_{ij}=A_{ij}(G_{ij}-\\sum_kA_{ik}G_{ik})$，随后 $\\partial L/\\partial Q=DK/\\sqrt{d_k}$、$\\partial L/\\partial K=D^\\top Q/\\sqrt{d_k}$，更新投影和上游表征。模型还可能学习位置偏置等参数，但训练目标未必直接监督注意力图；固定 mask 下，被屏蔽位置的分数梯度为零。\n\n高权重只说明该层该头的相对加权关系，$V$ 的方向与幅值、其他头、输出投影、残差和后续层都会改变最终影响。热力图可以描述局部计算，因果解释仍需消融、扰动和基线诊断，并注意扰动造成的分布变化。关于注意力解释性的研究存在不同诊断结论，其实验局限于具体模型与任务，不能概括为所有模型的注意力永远不能解释。\n\nAttention的token混合矩阵随当前输入Q/K动态变化；全连接层的W在一次前向中固定，通常不随样本即时生成。Transformer的FFN虽非线性，却在每个位置独立使用共享参数，不能独自完成跨token汇聚。若Q=K，打分矩阵为Gram矩阵，在不对称mask之前具有对称性，但softmax归一化和mask可使权重不对称，也不必退化成单位阵；不同Q/K投影允许更灵活的有向匹配。",
         "formula": "\\begin{aligned}A&=\\operatorname{softmax}_{\\rm row}(QK^\\top/\\sqrt{d_k}+M),\\quad O=AV\\\\G&=\\frac{\\partial L}{\\partial A}\\\\D_{ij}&=A_{ij}\\left(G_{ij}-\\sum_kA_{ik}G_{ik}\\right)\\\\\\frac{\\partial L}{\\partial Q}&=\\frac{DK}{\\sqrt{d_k}},\\quad\\frac{\\partial L}{\\partial K}=\\frac{D^\\top Q}{\\sqrt{d_k}}\\\\\\frac{\\partial L}{\\partial W_Q}&=\\frac{X^\\top DK}{\\sqrt{d_k}}\\end{aligned}",
         "pitfalls": [
           "说 softmax 中每个注意力权重都是独立学习参数，忽略 Q/K 与输入。",
@@ -3547,7 +3660,8 @@
       "editorial": true,
       "article_supplement_keys": [
         "Z20"
-      ]
+      ],
+      "topic": "注意力机制与掩码"
     },
     {
       "id": "TFM-022",
@@ -3580,7 +3694,8 @@
       "editorial": true,
       "article_supplement_keys": [
         "Z23"
-      ]
+      ],
+      "topic": "复杂度与实现机制"
     },
     {
       "id": "TFM-023",
@@ -3614,7 +3729,8 @@
       "editorial": true,
       "article_supplement_keys": [
         "Z24"
-      ]
+      ],
+      "topic": "注意力机制与掩码"
     }
   ]
 }

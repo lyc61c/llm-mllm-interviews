@@ -13,6 +13,7 @@ const ctx=vm.createContext({document:{getElementById:element},Option:function(te
 vm.runInContext(scripts[0],ctx,{timeout:5000});
 const run=source=>vm.runInContext(source,ctx,{timeout:5000});
 const total=JSON.parse(payload).questions.length;
+assert.equal(Object.keys(JSON.parse(payload).categories).length,16);
 assert(!('sources' in JSON.parse(payload)));
 assert(!text.includes('题目出处线索'));
 assert.equal(run('filtered().length'),total);
@@ -27,6 +28,9 @@ element('reset').onclick();
 element('category').value='VLM';element('category').listeners.change();
 element('level').value='L2';element('level').listeners.change();
 assert(run('filtered().every(q=>q.category==="VLM" && q.level==="L2")'));
+const selectedTopic=run('filtered()[0].topic');
+element('topic').value=selectedTopic;element('topic').listeners.change();
+assert(run('filtered().every(q=>q.topic===document.getElementById("topic").value)'));
 element('random').onclick();assert(run('sample.length')<=10);
 element('quiz').checked=true;element('quiz').onchange();
 const card=element('cards').innerHTML;
@@ -40,4 +44,4 @@ element('search').value='this-never-exists-8711';element('search').listeners.inp
 assert.equal(run('filtered().length'),0);assert(element('cards').innerHTML.includes('没有匹配题目'));
 assert(run('escapeHtml("<img onerror=alert(1)>")').startsWith('&lt;img'));
 element('reset').onclick();element('next').onclick();assert(element('pageinfo').textContent.startsWith('2 /'));
-console.log(`PASS: explorer DOM smoke tests; ${total} unified answers; search, categories, quiz, sampling, stars, paging, MathML and escaping`);
+console.log(`PASS: explorer DOM smoke tests; ${total} unified answers; search, categories, topics, quiz, sampling, stars, paging, MathML and escaping`);

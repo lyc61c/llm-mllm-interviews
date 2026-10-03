@@ -1,0 +1,1149 @@
+{
+  "sources": [
+    {
+      "id": "ZH26-P01",
+      "title": "DeepSeek-V2 Technical Report",
+      "url": "https://arxiv.org/html/2405.04434v5",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "MLA",
+        "DeepSeek-V2"
+      ]
+    },
+    {
+      "id": "ZH26-P02",
+      "title": "DeepSeek-V3 Technical Report",
+      "url": "https://arxiv.org/html/2412.19437v2",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "DeepSeekMoE",
+        "MTP",
+        "FP8"
+      ]
+    },
+    {
+      "id": "ZH26-P03",
+      "title": "DeepSeek-V3 official repository",
+      "url": "https://github.com/deepseek-ai/DeepSeek-V3",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "模型版本",
+        "MoE",
+        "推理"
+      ]
+    },
+    {
+      "id": "ZH26-P04",
+      "title": "DeepSeek-R1 Technical Report",
+      "url": "https://arxiv.org/html/2501.12948v1",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "R1-Zero",
+        "冷启动",
+        "GRPO"
+      ]
+    },
+    {
+      "id": "ZH26-P05",
+      "title": "DeepSeek-R1 official repository",
+      "url": "https://github.com/deepseek-ai/DeepSeek-R1",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "蒸馏",
+        "模型版本"
+      ]
+    },
+    {
+      "id": "ZH26-P06",
+      "title": "Qwen3 Technical Report",
+      "url": "https://arxiv.org/html/2505.09388v1",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "Qwen3",
+        "GQA",
+        "QK-Norm",
+        "Thinking"
+      ]
+    },
+    {
+      "id": "ZH26-P07",
+      "title": "Qwen3 official repository",
+      "url": "https://github.com/QwenLM/Qwen3",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "模型版本",
+        "Thinking"
+      ]
+    },
+    {
+      "id": "ZH26-P08",
+      "title": "Qwen3-VL Technical Report",
+      "url": "https://arxiv.org/html/2511.21631v1",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "四阶段预训练",
+        "多模态",
+        "DeepStack"
+      ]
+    },
+    {
+      "id": "ZH26-P09",
+      "title": "Qwen3-VL official repository",
+      "url": "https://github.com/QwenLM/Qwen3-VL",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "动态分辨率",
+        "视觉token",
+        "时间戳"
+      ]
+    },
+    {
+      "id": "ZH26-P10",
+      "title": "Transformers v4.57.1 Qwen3-VL modeling code",
+      "url": "https://github.com/huggingface/transformers/blob/v4.57.1/src/transformers/models/qwen3_vl/modeling_qwen3_vl.py",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读固定版本代码中的 merger、rotary embedding 和 DeepStack 实现；未复制代码。",
+      "topics": [
+        "Merger",
+        "Interleaved MRoPE",
+        "DeepStack"
+      ]
+    },
+    {
+      "id": "ZH26-P11",
+      "title": "Transformers v4.57.1 Qwen3-VL processor code",
+      "url": "https://github.com/huggingface/transformers/blob/v4.57.1/src/transformers/models/qwen3_vl/processing_qwen3_vl.py",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读固定版本代码中的视频元数据、时间戳计算与序列构造。",
+      "topics": [
+        "视频时间戳",
+        "预处理"
+      ]
+    },
+    {
+      "id": "ZH26-P12",
+      "title": "Qwen-VL Technical Report",
+      "url": "https://arxiv.org/html/2308.12966v3",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "Cross-attention adapter",
+        "256 queries"
+      ]
+    },
+    {
+      "id": "ZH26-P13",
+      "title": "Transformers: Text generation",
+      "url": "https://huggingface.co/docs/transformers/llm_tutorial",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "padding",
+        "generate"
+      ]
+    },
+    {
+      "id": "ZH26-P14",
+      "title": "SGLang: Efficient Execution of Structured Language Model Programs",
+      "url": "https://arxiv.org/html/2312.07104v2",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "RadixAttention",
+        "KV复用",
+        "版本比较"
+      ]
+    },
+    {
+      "id": "ZH26-P15",
+      "title": "SGLang official repository",
+      "url": "https://github.com/sgl-project/sglang",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "Serving",
+        "推理框架"
+      ]
+    },
+    {
+      "id": "ZH26-P16",
+      "title": "vLLM: Automatic Prefix Caching",
+      "url": "https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "prefix cache",
+        "prefill"
+      ]
+    },
+    {
+      "id": "ZH26-P17",
+      "title": "PyTorch: Tensor Views",
+      "url": "https://docs.pytorch.org/docs/2.14/tensor_view.html",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "stride",
+        "contiguous",
+        "view",
+        "reshape"
+      ]
+    },
+    {
+      "id": "ZH26-P18",
+      "title": "LLM-Pruner: On the Structural Pruning of Large Language Models",
+      "url": "https://arxiv.org/abs/2305.11627",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "partial",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读论文摘要；只用于结构化依赖剪枝和恢复训练的原则，不引用未读实验细节。",
+      "topics": [
+        "结构化剪枝",
+        "模型压缩"
+      ]
+    },
+    {
+      "id": "ZH26-P19",
+      "title": "Python: threading",
+      "url": "https://docs.python.org/3/library/threading.html",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "GIL",
+        "线程",
+        "free-threaded"
+      ]
+    },
+    {
+      "id": "ZH26-P20",
+      "title": "Python: concurrent.futures",
+      "url": "https://docs.python.org/3/library/concurrent.futures.html",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "进程池",
+        "序列化",
+        "背压"
+      ]
+    },
+    {
+      "id": "ZH26-P21",
+      "title": "PyMuPDF: Multiprocessing",
+      "url": "https://pymupdf.readthedocs.io/en/latest/recipes-multiprocessing.html",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "PDF",
+        "进程",
+        "线程安全"
+      ]
+    },
+    {
+      "id": "ZH26-P22",
+      "title": "LangChain: Memory overview",
+      "url": "https://docs.langchain.com/oss/python/concepts/memory",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "长期记忆",
+        "namespace",
+        "事实",
+        "经历"
+      ]
+    },
+    {
+      "id": "ZH26-P23",
+      "title": "Generative Agents",
+      "url": "https://arxiv.org/html/2304.03442v2",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "记忆检索",
+        "相关性",
+        "时间"
+      ]
+    },
+    {
+      "id": "ZH26-P24",
+      "title": "GitHub: Responsible use of Copilot agents",
+      "url": "https://docs.github.com/en/copilot/responsible-use/agents",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "代码审查",
+        "验收",
+        "AI coding"
+      ]
+    },
+    {
+      "id": "ZH26-P25",
+      "title": "PEFT: LoRA",
+      "url": "https://huggingface.co/docs/peft/v0.21.0/package_reference/lora",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "LoRA",
+        "merge"
+      ]
+    },
+    {
+      "id": "ZH26-P26",
+      "title": "PEFT: Quantization",
+      "url": "https://huggingface.co/docs/peft/developer_guides/quantization",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "QLoRA",
+        "NF4",
+        "compute dtype"
+      ]
+    },
+    {
+      "id": "ZH26-P27",
+      "title": "Transformers: Qwen3-VL",
+      "url": "https://huggingface.co/docs/transformers/model_doc/qwen3_vl",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "DeepStack",
+        "视觉特征",
+        "模型配置"
+      ]
+    },
+    {
+      "id": "ZH26-P28",
+      "title": "vLLM: Quickstart",
+      "url": "https://docs.vllm.ai/en/latest/getting_started/quickstart/",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已读取作者技术报告或官方文档的相关正文；仅作答案核验，未复制原答案或图片。",
+      "topics": [
+        "API server",
+        "部署",
+        "异步"
+      ]
+    },
+    {
+      "id": "ZH26-P29",
+      "title": "Text Generation Inference 官方文档",
+      "url": "https://huggingface.co/docs/text-generation-inference/en/index",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已核对官方页面相关正文；用途与维护状态按该版本表述。",
+      "topics": [
+        "serving",
+        "maintenance mode"
+      ]
+    },
+    {
+      "id": "ZH26-P30",
+      "title": "CTranslate2 官方仓库",
+      "url": "https://github.com/OpenNMT/CTranslate2",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已核对官方页面相关正文；用途与维护状态按该版本表述。",
+      "topics": [
+        "runtime",
+        "CPU",
+        "GPU",
+        "model conversion"
+      ]
+    },
+    {
+      "id": "ZH26-P31",
+      "title": "DeepSpeed-MII 官方仓库",
+      "url": "https://github.com/deepspeedai/DeepSpeed-MII",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已核对官方页面相关正文；用途与维护状态按该版本表述。",
+      "topics": [
+        "DeepSpeed-Inference",
+        "FastGen",
+        "serving"
+      ]
+    },
+    {
+      "id": "ZH26-P32",
+      "title": "Ray Serve LLM 官方文档",
+      "url": "https://docs.ray.io/en/latest/serve/llm/index.html",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已核对官方页面相关正文；用途与维护状态按该版本表述。",
+      "topics": [
+        "autoscaling",
+        "multi-node",
+        "vLLM",
+        "SGLang"
+      ]
+    },
+    {
+      "id": "ZH26-P33",
+      "title": "OpenLLM 官方仓库",
+      "url": "https://github.com/bentoml/OpenLLM",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已核对官方页面相关正文；用途与维护状态按该版本表述。",
+      "topics": [
+        "BentoML",
+        "vLLM",
+        "deployment"
+      ]
+    },
+    {
+      "id": "ZH26-P34",
+      "title": "MLC LLM 官方文档",
+      "url": "https://llm.mlc.ai/docs/",
+      "platform": "论文 / 官方文档",
+      "type": "primary",
+      "access": "full",
+      "published_date": null,
+      "accessed_date": "2026-10-03",
+      "notes": "已核对官方页面相关正文；用途与维护状态按该版本表述。",
+      "topics": [
+        "compiler",
+        "deployment engine"
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "ARC-021",
+      "category": "ARC",
+      "title": "MLA 怎样压缩 KV Cache？和 MQA/GQA、RoPE 有什么关系？",
+      "level": "L3",
+      "tags": [
+        "MLA",
+        "低秩",
+        "KVCache",
+        "DeepSeek"
+      ],
+      "answer": {
+        "body": "MLA 将每个 token 的内容 K/V 联合投影为低维 latent $c_t$，再由各头的上投影得到内容 K/V。MQA/GQA 直接共享少量 KV 头；MLA 共享压缩表示，同时允许各 query 头具有不同的内容投影。它是一种重新训练的注意力结构，不能把已有 MHA 模型的缓存直接压缩后声称等价。\n\n推理时，内容 key 的上投影可吸收到 query 投影，value 的上投影可与输出投影结合，从而在 latent 空间计算，避免永久缓存展开的每头 K/V。但普通 RoPE 把位置相关旋转夹在两次投影中，不能随意交换矩阵或完成同样的吸收。DeepSeek-V2 将内容分量与位置分量解耦，额外缓存共享的 RoPE key。\n\n若 latent 维为 $d_c$，额外位置 key 维为 $d_R$，$B$ 条等长序列、$L$ 层、长度 $T$、每元素 $s$ 字节，理想缓存为 $BLT(d_c+d_R)s$。MHA 则约为 $2BLTHd_hs$；这里不含块表、量化元数据和工作区。缓存减少有利于并发和带宽，但最终速度还依赖是否使用适配 MLA 的内核与并行布局。",
+        "formula": "\\begin{aligned}c_t&=W_Dh_t,\\quad k_{t,i}^{C}=W_{UK,i}c_t,\\quad v_{t,i}=W_{UV,i}c_t\\\\(q_{t,i}^{C})^\\top k_{j,i}^{C}&=(W_{UK,i}^{\\top}q_{t,i}^{C})^\\top c_j\\\\M_{\\mathrm{MLA}}&\\approx BLT(d_c+d_R)s\\end{aligned}",
+        "pitfalls": [
+          "MLA 的 latent 不是单个普通 KV 头，也不是对已训练 MHA 缓存无损做 SVD。",
+          "省略解耦 RoPE key，或把缓存压缩比例直接当作端到端加速比例。"
+        ],
+        "followups": [
+          "为什么位置相关旋转会破坏权重吸收？",
+          "使用朴素展开 K/V 的实现时，MLA 的实际峰值显存与带宽有什么变化？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P01",
+        "ZH26-P03"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "推理模型与 MLA"
+    },
+    {
+      "id": "ARC-022",
+      "category": "ARC",
+      "title": "DeepSeek-V2、V3、R1 有何区别？它们还是 Transformer 吗？",
+      "level": "L2",
+      "tags": [
+        "DeepSeek-V2",
+        "DeepSeek-V3",
+        "DeepSeek-R1",
+        "模型家族"
+      ],
+      "answer": {
+        "body": "以 2024 年 V2、2024 年底 V3 和 2025 年初 R1 的原始报告为准，它们仍属于自回归 Decoder-only Transformer 家族，保留因果注意力、残差和前馈模块；MLA 与 MoE 改变的是注意力和 FFN 的实现。\n\nV2 将 MLA 与 DeepSeekMoE 结合，主要解决容量、激活计算量和 KV 成本。V3 延续这两个模块，并改进负载平衡、增加多 token 预测训练，配合 FP8 与计算通信重叠来提高训练效率；原始 V3 为总参数 671B、每 token 激活约 37B。激活参数少不意味着只需存放 37B 权重。\n\nR1 主要是基于 V3-Base 的推理后训练路线：R1-Zero 探索从底座直接进行推理 RL，R1 增加冷启动、筛选生成数据和更完整的后训练。R1-Distill-Qwen/Llama 是不同底座的蒸馏模型，不能因名字里有 R1 就认为它们也有 V3 的 MLA/MoE。回答模型区别时应同时报 checkpoint、底座、结构和训练路线。",
+        "formula": "",
+        "pitfalls": [
+          "把 DeepSeek 视为 Transformer 的竞争架构名，或把 R1 蒸馏版的结构归为原始 V3。",
+          "用每 token 激活参数量估算完整权重容量。"
+        ],
+        "followups": [
+          "怎样比较 MoE 和 Dense 的容量、FLOPs、通信以及部署内存？",
+          "R1-Distill-Qwen-14B 的注意力结构应去哪里确认？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P01",
+        "ZH26-P03",
+        "ZH26-P05"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "预训练模型与家族对比"
+    },
+    {
+      "id": "ARC-023",
+      "category": "ARC",
+      "title": "DeepSeek-V3 的负载平衡、MTP 和 FP8 分别解决什么问题？",
+      "level": "L3",
+      "tags": [
+        "DeepSeek-V3",
+        "负载平衡",
+        "MTP",
+        "FP8"
+      ],
+      "answer": {
+        "body": "V3 的主要训练改进可从三个瓶颈解释。专家负载不均会造成热点和等待，因此它给专家路由分数增加可动态更新的偏置，过载专家降低偏置，欠载专家提高偏置。偏置影响 top-k 选择，实际聚合权重仍来自原始亲和分数，避免直接用较强的平衡损失干扰主任务；报告仍使用很小的序列级平衡辅助损失，所以“完全没有任何辅助 loss”不准确。\n\nMTP 在主 next-token 目标之外，使用额外模块预测后续 token，使训练能利用更长的预测关系。它不意味着主模型一次前向即可无条件生成多个最终 token；推理可移除额外模块，也可把它作为草稿用于投机验证，是否提速取决于接受率和实现。\n\nFP8 主要降低矩阵乘法与部分存储通信成本，但采用细粒度缩放并保留关键操作的较高精度，不是权重、梯度、优化器、归约全部以 FP8 运行。还需把 MoE all-to-all、DualPipe 和重叠调度一起考虑；单个低精度开关无法复现整套效率。",
+        "formula": "",
+        "pitfalls": [
+          "将 auxiliary-loss-free 解释为训练总目标不含任何辅助项。",
+          "把 MTP 训练目标与无验证的多 token 最终输出混为一谈。"
+        ],
+        "followups": [
+          "路由偏置和专家聚合权重为什么要分开？",
+          "FP8 溢出、量化误差与通信瓶颈应分别怎样监控？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P02",
+        "ZH26-P03"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "MoE 路由、训练与压缩"
+    },
+    {
+      "id": "ARC-024",
+      "category": "ARC",
+      "title": "DeepSeek-R1-Zero、R1 与蒸馏模型的训练流程分别是什么？",
+      "level": "L2",
+      "tags": [
+        "DeepSeek-R1",
+        "GRPO",
+        "冷启动",
+        "蒸馏"
+      ],
+      "answer": {
+        "body": "原始 R1-Zero 从 DeepSeek-V3-Base 出发，直接做大规模推理强化学习，不先增加任务冷启动 SFT；这不代表底座未经预训练。训练以 GRPO 使用同题多条生成结果的相对奖励，数学答案或代码测试提供准确性信号，格式规则约束输出。它能形成较长推理，但存在可读性、重复和语言混杂问题。\n\nR1 的主路线是少量长 CoT 冷启动 SFT → 推理 RL → 对较好的生成样本做拒绝采样并加入一般任务数据，形成约 800K 样本，重新从 DeepSeek-V3-Base 做两轮 SFT → 同时覆盖推理及通用偏好的 RL。冷启动提供可读格式，RL 提供结果驱动探索，筛选数据帮助巩固能力和改善通用表现，各阶段不是可随意互换的同一 loss。\n\n蒸馏版则让较小 Qwen/Llama 底座学习 R1 生成并筛选的训练输出，不继承教师的全部结构或运行成本。原论文公布的学生蒸馏配方只做 SFT，没有在这些学生上追加 RL。面试中应区分“教师训练用了 RL”和“学生自己重新做了同等 RL”，并用正确率、推理 token、延迟与语言质量共同衡量收益。",
+        "formula": "",
+        "pitfalls": [
+          "“没有 SFT”只描述 R1-Zero 的该后训练路线，不代表没有预训练。",
+          "蒸馏模型不自动拥有教师的 MLA、专家数量或完整 RL 训练历史。"
+        ],
+        "followups": [
+          "如何防止规则奖励只奖励格式而没有奖励解题？",
+          "为什么只学习教师最终答案可能与学习筛选后的推理轨迹不同？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P04",
+        "ZH26-P05"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "推理模型与 MLA"
+    },
+    {
+      "id": "ARC-025",
+      "category": "ARC",
+      "title": "原始 Qwen3 文本模型相较 Qwen2.5 有哪些结构和后训练变化？",
+      "level": "L2",
+      "tags": [
+        "Qwen3",
+        "QK-Norm",
+        "GQA",
+        "Thinking"
+      ],
+      "answer": {
+        "body": "以 2025 年 4 月发布、同年 5 月报告描述的原始 Qwen3 文本系列为准：Dense 模型继续采用 GQA、SwiGLU、RoPE 与 Pre-RMSNorm，去掉 QKV bias 并引入 QK-Norm 来改善注意力训练稳定性。MoE 版本使用 128 个路由专家、每 token 激活 8 个，不沿用 Qwen2.5-MoE 的共享专家设置；总参数和激活参数必须分别比较。\n\n旗舰模型后训练按长 CoT 冷启动、推理 RL、Thinking Mode Fusion、通用 RL 组织；通过模板和训练让同一原始 checkpoint 支持思考与非思考模式，并提供思考预算的控制。小模型还可以采用强到弱蒸馏。后续标明 Instruct/Thinking 或不同日期的版本可能采用不同模式，不能把原始版本的行为套到全部 Qwen3 名称上。\n\n文本 Qwen3 使用一维文本位置 RoPE，没有图像的 t/h/w 网格或 Qwen3-VL 的 Interleaved M-RoPE。多模态改造需要视觉编码器、连接器、位置处理和相应数据训练，换模型名字或额外塞图像 embedding 不能自动得到这些能力。",
+        "formula": "",
+        "pitfalls": [
+          "把文本 Qwen3 的 QK-Norm 或 hybrid thinking 与 Qwen3-VL 的视觉位置编码混为一谈。",
+          "省略发布日期，声称全部 Qwen3 checkpoint 都支持相同的 /think 行为。"
+        ],
+        "followups": [
+          "QK-Norm 如何影响注意力 logit 的尺度？",
+          "怎样比较思考模式的准确率收益和额外 token 成本？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P06",
+        "ZH26-P07"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "预训练模型与家族对比"
+    },
+    {
+      "id": "VLM-027",
+      "category": "VLM",
+      "title": "Qwen3-VL 的基本模块与相较 Qwen2.5-VL 的结构变化是什么？",
+      "level": "L2",
+      "tags": [
+        "Qwen3-VL",
+        "视觉编码器",
+        "DeepStack",
+        "时间"
+      ],
+      "answer": {
+        "body": "Qwen3-VL 由视觉编码器、视觉语言 merger 和 Qwen3 语言骨干构成，同时有 Dense 与 MoE 配置。视觉编码器基于 SigLIP-2 架构继续适配动态分辨率，merger 将邻近 2×2 patch 特征合并并投影到语言隐藏维度；不能只比较两个 LLM 的参数量来推断整个 VLM 的成本。\n\n与 Qwen2.5-VL 相比，三个应重点解释的变化是 Interleaved M-RoPE 平衡时空位置的频率分配，DeepStack 将不同深度的视觉特征注入较早的语言层，文本时间戳加强视频事件与真实时间的对应。它们分别补足位置、细节通路和时间表示。更好的数据与训练同样影响最终能力，结构变化不能单独保证任意 OCR、长视频或 grounding 任务提升。\n\n部署要一起核对 processor、patch 大小、视觉 token 预算、模型配置及模板；输入预处理错配可能比换推理 dtype 对结果的影响更大。",
+        "formula": "",
+        "pitfalls": [
+          "Qwen3-VL 的架构事实不能从文本 Qwen3 的配置直接推断。",
+          "动态分辨率不代表无限像素输入或固定的单图 token 数。"
+        ],
+        "followups": [
+          "DeepStack 增加的是序列长度还是跨层特征通路？",
+          "如何消融结构、数据和训练预算带来的收益？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P09",
+        "ZH26-P27",
+        "ZH26-P10"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "模型结构与版本对比"
+    },
+    {
+      "id": "VLM-028",
+      "category": "VLM",
+      "title": "Qwen3-VL 四阶段预训练分别训练什么模块、数据和目标？",
+      "level": "L3",
+      "tags": [
+        "Qwen3-VL",
+        "训练阶段",
+        "Merger",
+        "长上下文"
+      ],
+      "answer": {
+        "body": "报告中的“四阶段”特指 S0～S3 预训练，不能把它和后训练阶段混算：\n\n| 阶段 | 可训练模块 | 数据重点 | 长度与 token 预算 |\n|---|---|---|---|\n| S0 对齐 | 仅 MLP merger；冻结视觉编码器和 LLM | 图文描述、视觉知识、OCR | 8,192；约 67B |\n| S1 多模态预训练 | 全部模块 | 图文、交错文档、grounding、VQA、STEM、少量视频，加纯文本 | 8,192；约 1T |\n| S2 长上下文预训练 | 全部模块 | 增加长文本、视频和 Agent 相关数据 | 32,768；约 1T |\n| S3 超长上下文适配 | 全部模块 | 长视频与长文档，加纯文本 | 262,144；约 100B |\n\n共同使用生成建模建立和扩展能力，阶段差异主要是更新范围、数据组成与长度课程。S0 先让新连接器对齐已有骨干，随后联合训练，再逐步承担长序列成本。表中预算是训练 token 数，不是样本数，也不是每阶段单步 batch。\n\n预训练之后，报告另有 SFT、强到弱蒸馏、RL 的后训练流程，其中 SFT 又逐步扩展上下文。复现时应对齐具体阶段的数据格式、监督 mask 和参数冻结，不把所有数据统一套成 assistant-only SFT。",
+        "formula": "",
+        "pitfalls": [
+          "S0 冻结视觉与 LLM；不能回答成全参训练。",
+          "四阶段预训练与三个主要后训练环节不是同一个计数。"
+        ],
+        "followups": [
+          "为什么不从第一步就全部使用 256K 序列？",
+          "如何验证长上下文扩展没有损害纯文本与短图文能力？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P08"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "视觉连接器与训练"
+    },
+    {
+      "id": "VLM-029",
+      "category": "VLM",
+      "title": "不同版本 Qwen-VL 的视觉压缩比例和连接器层数如何确认？",
+      "level": "L2",
+      "tags": [
+        "Qwen-VL",
+        "Qwen2-VL",
+        "Qwen3-VL",
+        "Merger"
+      ],
+      "answer": {
+        "body": "必须区分版本。原始 Qwen-VL 使用带位置处理的单层 cross-attention adapter，以 256 个可学习 query 压缩视觉特征，最终长度固定为 256。这里的“单层”不是后来两层 MLP，也不等于 BLIP-2 的完整 Q-Former。\n\nQwen2-VL、Qwen2.5-VL 的常用配置将相邻 2×2 patch 特征并到通道，再通过两层 MLP merger 映射到 LLM，空间 token 数缩为原来的 1/4。Qwen3-VL 延续 2×2 merger，固定版本代码可看到 Linear → GELU → Linear，并有用于 DeepStack 的额外 merger；统计连接器时不要漏掉后者。\n\npatch 大小与 merge 大小是两件事：常见 Qwen2/2.5-VL patch 为 14，空间有效步长为 28；Qwen3-VL patch 为 16，对应 32。经过 processor 对齐的 H×W 图像，合并后空间 token 约为 HW/(ps)²，p 为 patch 大小，s 为 merge 边长；视频还要计时间 patch 和帧数。实际预算以 checkpoint 配置、resize 结果及 image/video grid 为准。",
+        "formula": "N_{\\mathrm{spatial}}\\approx\\frac{HW}{(ps)^2},\\qquad s=2",
+        "pitfalls": [
+          "把 2×2 合并写成 token 数只减少一半，或把所有 Qwen-VL 都写为固定 256 token。",
+          "把 patch14、空间合并2和视频时间合并2写成同一个压缩维度。"
+        ],
+        "followups": [
+          "给定 resize 后的图像尺寸，如何从 processor 输出复核视觉 token 数？",
+          "为什么相同像素预算下还需要比较 OCR 质量，而非仅看 token 更少？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P12",
+        "ZH26-P09",
+        "ZH26-P10",
+        "MM-S018",
+        "MM-S019"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "动态分辨率与位置编码"
+    },
+    {
+      "id": "VLM-030",
+      "category": "VLM",
+      "title": "Interleaved M-RoPE 怎样改善频率分配？与文本 Qwen3 的 RoPE 有何区别？",
+      "level": "L3",
+      "tags": [
+        "Interleaved M-RoPE",
+        "Qwen3-VL",
+        "位置编码"
+      ],
+      "answer": {
+        "body": "普通文本 RoPE 为 token 的一维位置选择旋转角度。多模态 M-RoPE 对视觉 token 使用时间、行、列位置 t/h/w，把不同维度的旋转角度取自相应坐标；文本位置可以在三个轴上取相同值。\n\n早期连续分段的维度分配使某些轴集中在特定频率区间。Qwen3-VL 改为在旋转频率对之间交错分配 t/h/w，让各轴都覆盖较宽的高低频范围，从而减少单个轴的频谱偏置。它交错的是位置轴对应的旋转频率，并不是把图像与文字轮流排列这种“交错图文”数据格式。具体频率数与排列依配置和实现，不必宣称所有维度都严格按 t/h/w 等数循环。\n\n该方法仍需正确的视觉网格、position_ids 和增量 cache 位置；它不会直接减少 KV 元素数。文本 Qwen3 的原始配置采用一维 RoPE，不能因 Qwen3-VL 使用 Qwen3 骨干就把这项多模态改造归给纯文本模型。",
+        "formula": "\\phi_j=\\theta_jp_{a(j)},\\qquad a(j)\\in\\{t,h,w\\},\\qquad \\widetilde q_j=R(\\phi_j)q_j",
+        "pitfalls": [
+          "交错频率分配与交错图文训练是不同概念。",
+          "不看模型版本与 position_ids 就声称文本 Qwen3 已使用三维视觉位置。"
+        ],
+        "followups": [
+          "当文本 token 的三个位置轴相同时，公式怎样退化为一维 RoPE？",
+          "为什么改变频率轴分配需要配套训练，而不能任意替换已有 checkpoint？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P10",
+        "ZH26-P09",
+        "ZH26-P06"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "动态分辨率与位置编码"
+    },
+    {
+      "id": "VLM-031",
+      "category": "VLM",
+      "title": "Qwen3-VL 的 DeepStack 如何注入多层视觉特征，是否把视觉 token 翻倍？",
+      "level": "L3",
+      "tags": [
+        "DeepStack",
+        "跨层融合",
+        "Qwen3-VL"
+      ],
+      "answer": {
+        "body": "Qwen3-VL 的 DeepStack 从视觉编码器的不同深度取特征，各自经过专用 merger 映射到语言隐藏维度，再加到较早语言层的对应视觉位置。报告方案使用三个视觉层级注入前三个 LLM 层；具体取层索引以 checkpoint 配置为准。基础图像 embedding 仍形成语言输入，额外分支提供较浅纹理与较深语义的补充路径。\n\n这主要改变跨层信息通路，并非把三组特征全都追加成更长的 token 序列。因而不能把语言 KV 长度简单乘三，但额外 merger、保存的中间视觉特征和训练反向仍有计算与显存成本。模型代码用视觉位置 mask 对齐注入；多图拼接时，特征顺序错配会把另一张图的信息加到错误位置。\n\n解释收益时应做有无 DeepStack 的相同数据、预算消融，并分别观察 OCR、文档、空间和纯文本任务，避免只拿最终模型总分证明这条通路的作用。",
+        "formula": "h_{\\ell}^{\\mathrm{vis}}\\leftarrow h_{\\ell}^{\\mathrm{vis}}+\\operatorname{Merger}_{\\ell}(F_{k_\\ell})",
+        "pitfalls": [
+          "DeepStack 不等于把多层 ViT 输出全部拼到序列末尾。",
+          "额外视觉分支不会凭空消除 OCR 分辨率限制。"
+        ],
+        "followups": [
+          "多图输入怎样保证 visual_pos_masks 与各图特征顺序一致？",
+          "冻结视觉骨干时，中间特征分支需要怎样设置计算图？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P10",
+        "ZH26-P27"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "模型结构与版本对比"
+    },
+    {
+      "id": "VLM-032",
+      "category": "VLM",
+      "title": "Qwen3-VL 为什么用文本时间戳表示视频时间，采样后怎样保证对齐？",
+      "level": "L2",
+      "tags": [
+        "视频",
+        "时间戳",
+        "Qwen3-VL",
+        "FPS"
+      ],
+      "answer": {
+        "body": "Qwen3-VL 在视频时间 patch 前加入可读的时间戳文本，使真实时间直接进入语言序列，更方便回答“何时发生”与事件定位。时间戳依原视频元数据和所选帧索引计算，而不是把抽样后帧的序号直接当秒数；同时仍保留视觉空间位置处理，所以不能说文本时间戳替代了全部视觉位置编码。\n\n固定 FPS 原视频中，第 i 帧的时间约为 i/fps；若一个时间 patch 合并多个帧，所读固定版本 processor 用合并组首尾时间的平均值表示该 patch。可变帧率视频则应优先依据解码器给出的真实时间信息，不能机械套一个平均 FPS。重复采样、裁剪或拼接也要保持源时间和目标序列的映射。\n\n文本时间戳会占少量上下文，细粒度定位仍受抽帧密度和视觉 token 预算限制。评测应同时看事件内容是否正确、时间误差和区间 IoU，并检查视频预处理与训练约定一致。",
+        "formula": "t_i=\\frac{i}{f_{\\mathrm{source}}},\\qquad t_{\\mathrm{patch}}=\\frac{t_{\\mathrm{first}}+t_{\\mathrm{last}}}{2}",
+        "pitfalls": [
+          "采样帧号不等于真实秒数，尤其不能忽略源 FPS 与变帧率。",
+          "时间戳很精确不代表模型看过时间段内未采样的瞬时事件。"
+        ],
+        "followups": [
+          "视频裁剪之后，输出时间应使用源视频时间还是片段相对时间？",
+          "减少 FPS 对动作识别和瞬时事件定位有什么不同影响？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P11",
+        "ZH26-P09"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "动态分辨率与位置编码"
+    },
+    {
+      "id": "INF-016",
+      "category": "INF",
+      "title": "Decoder-only 批量生成为什么通常左 padding？右 padding 一定不可以吗？",
+      "level": "L2",
+      "tags": [
+        "padding",
+        "generate",
+        "position_ids"
+      ],
+      "answer": {
+        "body": "常见 Transformers 生成循环取每条序列张量末位 logits 来选下一个 token。长度不同时若右 padding，短样本的末位是 PAD，即使 attention_mask 屏蔽了它作为 key，末位 query 的输出也不等于原文本最后有效位置的输出；mask 不能自动改变“从哪一位取 logits”。左 padding 让所有样本的有效前缀都在张量右端结束，因此更适合这种批量生成实现。\n\n还要正确传 attention_mask、位置编号和 cache_position；不能只改 tokenizer.padding_side 却忽略模型如何编号。把 EOS 用作左侧 padding 时，应显式给 mask，并检查停止条件是否只依据新生成 token。\n\n这不是自回归数学要求必须左补齐。能按每条长度收集最后有效 logits、正确管理位置与 cache 的实现也可支持右 padding；无 padding 的 ragged/paged serving 又是另一种布局。SFT 的 padding 方向取决于训练实现，真正关键是注意力、labels 和有效位置一致。",
+        "formula": "",
+        "pitfalls": [
+          "attention_mask 屏蔽 PAD key 不会自动修复从末尾 PAD query 取生成 logits 的问题。",
+          "将推理左 padding 的经验当作所有训练与 serving 引擎的硬规则。"
+        ],
+        "followups": [
+          "手写右 padding 生成循环时，第一步 logits 应按什么索引 gather？",
+          "pad_token_id 与 eos_token_id 相同时，为什么仍需显式 attention_mask？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P13",
+        "ZH26-P09"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "KV Cache 与服务调度"
+    },
+    {
+      "id": "INF-017",
+      "category": "INF",
+      "title": "SGLang、vLLM 与其他推理部署方案怎样选型，能直接断言哪一个延迟更低吗？",
+      "level": "L2",
+      "tags": [
+        "SGLang",
+        "vLLM",
+        "RadixAttention",
+        "Serving"
+      ],
+      "answer": {
+        "body": "两者都是模型 serving 框架，比较应落到具体版本、模型、硬件和负载。SGLang 的 RadixAttention 用 radix tree 组织共享前缀 KV 的匹配、复用和驱逐，适合存在模板、多轮历史或分支共享的工作负载；vLLM 以分页 KV 管理和请求调度见长，同时也有自动前缀缓存。因此“一个能复用前缀，另一个完全不能”已不是有效比较。\n\n先固定 checkpoint、dtype/量化、张量并行、上下文长度与输出分布，再明确冷缓存或热缓存，测 P50/P95 TTFT、ITL、端到端耗时、失败率和 SLO 内 goodput。共享前缀多时减少的是重复 prefill；长输出场景仍可能受 decode 带宽限制。模型支持、注意力内核、调度参数与结构化输出实现都会影响结果。\n\n原始 SGLang 论文与旧版 vLLM 的倍数是那组实验的结果，不能直接作为当前版本承诺。选择时还要评估上线接口、运维、稳定性和迁移成本，最终用真实请求回放验证。\n\n扩展到其他部署方案时，先分清推理运行时、模型服务与集群编排：CTranslate2 是需转换模型格式的 C++/Python CPU/GPU 推理库，MLC LLM 侧重编译与跨平台部署，DeepSpeed-MII 封装 DeepSpeed-Inference/FastGen；TGI 提供模型服务，官方截至 2026 年 10 月已将其标记为维护模式。OpenLLM 使用 BentoML 做服务部署并以 vLLM 为后端，Ray Serve LLM 则在 vLLM/SGLang 等引擎上组织多节点、多模型、自动扩缩容与请求路由。这些层次可以组合，不能仅按项目名称视为互斥替代；也不能把旧榜单、旧模型支持范围或旧接口当作当前能力。",
+        "formula": "",
+        "pitfalls": [
+          "把历史论文的旧版 baseline 倍数当作当前框架固定性能差距。",
+          "一边使用热前缀缓存、一边冷缓存，或者只看最大 tokens/s。"
+        ],
+        "followups": [
+          "前缀复用率变化时，TTFT 与 TPOT 分别会怎样变化？",
+          "高缓存命中是否可能掩盖高并发下的排队与长尾？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P14",
+        "ZH26-P15",
+        "ZH26-P16",
+        "ZH26-P29",
+        "ZH26-P30",
+        "ZH26-P31",
+        "ZH26-P32",
+        "ZH26-P33",
+        "ZH26-P34"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "KV Cache 与服务调度"
+    },
+    {
+      "id": "INF-018",
+      "category": "INF",
+      "title": "torch.contiguous、stride、view 与 reshape 有什么关系？为什么影响推理？",
+      "level": "L2",
+      "tags": [
+        "PyTorch",
+        "stride",
+        "contiguous",
+        "view"
+      ],
+      "answer": {
+        "body": "张量不仅有 shape，还通过 storage offset 与 stride 描述逻辑索引怎样映射到存储。transpose/permute 常只改变这组元数据并共享原 storage，因而输出可能不满足默认连续布局。shape 为 2×3、stride 为 (3,1) 的连续张量转置后是 3×2、stride 为 (1,3)，数据并未立即搬动。\n\ncontiguous 在输入已经满足指定 memory format 时返回自身，否则复制成连续布局。view 要求当前 shape/stride 兼容所需重解释，不能任意展开一个转置张量；reshape 可以在兼容时返回 view，也可能隐式复制，不能依赖它总是零拷贝。连续性还应指定默认行优先或 channels_last 等格式。\n\n推理中的频繁转置、拼头、KV 布局转换若触发大张量拷贝，会增加带宽消耗、临时显存和内核启动。但不少算子支持 strided 输入，不必在每个操作前无条件 contiguous；应依据后续内核要求，用 profiler 找出真正的复制与耗时。",
+        "formula": "\\operatorname{offset}(i_1,\\ldots,i_n)=\\operatorname{storage\\_offset}+\\sum_{j=1}^{n}i_j\\,\\operatorname{stride}_j",
+        "pitfalls": [
+          "contiguous 可能复制数据，不是无需成本的 shape 操作。",
+          "reshape 不保证总是 view；非默认 memory format 也可能连续。"
+        ],
+        "followups": [
+          "为什么 transpose 后 view(-1) 可能失败，而 reshape(-1) 可成功？",
+          "如何确认一个推理瓶颈是隐式复制而不是 GEMM？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P17"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "注意力与算子加速"
+    },
+    {
+      "id": "INF-019",
+      "category": "INF",
+      "title": "模型剪枝与量化有何区别，结构化、非结构化和 2:4 稀疏为何不一定加速？",
+      "level": "L2",
+      "tags": [
+        "剪枝",
+        "结构化",
+        "稀疏",
+        "量化"
+      ],
+      "answer": {
+        "body": "量化降低权重或激活的表示精度；剪枝删除或屏蔽连接、通道、注意力头或层。非结构化剪枝将任意权重置零，通常保留原矩阵形状；结构化剪枝直接缩小通道、head或层；N:M 半结构化要求每 M 个权重保留 N 个，例如 2:4，便于支持相应模式的稀疏硬件执行。普通 dense GEMM 仍可能处理完整矩阵，所以零权重比例不能直接换算为速度收益。\n\n幅值剪枝按权重绝对值估计重要性，Wanda 结合权重幅值与输入激活尺度，也有方法使用近似二阶信息；这些都是近似，应固定校准数据并测试恢复训练的收益。LLM-Pruner 等方法考虑模块依赖；删通道或头时必须同步相关投影、残差维度和配置，不能孤立删除一个张量维度。校准与恢复训练不得污染最终评测集。\n\n结构化剪枝较容易复用密集内核，但不适配硬件对齐的小矩阵也可能变慢。稀疏加速依赖硬件、dtype、布局、尺寸与内核，索引和不规则访存也有开销。比较实际权重内存、端到端延迟、吞吐、尾延迟和质量，并计入恢复训练预算；剪枝与量化可以组合，误差和内核兼容性需要联合验证。",
+        "formula": "\\operatorname{score}_{ij}^{\\rm Wanda}=|W_{ij}|\\,\\lVert X_{:,j}\\rVert_2,\\qquad\\rho=1-\\frac{\\#\\text{nonzero weights}}{\\#\\text{weights}}",
+        "pitfalls": [
+          "非结构化权重置零不自动缩小稠密权重文件或 GEMM 计算。",
+          "独立删除通道却忽略残差和耦合模块维度。",
+          "声称50%权重为零就必然把dense推理速度翻倍。",
+          "进行结构化剪枝时不同投影维度未同步修改。"
+        ],
+        "followups": [
+          "相同参数减少比例下，删层与删 FFN 通道的质量和延迟影响怎样比较？",
+          "怎样把剪枝后的恢复训练预算纳入公平比较？",
+          "2:4稀疏为何与任意50%零权重不同？",
+          "剪枝后哪些评测能发现少数关键能力被破坏？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P18",
+        "CORE-S061",
+        "CORE-S062",
+        "WD26-WANDA",
+        "WD26-TRT"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "量化与稀疏推理"
+    },
+    {
+      "id": "SYS-016",
+      "category": "SYS",
+      "title": "大规模 PDF 解析怎样组合多线程、多进程与 GPU 批处理？",
+      "level": "L3",
+      "tags": [
+        "PDF",
+        "threading",
+        "multiprocessing",
+        "流水线"
+      ],
+      "answer": {
+        "body": "先把流程分成下载/读取、PDF 解码与页面渲染、OCR/版面识别、清洗切块、embedding 和入库，分别测 CPU、I/O、GPU 与队列等待。一般用线程或异步重叠网络和文件 I/O，用进程并行 CPU 密集的 Python 处理，把 GPU OCR/embedding 集中到受控批处理服务。默认带 GIL 的 CPython 不能让纯 Python CPU 任务仅靠线程实现多核；释放 GIL 的库或 free-threaded 构建须另看条件。\n\n库的线程安全优先于这条经验。PyMuPDF 官方不支持多线程调用，应由独立进程各自打开文档，传文件路径和页范围，不跨进程传 Document 对象或整页大图。结果携带文档 hash、页号、解析版本和状态，便于排序、重试和增量去重。\n\n用有界队列施加背压，避免解析快而 OCR 慢时把内存堆满。限制进程内 BLAS/OCR 线程，避免进程数乘线程数过度争抢；控制 GPU 模型实例数量，批量推理与失败页隔离并行设计。优化目标是每秒成功处理页数及峰值资源，不是启动最多 worker。",
+        "formula": "\\operatorname{throughput}_{\\mathrm{pipeline}}\\lesssim\\min_i\\operatorname{capacity}_i",
+        "pitfalls": [
+          "PyMuPDF 的线程安全限制不能被“C 扩展可能释放 GIL”这个经验覆盖。",
+          "无限队列和每个 worker 都加载一份 GPU 模型会放大内存与显存峰值。"
+        ],
+        "followups": [
+          "怎样判断该按文档分片还是按页范围分片？",
+          "Windows spawn 模式下为什么入口保护、序列化和 worker 初始化重要？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P19",
+        "ZH26-P20",
+        "ZH26-P21"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "性能、缓存与并发"
+    },
+    {
+      "id": "SYS-017",
+      "category": "SYS",
+      "title": "个人多模态记忆怎样存储、检索、更新并处理相互矛盾的信息？",
+      "level": "L3",
+      "tags": [
+        "Memory",
+        "多模态",
+        "时间",
+        "用户隔离"
+      ],
+      "answer": {
+        "body": "把短期会话状态与跨会话长期记忆分开。原图、音频或视频保存在对象存储；文本转写、摘要和视觉描述用于检索；结构化记录保存 user_id、来源、时间、图片区域或音视频片段坐标、内容 hash、置信度和版本。向量索引只负责相似召回，不能替代原证据或成为唯一事实数据库。\n\n长期记忆区分稳定偏好、具体经历和任务状态。先按用户/权限、有效时间和类型过滤，再混合检索文本与模态向量，必要时重排；只把与当前任务有关的摘要和证据片段放入上下文。可以用相关性、时间与重要性的加权分数排序，但这些分数须在真实任务上校准。\n\n写入时做去重和版本更新，记忆附证据；新的地址或偏好应终止旧记录的有效期，冲突不应随意取相似度最高者当真。用户纠正或删除时同步删除派生摘要、向量与缓存。评测覆盖跨会话召回、时间正确性、错误记忆写入和用户隔离，而不仅看检索命中率。",
+        "formula": "",
+        "pitfalls": [
+          "视觉 embedding 相似只代表表示接近，不能证明图片里的事实或用户身份。",
+          "模型猜测写成稳定事实，或更新原记录却保留旧派生索引。"
+        ],
+        "followups": [
+          "用户说“我搬家了”时，事实的时间有效性和旧经历应怎样分别保留？",
+          "怎样区分检索不到正确记忆与正确记忆被模型忽略？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P22",
+        "ZH26-P23"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "权限、容错与可观测性"
+    },
+    {
+      "id": "SYS-018",
+      "category": "SYS",
+      "title": "FastAPI 与 vLLM 怎样分工，如何避免 worker 数量导致模型重复加载？",
+      "level": "L2",
+      "tags": [
+        "FastAPI",
+        "vLLM",
+        "服务化",
+        "异步"
+      ],
+      "answer": {
+        "body": "FastAPI 负责应用 HTTP 接口、鉴权、请求校验、业务路由和流式转发；vLLM engine 负责模型执行、KV 分配、批处理与生成调度。vLLM 已提供兼容 API 的 serving 入口，常见做法是让轻量应用网关异步调用独立模型服务，而不是在每个 Web worker 的请求函数里同步加载模型。\n\n多个 ASGI worker 是多个进程，各自初始化模型会复制权重、上下文与缓存，可能一启动就 OOM。应明确模型进程/实例数、GPU 分配和并行组；网关扩容与模型副本扩容分开。流式接口及时处理客户端断连与取消，限制在途请求、输入/输出 token 和超时，避免已无人接收的生成继续占用容量。\n\n做负载测试时把网关排队、网络、prefill 和 decode 分开记录，并验证聊天模板、stop、采样参数及错误码能正确透传。async 允许重叠等待，不会让单次 GPU 前向自行变快；吞吐最终受模型调度和资源约束。",
+        "formula": "",
+        "pitfalls": [
+          "FastAPI 的 async 接口不自动解决同步阻塞模型调用或 GPU 显存复制。",
+          "盲目增加 Web worker 数量，却没有确定模型实例与 GPU 的关系。"
+        ],
+        "followups": [
+          "客户端中途断连时，怎样确认底层生成请求也被取消？",
+          "怎样分别扩容无状态网关和持有 KV 状态的模型服务？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P28",
+        "CORE-S058",
+        "CORE-S059"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "性能、缓存与并发"
+    },
+    {
+      "id": "PRJ-011",
+      "category": "PRJ",
+      "title": "面试中怎样说明 vibe coding 的实际用法、贡献和验证？",
+      "level": "L2",
+      "tags": [
+        "AI coding",
+        "验收",
+        "代码审查",
+        "项目"
+      ],
+      "answer": {
+        "body": "把它描述为用自然语言驱动快速实现、迭代和探索的工作方式，并讲清具体工具、任务和结果。可先给需求、边界、接口和验收样例，让编码 Agent 查仓库、形成小改动、执行验证，再由开发者理解并审查 diff。不能仅把“用了某工具”“页面能打开”当作交付质量或个人技术贡献。\n\n验证应针对行为而非复述生成代码：关键正常/异常路径、权限与数据边界、回归测试、依赖与配置、实际部署环境的集成检查。遇到测试失败要确认是实现问题、环境问题还是测试假设错，不让模型只为通过测试修改断言。代码生成可能带来不存在的 API、不安全实现或额外依赖，应核对项目实际版本和变化范围。\n\n回答个人贡献时给出自己负责的需求分解、方案取舍、关键修正与验收证据，最好展示一次失败后如何定位并修复。衡量节省的时间也应包含阅读、调试和回归成本；使用 Agent 不免除理解最终代码和承担维护责任。",
+        "formula": "",
+        "pitfalls": [
+          "把 Agent 写出的代码行数当作自己的技术深度或项目收益。",
+          "只让同一个生成模型自评正确，省略独立运行和审查。"
+        ],
+        "followups": [
+          "如果 Agent 做出了超出需求的大重构，你怎样缩小改动并验收？",
+          "你能否不用工具解释最后交付的核心代码及其边界条件？"
+        ]
+      },
+      "reference_ids": [
+        "ZH26-P24",
+        "ENG-P21"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "论文、视野与工程习惯"
+    }
+  ]
+}

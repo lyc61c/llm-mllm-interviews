@@ -8,16 +8,16 @@
 
 | 岗位 | 主线 | 补充 |
 |---|---|---|
-| LLM 算法 / 后训练 | TFM → PRE → FT → ALN → EVA | INF / DST / COD / PRJ |
-| MLLM 算法 | TFM → VLM → OMM → FT → ALN → EVA | DST / COD / PRJ |
-| AI Infra / 推理 | TFM → INF → DST → COD → SYS | PRE / FT / EVA |
-| RAG / Agent 应用 | TFM 基础 → RAG → AGT → EVA → SYS | FT / COD / PRJ |
+| LLM 算法 / 后训练 | BAS → TFM → ARC → PRE → FT → ALN → EVA | INF / DST / COD / PRJ |
+| MLLM 算法 | BAS → TFM → ARC → VLM → OMM → FT → ALN → EVA | DST / COD / PRJ |
+| AI Infra / 推理 | TFM → ARC → INF → DST → COD → SYS | BAS / PRE / FT / EVA |
+| RAG / Agent 应用 | BAS / TFM 基础 → RAG → AGT → EVA → SYS | FT / COD / PRJ |
 
 ## 四周计划
 
 | 周 | 目标 | 每天的可交付物 |
 |---|---|---|
-| 1 | TFM/PRE/FT 的基础与推导 | 5–8 题口述 + 1 条公式 + 一个边界例子 |
+| 1 | BAS/TFM/ARC/PRE/FT 的基础与推导 | 5–8 题口述 + 1 条公式 + 一个边界例子 |
 | 2 | 岗位专项：ALN 或 VLM/OMM 或 INF/DST | 5–8 题 + 1 张模块/数据流草图 + 一条取舍 |
 | 3 | RAG/AGT/EVA/SYS 与代码 | 一个手撕实现 + 测试 + 一个归因实验设计 |
 | 4 | PRJ 与模拟面试 | 一次 45–60 分钟模拟 + 错题记录与复测 |

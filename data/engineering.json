@@ -607,7 +607,7 @@
         "log-sum-exp"
       ],
       "answer": {
-        "body": "Softmax 对所有 logits 加同一常数不变，因为分子与分母中的公因子会抵消。令 $m=\\max_i z_i$，先减最大值再计算指数，可以避免大正数导致溢出。\n\n交叉熵直接计算 $\\operatorname{logsumexp}(z)-z_y$，比先求概率再取对数更稳定；对 logits 的梯度为预测概率减去目标的 one-hot 向量。实现需要测试大正负 logits、平移不变性和部分 `-inf` mask。全为 `-inf` 的行没有有效概率分布，必须显式处理。",
+        "body": "Softmax 对所有 logits 加同一常数不变，因为分子与分母中的公因子会抵消。令 $m=\\max_i z_i$，先减最大值再计算指数，可以避免大正数导致溢出。\n\n交叉熵直接计算 $\\operatorname{logsumexp}(z)-z_y$，比先求概率再取对数更稳定；对 logits 的梯度为预测概率减去目标的 one-hot 向量。实现需要测试大正负 logits、平移不变性和部分 `-inf` mask。全为 `-inf` 的行没有有效概率分布，必须显式处理。\n\n减去任意共同常数的等价性来自 $e^{z-c}=e^ze^{-c}$，归一化时公共因子抵消。它不能自动推广到任意函数：例如先 sigmoid 再归一化，一般有 $\\sigma(z_i-c)/\\sum_j\\sigma(z_j-c)\\ne\\sigma(z_i)/\\sum_j\\sigma(z_j)$；ReLU 后归一化还可能出现全零分母。替换函数会改变权重、梯度甚至概率语义，数值稳定化必须按新公式推导，而不是照搬 softmax 的技巧。",
         "formula": "\\begin{aligned}m&=\\max_j z_j,\\qquad p_i=\\frac{e^{z_i-m}}{\\sum_j e^{z_j-m}}\\\\\\mathcal L_{\\mathrm{CE}}&=m+\\log\\sum_j e^{z_j-m}-z_y\\end{aligned}",
         "pitfalls": [
           "只写 exp(z)/sum(exp(z))；或者用 log(softmax) 在极端值下得到 log(0)。"
@@ -620,7 +620,8 @@
         "ENG-P02"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "模型算子与数值实现"
     },
     {
       "id": "COD-002",
@@ -652,7 +653,8 @@
           "note": "公开正文列出 multi-head-attention 手撕题；本题为重述与独立答案。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "模型算子与数值实现"
     },
     {
       "id": "COD-003",
@@ -678,7 +680,8 @@
         "ENG-P01"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "采样与缓存实现"
     },
     {
       "id": "COD-004",
@@ -704,7 +707,8 @@
         "ENG-P04"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "模型算子与数值实现"
     },
     {
       "id": "COD-005",
@@ -737,7 +741,8 @@
           "note": "正文明确要求理解并编码 InfoNCE；答案为独立实现。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "损失函数与训练代码"
     },
     {
       "id": "COD-006",
@@ -763,7 +768,8 @@
         "ENG-P12"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "采样与缓存实现"
     },
     {
       "id": "COD-007",
@@ -789,7 +795,8 @@
         "ENG-P05"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "模型算子与数值实现"
     },
     {
       "id": "COD-008",
@@ -815,7 +822,8 @@
         "ENG-P13"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "损失函数与训练代码"
     },
     {
       "id": "COD-009",
@@ -841,7 +849,8 @@
         "ENG-P14"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "损失函数与训练代码"
     },
     {
       "id": "COD-010",
@@ -874,7 +883,8 @@
           "note": "正文手撕题列出数组第 k 大，并提到堆或快排。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "通用算法与数据结构"
     },
     {
       "id": "COD-011",
@@ -906,7 +916,8 @@
           "note": "面经手撕题列出岛屿问题；本题按四连通计数整理。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "通用算法与数据结构"
     },
     {
       "id": "COD-012",
@@ -937,7 +948,8 @@
           "note": "搜索摘录列出编辑距离代码题；未声称读到完整原始面试。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "通用算法与数据结构"
     },
     {
       "id": "COD-013",
@@ -964,7 +976,8 @@
         "ENG-P11"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "通用算法与数据结构"
     },
     {
       "id": "COD-014",
@@ -997,7 +1010,8 @@
           "note": "公开部分有 KV Cache 和显存开销主题；本题补充可运行估算练习。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "采样与缓存实现"
     },
     {
       "id": "COD-015",
@@ -1023,7 +1037,8 @@
         "ENG-P21"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "通用算法与数据结构"
     },
     {
       "id": "SYS-001",
@@ -1050,7 +1065,8 @@
         "ENG-P25"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "系统设计与资源预算"
     },
     {
       "id": "SYS-002",
@@ -1079,7 +1095,8 @@
         "ENG-P17"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "性能、缓存与并发"
     },
     {
       "id": "SYS-003",
@@ -1106,7 +1123,8 @@
         "ENG-P25"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "性能、缓存与并发"
     },
     {
       "id": "SYS-004",
@@ -1140,7 +1158,8 @@
           "note": "二手小红书调研出现上下文/记忆和长任务主题；未核验原帖，不使用报告答案。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "系统设计与资源预算"
     },
     {
       "id": "SYS-005",
@@ -1173,7 +1192,8 @@
           "note": "转载搜索摘录含 Agent 中断、失败和重试安全主题。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "权限、容错与可观测性"
     },
     {
       "id": "SYS-006",
@@ -1200,7 +1220,8 @@
         "ENG-P26"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "权限、容错与可观测性"
     },
     {
       "id": "SYS-007",
@@ -1226,7 +1247,8 @@
         "ENG-P24"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "权限、容错与可观测性"
     },
     {
       "id": "SYS-008",
@@ -1259,7 +1281,8 @@
           "note": "公开搜索摘录出现 RAG 知识库不停服更新提问。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "质量诊断与版本治理"
     },
     {
       "id": "SYS-009",
@@ -1292,7 +1315,8 @@
           "note": "搜索摘录有 RAG 检索错/生成错与归因实验主题。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "质量诊断与版本治理"
     },
     {
       "id": "SYS-010",
@@ -1318,7 +1342,8 @@
         "ENG-P23"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "性能、缓存与并发"
     },
     {
       "id": "SYS-011",
@@ -1346,7 +1371,8 @@
         "ENG-P32"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "性能、缓存与并发"
     },
     {
       "id": "SYS-012",
@@ -1379,7 +1405,8 @@
           "note": "知乎搜索可见“微调上线后效果衰减”提问；正文未读。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "质量诊断与版本治理"
     },
     {
       "id": "SYS-013",
@@ -1407,7 +1434,8 @@
         "ENG-P31"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "系统设计与资源预算"
     },
     {
       "id": "SYS-014",
@@ -1440,7 +1468,8 @@
           "note": "调研报告对应字节 Agent 二面条目含 prompt 修好一类坏另一类；原帖未核验。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "质量诊断与版本治理"
     },
     {
       "id": "SYS-015",
@@ -1467,7 +1496,8 @@
         "ENG-P26"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "权限、容错与可观测性"
     },
     {
       "id": "PRJ-001",
@@ -1500,7 +1530,8 @@
           "note": "公开项目题多次询问动机、业务问题和最终提升；本题提供组织回答方法。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "项目贡献与实验设计"
     },
     {
       "id": "PRJ-002",
@@ -1532,7 +1563,8 @@
           "note": "小红书二手报告保留项目分工/实现细节题目线索；答案为编辑建议。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "项目贡献与实验设计"
     },
     {
       "id": "PRJ-003",
@@ -1559,7 +1591,8 @@
         "ENG-P25"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "项目贡献与实验设计"
     },
     {
       "id": "PRJ-004",
@@ -1592,7 +1625,8 @@
           "note": "公开部分询问消融与改进到底来自 MoE 还是参数增加；本题重述控制变量问题。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "项目贡献与实验设计"
     },
     {
       "id": "PRJ-005",
@@ -1618,7 +1652,8 @@
         "ENG-P26"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "调试、数据与复现"
     },
     {
       "id": "PRJ-006",
@@ -1645,7 +1680,8 @@
         "ENG-P21"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "论文、视野与工程习惯"
     },
     {
       "id": "PRJ-007",
@@ -1671,7 +1707,8 @@
         "ENG-P20"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "调试、数据与复现"
     },
     {
       "id": "PRJ-008",
@@ -1697,7 +1734,8 @@
         "ENG-P21"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "调试、数据与复现"
     },
     {
       "id": "PRJ-009",
@@ -1723,7 +1761,8 @@
         "ENG-P26"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "论文、视野与工程习惯"
     },
     {
       "id": "PRJ-010",
@@ -1749,7 +1788,8 @@
         "ENG-P25"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "论文、视野与工程习惯"
     }
   ]
 }

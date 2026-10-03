@@ -1136,7 +1136,8 @@
           "note": "公开面经明确要求介绍 CLIP；此处将其拆成架构与目标。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "图文表示与预训练"
     },
     {
       "id": "VLM-002",
@@ -1160,7 +1161,8 @@
         "MM-S011"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "图文表示与预训练"
     },
     {
       "id": "VLM-003",
@@ -1184,7 +1186,8 @@
         "MM-S012"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "图文表示与预训练"
     },
     {
       "id": "VLM-004",
@@ -1208,7 +1211,8 @@
         "MM-S013"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "图文表示与预训练"
     },
     {
       "id": "VLM-005",
@@ -1238,7 +1242,8 @@
           "note": "面经明确问 BLIP 的三个损失；仅抽该主题。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "图文表示与预训练"
     },
     {
       "id": "VLM-006",
@@ -1268,7 +1273,8 @@
           "note": "面经同一道 BLIP 问题涉及数据清洗，此题展开 CapFilt。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "图文表示与预训练"
     },
     {
       "id": "VLM-007",
@@ -1307,7 +1313,8 @@
       "editorial": false,
       "user_supplement_keys": [
         "U00"
-      ]
+      ],
+      "topic": "视觉连接器与训练"
     },
     {
       "id": "VLM-008",
@@ -1320,10 +1327,12 @@
         "Q-Former",
         "MLP",
         "Resampler",
-        "Token预算"
+        "Token预算",
+        "融合范式",
+        "Flamingo"
       ],
       "answer": {
-        "body": "两层 MLP 逐 patch 做维度映射；Q-Former 则通过查询自注意力和视觉交叉注意力交互提取信息，并压缩成固定数量的查询表示。MLP 结构简单，通常保留 patch 粒度；Q-Former 增加连接器计算，却可减小 LLM 的序列长度、prefill 和 KV 预算。选择时要比较视觉编码、连接器和 LLM 的端到端成本。\n\n以 LLaVA-1.5 为例，连接器为 `Linear→GELU→Linear`，输入的 $N$ 个视觉 token 映射后仍为 $N$ 个。连接器本身不新增跨 token 混合，但视觉编码器此前已可通过注意力融合上下文；保留 patch 粒度不等于像素信息无损。Q-Former 用 $M$ 个查询汇聚 $N$ 个视觉特征，固定 $M$ 可能形成细节瓶颈。\n\n需要小字识别、局部定位且 token 预算充足时，可先试逐 patch MLP；多图、视频或 LLM 输入预算紧张时，可试查询压缩。压缩是否损害 OCR 要在相同任务、分辨率、数据和冻结策略下消融，不能只比较整模型成绩。\n\nMLP 是简洁有效的基线；BLIP-2 的两阶段表征学习服务于冻结骨干，InstructBLIP 使用指令感知 Q-Former，MiniCPM-V 4.5 使用 3D-Resampler 压缩图像和视频。不同设计并存，这些实例不足以证明商业部署占比或“业界普遍淘汰 Q-Former”。Resampler 的可学习查询、位置编码与 cross-attention，也不等于 BLIP-2 的 BERT 初始化、共享文本分支及 ITC/ITM/ITG 目标；不能把所有固定 token 压缩器统称 Q-Former。",
+        "body": "两层 MLP 逐 patch 做维度映射；Q-Former 则通过查询自注意力和视觉交叉注意力交互提取信息，并压缩成固定数量的查询表示。MLP 结构简单，通常保留 patch 粒度；Q-Former 增加连接器计算，却可减小 LLM 的序列长度、prefill 和 KV 预算。选择时要比较视觉编码、连接器和 LLM 的端到端成本。\n\n以 LLaVA-1.5 为例，连接器为 `Linear→GELU→Linear`，输入的 $N$ 个视觉 token 映射后仍为 $N$ 个。连接器本身不新增跨 token 混合，但视觉编码器此前已可通过注意力融合上下文；保留 patch 粒度不等于像素信息无损。Q-Former 用 $M$ 个查询汇聚 $N$ 个视觉特征，固定 $M$ 可能形成细节瓶颈。\n\n需要小字识别、局部定位且 token 预算充足时，可先试逐 patch MLP；多图、视频或 LLM 输入预算紧张时，可试查询压缩。压缩是否损害 OCR 要在相同任务、分辨率、数据和冻结策略下消融，不能只比较整模型成绩。\n\nMLP 是简洁有效的基线；BLIP-2 的两阶段表征学习服务于冻结骨干，InstructBLIP 使用指令感知 Q-Former，MiniCPM-V 4.5 使用 3D-Resampler 压缩图像和视频。不同设计并存，这些实例不足以证明商业部署占比或“业界普遍淘汰 Q-Former”。Resampler 的可学习查询、位置编码与 cross-attention，也不等于 BLIP-2 的 BERT 初始化、共享文本分支及 ITC/ITM/ITG 目标；不能把所有固定 token 压缩器统称 Q-Former。\n\n比较完整融合范式时，CLIP双塔输出可比表示但不能直接完成生成对话；LLaVA/BLIP-2等把转换后的视觉token作为LLM条件输入；Flamingo使用Perceiver Resampler压缩视觉特征，再在冻结语言模型层间加入可训练的gated cross-attention。BLIP-2的cross-attention主要发生在Q-Former，不能等同于Flamingo在LLM内部插层；“连接器/跨注意力”也并非互斥，因为连接器本身就可使用cross-attention。",
         "formula": "\\begin{aligned}\n\\text{MLP:}\\quad&\\mathbb R^{N\\times d_v}\\longrightarrow\\mathbb R^{N\\times d_{\\mathrm{LLM}}}\\\\\n\\text{Query bridge:}\\quad&\\mathbb R^{N\\times d_v}\\longrightarrow\\mathbb R^{M\\times d_q}\\longrightarrow\\mathbb R^{M\\times d_{\\mathrm{LLM}}}\n\\end{aligned}",
         "pitfalls": [
           "不同视觉骨干、数据和冻结策略的整模型成绩不能全部归因连接器，也不能外推成“MLP 一定更强”。",
@@ -1340,7 +1349,8 @@
         "MM-S068",
         "MM-S069",
         "MM-S070",
-        "MM-S076"
+        "MM-S076",
+        "JUN26-P064"
       ],
       "community_evidence": [
         {
@@ -1353,6 +1363,14 @@
       "user_supplement_keys": [
         "U00",
         "U01"
+      ],
+      "topic": "视觉连接器与训练",
+      "figures": [
+        {
+          "path": "assets/visual-connectors.svg",
+          "alt": "逐 token MLP 与 Q-Former 视觉连接器",
+          "caption": "MLP 通常保留输入 token 数；固定查询的 Q-Former 可压缩视觉序列，具体配置依模型而定。"
+        }
       ]
     },
     {
@@ -1362,10 +1380,11 @@
       "level": "L1",
       "tags": [
         "LLaVA",
-        "训练阶段"
+        "训练阶段",
+        "MiniGPT-4"
       ],
       "answer": {
-        "body": "原始 LLaVA 的第一阶段冻结视觉编码器和 LLM，只训练投影层，用图文描述数据将视觉特征接入语言嵌入空间；第二阶段继续冻结视觉编码器，更新投影层和 LLM，用对话、详细描述和推理指令学习回答格式与任务。\n\n特征对齐和指令跟随是两个阶段的不同职责，指令能力不能只靠增大连接器获得。回答时应注明版本，后续 VLM 的视觉解冻策略和阶段划分可能不同，“端到端”也不代表所有模块都解冻。",
+        "body": "原始 LLaVA 的第一阶段冻结视觉编码器和 LLM，只训练投影层，用图文描述数据将视觉特征接入语言嵌入空间；第二阶段继续冻结视觉编码器，更新投影层和 LLM，用对话、详细描述和推理指令学习回答格式与任务。\n\n特征对齐和指令跟随是两个阶段的不同职责，指令能力不能只靠增大连接器获得。回答时应注明版本，后续 VLM 的视觉解冻策略和阶段划分可能不同，“端到端”也不代表所有模块都解冻。\n\nMiniGPT-4复用带ViT与Q-Former的BLIP-2视觉部分，以可训练线性层接到Vicuna；其预训练视觉/语言部分冻结，先用图文数据学习投影，再以精选描述数据继续改善生成质量。原始LLaVA使用CLIP视觉特征与线性投影，指令阶段训练连接器和语言模型；两者都利用预训练模块，但连接路线、训练数据与更新模块并不相同，不能把MiniGPT-4简化成LLaVA-1.5两层MLP。",
         "pitfalls": [
           "原论文说 end-to-end 不代表所有模块都解冻。"
         ],
@@ -1374,10 +1393,12 @@
         ]
       },
       "reference_ids": [
-        "MM-S016"
+        "MM-S016",
+        "JUN26-P063"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "视觉连接器与训练"
     },
     {
       "id": "VLM-010",
@@ -1401,7 +1422,8 @@
         "MM-S016"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "视觉连接器与训练"
     },
     {
       "id": "VLM-011",
@@ -1425,7 +1447,8 @@
         "MM-S017"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "模型结构与版本对比"
     },
     {
       "id": "VLM-012",
@@ -1449,7 +1472,8 @@
         "MM-S018"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "动态分辨率与位置编码"
     },
     {
       "id": "VLM-013",
@@ -1473,7 +1497,8 @@
         "MM-S018"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "动态分辨率与位置编码"
     },
     {
       "id": "VLM-014",
@@ -1503,7 +1528,8 @@
           "note": "搜索片段含 Qwen2.5-VL 结构问法；答案以作者技术报告校对。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "模型结构与版本对比"
     },
     {
       "id": "VLM-015",
@@ -1527,7 +1553,8 @@
         "MM-S020"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "动态分辨率与位置编码"
     },
     {
       "id": "VLM-016",
@@ -1557,7 +1584,8 @@
           "note": "公开题目列表包含 document understanding/layout。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "感知、文档与视觉评测"
     },
     {
       "id": "VLM-017",
@@ -1587,7 +1615,8 @@
           "note": "公开题目明确提出单图问答有效、多页文档失败的场景。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "感知、文档与视觉评测"
     },
     {
       "id": "VLM-018",
@@ -1617,7 +1646,8 @@
           "note": "题目列表包含 VLM 生成事实错误图像描述的排查场景。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "感知、文档与视觉评测"
     },
     {
       "id": "VLM-019",
@@ -1648,7 +1678,8 @@
           "note": "公开题目明确提出模型忽略图像只按文本描述的问题。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "感知、文档与视觉评测"
     },
     {
       "id": "VLM-020",
@@ -1672,7 +1703,8 @@
         "MM-S025"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "感知、文档与视觉评测"
     },
     {
       "id": "VLM-021",
@@ -1702,7 +1734,8 @@
           "note": "公开题目列表包含 vision-language model fine-tuning。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "视觉连接器与训练"
     },
     {
       "id": "VLM-022",
@@ -1727,7 +1760,8 @@
         "MM-S020"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "感知、文档与视觉评测"
     },
     {
       "id": "VLM-023",
@@ -1751,7 +1785,8 @@
         "MM-S028"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "感知、文档与视觉评测"
     },
     {
       "id": "VLM-024",
@@ -1763,7 +1798,7 @@
         "能力平衡"
       ],
       "answer": {
-        "body": "多模态预训练与 SFT 配比应围绕目标能力和数据质量设计。自然图像、OCR、文档、区域问答及纯文本的 token 成本和难度不同，先建分任务评测，再通过受控采样与消融寻找能力和成本的平衡。\n\n记录去重后样本数、视觉 token 数和有效答案 token 数，防止低质量海量描述压过稀缺的细粒度监督。持续检查纯文本回归、视觉细节和域外泛化，而非只按原始样本量混合。",
+        "body": "多模态预训练与 SFT 配比应围绕目标能力和数据质量设计。自然图像、OCR、文档、区域问答及纯文本的 token 成本和难度不同，先建分任务评测，再通过受控采样与消融寻找能力和成本的平衡。\n\n记录去重后样本数、视觉 token 数和有效答案 token 数，防止低质量海量描述压过稀缺的细粒度监督。持续检查纯文本回归、视觉细节和域外泛化，而非只按原始样本量混合。\n\n已有 VLM 适应新领域时，增量预训练先明确新能力缺口，规范原图、区域、文本与时间的对应关系，做文档/用户/时间维度切分与去重，防止同源页面或视频片段跨入评测集。以领域图文和任务样本配合一定通用图文、纯文本回放，从较小学习率与受控更新范围开始；域差异明显才扩大解冻范围。预训练式生成目标和回答监督式 SFT 要按样本目的设置 mask，不能混用固定模板。按旧能力、新领域、长上下文和视觉依赖分别回归，出现遗忘时调整采样、训练步数和模块更新，不能只以训练 loss 下降判定增量学习成功。",
         "pitfalls": [
           "不能把单篇论文的配比当跨模型最优配方。"
         ],
@@ -1772,10 +1807,13 @@
         ]
       },
       "reference_ids": [
-        "MM-S029"
+        "MM-S029",
+        "ZH26-P08",
+        "MM-S026"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "视觉连接器与训练"
     },
     {
       "id": "VLM-025",
@@ -1800,7 +1838,8 @@
         "MM-S030"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "感知、文档与视觉评测"
     },
     {
       "id": "VLM-026",
@@ -1841,7 +1880,8 @@
       "editorial": true,
       "user_supplement_keys": [
         "U08"
-      ]
+      ],
+      "topic": "模型结构与版本对比"
     },
     {
       "id": "OMM-001",
@@ -1865,7 +1905,8 @@
         "MM-S031"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "视频采样与时序"
     },
     {
       "id": "OMM-002",
@@ -1889,7 +1930,8 @@
         "MM-S019"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "视频采样与时序"
     },
     {
       "id": "OMM-003",
@@ -1913,7 +1955,8 @@
         "MM-S032"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "视频采样与时序"
     },
     {
       "id": "OMM-004",
@@ -1938,7 +1981,8 @@
         "MM-S033"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "视频采样与时序"
     },
     {
       "id": "OMM-005",
@@ -1968,7 +2012,8 @@
           "note": "社区备考集合明确讨论 Whisper 的 ASR 设计；不是公司面试认证。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "语音识别与编码"
     },
     {
       "id": "OMM-006",
@@ -2000,7 +2045,8 @@
           "note": "社区 ASR 主题列出 WER；此题扩展指标计算和中文协议。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "语音识别与编码"
     },
     {
       "id": "OMM-007",
@@ -2025,7 +2071,8 @@
         "MM-S036"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "语音识别与编码"
     },
     {
       "id": "OMM-008",
@@ -2055,7 +2102,8 @@
           "note": "社区多模态备考材料讨论神经 codec 表示。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "语音识别与编码"
     },
     {
       "id": "OMM-009",
@@ -2085,7 +2133,8 @@
           "note": "社区集合提及 VALL-E 风格的 codec 语言模型 TTS。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "语音生成与流式"
     },
     {
       "id": "OMM-010",
@@ -2109,7 +2158,8 @@
         "MM-S039"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "语音识别与编码"
     },
     {
       "id": "OMM-011",
@@ -2133,7 +2183,8 @@
         "MM-S040"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "Omni 融合与评测"
     },
     {
       "id": "OMM-012",
@@ -2163,7 +2214,8 @@
           "note": "社区集合比较 STT→LLM→TTS 与 native speech-to-speech。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "语音生成与流式"
     },
     {
       "id": "OMM-013",
@@ -2187,7 +2239,8 @@
         "MM-S041"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "语音生成与流式"
     },
     {
       "id": "OMM-014",
@@ -2211,7 +2264,8 @@
         "MM-S042"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "语音识别与编码"
     },
     {
       "id": "OMM-015",
@@ -2235,7 +2289,8 @@
         "MM-S043"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "Omni 融合与评测"
     },
     {
       "id": "DST-001",
@@ -2247,7 +2302,7 @@
         "数据并行"
       ],
       "answer": {
-        "body": "DDP 让各进程持有模型副本并处理自己的数据，反向期间聚合梯度，随后各副本用相同结果执行优化器更新。训练程序负责向各 rank 提供不同数据子集，DDP 不自动分割数据集，也通常不切分模型状态。\n\n正确训练需保持初始化、采样及 collective 顺序一致。广播 buffers 与梯度归约是不同机制，各卡仍通常持有完整参数，不能据此期待模型状态显存按卡数下降。",
+        "body": "DDP 让各进程持有模型副本并处理自己的数据，反向期间聚合梯度，随后各副本用相同结果执行优化器更新。训练程序负责向各 rank 提供不同数据子集，DDP 不自动分割数据集，也通常不切分模型状态。\n\n正确训练需保持初始化、采样及 collective 顺序一致。广播 buffers 与梯度归约是不同机制，各卡仍通常持有完整参数，不能据此期待模型状态显存按卡数下降。\n\nPyTorch DataParallel通常在一个进程内多线程scatter输入、复制模型、并行前向再gather输出，主卡更容易承担额外开销；DDP通常每GPU独立进程，通过梯度collective同步并让各rank本地更新，适合单机与多机扩展。参数服务器则让worker向中心或分片server推/拉参数或梯度，可同步或异步；与DDP的collective模式相比，其流量、瓶颈和陈旧梯度语义不同。不能把“数据并行”一概等同于某一个PyTorch API。",
         "pitfalls": [
           "DDP 不会让每张卡只持有一部分模型参数。"
         ],
@@ -2256,7 +2311,8 @@
         ]
       },
       "reference_ids": [
-        "MM-S050"
+        "MM-S050",
+        "WD26-DDP"
       ],
       "community_evidence": [
         {
@@ -2265,7 +2321,8 @@
           "note": "公开基础架构面经明确问对数据并行的理解。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "并行策略与通信"
     },
     {
       "id": "DST-002",
@@ -2289,7 +2346,8 @@
         "MM-S050"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "并行策略与通信"
     },
     {
       "id": "DST-003",
@@ -2306,7 +2364,7 @@
         "Streaming"
       ],
       "answer": {
-        "body": "先把训练显存拆为权重、梯度、优化器/主权重、激活、工作区及通信临时状态。设参数量为 $P$，若低精度权重和梯度各为 $2P$ bytes，FP32 主权重为 $4P$，Adam 一二阶状态合计 $8P$，模型状态共 $16P$ bytes。$P=7\\times10^9$ 时为十进制 112GB，约 104.3GiB；FP32 梯度、没有独立主权重或换优化器时须重算。峰值还包含激活、工作区、通信桶及临时聚合，`allocated`、`reserved` 和设备已用量也不是同一口径。\n\n固定有效 batch 时，减小每卡 microbatch、增加累积步数，可通过逐次前后向释放计算图降低激活峰值；只增累积步数而不减 microbatch 不会自动省激活，也不减少权重或 Adam 状态。等大小样本时 $B_{\\mathrm{eff}}=B_{\\mathrm{micro}}AD$，$A$ 为累积步数、$D$ 为数据并行度；变长样本按有效监督 token 加权，避免重复归一化。FSDP 的 `no_sync` 等设置可能保留完整梯度，须实测峰值。\n\n按瓶颈选择优化：\n\n- 模型状态：DDP 复制状态；TP 切单层矩阵与计算，PP 切不同层，ZeRO 在数据并行组中依次分片 optimizer/master、gradients、parameters。当前模块的参数 all-gather、通信桶和 PP 在途 microbatch 仍可能提高临时峰值。CPU/NVMe offload 用传输与主存/存储带宽换容量。\n- 激活与注意力：checkpointing 用反向重算换保留激活；标准 FlashAttention 通过分块、在线 softmax 避免完整 $S\\times S$ 注意力矩阵驻留 HBM，仍是精确稠密注意力，浮点次序可不同，算术复杂度仍约 $O(S^2)$。稀疏注意力改变可见连接，需另测质量；LoRA 减少可训练状态，长序列激活仍可很大。\n- 数据：streaming 按需读取数据，可减少整库下载、转换和主存驻留，需设置分片、shuffle buffer 与 worker；它不自动压缩模型参数、优化器或当前 batch 的激活。\n\n先 profile OOM 出现在前向、反向还是优化器更新，再比较显存、有效 token 吞吐与任务质量。缩短序列、量化、冻结或稀疏化，都应说明目标或精度变化。",
+        "body": "先把训练显存拆为权重、梯度、优化器/主权重、激活、工作区及通信临时状态。设参数量为 $P$，若低精度权重和梯度各为 $2P$ bytes，FP32 主权重为 $4P$，Adam 一二阶状态合计 $8P$，模型状态共 $16P$ bytes。$P=7\\times10^9$ 时为十进制 112GB，约 104.3GiB；FP32 梯度、没有独立主权重或换优化器时须重算。峰值还包含激活、工作区、通信桶及临时聚合，`allocated`、`reserved` 和设备已用量也不是同一口径。\n\n固定有效 batch 时，减小每卡 microbatch、增加累积步数，可通过逐次前后向释放计算图降低激活峰值；只增累积步数而不减 microbatch 不会自动省激活，也不减少权重或 Adam 状态。等大小样本时 $B_{\\mathrm{eff}}=B_{\\mathrm{micro}}AD$，$A$ 为累积步数、$D$ 为数据并行度；变长样本按有效监督 token 加权，避免重复归一化。FSDP 的 `no_sync` 等设置可能保留完整梯度，须实测峰值。\n\n按瓶颈选择优化：\n\n- 模型状态：DDP 复制状态；TP 切单层矩阵与计算，PP 切不同层，ZeRO 在数据并行组中依次分片 optimizer/master、gradients、parameters。当前模块的参数 all-gather、通信桶和 PP 在途 microbatch 仍可能提高临时峰值。CPU/NVMe offload 用传输与主存/存储带宽换容量。\n- 激活与注意力：checkpointing 用反向重算换保留激活；标准 FlashAttention 通过分块、在线 softmax 避免完整 $S\\times S$ 注意力矩阵驻留 HBM，仍是精确稠密注意力，浮点次序可不同，算术复杂度仍约 $O(S^2)$。稀疏注意力改变可见连接，需另测质量；LoRA 减少可训练状态，长序列激活仍可很大。\n- 数据：streaming 按需读取数据，可减少整库下载、转换和主存驻留，需设置分片、shuffle buffer 与 worker；它不自动压缩模型参数、优化器或当前 batch 的激活。\n\n先 profile OOM 出现在前向、反向还是优化器更新，再比较显存、有效 token 吞吐与任务质量。缩短序列、量化、冻结或稀疏化，都应说明目标或精度变化。\n\n同一混合精度 Adam 账单下，全参微调模型状态约 $16P$。底座全部冻结时，浮点 LoRA 约为 $2P+16P_a$，理想全量化 QLoRA 约为 $P/2+16P_a+M_{\\mathrm{quant\\ metadata}}$ bytes；$P_a$ 是实际新增的可训练 adapter 参数数，不是 rank 本身。未量化冻结层、额外解冻参数须单独重算，不能把已经计入底座的权重再重复加入 adapter 账单。这些都须再加激活、工作区与通信临时状态，且 master/gradient dtype、量化层范围和优化器实现不同会改写系数。14B 全参的这项模型状态账单约 224 GB、208.6 GiB，不能用推理的 28 GB FP16 权重直接估算训练卡数。若冻结视觉或语言模块但需向可训练前层传播梯度，也不能简单整段 no_grad；是否省激活取决于计算图中的可训练位置。",
         "formula": "\\begin{aligned}\nM_{\\mathrm{states}}&=(2+2+4+4+4)P=16P\\ \\mathrm{bytes}\\\\\nM_{\\mathrm{peak}}&=M_{\\mathrm{states}}+M_{\\mathrm{activations}}+M_{\\mathrm{workspace}}+M_{\\mathrm{communication}}\\\\\nB_{\\mathrm{eff}}&=B_{\\mathrm{micro}}\\times A\\times D\n\\end{aligned}",
         "pitfalls": [
           "仅加梯度累积就声称显存下降，或用 $16P$ 状态账单冒充所有实现的峰值显存。",
@@ -2314,7 +2372,8 @@
         ],
         "followups": [
           "microbatch 已经是 1，而权重与 optimizer 仍放不下时，应优先尝试哪些状态优化？",
-          "怎么用 profiler 与峰值 `allocated`/`reserved` 区分激活、参数聚合和 `optimizer.step` 的 OOM？"
+          "怎么用 profiler 与峰值 `allocated`/`reserved` 区分激活、参数聚合和 `optimizer.step` 的 OOM？",
+          "怎样根据 adapter 的 target_modules 和实际 shape 计算 $P_a$，而不是套固定显存百分比？"
         ]
       },
       "reference_ids": [
@@ -2328,7 +2387,9 @@
         "CORE-S057",
         "MM-S077",
         "MM-S078",
-        "MM-S079"
+        "MM-S079",
+        "ZH26-P25",
+        "ZH26-P26"
       ],
       "community_evidence": [
         {
@@ -2340,7 +2401,8 @@
       "editorial": false,
       "article_supplement_keys": [
         "Z29"
-      ]
+      ],
+      "topic": "训练显存与状态分片"
     },
     {
       "id": "DST-004",
@@ -2372,7 +2434,8 @@
           "note": "面经明确问 DeepSpeed 各 ZeRO stage 的作用。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "训练显存与状态分片"
     },
     {
       "id": "DST-005",
@@ -2402,7 +2465,8 @@
           "note": "公开 Infra 题目集合讨论 FSDP 收集参数与分片梯度；公司/频率未采纳。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "训练显存与状态分片"
     },
     {
       "id": "DST-006",
@@ -2433,7 +2497,8 @@
           "note": "牛客片段出现张量并行与 ZeRO 区别；此题延伸层内切分细节。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "并行策略与通信"
     },
     {
       "id": "DST-007",
@@ -2464,7 +2529,8 @@
           "note": "面经明确问流水线并行理解。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "并行策略与通信"
     },
     {
       "id": "DST-008",
@@ -2488,7 +2554,8 @@
         "MM-S057"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "并行策略与通信"
     },
     {
       "id": "DST-009",
@@ -2513,7 +2580,8 @@
         "MM-S058"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "并行策略与通信"
     },
     {
       "id": "DST-010",
@@ -2537,7 +2605,8 @@
         "MM-S058"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "并行策略与通信"
     },
     {
       "id": "DST-011",
@@ -2568,7 +2637,8 @@
           "note": "Infra 题目集合列出 ring all-reduce 与 reduce-scatter/all-gather 等价关系。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "并行策略与通信"
     },
     {
       "id": "DST-012",
@@ -2598,7 +2668,8 @@
           "note": "Infra 集合列出 reducer/bucket/overlap 深挖题；这里概括原理。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "并行策略与通信"
     },
     {
       "id": "DST-013",
@@ -2631,7 +2702,8 @@
       "editorial": false,
       "article_supplement_keys": [
         "Z29"
-      ]
+      ],
+      "topic": "精度与激活优化"
     },
     {
       "id": "DST-014",
@@ -2656,7 +2728,8 @@
         "MM-S061"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "精度与激活优化"
     },
     {
       "id": "DST-015",
@@ -2683,7 +2756,8 @@
       "editorial": true,
       "article_supplement_keys": [
         "Z29"
-      ]
+      ],
+      "topic": "训练显存与状态分片"
     },
     {
       "id": "DST-016",
@@ -2707,7 +2781,8 @@
         "MM-S062"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "训练故障与可靠性"
     },
     {
       "id": "DST-017",
@@ -2731,7 +2806,8 @@
         "MM-S063"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "训练故障与可靠性"
     },
     {
       "id": "DST-018",
@@ -2762,7 +2838,8 @@
           "note": "Infra 集合包含 NCCL group 冲突、FSDP 故障诊断，扩展为通用排查。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "训练故障与可靠性"
     },
     {
       "id": "DST-019",
@@ -2793,7 +2870,8 @@
           "note": "公开 Infra 集合列出 FLOPs 估算与 MFU/HFU/utilization 对比题。"
         }
       ],
-      "editorial": false
+      "editorial": false,
+      "topic": "训练故障与可靠性"
     },
     {
       "id": "DST-020",
@@ -2819,7 +2897,8 @@
         "MM-S019"
       ],
       "community_evidence": [],
-      "editorial": true
+      "editorial": true,
+      "topic": "训练故障与可靠性"
     }
   ]
 }

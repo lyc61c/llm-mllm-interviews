@@ -1,0 +1,1845 @@
+{
+  "sources": [
+    {
+      "id": "JUN26-P001",
+      "title": "Spinning Up: Key Concepts in RL",
+      "url": "https://spinningup.openai.com/en/latest/spinningup/rl_intro.html",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "MDP",
+        "价值函数",
+        "Bellman"
+      ]
+    },
+    {
+      "id": "JUN26-P002",
+      "title": "Spinning Up: Intro to Policy Optimization",
+      "url": "https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "REINFORCE",
+        "baseline"
+      ]
+    },
+    {
+      "id": "JUN26-P003",
+      "title": "Spinning Up: Kinds of RL Algorithms",
+      "url": "https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "model-based",
+        "on-policy"
+      ]
+    },
+    {
+      "id": "JUN26-P004",
+      "title": "Proximal Policy Optimization Algorithms",
+      "url": "https://arxiv.org/abs/1707.06347",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "PPO"
+      ]
+    },
+    {
+      "id": "JUN26-P005",
+      "title": "Training language models to follow instructions with human feedback",
+      "url": "https://arxiv.org/abs/2203.02155",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "RLHF"
+      ]
+    },
+    {
+      "id": "JUN26-P006",
+      "title": "DeepSeekMath",
+      "url": "https://arxiv.org/abs/2402.03300",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "GRPO"
+      ]
+    },
+    {
+      "id": "JUN26-P007",
+      "title": "Group Sequence Policy Optimization",
+      "url": "https://arxiv.org/html/2507.18071v2",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "GSPO"
+      ]
+    },
+    {
+      "id": "JUN26-P008",
+      "title": "DAPO: An Open-Source LLM Reinforcement Learning System at Scale",
+      "url": "https://arxiv.org/html/2503.14476v2",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "DAPO"
+      ]
+    },
+    {
+      "id": "JUN26-P009",
+      "title": "verl DAPO recipe",
+      "url": "https://verl.readthedocs.io/en/latest/algo/dapo.html",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "DAPO",
+        "clip",
+        "loss aggregation"
+      ]
+    },
+    {
+      "id": "JUN26-P010",
+      "title": "verl GRPO documentation",
+      "url": "https://verl.readthedocs.io/en/latest/algo/grpo.html",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "GRPO"
+      ]
+    },
+    {
+      "id": "JUN26-P011",
+      "title": "verl Hardware Resource Needed for RL",
+      "url": "https://verl.readthedocs.io/en/latest/perf/device_tuning.html",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "RL训练显存"
+      ]
+    },
+    {
+      "id": "JUN26-P012",
+      "title": "Direct Preference Optimization",
+      "url": "https://arxiv.org/abs/2305.18290",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "DPO"
+      ]
+    },
+    {
+      "id": "JUN26-P013",
+      "title": "Trust Region Policy Optimization",
+      "url": "https://arxiv.org/abs/1502.05477",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "TRPO",
+        "KL"
+      ]
+    },
+    {
+      "id": "JUN26-P014",
+      "title": "Deep Reinforcement Learning with Double Q-learning",
+      "url": "https://arxiv.org/abs/1509.06461",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "DQN",
+        "Double DQN"
+      ]
+    },
+    {
+      "id": "JUN26-P015",
+      "title": "Dueling Network Architectures for Deep Reinforcement Learning",
+      "url": "https://arxiv.org/abs/1511.06581",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "Dueling DQN"
+      ]
+    },
+    {
+      "id": "JUN26-P016",
+      "title": "Spinning Up: Deep Deterministic Policy Gradient",
+      "url": "https://spinningup.openai.com/en/latest/algorithms/ddpg.html",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "DDPG",
+        "Q-learning"
+      ]
+    },
+    {
+      "id": "JUN26-P017",
+      "title": "Asynchronous Methods for Deep Reinforcement Learning",
+      "url": "https://arxiv.org/abs/1602.01783",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "A3C"
+      ]
+    },
+    {
+      "id": "JUN26-P018",
+      "title": "Addressing Function Approximation Error in Actor-Critic Methods",
+      "url": "https://arxiv.org/abs/1802.09477",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "TD3"
+      ]
+    },
+    {
+      "id": "JUN26-P019",
+      "title": "Soft Actor-Critic",
+      "url": "https://arxiv.org/abs/1801.01290",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "SAC"
+      ]
+    },
+    {
+      "id": "JUN26-P020",
+      "title": "Distributed Distributional Deterministic Policy Gradients",
+      "url": "https://arxiv.org/abs/1804.08617",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "D4PG"
+      ]
+    },
+    {
+      "id": "JUN26-P021",
+      "title": "Curiosity-driven Exploration by Self-supervised Prediction",
+      "url": "https://arxiv.org/abs/1705.05363",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "ICM"
+      ]
+    },
+    {
+      "id": "JUN26-P022",
+      "title": "A Reduction of Imitation Learning and Structured Prediction to No-Regret Online Learning",
+      "url": "https://arxiv.org/abs/1011.0686",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "DAgger"
+      ]
+    },
+    {
+      "id": "JUN26-P023",
+      "title": "Generative Adversarial Imitation Learning",
+      "url": "https://arxiv.org/abs/1606.03476",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "IRL",
+        "GAIL"
+      ]
+    },
+    {
+      "id": "JUN26-P024",
+      "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+      "url": "https://arxiv.org/abs/2201.11903",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "CoT"
+      ]
+    },
+    {
+      "id": "JUN26-P025",
+      "title": "Self-Consistency Improves Chain of Thought Reasoning in Language Models",
+      "url": "https://arxiv.org/abs/2203.11171",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "Self-Consistency"
+      ]
+    },
+    {
+      "id": "JUN26-P026",
+      "title": "Tree of Thoughts",
+      "url": "https://arxiv.org/abs/2305.10601",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "ToT"
+      ]
+    },
+    {
+      "id": "JUN26-P027",
+      "title": "Graph of Thoughts",
+      "url": "https://arxiv.org/abs/2308.09687",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "GoT"
+      ]
+    },
+    {
+      "id": "JUN26-P028",
+      "title": "LangGraph Python reference",
+      "url": "https://reference.langchain.com/python/langgraph/overview",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "Agent框架"
+      ]
+    },
+    {
+      "id": "JUN26-P029",
+      "title": "LlamaIndex Framework",
+      "url": "https://developers.llamaindex.ai/python/framework/",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "Agent",
+        "RAG框架"
+      ]
+    },
+    {
+      "id": "JUN26-P030",
+      "title": "A2A Protocol Specification",
+      "url": "https://a2a-protocol.org/latest/specification/",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "A2A",
+        "Task",
+        "AgentCard"
+      ]
+    },
+    {
+      "id": "JUN26-P031",
+      "title": "LangGraph Persistence",
+      "url": "https://docs.langchain.com/oss/python/langgraph/persistence",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "checkpoint",
+        "故障恢复"
+      ]
+    },
+    {
+      "id": "JUN26-P032",
+      "title": "Microsoft GraphRAG Local Search",
+      "url": "https://github.com/microsoft/graphrag/blob/main/docs/query/local_search.md",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "GraphRAG"
+      ]
+    },
+    {
+      "id": "JUN26-P033",
+      "title": "Microsoft GraphRAG Global Search",
+      "url": "https://microsoft.github.io/graphrag/query/global_search/",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "GraphRAG",
+        "community"
+      ]
+    },
+    {
+      "id": "JUN26-P034",
+      "title": "Faiss IndexIVFFlat",
+      "url": "https://faiss.ai/cpp_api/struct/structfaiss_1_1IndexIVFFlat.html",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "IVF"
+      ]
+    },
+    {
+      "id": "JUN26-P035",
+      "title": "Faiss IndexIVFPQ",
+      "url": "https://faiss.ai/cpp_api/struct/structfaiss_1_1IndexIVFPQ.html",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "PQ"
+      ]
+    },
+    {
+      "id": "JUN26-P036",
+      "title": "RAGFlow documentation",
+      "url": "https://ragflow.io/docs/",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "RAGFlow"
+      ]
+    },
+    {
+      "id": "JUN26-P037",
+      "title": "Introduction to Haystack",
+      "url": "https://docs.haystack.deepset.ai/docs",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "Haystack"
+      ]
+    },
+    {
+      "id": "JUN26-P038",
+      "title": "DSPy Optimizers",
+      "url": "https://dspy.ai/3.1.0/learn/optimization/optimizers/",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "DSPy"
+      ]
+    },
+    {
+      "id": "JUN26-P039",
+      "title": "Measuring Massive Multitask Language Understanding",
+      "url": "https://arxiv.org/abs/2009.03300",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "MMLU"
+      ]
+    },
+    {
+      "id": "JUN26-P040",
+      "title": "BIG-bench",
+      "url": "https://arxiv.org/abs/2206.04615",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "BIG-bench"
+      ]
+    },
+    {
+      "id": "JUN26-P041",
+      "title": "AgentBench: Evaluating LLMs as Agents",
+      "url": "https://arxiv.org/abs/2308.03688",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "AgentBench"
+      ]
+    },
+    {
+      "id": "JUN26-P042",
+      "title": "WebArena official repository",
+      "url": "https://github.com/web-arena-x/webarena",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "WebArena"
+      ]
+    },
+    {
+      "id": "JUN26-P043",
+      "title": "GAIA: a benchmark for General AI Assistants",
+      "url": "https://arxiv.org/abs/2311.12983",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "GAIA"
+      ]
+    },
+    {
+      "id": "JUN26-P044",
+      "title": "tau-bench",
+      "url": "https://arxiv.org/abs/2406.12045",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "Agent评测"
+      ]
+    },
+    {
+      "id": "JUN26-P045",
+      "title": "LM Evaluation Harness",
+      "url": "https://github.com/EleutherAI/lm-evaluation-harness",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "评测工具"
+      ]
+    },
+    {
+      "id": "JUN26-P046",
+      "title": "WebGPT: Browser-assisted question-answering with human feedback",
+      "url": "https://arxiv.org/abs/2112.09332",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "工具学习",
+        "Agent训练"
+      ]
+    },
+    {
+      "id": "JUN26-P047",
+      "title": "Do As I Can, Not As I Say: Grounding Language in Robotic Affordances",
+      "url": "https://arxiv.org/abs/2204.01691",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "具身Agent"
+      ]
+    },
+    {
+      "id": "JUN26-P048",
+      "title": "RT-2: Vision-Language-Action Models",
+      "url": "https://arxiv.org/abs/2307.15818",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "VLA"
+      ]
+    },
+    {
+      "id": "JUN26-P049",
+      "title": "Dense Passage Retrieval",
+      "url": "https://arxiv.org/abs/2004.04906",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "embedding训练"
+      ]
+    },
+    {
+      "id": "JUN26-P050",
+      "title": "Approximate Nearest Neighbor Negative Contrastive Learning for Dense Text Retrieval",
+      "url": "https://arxiv.org/abs/2007.00808",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "ANCE",
+        "hard negatives"
+      ]
+    },
+    {
+      "id": "JUN26-P051",
+      "title": "RocketQA",
+      "url": "https://arxiv.org/abs/2010.08191",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "RocketQA",
+        "负样本过滤"
+      ]
+    },
+    {
+      "id": "JUN26-P052",
+      "title": "REALM: Retrieval-Augmented Language Model Pre-Training",
+      "url": "https://arxiv.org/abs/2002.08909",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "REALM"
+      ]
+    },
+    {
+      "id": "JUN26-P053",
+      "title": "Latent Retrieval for Weakly Supervised Open Domain Question Answering",
+      "url": "https://arxiv.org/abs/1906.00300",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "ICT",
+        "ORQA"
+      ]
+    },
+    {
+      "id": "JUN26-P054",
+      "title": "Introduction to Information Retrieval: Evaluation of ranked retrieval results",
+      "url": "https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-ranked-retrieval-results-1.html",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "MRR",
+        "MAP",
+        "nDCG"
+      ]
+    },
+    {
+      "id": "JUN26-P055",
+      "title": "Evaluating Large Language Models Trained on Code",
+      "url": "https://arxiv.org/abs/2107.03374",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "HumanEval"
+      ]
+    },
+    {
+      "id": "JUN26-P056",
+      "title": "Training Verifiers to Solve Math Word Problems",
+      "url": "https://arxiv.org/abs/2110.14168",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "GSM8K"
+      ]
+    },
+    {
+      "id": "JUN26-P057",
+      "title": "Challenging BIG-Bench Tasks and Whether Chain-of-Thought Can Solve Them",
+      "url": "https://arxiv.org/abs/2210.09261",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "BBH"
+      ]
+    },
+    {
+      "id": "JUN26-P058",
+      "title": "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?",
+      "url": "https://arxiv.org/abs/2310.06770",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "SWE-bench"
+      ]
+    },
+    {
+      "id": "JUN26-P059",
+      "title": "Less is More: Pre-train a Strong Text Encoder for Dense Retrieval Using a Weak Decoder",
+      "url": "https://arxiv.org/abs/2102.09206",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "SEED-Encoder"
+      ]
+    },
+    {
+      "id": "JUN26-P060",
+      "title": "Policy invariance under reward transformations",
+      "url": "https://people.eecs.berkeley.edu/~russell/papers/icml99-shaping.pdf",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "Potential-based shaping"
+      ]
+    },
+    {
+      "id": "JUN26-P061",
+      "title": "Corrective Retrieval Augmented Generation",
+      "url": "https://arxiv.org/abs/2401.15884",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "CRAG"
+      ]
+    },
+    {
+      "id": "JUN26-P062",
+      "title": "Active Retrieval Augmented Generation",
+      "url": "https://arxiv.org/abs/2305.06983",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "FLARE"
+      ]
+    },
+    {
+      "id": "JUN26-P063",
+      "title": "MiniGPT-4: Enhancing Vision-Language Understanding with Advanced Large Language Models",
+      "url": "https://arxiv.org/abs/2304.10592",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "MiniGPT-4"
+      ]
+    },
+    {
+      "id": "JUN26-P064",
+      "title": "Flamingo: a Visual Language Model for Few-Shot Learning",
+      "url": "https://arxiv.org/abs/2204.14198",
+      "platform": "论文/官方文档",
+      "type": "primary",
+      "access": "partial",
+      "accessed_date": "2026-10-03",
+      "notes": "用于核验技术定义、目标或接口；答案为原创整理。",
+      "topics": [
+        "Flamingo"
+      ]
+    },
+    {
+      "id": "JUN26-P065",
+      "title": "SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection for Generative Large Language Models",
+      "url": "https://arxiv.org/html/2303.08896v3",
+      "platform": "arXiv",
+      "type": "primary",
+      "access": "full",
+      "published_date": "2023-10-11",
+      "accessed_date": "2026-10-03",
+      "notes": "实读原论文第5节，核验多样本一致性与BERTScore/QA/n-gram/NLI/prompt变体；答案为原创总结。",
+      "topics": [
+        "幻觉检测",
+        "SelfCheckGPT"
+      ]
+    },
+    {
+      "id": "JUN26-P066",
+      "title": "Factuality Enhanced Language Models for Open-Ended Text Generation",
+      "url": "https://papers.neurips.cc/paper_files/paper/2022/file/df438caa36714f69277daa92d608dd63-Paper-Conference.pdf",
+      "platform": "NeurIPS",
+      "type": "primary",
+      "access": "full",
+      "published_date": "2022-06-09",
+      "accessed_date": "2026-10-03",
+      "notes": "实读原论文第5节，核验top-p句内衰减、句间重置和下限；发布日期为arXiv首次提交日期，答案未泛化实验保证。",
+      "topics": [
+        "事实性",
+        "事实核心采样"
+      ]
+    },
+    {
+      "id": "JUN26-P067",
+      "title": "LlamaIndex: How Each Index Works",
+      "url": "https://developers.llamaindex.ai/python/framework/module_guides/indexing/index_guide/",
+      "platform": "官方文档",
+      "type": "primary",
+      "access": "full",
+      "accessed_date": "2026-10-03",
+      "notes": "实读Summary Index、Tree Index和Vector Store Index章节，核验顺序节点、默认全节点查询与树式分支选择；答案为原创整理。",
+      "topics": [
+        "RAG",
+        "链式索引",
+        "树式索引"
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "ALN-021",
+      "category": "ALN",
+      "title": "强化学习怎样建模为 MDP？V、Q、Bellman 与 LLM 生成怎样对应？",
+      "level": "L1",
+      "tags": [
+        "MDP",
+        "Bellman",
+        "V/Q",
+        "强化学习基础"
+      ],
+      "answer": {
+        "body": "强化学习优化交互轨迹的期望累计奖励。MDP 用状态、动作、转移、奖励和折扣描述序贯决策；马尔可夫性质要求当前状态包含预测下一步所需的信息。仅有状态转移的是马尔可夫过程，增加奖励得到奖励过程，再增加动作与策略得到决策过程；在 MDP 上固定策略，可诱导一个奖励过程。\n\nLLM 的状态可取 prompt 加已生成前缀，动作是下一个 token，终止由 EOS 或任务规则决定。V 是按策略继续行动的期望回报，Q 是先选某动作再继续的回报；Bellman 方程把当前价值分成即时奖励与后续价值。求最优 Q 后可选择使 Q 最大的动作，但最优策略可能不唯一，不能说 V 与策略存在一一对应。\n\n若观察不完整，使用历史、记忆或 belief state 建模部分可观测性。深度学习是函数表示/优化手段，RL 是学习范式，两者不是对立关系；RL 也可能依赖答案标签、人工反馈或模拟器。",
+        "pitfalls": [
+          "不能把“RL不需要标签”“所有状态必须能重复到达”当作定义。"
+        ],
+        "followups": [
+          "LLM Agent 的外部网页状态不可见时，怎样构造状态？"
+        ],
+        "formula": "\\begin{aligned}G_t&=\\sum_{k=0}^{T-t-1}\\gamma^k r_{t+k+1}\\\\ V^\\pi(s)&=\\mathbb E_{a\\sim\\pi,\\,s^\\prime,r}[r+\\gamma V^\\pi(s^\\prime)]\\\\ Q^\\pi(s,a)&=\\mathbb E_{s^\\prime,r}[r+\\gamma\\mathbb E_{a^\\prime\\sim\\pi}Q^\\pi(s^\\prime,a^\\prime)]\\end{aligned}"
+      },
+      "reference_ids": [
+        "JUN26-P001"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "强化学习基础"
+    },
+    {
+      "id": "ALN-022",
+      "category": "ALN",
+      "title": "动态规划、Monte Carlo、TD 与 n-step return 有什么区别？",
+      "level": "L2",
+      "tags": [
+        "MC",
+        "TD",
+        "n-step",
+        "动态规划",
+        "强化学习基础"
+      ],
+      "answer": {
+        "body": "动态规划使用已知环境模型计算期望并迭代评价/改进策略；MC 用采样轨迹的实际回报估计价值，通常需要等到终止；TD 用一步奖励加下一状态的估计值更新，可以在线学习但会 bootstrap。Model-based 方法使用已知或学到的转移/奖励模型规划，model-free 方法直接从交互学习价值或策略；前者有模型误差，后者也不天然保证泛化更好。\n\nn-step 把前 n 步实际奖励与末状态价值组合。n 增大通常减少对 bootstrap 的依赖，但累计更多随机奖励可能增加方差；这只是常见权衡，不是期望、偏差与方差都必然单调变化的定理。MC 回报在合适采样条件下可作为 V 的无偏样本，TD 目标则受当前价值误差影响，不能简单说两种最终学习算法“永远无偏”。\n\n真实终止令后续价值为零；时间限制截断未必表示环境终止，需要按任务语义处理 bootstrap。GAE 可看作不同步长优势信息的加权组合。",
+        "pitfalls": [
+          "“n越大，价值期望越大”不成立；须区分目标的偏差、估计方差与真实价值。"
+        ],
+        "followups": [
+          "为什么截断成 max_tokens 的回答不应无条件当作真实终止？"
+        ],
+        "formula": "\\begin{aligned}V(s_t)&\\leftarrow V(s_t)+\\alpha\\big[r_{t+1}+\\gamma V(s_{t+1})-V(s_t)\\big]\\\\ G_t^{(n)}&=\\sum_{k=0}^{n-1}\\gamma^k r_{t+k+1}+\\gamma^n V(s_{t+n})\\end{aligned}"
+      },
+      "reference_ids": [
+        "JUN26-P001",
+        "JUN26-P003"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "强化学习基础"
+    },
+    {
+      "id": "ALN-023",
+      "category": "ALN",
+      "title": "怎样推导策略梯度与 REINFORCE，baseline 为什么能降方差？",
+      "level": "L2",
+      "tags": [
+        "Policy Gradient",
+        "REINFORCE",
+        "baseline",
+        "强化学习基础"
+      ],
+      "answer": {
+        "body": "把轨迹概率写成初始状态、环境转移与各步策略概率的乘积；对期望回报求导，使用 likelihood-ratio 恒等式把梯度转成回报乘轨迹 log-prob 梯度。环境不依赖策略参数时，只有动作概率贡献梯度；再利用因果性，把整条轨迹奖励换成该动作之后的 reward-to-go。\n\nREINFORCE 按当前策略采样轨迹，计算回报，最小化负的 log-prob 与回报乘积。这里回报 G_t 从时刻t开始折扣，若目标是从时刻0起的折扣回报，求和还需乘γ的t次方；LLM有限响应常取γ=1。采样分布每轮变化，代理loss的数值跨轮不能直接作固定监督目标比较，关键是梯度与独立任务奖励。\n\nbaseline b(s) 不依赖当前采样动作时，其期望梯度贡献为零，可以降低方差。用 V(s) 得到回报减价值的优势估计。实现中回报/优势应 detach，避免策略梯度通过权重误反传；状态访问权重及折扣须与定义的目标一致。",
+        "pitfalls": [
+          "任意与动作相关的 baseline 都不会产生偏差，这一说法是错的。"
+        ],
+        "followups": [
+          "为什么提高好回答的概率不等于只训练这些回答的 SFT？"
+        ],
+        "formula": "\\begin{aligned}\\nabla_\\theta J&=\\mathbb E_\\tau\\left[\\sum_t \\gamma^t\\nabla_\\theta\\log\\pi_\\theta(a_t\\mid s_t)\\big(G_t-b(s_t)\\big)\\right]\\\\ \\mathbb E_{a\\sim\\pi}[b(s)\\nabla_\\theta\\log\\pi(a\\mid s)]&=b(s)\\nabla_\\theta\\sum_a\\pi(a\\mid s)=0\\end{aligned}"
+      },
+      "reference_ids": [
+        "JUN26-P002"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "强化学习基础"
+    },
+    {
+      "id": "ALN-024",
+      "category": "ALN",
+      "title": "Actor-Critic、A2C 与 A3C 怎样工作，Critic 是奖励模型吗？",
+      "level": "L2",
+      "tags": [
+        "Actor-Critic",
+        "A2C",
+        "A3C",
+        "强化学习基础"
+      ],
+      "answer": {
+        "body": "Actor 输出策略，Critic 估计当前策略下的未来回报，帮助构造优势并降低策略梯度方差。Actor 可用负 log-prob 乘优势训练，Critic 回归 n-step 或其他 return target；优势、回归目标通常停止梯度。共享骨干时仍需区分两类损失的作用及相互影响。\n\nA3C 让多个 worker 与独立环境交互，从共享参数同步局部副本，再异步提交更新；多环境有助于分散样本相关性，但异步带来参数滞后。A2C 将多个环境的 rollout 同步聚合后更新，便于批量计算。两者通常归入 on-policy 方法，但 A3C 的异步滞后不能被忽略；是否 off-policy 要看数据与学习目标，不由“多线程”决定。\n\nRLHF 的 RM 评价回答质量，Critic 预测包含 RM/KL 等定义后未来能获得的回报，二者不同。优势 A=Q−V 是期望函数；单步 TD residual 是它的一种估计，不能处处当成完全相等的真值。",
+        "pitfalls": [
+          "Critic 不是给回答标好坏的判别器，也不一定需要独立估计 Q 网络。"
+        ],
+        "followups": [
+          "Actor 与 Critic 共用 Transformer 时，应怎样检查梯度冲突？"
+        ],
+        "formula": "\\mathcal L_{\\mathrm{actor}}=-\\mathbb E[\\log\\pi_\\theta(a_t\\mid s_t)\\operatorname{sg}(\\hat A_t)],\\qquad \\mathcal L_{\\mathrm{critic}}=\\mathbb E[(V_\\phi(s_t)-\\operatorname{sg}(\\hat G_t))^2]"
+      },
+      "reference_ids": [
+        "JUN26-P017",
+        "JUN26-P002"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "强化学习基础"
+    },
+    {
+      "id": "ALN-025",
+      "category": "ALN",
+      "title": "RLHF-PPO 的四模型完整流程是什么？Critic 的 V_target 从哪里来？",
+      "level": "L2",
+      "tags": [
+        "RLHF",
+        "PPO",
+        "四模型",
+        "Critic",
+        "value_target"
+      ],
+      "answer": {
+        "body": "经典 RLHF-PPO 中 Actor 和 Critic 训练，Reference 和 RM 通常冻结。RM 先用偏好数据训练，RL 阶段并非四个模型同时各算一份训练 loss。Actor 从 SFT 初始化，Reference 是固定行为锚点，Critic 预测每个生成前缀的后续回报；四个逻辑角色也不意味着必须部署四套同尺寸独立参数。\n\n先用采样旧策略 rollout，缓存响应 token、mask、旧 log-prob 与旧 value；RM 评价整段回答，按约定加入逐 token 参考 KL 惩罚。根据奖励、旧 value 和终止语义计算 GAE，再形成冻结回归目标 V_target=旧 value+优势。Actor 优化 PPO clipped surrogate，Critic 回归目标，可使用 value clipping；更新若干 mini-batch 后刷新采样策略。\n\nV_target 是当前采样批次的估计回报，不是 RM 分数直接广播，也不是新 Critic 自己给自己作标签。只有回答有效位置参与相应 loss，截断是否 bootstrap、KL 正则是否另作损失、价值归一化须保持一致。",
+        "pitfalls": [
+          "不要让 GAE/return target 通过计算图回传到旧 value，也不要把 reference 与本轮 old policy 混同。"
+        ],
+        "followups": [
+          "PPO actor loss 下降而独立胜率降低，先检查哪些日志？"
+        ],
+        "formula": "\\begin{aligned}\\tilde r_t&=r_t^{\\mathrm{task}}-\\beta(\\log\\pi_{\\mathrm{old}}(y_t\\mid s_t)-\\log\\pi_{\\mathrm{ref}}(y_t\\mid s_t))\\\\ \\hat A_t&=\\delta_t+\\gamma\\lambda\\hat A_{t+1},\\quad \\delta_t=\\tilde r_t+\\gamma V_{\\mathrm{old}}(s_{t+1})-V_{\\mathrm{old}}(s_t)\\\\ \\hat V_t^{\\mathrm{target}}&=\\operatorname{sg}(V_{\\mathrm{old}}(s_t)+\\hat A_t)\\\\ \\mathcal L_V&=\\tfrac12\\operatorname{mean}_{t\\in\\mathcal V}(V_\\phi(s_t)-\\hat V_t^{\\mathrm{target}})^2\\end{aligned}"
+      },
+      "reference_ids": [
+        "JUN26-P004",
+        "JUN26-P005"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "RLHF 与 PPO",
+      "figures": [
+        {
+          "path": "assets/ppo-roles.svg",
+          "alt": "RLHF-PPO 的 Actor、Reference、Reward Model 和 Critic",
+          "caption": "四个角色不要求四份独立物理模型；图示经典 Actor 与 Critic 分开训练的流程。"
+        }
+      ]
+    },
+    {
+      "id": "ALN-026",
+      "category": "ALN",
+      "title": "PPO 需要多少张 GPU，怎样估算四模型、rollout 与训练显存？",
+      "level": "L2",
+      "tags": [
+        "PPO",
+        "显存",
+        "GPU卡数",
+        "rollout"
+      ],
+      "answer": {
+        "body": "卡数由参数规模、精度、并行切分、回答长度、rollout 数量与每卡显存共同决定，不能仅凭“PPO四模型”给固定数字。先区分可训练 Actor/Critic 的参数、梯度与优化器状态，冻结 Reference/RM 的参数与前向工作区，以及生成引擎的 KV cache、权重副本和缓存轨迹。\n\n常见 BF16 参数/梯度加 FP32 master weights 与 Adam 两个状态，训练状态粗估约16字节/参数；实现未保存 master、状态压缩或LoRA时需改算。冻结 BF16 权重约2字节/参数。ZeRO/FSDP 分片后减少常驻状态，激活、all-gather 临时峰值和通信buffer仍需另计。生成引擎若与训练引擎保留独立副本，也必须计入。\n\n按 rollout、RM/reference 打分、Actor/Critic 更新分别测峰值；角色共卡/分卡与 offload 改变峰值和吞吐。7B Actor+7B Critic+两个7B冻结模型，在上述未分片假设下仅状态就约252 GB十进制，尚未包含激活/KV，不能据此简单平均后断言4张80GB足够。",
+        "pitfalls": [
+          "共享角色显存和串行切换需要明确调度，不能把所有阶段峰值机械相加或全部理想分片。"
+        ],
+        "followups": [
+          "长响应先在 rollout OOM、短响应在 update OOM，优化策略为何不同？"
+        ],
+        "formula": "M_{\\mathrm{peak}}\\approx\\max_{\\mathrm{phase}}\\big(M_{\\mathrm{train\\ states}}+M_{\\mathrm{frozen\\ weights}}+M_{\\mathrm{activations}}+M_{\\mathrm{KV}}+M_{\\mathrm{buffers}}\\big)"
+      },
+      "reference_ids": [
+        "JUN26-P011"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "RLHF 与 PPO"
+    },
+    {
+      "id": "ALN-027",
+      "category": "ALN",
+      "title": "GSPO 与 GRPO 的 importance ratio、clip 和梯度单位有什么区别？",
+      "level": "L3",
+      "tags": [
+        "GSPO",
+        "GRPO",
+        "sequence-level",
+        "importance ratio"
+      ],
+      "answer": {
+        "body": "GRPO 使用组内相对奖励作优势，常见实现逐 token 计算新旧策略概率比。GSPO 保留组内优势，但用整段回答似然比的长度归一化几何平均作比例，对整段回答进行 clip，使优化单位与序列奖励对齐。\n\n计算时先在有效回答 token 上求新旧 log-prob 差的均值，再指数化；不能先把序列概率直接相乘，否则长回答容易下溢。这个长度归一化比例也不是未经改变的整条轨迹 importance weight，须按论文目标理解。一个响应的 token 梯度共享序列权重，其 clipping 行为与 token 级 GRPO 不同，因此不能直接照搬同样的 epsilon。\n\n论文在特定 Qwen3/MoE 实验中报告稳定性与效率收益；这不保证所有数据、模型与奖励下都优于 GRPO。比较时应固定 rollout 预算、奖励、响应长度和训练算力，并记录 clip fraction、策略漂移和独立能力。",
+        "pitfalls": [
+          "“GSPO只是把token loss先平均”不足以描述序列比例和clip条件的变化。"
+        ],
+        "followups": [
+          "两个响应某个 token 的 ratio 极端，但序列均值接近1，GSPO与GRPO会怎样不同？"
+        ],
+        "formula": "\\begin{aligned}s_i(\\theta)&=\\exp\\left(\\frac{1}{|y_i|}\\sum_t\\log\\frac{\\pi_\\theta(y_{i,t}\\mid x,y_{i,<t})}{\\pi_{\\mathrm{old}}(y_{i,t}\\mid x,y_{i,<t})}\\right)\\\\ J_{\\mathrm{GSPO}}&=\\mathbb E\\left[\\frac1G\\sum_i\\min(s_i\\hat A_i,\\operatorname{clip}(s_i,1-\\epsilon,1+\\epsilon)\\hat A_i)\\right]\\end{aligned}"
+      },
+      "reference_ids": [
+        "JUN26-P007"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "GRPO 与在线优化"
+    },
+    {
+      "id": "ALN-028",
+      "category": "ALN",
+      "title": "DAPO 相比原始 GRPO 改了什么，四个核心设计分别解决什么问题？",
+      "level": "L3",
+      "tags": [
+        "DAPO",
+        "Clip-Higher",
+        "Dynamic Sampling",
+        "token-mean"
+      ],
+      "answer": {
+        "body": "DAPO 是一套大规模推理RL方法与系统方案，不能只理解为换一个优势公式。其主要设计包括上下界分开的 Clip-Higher、动态采样、token级损失聚合，以及超长响应奖励处理。\n\nClip-Higher 放宽正优势概率增加的上边界，以缓解探索受限，同时保留独立下边界。动态采样剔除同一prompt组内全部相同结果的组，并继续采样补够训练批次，使训练看到有区分度的信号，但也改变了训练问题分布并增加生成成本。token-mean 聚合让所有有效响应 token 共同归一化，与“先每序列平均再对序列平均”权重不同，长短回答的梯度贡献会变化。\n\n超长处理通过长度缓冲区等减轻硬截断对奖励的错误归因；论文recipe去掉显式KL也不能外推为所有任务都应去KL。应同时检查熵、非零优势组比例、长度/截断率与独立正确率；只提高训练奖励不能证明能力改善。",
+        "pitfalls": [
+          "不对称clip上下界不等于给正负样本直接乘不同数据权重。"
+        ],
+        "followups": [
+          "过滤全对/全错组会对样本难度和每步采样成本产生什么影响？"
+        ],
+        "formula": "J\\propto\\frac{\\sum_{i,t}m_{i,t}\\min(\\rho_{i,t}\\hat A_i,\\operatorname{clip}(\\rho_{i,t},1-\\epsilon_{\\mathrm{low}},1+\\epsilon_{\\mathrm{high}})\\hat A_i)}{\\sum_{i,t}m_{i,t}}"
+      },
+      "reference_ids": [
+        "JUN26-P008"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "GRPO 与在线优化"
+    },
+    {
+      "id": "ALN-029",
+      "category": "ALN",
+      "title": "在 verl 中支持 DAPO，需要改哪些配置或训练模块？",
+      "level": "L3",
+      "tags": [
+        "verl",
+        "DAPO",
+        "配置",
+        "训练模块"
+      ],
+      "answer": {
+        "body": "先固定 verl commit 和 DAPO recipe，配置名随版本变动，不能只在普通 PPO脚本里改一个 estimator 就声称完整复现。官方recipe暴露 actor 的 clip_ratio_low/high、loss_agg_mode，algorithm.filter_groups 的开关/指标/生成批次上限，以及 reward_model.overlong_buffer 的长度和penalty。\n\n例如把损失聚合设为 token-mean；组过滤按 acc、score 等指定指标判断同组是否没有差异，反复生成到训练prompt批次满足要求或达到上限。gen_batch_size控制生成候选数，train_batch_size控制实际训练批次，须区分prompt数与乘 rollout.n 后的轨迹数。长度惩罚应基于有效响应长度，排除padding。\n\n若当前trainer不支持过滤后的补采样，需要改rollout收集/组筛选循环；奖励shaping在奖励路径实现，分离clip和归一化在actor loss实现。用小批次检查mask、组ID、长度边界和优势有效性，再按官方消融逐项开启。这里依据官方文档2025-06-19的recipe接口示例；文档说明它没有实现论文中的额外Overlong Filtering，复现时应锁定commit并交代这一边界，不能当作所有新版本永久不支持。",
+        "pitfalls": [
+          "“DAPO=GRPO+调高epsilon”漏掉数据选择、loss归一化和奖励路径。"
+        ],
+        "followups": [
+          "启用filter_groups后一直采不够批次，应检查数据难度、奖励还是采样策略？"
+        ]
+      },
+      "reference_ids": [
+        "JUN26-P009"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "GRPO 与在线优化"
+    },
+    {
+      "id": "ALN-030",
+      "category": "ALN",
+      "title": "GRPO 数据必须标注 Thought 吗，完整训练数据与 rollout 怎样组织？",
+      "level": "L2",
+      "tags": [
+        "GRPO",
+        "数据格式",
+        "rollout",
+        "Thought"
+      ],
+      "answer": {
+        "body": "GRPO 的训练基本输入是prompt及奖励计算所需的任务元数据，不要求每条样本都提供人工标注的推理过程。数学任务可保存题目与可核验答案，代码任务可保存测试环境，Agent任务可保存初始状态和成功判定。模型对同一prompt采样G条响应，奖励器评分，再以组内相对结果构造优势并更新策略。\n\n若采用cold-start SFT，需要带高质量目标响应的数据，这是另一个阶段；把SFT的带Thought示例直接当成GRPO必备字段，会混淆监督标签与在线rollout。过程奖励可使用步骤标签或验证器，但不是GRPO定义的强制要求。\n\n实现要保留prompt组ID、有效回答mask、终止/截断状态、采样旧log-prob和奖励；同组不能混入其他prompt。优势与reward通常停止梯度，训练需按具体框架区分组标准差、loss聚合和KL位置。G=1通常无法从组内相对结果提供有效学习信号。",
+        "pitfalls": [
+          "“GRPO不需要数据标签”过于绝对：可验证奖励常需要答案/测试/环境信息，只是不必人工Thought。"
+        ],
+        "followups": [
+          "模型全部回答错误时，为什么改成更多人工推理文本未必解决GRPO零优势？"
+        ]
+      },
+      "reference_ids": [
+        "JUN26-P006",
+        "JUN26-P010"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "GRPO 与在线优化"
+    },
+    {
+      "id": "ALN-031",
+      "category": "ALN",
+      "title": "GRPO 不收敛或训练奖励升高但能力退化，怎样排查和调参？",
+      "level": "L3",
+      "tags": [
+        "GRPO",
+        "不收敛",
+        "调参",
+        "reward hacking"
+      ],
+      "answer": {
+        "body": "先确认奖励可信：离线重放正确、错误、格式异常和截断样本，检查答案解析器、测试超时和格式奖励是否被钻空子。再看每组奖励方差与非零优势比例；全对/全错过多时，可能是题目难度、采样熵或group size不合适，而非单纯学习率过低。\n\n检查组ID、response mask、log-prob对齐、detach与loss归一化；在更新前，新旧策略同权重时ratio应接近1，训练/推理引擎精度和模板不一致会破坏这一条件。监控熵、KL、clip fraction、梯度范数、响应长度、截断率与独立验证正确率。长答上升可能只是奖励偏好冗长，训练平均loss也不应期望像SFT一样单调下降。\n\n用能产生正负结果的少量任务先跑通，再单变量调整学习率、每批更新次数、clip、KL、G、采样温度和回答预算；设稳定SFT基线与冻结评测集。若验证持续退化应回滚checkpoint并定位机制，盲目延长训练通常放大奖励偏差。",
+        "pitfalls": [
+          "策略梯度loss接近0可能是零优势、clip饱和或梯度错误，不等于已经收敛。"
+        ],
+        "followups": [
+          "组内奖励有方差但ratio始终1且权重不变，如何定位未更新问题？"
+        ]
+      },
+      "reference_ids": [
+        "JUN26-P010",
+        "JUN26-P007"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "GRPO 与在线优化"
+    },
+    {
+      "id": "ALN-032",
+      "category": "ALN",
+      "title": "正负样本不对称设计有哪些方式，和 PPO/DAPO 的不对称 clip 有何区别？",
+      "level": "L3",
+      "tags": [
+        "不对称权重",
+        "偏好数据",
+        "clip"
+      ],
+      "answer": {
+        "body": "先确认“正负”的定义：偏好数据是同prompt的chosen/rejected对，二分类数据是正负标签，策略优化通常按优势正负区分。三者不能使用一个未说明的“正样本权重”概念。\n\n样本加权可改变各偏好对或类别对目标的贡献，用于类别不平衡、错误成本不同或标签可信度不同；DPO本身已在同一logistic loss里提高chosen相对rejected的log-ratio间隔。若分别额外拉高/压低两者绝对概率，便改变了目标，可能带来长度偏差、遗忘或过度拒答，不是标准DPO的等价写法。\n\nPPO/DAPO的clip取决于优势符号：正优势只限制过度增加概率，负优势只限制过度减少概率。不对称上下界改变允许更新区间，而非直接给正负样本乘不同常数。选型应说明业务成本、归一化和最终阈值，并报告正负分层的收益与误伤。",
+        "pitfalls": [
+          "不能把类别权重、chosen/rejected概率项、正负优势clip三种机制当作同一算法。"
+        ],
+        "followups": [
+          "高风险拒答任务怎样验证提高负类权重没有导致过度拒答？"
+        ],
+        "formula": "\\begin{aligned}\\mathcal L_{\\mathrm{weighted\\ BCE}}&=-\\mathbb E[w_+y\\log p+w_-(1-y)\\log(1-p)]\\\\ \\ell_{\\mathrm{PPO}}&=\\min(\\rho A,\\operatorname{clip}(\\rho,1-\\epsilon_{\\mathrm{low}},1+\\epsilon_{\\mathrm{high}})A)\\end{aligned}"
+      },
+      "reference_ids": [
+        "JUN26-P012",
+        "JUN26-P009"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "GRPO 与在线优化"
+    },
+    {
+      "id": "ALN-033",
+      "category": "ALN",
+      "title": "提升 RAG 回答质量时怎样选 DPO 或 GRPO，奖励怎样设计？",
+      "level": "L3",
+      "tags": [
+        "RAG",
+        "DPO",
+        "GRPO",
+        "reward design"
+      ],
+      "answer": {
+        "body": "DPO适合已有同一问题、同一证据上下文下的可靠chosen/rejected数据，直接优化回答偏好且不需要在线采样循环。GRPO适合能重复采样并得到相对可信任务奖励的场景，例如基于可核验引用/事实/数据库结果的问答；其优势是可探索当前策略，但奖励设计和rollout成本更高。\n\n构造DPO数据时控制检索证据，避免chosen拿到正确文档而rejected没拿到，使优化主要学习输入差异。在线GRPO可把答案正确、证据支持、引用有效、指令约束等分层验证，防止只奖励引用数量或与参考的词面重合。开放域judge本身有偏差，组内归一化不会将坏奖励变成可靠监督。\n\n若失败源于召回漏证据，单独微调回答模型无法替代改检索。实验先冻结索引、检索器、prompt与预算，比较SFT/DPO/GRPO，并在相同检索条件和端到端系统上分别测效果、拒答、成本与分布外泛化。",
+        "pitfalls": [
+          "RAG不是天然必须用DPO；GRPO也不因组内比较就免于奖励作弊。"
+        ],
+        "followups": [
+          "怎样区分策略更会回答与它只是更会迎合引用评分器？"
+        ]
+      },
+      "reference_ids": [
+        "JUN26-P012",
+        "JUN26-P006"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "奖励与对齐策略"
+    },
+    {
+      "id": "ALN-034",
+      "category": "ALN",
+      "title": "on-policy、off-policy、importance sampling、TRPO 与 PPO 怎样联系？",
+      "level": "L2",
+      "tags": [
+        "on/off-policy",
+        "importance sampling",
+        "TRPO",
+        "强化学习基础"
+      ],
+      "answer": {
+        "body": "On-policy学习当前交互策略，off-policy允许数据由不同的行为策略产生，学习另一个目标策略。是否经验回放、异步或多轮更新不是唯一判据，须明确行为策略与优化目标及所用校正。\n\n重要性采样用目标/行为密度比重加权行为样本；目标有概率的区域必须被行为分布覆盖。轨迹比例是逐步比例的乘积，长轨迹容易造成高方差。截断、自归一化或使用局部surrogate常降低方差，但通常引入偏差或改变目标，不能声称“PPO clip使任意旧样本都完全无偏”。\n\nTRPO用KL约束限制更新，通常涉及二阶近似和线搜索；PPO-clip采用一阶优化的截断代理目标，PPO-penalty则采用KL惩罚。clip并不是严格KL信任域保证，仍应监控KL/采用早停。RLHF参考模型KL又是行为锚点约束，与本轮新旧策略限制分开。",
+        "pitfalls": [
+          "PPO通常以on-policy方式收集数据，再有限复用旧策略rollout；不能因存在ratio就称任意off-policy回放算法。"
+        ],
+        "followups": [
+          "为什么重要性比例在长回答上常比短回答更不稳定？"
+        ],
+        "formula": "\\mathbb E_{z\\sim p}[f(z)]=\\mathbb E_{z\\sim q}\\left[\\frac{p(z)}{q(z)}f(z)\\right],\\qquad p(z)>0\\Rightarrow q(z)>0"
+      },
+      "reference_ids": [
+        "JUN26-P003",
+        "JUN26-P013",
+        "JUN26-P004"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "强化学习基础"
+    },
+    {
+      "id": "ALN-035",
+      "category": "ALN",
+      "title": "Q-learning 与 SARSA 的更新、探索策略和适用边界有什么区别？",
+      "level": "L2",
+      "tags": [
+        "Q-learning",
+        "SARSA",
+        "强化学习基础"
+      ],
+      "answer": {
+        "body": "两者都是基于采样转移的TD控制方法，区别在下一状态target。Q-learning用下一状态所有动作Q的最大值，学习趋向贪心最优策略；行为仍可用epsilon-greedy探索，因此是off-policy。SARSA使用下一步按当前行为策略实际选择的动作价值，学习包含当前探索行为的策略，因此是on-policy。\n\nQ值是期望回报，不是动作概率；由价值导出的策略也可随机探索。两种方法都使用环境交互数据，不能说Q-learning“不使用行为策略数据”。在悬崖行走等任务，SARSA可能考虑探索风险，而Q-learning的贪心target看起来更激进，但这不表示SARSA始终是更优改进版。\n\n表格型收敛结论需要充分访问、步长条件与有限状态动作等假设，换成神经网络后不能直接套用。连续动作上的max较难，常借助Actor-Critic；LLM词表可作为离散动作，但长程状态、信用分配与计算成本仍令直接Q学习具有挑战。",
+        "pitfalls": [
+          "SARSA下一动作要按行为策略选择，但不必实际执行完下一动作后才更新当前transition。"
+        ],
+        "followups": [
+          "若行为策略和target都贪心，两种一步更新还会有什么差别？"
+        ],
+        "formula": "\\begin{aligned}Q_{\\mathrm{Q\\text{-}learn}}(s_t,a_t)&\\leftarrow Q(s_t,a_t)+\\alpha[r_{t+1}+\\gamma\\max_aQ(s_{t+1},a)-Q(s_t,a_t)]\\\\ Q_{\\mathrm{SARSA}}(s_t,a_t)&\\leftarrow Q(s_t,a_t)+\\alpha[r_{t+1}+\\gamma Q(s_{t+1},a_{t+1})-Q(s_t,a_t)]\\end{aligned}"
+      },
+      "reference_ids": [
+        "JUN26-P016",
+        "JUN26-P001"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "强化学习基础"
+    },
+    {
+      "id": "ALN-036",
+      "category": "ALN",
+      "title": "DQN 的经验回放和目标网络做什么，Double DQN 与 Dueling DQN 分别改了什么？",
+      "level": "L2",
+      "tags": [
+        "DQN",
+        "Double DQN",
+        "Dueling",
+        "强化学习基础"
+      ],
+      "answer": {
+        "body": "DQN用神经网络近似动作价值，回归Bellman target。经验回放打散连续样本相关性并复用数据，目标网络暂时固定bootstrap目标以降低追逐同一网络的振荡；二者都不保证训练样本完全独立，也不提供深度函数逼近下的一般收敛保证。\n\n普通DQN用target network同时选最大动作并评价，其max可能放大估计噪声。Double DQN用online network选动作、target network估值，缓解过估计。Dueling将网络分成状态价值V与动作优势A，再聚合成Q；减去动作优势均值等约束处理分解不可辨识，便于在多个动作价值相近时学习状态质量。\n\nDouble是target构造的变化，Dueling是网络结构的变化，可以组合。目标网络与actor-critic中的价值模型也不是同一个概念，DQN本身没有独立输出动作的Actor。",
+        "pitfalls": [
+          "不能把Double DQN的两个网络称为两个独立Actor，也不能把Dueling称为对抗训练。"
+        ],
+        "followups": [
+          "目标网络更新太频繁或太慢分别可能产生什么问题？"
+        ],
+        "formula": "\\begin{aligned}y_{\\mathrm{DDQN}}&=r+\\gamma Q_{\\mathrm{target}}(s^\\prime,\\arg\\max_aQ_{\\mathrm{online}}(s^\\prime,a))\\\\ Q(s,a)&=V(s)+A(s,a)-\\frac1{|\\mathcal A|}\\sum_{a^\\prime}A(s,a^\\prime)\\end{aligned}"
+      },
+      "reference_ids": [
+        "JUN26-P014",
+        "JUN26-P015"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "强化学习基础"
+    },
+    {
+      "id": "ALN-037",
+      "category": "ALN",
+      "title": "DDPG、D4PG、TD3 与 SAC 怎样比较，能直接套到 LLM token 生成吗？",
+      "level": "L2",
+      "tags": [
+        "DDPG",
+        "D4PG",
+        "TD3",
+        "SAC",
+        "强化学习基础"
+      ],
+      "answer": {
+        "body": "这些方法主要讨论连续动作控制。DDPG用确定性Actor给出动作，Critic学习Q，通过Q对动作的梯度更新Actor；经验回放、目标网络和行为探索噪声使其属于off-policy Actor-Critic。\n\nD4PG在确定性策略梯度框架加入分布式采样、回报分布表示、n-step与优先回放等设计；其中distributional指回报分布，distributed指多个采样者，二者不能混同。TD3用双Critic取较小target、延迟策略更新和target动作平滑缓解估计误差。SAC学习随机策略，优化回报与策略熵的组合，提高探索和鲁棒性。\n\nLLM token是离散词表动作，普通确定性连续动作梯度不能直接穿过采样token；应使用适配离散动作的目标与实现，而非把DDPG的网络名换成Transformer就当作等价算法。SAC存在离散变体，但需要具体说明动作分布、Q计算成本与采样方式。",
+        "pitfalls": [
+          "“策略梯度只适用于连续动作、价值方法只适用于确定策略”都不是正确边界。"
+        ],
+        "followups": [
+          "离散大词表上计算所有动作Q值与连续动作Actor求导有何成本差异？"
+        ],
+        "formula": "J_{\\mathrm{SAC}}=\\mathbb E\\left[\\sum_t\\gamma^t\\big(r_t+\\alpha\\mathcal H(\\pi(\\cdot\\mid s_t))\\big)\\right]"
+      },
+      "reference_ids": [
+        "JUN26-P016",
+        "JUN26-P020",
+        "JUN26-P018",
+        "JUN26-P019"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "强化学习基础"
+    },
+    {
+      "id": "ALN-038",
+      "category": "ALN",
+      "title": "稀疏奖励怎样改善，reward shaping、课程学习与 ICM 有什么风险？",
+      "level": "L2",
+      "tags": [
+        "稀疏奖励",
+        "ICM",
+        "reward shaping",
+        "强化学习基础"
+      ],
+      "answer": {
+        "body": "稀疏奖励只在少数完成事件提供反馈，探索可能长时间收不到有效信号。可以缩短任务、用课程控制难度、加入示范、设计可验证过程奖励或改善探索。密集奖励若鼓励与最终目标无关的代理行为，会造成reward hacking，因此必须单独验证最终成功率。\n\n势函数型shaping用下一状态势能减当前势能的折扣值，在匹配的折扣及终止条件下可以保留最优策略；任意加上“每步多思考一点就给分”没有这样的保证。ICM在特征空间学习逆动力学表征与前向预测，并用预测误差作内在奖励，引导探索难以预测的状态。\n\n预测误差不等于业务价值，随机噪声也可持续提供奖励，产生“noisy TV”问题。对LLM Agent不应直接把新奇token、更多工具调用或更长轨迹当成功；应设内在奖励权重、资源约束与外部目标验收。",
+        "pitfalls": [
+          "更密集的奖励不保证原任务最优策略不变；好奇心也不保证探索有用信息。"
+        ],
+        "followups": [
+          "如果Agent不断调用返回随机数的工具，怎样发现和修复奖励作弊？"
+        ],
+        "formula": "\\begin{aligned}r_t^\\prime&=r_t+\\gamma\\Phi(s_{t+1})-\\Phi(s_t)\\\\ r_t^{\\mathrm{intrinsic}}&\\propto\\left\\|f(\\phi(s_t),a_t)-\\phi(s_{t+1})\\right\\|_2^2\\end{aligned}"
+      },
+      "reference_ids": [
+        "JUN26-P021",
+        "JUN26-P060"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "强化学习基础"
+    },
+    {
+      "id": "ALN-039",
+      "category": "ALN",
+      "title": "行为克隆、DAgger、IRL 与 GAIL 有何区别，怎样对应 Agent 训练？",
+      "level": "L2",
+      "tags": [
+        "BC",
+        "DAgger",
+        "IRL",
+        "GAIL",
+        "强化学习基础"
+      ],
+      "answer": {
+        "body": "行为克隆把专家状态/动作当监督数据，直接学习动作分布；训练只看专家访问的状态，部署时自己的小错误会带到未见状态，造成分布偏移和误差累积。DAgger让当前策略运行，在它实际访问的状态上询问专家动作并聚合数据，代价是需要专家反馈与可控交互环境。\n\nIRL从示范推断能解释专家行为的奖励，再求策略，但奖励通常不唯一，专家也未必最优。GAIL用判别器区分专家与当前策略的状态动作占用分布，策略优化对应代理信号；它是模仿学习目标，不意味着必然恢复唯一真实奖励。判别器与策略的对抗结构类似GAN，但样本来自有环境反馈的轨迹。\n\nAgent SFT相当于示范轨迹上的行为学习；数据应包含工具选择、参数、观察与恢复。修复deployment失误时，可以收集当前Agent错误状态上的示范，而非仅增加更多理想轨迹；危险状态不能为采样而无约束执行。",
+        "pitfalls": [
+          "模仿学习不能保证把专家全部行为精确复制，也不能据示范唯一识别人类真实意图。"
+        ],
+        "followups": [
+          "让专家只重写Agent最终答案，为什么不等于在错误状态上做DAgger？"
+        ],
+        "formula": "\\mathcal L_{\\mathrm{BC}}=-\\mathbb E_{(s,a)\\sim\\mathcal D_E}[\\log\\pi_\\theta(a\\mid s)]"
+      },
+      "reference_ids": [
+        "JUN26-P022",
+        "JUN26-P023"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "强化学习基础"
+    },
+    {
+      "id": "AGT-011",
+      "category": "AGT",
+      "title": "CoT、Self-Consistency、ToT、GoT 与计划执行分别怎样提高推理和规划？",
+      "level": "L2",
+      "tags": [
+        "CoT",
+        "Self-Consistency",
+        "ToT",
+        "GoT",
+        "Planning"
+      ],
+      "answer": {
+        "body": "CoT让模型生成中间步骤，原始few-shot做法在prompt里提供推理示例；zero-shot的“逐步思考”属于另一个提示变体。它可把复杂计算分成步骤，但生成的理由不保证忠实或正确，也没有实际执行环境动作。\n\nSelf-Consistency采样多条推理路径，对规范化后的最终答案聚合投票；它增加推理算力，没有改模型权重，相同模型的错误也可能相关。ToT把部分思路视为节点，提出候选、评价、搜索与回溯；GoT允许分支合并和迭代，表达比树更一般的依赖结构。这里的图是计算/思路结构，不能混为GraphRAG的知识图谱。\n\nPlan-and-Execute先产生任务分解，再由执行器完成步骤，并按观察更新计划；ReAct更强调逐步决策与行动反馈。真实Agent规划须用环境状态验证里程碑，限制分支、深度、token与时间。比较方法应给相同总预算，否则更高成功率可能主要来自更多调用。",
+        "pitfalls": [
+          "多数票不是事实核验；模型自评节点也不能替代执行结果。"
+        ],
+        "followups": [
+          "没有唯一短答案的开放任务，Self-Consistency怎样设计聚合？"
+        ],
+        "formula": "\\hat a=\\arg\\max_a\\sum_{i=1}^K\\mathbf1[\\operatorname{normalize}(a_i)=a]"
+      },
+      "reference_ids": [
+        "JUN26-P024",
+        "JUN26-P025",
+        "JUN26-P026",
+        "JUN26-P027"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "提示、推理与规划"
+    },
+    {
+      "id": "AGT-012",
+      "category": "AGT",
+      "title": "LangChain/LangGraph、LlamaIndex 与多 Agent 框架怎样选型？",
+      "level": "L2",
+      "tags": [
+        "LangGraph",
+        "LangChain",
+        "LlamaIndex",
+        "Multi-Agent",
+        "框架选型"
+      ],
+      "answer": {
+        "body": "先明确数据接入、状态管理、工具编排、持久化、人类介入与可观测性需求，再比较框架。LangChain提供模型/工具等组件与Agent入口，LangGraph强调有状态图、checkpoint和可控执行；LlamaIndex围绕数据/索引/检索构建应用，同时也有Agent和workflow，不能说它只支持RAG。\n\n多Agent框架还需检查角色/消息契约、委派与handoff、并发控制、共享状态写入、终止条件和测试能力。集中协调者便于控制预算与汇总，handoff适合角色切换，广播讨论容易增加token并放大共同错误；框架不自动解决任务拆分与证据核验。\n\n用同一业务任务实现最小基线，测客观成功率、调用/成本、P95延迟、工具故障恢复、checkpoint可重放性与集成成本。固定版本并验证关键能力，选择只用库、工作流引擎或平台应取决于部署控制和团队能力，而非笼统比较哪个“更智能”。",
+        "pitfalls": [
+          "框架支持某功能不等于你的业务流程已具备正确权限、幂等与终止策略。"
+        ],
+        "followups": [
+          "什么时候自己写几十行状态机，比引入多Agent框架更合适？"
+        ]
+      },
+      "reference_ids": [
+        "JUN26-P028",
+        "JUN26-P029"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "多 Agent 协同与训练"
+    },
+    {
+      "id": "AGT-013",
+      "category": "AGT",
+      "title": "A2A 与 MCP 有什么区别，A2A 通信怎样避免 Agent 递归对话？",
+      "level": "L2",
+      "tags": [
+        "A2A",
+        "MCP",
+        "任务协议",
+        "循环检测"
+      ],
+      "answer": {
+        "body": "A2A用于不同系统中的Agent互操作，主要抽象包括AgentCard发现能力、Message/Part传递内容、Task跟踪执行状态以及Artifact返回成果。远端Agent可以隐藏内部推理和工具实现。MCP主要标准化客户端访问工具、资源和提示等能力，两者可以组合；A2A不是替代Agent内部编排的“智能框架”。\n\n一次委派应携带明确目标、输入、期望成果和完成条件，宿主管理task/context、超时、取消与结果验证。发现AgentCard不等于已授权执行，也不证明声明的能力真实；需要身份验证、访问范围和输入输出校验。\n\n协议本身不保证无循环。应用应传播根任务/父任务/委派路径，设深度、总调用和token预算，去重重复请求，检测相同目标来回委派，规定每条任务只有一个收口负责者。异步状态更新和等待要区别于重复新建任务，任务终止后不应因通知再触发同一委派。",
+        "pitfalls": [
+          "A2A最新/dev接口与旧版SDK可能不同，应固定协议版本；JSON消息互发并不自动等于实现A2A。"
+        ],
+        "followups": [
+          "A委派B，B又以同一目标委派A，怎样在宿主端检测？"
+        ]
+      },
+      "reference_ids": [
+        "JUN26-P030"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "工具调用与协议"
+    },
+    {
+      "id": "AGT-014",
+      "category": "AGT",
+      "title": "具身 Agent、VLA 与软件工具 Agent 有什么区别？",
+      "level": "L2",
+      "tags": [
+        "Embodied Agent",
+        "VLA",
+        "SayCan",
+        "RT-2"
+      ],
+      "answer": {
+        "body": "具身Agent要把语言目标映射到传感器观测与实际动作，考虑空间、动力学、反馈延迟和安全约束。软件Agent也可能部分可观测、结果随机、操作不可逆，因此两者区别是观测与控制条件的侧重，不能粗分为“软件确定且安全，机器人不确定且危险”。\n\n高层可用LLM规划离散技能，低层控制器负责高频闭环；例如SayCan结合语言任务相关性与技能可执行性，避免语言上合理却物理上做不到的动作。VLA路线将视觉、语言与动作建模到一起，RT-2将动作离散为token并结合机器人数据训练，但输出合法token并不代表动作可安全执行。\n\n评测要检查任务成功、碰撞/约束违例、反馈与恢复、分布外环境和sim-to-real差距。感知错误、规划错误与控制误差应分层定位，部署需要动作边界、实时监控和可靠停止机制；不能只根据文字计划打分。",
+        "pitfalls": [
+          "自然语言计划正确不等于可达、可抓取或满足动力学约束。"
+        ],
+        "followups": [
+          "同一个“拿起杯子”目标失败，怎样区分视觉定位、技能选择和控制执行问题？"
+        ]
+      },
+      "reference_ids": [
+        "JUN26-P047",
+        "JUN26-P048"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "多 Agent 协同与训练"
+    },
+    {
+      "id": "AGT-015",
+      "category": "AGT",
+      "title": "怎样训练 Agent 的工具使用能力，SFT、轨迹偏好与在线 RL 数据如何组织？",
+      "level": "L2",
+      "tags": [
+        "Agent训练",
+        "轨迹SFT",
+        "Tool Use",
+        "在线RL"
+      ],
+      "answer": {
+        "body": "Agent训练样本是带状态和环境反馈的决策轨迹，至少包括用户目标、工具schema、assistant调用及参数、tool返回、后续决策和终止结果。SFT学习示范调用与恢复，只对应该训练的assistant位置计算loss；工具返回是条件信息，不能当成模型生成目标混训。示范不必公开隐藏思维链，可用任务状态、简要决策与行动作为可审计记录。\n\n偏好数据应在相同目标与环境条件下比较轨迹或回答，考虑成功、越权、成本和恢复。在线RL让当前策略在可重置环境探索，以状态验收/测试结果给奖励，WebGPT是浏览操作示范与人类偏好训练的一个例子；最终文字说“已完成”不能作环境成功证据。\n\n保留失败和恢复轨迹，验证工具调用可执行性，过滤无效/危险行为，按任务和环境划分训练评测避免泄漏。只收集成功终点而缺失中间观察，模型可能学会终点叙述却不会行动；不同工具版本和schema也须一致或明确迁移。",
+        "pitfalls": [
+          "工具返回内容不能直接赋予新权限，轨迹奖励也不能跳过执行端权限校验。"
+        ],
+        "followups": [
+          "Agent在新版本API上频繁填错参数，应改数据、schema还是约束解码？"
+        ]
+      },
+      "reference_ids": [
+        "JUN26-P046",
+        "JUN26-P022"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "多 Agent 协同与训练"
+    },
+    {
+      "id": "AGT-016",
+      "category": "AGT",
+      "title": "多 Agent 策略冲突或子 Agent 检索错误，怎样隔离、验证和恢复？",
+      "level": "L3",
+      "tags": [
+        "Multi-Agent",
+        "冲突",
+        "故障隔离",
+        "证据核验"
+      ],
+      "answer": {
+        "body": "多Agent协作应把结果当成带证据与状态的候选，而非上游必然正确的事实。明确每个子任务的输入、允许写入范围、输出schema、验收条件和负责人；只由授权节点修改共享状态，涉及同一资源时使用版本检查、事务或串行执行。\n\n例如检索Agent返回“合同已过期”，执行Agent要退款，另一个Agent判定合同有效：协调者应核对合同版本、时间和原文证据，不能以Agent数量投票决定业务事实。检索错误需要标注证据不足/失败，切换有限查询或独立核验；不要让缺证据结果被当成成功继续传播。\n\n为子任务设隔离的context/checkpoint、超时和预算，保留最后可信状态，失败时重试该分支或回到依赖节点。不可逆副作用需幂等键和执行授权，补偿策略不一定能完全恢复。比较多Agent与单Agent基线，确认并行收益大于通信、核验与相关错误成本。",
+        "pitfalls": [
+          "共享更多对话不一定提高可靠性，反而可能扩散一次检索错误或prompt injection。"
+        ],
+        "followups": [
+          "同一子任务被重试两次，怎样确保退款只执行一次？"
+        ]
+      },
+      "reference_ids": [
+        "JUN26-P031",
+        "JUN26-P028"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "可靠性与评测"
+    },
+    {
+      "id": "RAG-016",
+      "category": "RAG",
+      "title": "知识图谱 RAG 与 GraphRAG 何时有用，和多 Agent 有什么关系？",
+      "level": "L2",
+      "tags": [
+        "GraphRAG",
+        "知识图谱",
+        "Local/Global Search"
+      ],
+      "answer": {
+        "body": "图增强检索适合关系密集、多跳或全局归纳的问题。知识图谱保存实体、关系与来源，可以沿结构关系寻找证据；向量检索擅长语义相似文本，二者可组合。LLM抽出的图可能遗漏、混淆实体或捏造关系，必须保留原文回链与权限/版本。\n\nMicrosoft GraphRAG先抽取图结构并生成社区报告。Local Search围绕与query相关的实体扩展邻居并结合原文，Global Search利用社区摘要回答语料整体主题类问题；不是所有GraphRAG都等于在图数据库里做几跳遍历，也不能把摘要当作天然无误的事实。\n\n多Agent是决策/执行组织方式，GraphRAG是知识表示与检索方式；Agent可调用GraphRAG，也可以不用图，GraphRAG也不要求多Agent。比较方案应看关系问题的证据召回、事实支持、更新成本、实体链接质量与查询延迟，普通局部事实查询可能用baseline RAG更简单。",
+        "pitfalls": [
+          "Graph of Thoughts、Agent执行图和知识图谱分别表示计算结构、控制依赖与实体关系，不能混为同一种图。"
+        ],
+        "followups": [
+          "“公司所有子公司”与“整个行业的主要风险”分别适合哪种检索？"
+        ]
+      },
+      "reference_ids": [
+        "JUN26-P032",
+        "JUN26-P033"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "查询优化与图检索"
+    },
+    {
+      "id": "RAG-017",
+      "category": "RAG",
+      "title": "IVF_FLAT、IVF_PQ 与 HNSW 如何检索，nlist/nprobe 和 PQ 有何权衡？",
+      "level": "L2",
+      "tags": [
+        "IVF_FLAT",
+        "IVF_PQ",
+        "HNSW",
+        "nprobe",
+        "PQ"
+      ],
+      "answer": {
+        "body": "IVF用粗量化器把向量划到nlist个簇，查询选择nprobe个簇，在对应倒排列表里寻找近邻。IVF_FLAT保存原始向量并在选中列表算精确距离，仍可能因为漏查其他簇错过全局近邻，所以不是整个索引的精确搜索。\n\nPQ将向量拆成M个子空间，各自用有限码本编码，缩减存储并用距离查表近似计算；IVF_PQ常编码相对粗中心的残差。若每子空间用b位，编码约Mb/8字节，需另加ID、码本与索引开销。它同时存在粗筛漏召回和量化排序误差，可增大nprobe或使用原向量rerank，但成本会上升。\n\nHNSW通过分层近邻图导航，通常无需先训练聚类码本，但图结构增加内存。选择取决于数据量、内存、召回/延迟目标、增删维护和是否有代表性训练数据。IVF的nlist过大可能使列表过小/训练不足，nprobe越大通常更准也更慢；应在相同业务集合上测实际曲线。",
+        "pitfalls": [
+          "列表大小常不均匀，nprobe/nlist只表示粗比例，不是严格耗时或召回公式。"
+        ],
+        "followups": [
+          "ANN召回差怎样区分粗量化漏簇、PQ误差与embedding本身不合适？"
+        ],
+        "formula": "M_{\\mathrm{PQ\\ codes}}\\approx N\\frac{Mb}{8}\\ \\mathrm{bytes},\\qquad \\operatorname{probed\\ fraction}\\approx\\frac{n_{\\mathrm{probe}}}{n_{\\mathrm{list}}}"
+      },
+      "reference_ids": [
+        "JUN26-P034",
+        "JUN26-P035"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "文档切分与索引"
+    },
+    {
+      "id": "RAG-018",
+      "category": "RAG",
+      "title": "RAGFlow、Haystack、LlamaIndex 与 DSPy 怎样分工和选型？",
+      "level": "L2",
+      "tags": [
+        "RAGFlow",
+        "Haystack",
+        "LlamaIndex",
+        "DSPy",
+        "框架选型"
+      ],
+      "answer": {
+        "body": "RAG框架选型先看文档解析、chunk/元数据、检索与权限、生成编排、评测和部署。RAGFlow提供知识库接入、解析和检索应用的整合体验；Haystack以组件和pipeline构建检索/Agent应用；LlamaIndex围绕数据/索引/检索提供组件，也支持workflow/Agent。功能会重叠，不宜把它们固定分成“平台不会定制、库不能可视化”。\n\nDSPy强调用声明的程序/模块与指标优化提示、示例或模型权重，不是向量数据库，也不是装上就自动得到更好的RAG。优化必须用训练/开发集，留出独立测试集并计算优化调用成本，防止指标过拟合。\n\n用真实PDF/表格/权限更新等困难样本比较解析质量、证据召回、引用正确性、吞吐与恢复能力，确认能否导出数据、固定版本、插入自定义检索/重排与替换模型。更少编码的原型体验和生产控制力可以分别评估，不应以安装教程长度代替技术选型。",
+        "pitfalls": [
+          "框架默认分块和官方示例不保证适合中文合同、扫描PDF或跨页表格。"
+        ],
+        "followups": [
+          "怎样验证框架升级后chunk边界和检索效果没有回归？"
+        ]
+      },
+      "reference_ids": [
+        "JUN26-P036",
+        "JUN26-P037",
+        "JUN26-P029",
+        "JUN26-P038"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "评测、权限与多模态 RAG"
+    },
+    {
+      "id": "RAG-019",
+      "category": "RAG",
+      "title": "怎样训练 embedding/retriever，hard negatives、ICT、SEED 与 REALM 分别解决什么？",
+      "level": "L3",
+      "tags": [
+        "Embedding训练",
+        "Hard Negatives",
+        "ANCE",
+        "RocketQA",
+        "ICT",
+        "SEED",
+        "REALM"
+      ],
+      "answer": {
+        "body": "双塔用query与正/负文档的相似度进行对比训练。in-batch negatives便宜，但常偏容易且可能包含假负例；BM25、当前模型ANN召回或交叉编码器筛选能构造更难负例。按问题来源/实体/文档版本划分评测，防止相同问题改写或答案段落泄漏。\n\nANCE使用来自动态ANN索引的困难负例，缓解训练样本与检索阶段候选的差异；RocketQA强调跨批次负样本与去噪等训练设计。困难不等于错误标签可靠，应处理多个同样正确文档、近重复段落与领域歧义，避免把相关答案推远。\n\n弱监督预训练中，ICT用句子与其上下文构造检索任务；SEED-Encoder借助较弱decoder形成瓶颈，促使encoder学习有用的全局表示；REALM把潜在文档检索纳入语言模型预训练，按检索文档条件化目标。这些方法改变训练任务或检索/语言目标耦合，不是换一个向量数据库。更换encoder后需同步索引，迭代采负例时关注索引滞后。",
+        "pitfalls": [
+          "业务未标注为正例的文档不一定是真负例；盲目增加hard negatives可能损害召回。"
+        ],
+        "followups": [
+          "检索模型只在旧索引上挖负例，为什么训练可能越来越不贴近线上？"
+        ],
+        "formula": "\\mathcal L_{\\mathrm{retriever}}=-\\log\\frac{\\exp(s(q,d^+)/\\tau)}{\\exp(s(q,d^+)/\\tau)+\\sum_{d^-}\\exp(s(q,d^-)/\\tau)}"
+      },
+      "reference_ids": [
+        "JUN26-P049",
+        "JUN26-P050",
+        "JUN26-P051",
+        "JUN26-P053",
+        "JUN26-P059",
+        "JUN26-P052"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "召回、融合与重排"
+    },
+    {
+      "id": "EVA-016",
+      "category": "EVA",
+      "title": "MMLU、BIG-bench/BBH、GSM8K 与 HumanEval 分别测什么，怎样读榜单？",
+      "level": "L2",
+      "tags": [
+        "MMLU",
+        "BBH",
+        "GSM8K",
+        "HumanEval",
+        "Benchmark"
+      ],
+      "answer": {
+        "body": "基准反映特定数据和协议下的任务能力。MMLU是57学科的选择题，偏向知识与学科问题解决；BIG-bench覆盖多种任务，BBH是其中较困难的一组任务，不能把两者分数混作同一指标。GSM8K偏数学应用题，需按规则提取最终答案；HumanEval用函数编程题与测试评估代码功能，pass@k还依赖采样次数及解码设置。\n\n选择题可比较选项log-likelihood，也可让模型生成答案，但prompt、选项顺序、few-shot例子和评分协议不同会改变结果。推理任务还应报告回答/测试时算力预算，不能把更长思考或更多采样的收益全归于参数规模。\n\n榜单需要核对模型版本、模板、数据split、生成设置、污染与题目重复。综合平均会掩盖业务短板，高分也不意味着长上下文、事实拒答、工具执行或多语言都强。用这些基准定位候选，再以独立业务集和分层错误分析验收。",
+        "pitfalls": [
+          "排行榜同名基准不一定用了相同few-shot、CoT、答案解析与采样预算。"
+        ],
+        "followups": [
+          "选择题log-likelihood分高，生成式回答却经常不遵守格式，应如何评价？"
+        ]
+      },
+      "reference_ids": [
+        "JUN26-P039",
+        "JUN26-P040",
+        "JUN26-P057",
+        "JUN26-P056",
+        "JUN26-P055"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "评测协议与基准"
+    },
+    {
+      "id": "EVA-017",
+      "category": "EVA",
+      "title": "AgentBench、WebArena、GAIA、SWE-bench 与 τ-bench 怎样评价 Agent？",
+      "level": "L2",
+      "tags": [
+        "AgentBench",
+        "WebArena",
+        "GAIA",
+        "SWE-bench",
+        "tau-bench",
+        "Benchmark"
+      ],
+      "answer": {
+        "body": "Agent基准提供任务、交互环境和验收规则，关注实际完成而非模型自报成功。AgentBench涵盖多个环境的推理决策；WebArena在可复现网站任务中检验网页操作与状态达成；GAIA的问题常需组合检索、文件/多模态和工具；SWE-bench让模型修复真实代码仓库问题并执行测试；τ-bench关注工具、模拟用户与领域政策的交互。\n\n环境状态型验收、最终答案匹配和代码测试不是同一种评分。任务初态、网络/工具版本、权限与budget必须固定，动态网络或模拟用户随机性也需记录，不能说所有基准都完全离线或绝对确定。环境失败应与Agent决策失败分开。\n\n报告任务成功率、重复运行稳定性、调用/成本、延迟、越权和恢复表现。代码测试通过可能不覆盖全部业务行为；单次成功可能来自幸运采样。对于真实产品，应选与你的动作空间和失败代价一致的任务，而非用一个榜单代表Agent通用水平。",
+        "pitfalls": [
+          "文档检索问答基准的答案正确率不能替代网页/代码Agent的环境状态验收。"
+        ],
+        "followups": [
+          "同一Agent多次运行时成功率差异大，怎样设计重复试验和置信区间？"
+        ]
+      },
+      "reference_ids": [
+        "JUN26-P041",
+        "JUN26-P042",
+        "JUN26-P043",
+        "JUN26-P058",
+        "JUN26-P044"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "评测协议与基准"
+    },
+    {
+      "id": "EVA-018",
+      "category": "EVA",
+      "title": "怎样使用评测框架建立可复现的 LLM、RAG 与 Agent 验收？",
+      "level": "L2",
+      "tags": [
+        "Evaluation Harness",
+        "可复现评测",
+        "协议",
+        "验收"
+      ],
+      "answer": {
+        "body": "评测框架负责加载任务、调用模型、解析输出与汇总指标，不替代任务定义。LM Evaluation Harness把标准任务与模型后端分离，适合控制few-shot、log-likelihood/生成协议和答案过滤；RAG/Agent还需要证据、工具轨迹及环境结果验证，不能仅复用文本匹配分数。\n\n固定任务定义/数据版本、模型checkpoint、tokenizer/template、生成预算与停止规则，保存原始输出及评分中间结果。明确每个指标的分母、失败/超时处理与任务权重，按语言、难度、长度等分层；将实验开发集与最终验收集分开。\n\n新增模型或prompt先跑小批次确认输入与答案解析，再运行冻结回归集。重跑随机任务以估计不确定度，并抽查评分器与人工结果的一致性。对RAG记录所用证据版本，对Agent重置初态并校验副作用；最后核对业务阈值、成本与延迟，而非只保存一个平均分。",
+        "pitfalls": [
+          "评测脚本运行成功不代表协议一致，模型输出解析错误可造成虚假零分或高分。"
+        ],
+        "followups": [
+          "框架升级后同一checkpoint分数改变，应优先比对哪些原始结果？"
+        ]
+      },
+      "reference_ids": [
+        "JUN26-P045"
+      ],
+      "community_evidence": [],
+      "editorial": true,
+      "topic": "评测协议与基准"
+    }
+  ]
+}

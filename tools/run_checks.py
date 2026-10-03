@@ -13,6 +13,7 @@ def main():
     commands=[
         [sys.executable,'-X','utf8','tools/validate.py'],
         [sys.executable,'-X','utf8','-m','unittest','discover','-s','tools','-p','test_supplement.py','-v'],
+        [sys.executable,'-X','utf8','-m','unittest','discover','-s','tools','-p','test_presentation.py','-v'],
         [sys.executable,'-X','utf8','-m','unittest','discover','-s','coding','-p','test_*.py','-v'],
         ['node','tools/test_explorer.cjs'],
         [sys.executable,'-X','utf8','-m','py_compile','tools/common.py','tools/build.py','tools/presentation.py','tools/search.py','tools/validate.py','tools/package.py','tools/supplement.py','coding/reference.py','coding/torch_primitives.py'],
