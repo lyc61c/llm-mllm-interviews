@@ -1320,15 +1320,15 @@
         "数值稳定"
       ],
       "answer": {
-        "body": "缩放点积注意力先用 $Q$ 与 $K$ 的匹配分数，在 key 轴做 softmax，再加权汇聚 $V$。设 $Q\\in\\mathbb R^{L_q\\times d_k}$、$K\\in\\mathbb R^{L_k\\times d_k}$、$V\\in\\mathbb R^{L_k\\times d_v}$，则 $S=QK^\\top/\\sqrt{d_k}+M$、$A=\\mathrm{softmax}(S)$，输出 $AV\\in\\mathbb R^{L_q\\times d_v}$。Self-attention 常取 $Q=XW_Q$、$K=XW_K$、$V=XW_V$，cross-attention 的 $Q$ 与 $K/V$ 可来自不同序列。\n\n缩放的尺度分析假设各分量零均值、单位方差，$q_i$ 与 $k_i$ 独立，且不同维的乘积互不相关：此时 $\\mathrm{Var}(q_i k_i)=1$，$\\mathrm{Var}(q\\cdot k)=d_k$，除以 $\\sqrt{d_k}$ 后方差为 1。实际训练后的相关性和方差未必满足这些假设。分数差过大会使分布过于尖锐，softmax 的 Jacobian $\\partial A_i/\\partial S_j=A_i(\\delta_{ij}-A_j)$ 部分元素变小；这不表示所有后续梯度必然消失，softmax 与交叉熵合并时 logits 梯度仍为预测概率减目标概率。\n\n允许的连接加 0，禁止连接加 $-\\infty$，再做 softmax。实现常先减去每行最大有限分数以避免指数溢出；全屏蔽行须单独处理，并检查 dtype、广播和内核的 mask 约定。有限且未屏蔽的 logits 在精确计算下得到严格为正、和为 1 的权重，所以 softmax 本身没有硬稀疏；数值下溢和 mask 产生的零是另外的机制。权重适合描述加权汇聚，但不能直接当作因果重要性。\n\n除了固定除以根号维度，也可对 Q/K 做适当归一化并设置温度、学习 logit scale，或使用加性注意力的评分网络。它们改变评分分布及参数化，并不是把原模型的分母随意删掉的等价替换。改变温度只控制分布尖锐度，不替代所有输入范数与训练稳定性问题；应重新分析方差并配套训练。",
+        "body": "缩放点积注意力先比较查询 Q 与候选键 K，再把匹配程度转成权重，用这些权重汇总内容 V。可以把它理解为查资料：Q 是当前问题，K 是各条资料的检索特征，V 是真正要取回的内容。若有 L_q 个查询、L_k 个候选，Q 和 K 的特征宽度都为 d_k，匹配矩阵就是 L_q×L_k；V 宽度为 d_v，输出就是 L_q×d_v。softmax 沿候选 key 轴做，每个查询分别分配权重。\n\n除以 √d_k 是为了控制分数尺度。假设各分量独立、零均值、单位方差，d_k 个乘积相加后，点积方差为 d_k；除以平方根后，方差回到 1 左右。否则维度越大，分数容易相差很大，让 softmax 过于尖锐、部分导数变小。这个推导有独立性和方差前提，不能当作训练后所有 Q/K 的普遍性质。公式导数中的 p 是概率、s 是分数，δ 在两个下标相同时为 1，否则为 0；softmax 局部导数变小不等于所有梯度消失，例如与交叉熵组合后的 logits 梯度仍可写成预测概率减目标。\n\nM 是可见性掩码：允许位置加 0，禁止位置在 softmax 前加负无穷。稳定实现还会减去每行最大有限分数，避免指数溢出；全屏蔽行要单独处理。有限且未屏蔽的分数在精确计算下都有正权重，所以 softmax 本身不是硬选择少数位置。也可以通过 Q/K 归一化、温度或加性评分改变尺度，但那是新的参数化，需要配套训练，不能随意删掉原模型的缩放项。",
         "formula": "\\begin{aligned}\\mathrm{Attention}(Q,K,V)&=\\mathrm{softmax}\\!\\left(\\frac{QK^\\top}{\\sqrt{d_k}}+M\\right)V\\\\ \\mathrm{Var}(q\\cdot k)&=d_k\\\\ \\frac{\\partial p_i}{\\partial s_j}&=p_i(\\delta_{ij}-p_j)\\end{aligned}",
         "pitfalls": [
-          "把缩放分母写成 $d_{\\rm model}$ 或 $d_k$，或省略独立/方差假设后把 $\\mathrm{Var}(q\\cdot k)=d_k$ 当普遍定律。",
-          "把 mask 加到已归一化权重后不重归一化，或把 softmax 说成自动只选少量 token。"
+          "缩放用 √d_k，不是 d_k 或模型宽度；方差推导还需要独立性等前提。",
+          "掩码应在 softmax 前加入；softmax 本身也不会硬筛选少量 token。"
         ],
         "followups": [
-          "如果 Q/K 做 L2 归一化，点积分布与温度参数该怎样重新分析？",
-          "cross-attention 的 $L_q\\ne L_k$ 时，各中间矩阵与输出是什么形状？"
+          "Q/K 做 L2 归一化后，如何重新分析点积分布与温度？",
+          "交叉注意力查询和条件长度不同时，分数与输出各是什么形状？"
         ]
       },
       "reference_ids": [
@@ -1377,15 +1377,15 @@
         "参数量"
       ],
       "answer": {
-        "body": "多头注意力用多组分别学习的 $Q/K/V$ 投影，在不同子空间并行计算注意力，拼接各头输出，再经 $W_O$ 混合回模型维度。以输入 `X:[B,T,D]` 为例，第 $i$ 头的 $W_Q^i,W_K^i\\in\\mathbb R^{D\\times d_k}$、$W_V^i\\in\\mathbb R^{D\\times d_v}$，输出 `head_i:[B,T,d_v]`。原始 base 模型取 $D=512$、$h=8$、$d_k=d_v=64$。\n\n工程上把各头堆为 `Q/K:[B,h,T,d_k]`、`V:[B,h,T,d_v]`，分数为 `[B,h,T,T]`。输出从 `[B,h,T,d_v]` 转置并拼接为 `[B,T,h*d_v]`，乘 `W_O:[h*d_v,D]` 得到 `[B,T,D]`；拼接增加的是特征维度。Cross-attention 的权重形状为 `[B,h,L_q,L_k]`，输出长度仍为 $L_q$。一次大线性层后 reshape 与逐头投影等价，并不表示各头共用相同权重。\n\n当 $hd_k=hd_v=D$ 时，忽略 bias，标准 MHA 的 Q/K/V/O 总权重约为 $4D^2$；固定 $D$ 增加头数只会缩小每头维度，参数量不随头数成倍增长。不过注意力矩阵元素数随 $hT^2$ 变化，显存与内核效率仍需比较。各头可以学习不同匹配模式，也可能冗余，不能预设每头必定负责语法或实体等固定任务。MQA/GQA 改变了 K/V 共享方式，其参数与 KV cache 要另外估算。",
+        "body": "多头注意力让同一段输入经过多组不同的查询、键和值投影，在不同特征子空间里分别寻找关系，再把结果合起来。单头只有一套加权汇总方式，多头能同时提供多种匹配模式；但不能预先规定某头一定负责语法、另一头一定负责实体，训练后也可能出现冗余。\n\n输入若是 B×T×D，B 是批大小、T 是长度、D 是模型宽度，h 个头通常各用 D/h 的宽度。实现先做一次大投影，再拆成 B×h×T×d_k，每个头计算 T×T 的匹配和加权结果。随后把头维转回特征维，拼成 B×T×h d_v，再乘输出矩阵 W_O 回到 B×T×D。例如 D=512、h=8 时，每头常用 64 维；拼接增加的是特征宽度，不是序列长度。一次大投影只是在计算上合并，各头仍有各自参数。\n\n固定 D 且 h d_k=h d_v=D 时，Q、K、V、O 四张矩阵忽略 bias 共约 4D² 参数，增加头数并不会把参数量成倍增加，因为每头变窄了。显式注意力矩阵却有约 BhT² 个元素，头数仍影响显存和内核效率。交叉注意力分数是 L_q×L_k，输出长度由查询数决定。MQA、GQA 会共享部分 K/V，其参数和缓存需要另外计算，不能照搬标准多头结论。",
         "formula": "\\begin{aligned}\\mathrm{head}_i&=\\mathrm{softmax}\\!\\left(\\frac{(XW_Q^i)(XW_K^i)^\\top}{\\sqrt{d_k}}+M\\right)XW_V^i\\\\ \\mathrm{MHA}(X)&=\\mathrm{Concat}(\\mathrm{head}_1,\\ldots,\\mathrm{head}_h)W_O\\end{aligned}",
         "pitfalls": [
-          "将单头维度 $d_k$ 与总隐藏维度 D 混用，漏写转置/拼接或 $W_O$ 导致 shape 不闭合。",
-          "把实现里的 fused QKV 层误认为不同 head 使用完全相同的投影参数。"
+          "每头宽度与总宽度不同，拆头、转置、拼接和输出投影要让形状闭合。",
+          "融合 QKV 投影只是计算安排，不代表不同头使用相同参数。"
         ],
         "followups": [
-          "固定 D 和 h 时，GQA 的参数量与 KV cache 怎样变化？",
-          "为什么 concatenation 后还需要 $W_O$，而不是直接相加各头输出？"
+          "固定模型宽度和查询头数，减少 GQA 的 KV 头怎样影响参数与缓存？",
+          "拼接后为什么还需要输出投影，直接相加各头会改变什么？"
         ]
       },
       "reference_ids": [
@@ -1413,15 +1413,15 @@
         "KVCache"
       ],
       "answer": {
-        "body": "Attention mask 在 softmax 前排除不可见的 key：允许连接加 0，禁止连接加 $-\\infty$。将禁止位置的分数乘 0 无法屏蔽，因为 $\\exp(0)$ 仍会得到概率；全屏蔽行在朴素 softmax 中可能产生 NaN，须核对后端处理。\n\n因果掩码从 0 编号时允许 $j\\le i$，包括自身。位置 $i$ 的 logits 预测 $x_{i+1}$，所以看到 $x_i$ 不会泄漏下一词；只加 loss mask 而没有 causal mask，仍会泄漏未来信息。Padding mask 通常排除无效 key，pad query 的输出在后续计算或损失中忽略。Loss mask 只决定哪些目标计损：prompt 的 `labels=-100` 时，合法 prompt 仍应保持可见，否则回答无法读取问题。独立 packed 样本还要要求 query/key 属于同一样本。\n\n已有 $P$ 个历史 token，一次处理 $L$ 个新 token 时，query 长度为 $L$、key 长度为 $P+L$，第 $i$ 个新 query 可看 $j\\le P+i$。不能直接套用左上对齐的矩形下三角；须检查内核的因果偏置、真实缓存位置、左 padding 和静态缓存中未填的槽位。\n\n框架的 bool mask 与加性 mask 含义不同：PyTorch 2.14 SDPA 的 `attn_mask=True` 表示允许关注，`MultiheadAttention.key_padding_mask=True` 表示屏蔽。广播应覆盖 `[B,H,L_q,L_k]`，可用小输入验证可见性。普通 batch 可按本批最长序列 padding，长度分桶能减少浪费；位置编号须与真实 token 和模型方案一致。Padding mask 通常不自动省去 pad 的算术计算，变长内核或 packing 还需显式段边界。",
+        "body": "causal mask 控制能否看未来，padding mask 排除填充内容，loss mask 决定哪些目标计入损失，三者作用不同。注意力掩码要在 softmax 前把禁止位置加成负无穷，直接乘零仍会留下 exp(0) 的概率；全行都被屏蔽时，朴素计算可能产生 NaN，需要明确后端处理。\n\n因果注意力允许位置 i 读取 j≤i，包括自身，因为位置 i 的输出通常预测下一 token。Padding mask 通常屏蔽无效 key，填充 query 的输出再由后续计算或损失忽略。训练回答时把 prompt 标签设成 −100，只是不计算 prompt 的目标损失，回答仍应能读取问题；仅有 loss mask 而没有因果 mask 会泄漏未来。把多个独立样本拼进同一序列时，还要阻止跨样本注意力，EOS 或重置位置编号都不能自动完成隔离。\n\n缓存已有 P 个 token，一次处理 L 个新 token，第 i 个新查询应能看 j≤P+i 的 key。例如已有 5 个历史 token，新块第一个查询也应能读取这 5 个历史位置。此时 L×(P+L) 的掩码不能机械套左上角三角阵；还要检查左 padding、真实缓存位置和未填槽位。PyTorch SDPA 的布尔 True 表示允许，MultiheadAttention 的 key_padding_mask True 却表示屏蔽，必须按接口核对。Padding 通常只改变可见性，并不自动省去计算，可用长度分桶、变长内核或带段边界的 packing 减少浪费。",
         "formula": "\\begin{aligned}A&=\\mathrm{softmax}\\!\\left(\\frac{QK^\\top}{\\sqrt{d_k}}+M\\right)\\\\ M_{ij}&=\\begin{cases}0,&\\mathrm{allowed}(i,j)\\\\-\\infty,&\\text{otherwise}\\end{cases}\\\\ \\mathrm{allowed}_{\\rm cached}(i,j)&\\iff j\\le P+i\\end{aligned}",
         "pitfalls": [
-          "把 prompt loss mask、EOS 边界或重置 `position_ids` 当成 attention 隔离。",
-          "不检查矩形 causal 对齐和 bool 含义，导致缓存只能关注最前面的 key 或泄漏未来。"
+          "只屏蔽 prompt 损失、加入 EOS 或重置位置编号，都不能保证独立样本的注意力隔离。",
+          "布尔语义与矩形因果对齐要查接口，否则可能误屏蔽历史或泄露未来。"
         ],
         "followups": [
-          "如何用扰动另一个 packed 样本的测试证明没有跨样本信息泄漏？",
-          "只有一个新 query 且所有 key 均为有效历史时，还需要显式三角 mask 吗？"
+          "怎样通过改动另一个 packed 样本，验证当前样本输出不受影响？",
+          "单个新查询的所有 key 都是有效历史时，是否还需要显式三角掩码？"
         ]
       },
       "reference_ids": [
@@ -1454,15 +1454,15 @@
         "GPT"
       ],
       "answer": {
-        "body": "Encoder-Decoder 先编码源序列，再由 decoder 自回归生成目标，两边长度可以不同。原始 Transformer 的 encoder 和 decoder 各有 6 层：encoder 每层含双向 self-attention 和 FFN，decoder 另含因果 self-attention 与 cross-attention。源输入被编码为 $H_{\\rm src}$，目标第 $t$ 步依赖源输入与目标历史。\n\nCross-attention 用 decoder hidden 作 $Q$、encoder memory 作 $K/V$，可访问完整已知源句并屏蔽源 padding；decoder 自身仍只看目标历史。源 memory 可一次编码，各层的 cross-attention K/V 投影可复用。条件概率分解为 $p(y\\mid x)=\\prod_t p(y_t\\mid y_{<t},x)$，训练时用右移目标和 teacher forcing 并行计算各位置损失。原模型使用 PostNorm，并在两边注入位置编码；后续架构不必固定 6 层或同一种归一化。\n\nBERT 等 encoder-only 常用双向表示和 MLM，适合理解及表示任务；GPT 类 decoder-only 用因果目标训练，可把输入与输出串到同一上下文。Prefix LM 的分段可见性不等于具有独立 encoder 和 cross-attention。选型要结合任务形态、源/目标长度、memory 复用、缓存、吞吐与训练数据：encoder-only 可经额外设计用于生成，decoder-only 也能分类，结构标签本身不能保证任务效果。\n\nDecoder-only 把各种任务统一成前缀后的 next-token 预测，可直接利用大量无标注连续文本做因果训练，推理再按相同概率分解配合 KV cache 逐步生成，输入/示例/对话也可用同一序列接口组织。这种统一目标、数据与部署方式是其常见优势，不是“Encoder 完全不能生成”的数学定理。Encoder-Decoder 在条件生成、较长源输入和 memory 复用等条件下仍有优势，训练并行能力也不能与自回归生成必须按步进行混淆。",
+        "body": "理解与表示任务常从 Encoder-only 入手，自回归生成常用 Decoder-only，源输入与目标输出分工明确的条件生成可以用 Encoder-Decoder。三者区别主要在可见性与信息流，不是某类结构绝对只能做一种任务。BERT 类编码器通常双向看上下文；GPT 类解码器只读前缀，把问答、示例和输出放进同一序列。\n\nEncoder-Decoder 先把源文本 x 编成 memory，再让解码器根据源信息与已生成目标逐步预测 y。公式中的概率乘积表示每一步都依赖目标历史和源表示；训练把正确目标右移，用 teacher forcing 并行计算各位置。解码器用自身状态做 Q、源 memory 做 K/V，能读取完整已知源文本，同时目标 self-attention 仍保持因果。源和目标可以不同长度，固定源的编码及各层 cross-attention K/V 可以复用。\n\n原始 Transformer 两边各 6 层、使用 PostNorm，编码层有 self-attention 与 FFN，解码层还多 cross-attention；现代结构无需固定这些配置。Decoder-only 的优势是训练目标、连续文本数据和生成接口统一，也容易配合 KV cache；Encoder-Decoder 在长源输入、源表示复用或条件生成中仍有价值。Prefix LM 的分段可见性并不等于独立编码器。最终应按源目标长度、任务效果、训练数据、缓存与吞吐选型，训练并行也不能混同于生成步骤并行。",
         "formula": "\\begin{aligned}H_{\\rm src}&=\\mathrm{Encoder}(x)\\\\p_\\theta(y\\mid x)&=\\prod_t p_\\theta(y_t\\mid y_{<t},H_{\\rm src})\\\\Q&=H_{\\rm dec}W_Q,\\quad K=H_{\\rm src}W_K,\\quad V=H_{\\rm src}W_V\\end{aligned}",
         "pitfalls": [
-          "把 source 与 target 强制要求等长，或把 cross-attention 也无条件设置成目标三角 mask。",
-          "把 encoder 的双向 attention 直接移到生成中的未知目标位置而造成未来信息泄漏。"
+          "源和目标不必等长，源条件注意力也不必使用目标三角掩码。",
+          "生成未知目标时，直接双向读取目标会泄露未来答案。"
         ],
         "followups": [
-          "改变 source 长度时，cross-attention 权重矩阵的哪一轴变化？",
-          "条件 memory 的缓存与 decoder 历史 KV cache 的增长方式有何不同？"
+          "源输入变长时，交叉注意力分数矩阵哪一轴改变？",
+          "固定源缓存与目标历史缓存的长度如何分别变化？"
         ]
       },
       "reference_ids": [
@@ -1519,15 +1519,15 @@
         "归一化"
       ],
       "answer": {
-        "body": "LayerNorm 对每个 token 的 hidden 维计算均值与方差，再用 $\\epsilon$ 和可学习的 $\\gamma,\\beta$ 做标准化与仿射变换。对 `X:[B,T,D]`、`normalized_shape=D`，均值和方差形状为 `[B,T,1]`，$\\gamma,\\beta$ 为 `[D]`。方差使用分母 $D$ 的总体形式；$\\epsilon$ 加在方差内，避免分母为零并影响小方差时的尺度。\n\n归一化只覆盖指定的特征轴；若 `normalized_shape` 包含多个轴，统计范围也随之扩大。仿射或 bias 可由具体架构关闭。同一层各 token 共享这组参数，但不同层通常分别学习。LN 在训练与推理时都依据当前 token 重算统计，不依赖 batch size 或运行均值，适合变长、在线和自回归解码。\n\nBatchNorm 通常按通道聚合 batch 与其他指定轴，训练时用批统计，常规推理用估计的总体或运行统计。小 batch、分布变化、序列位置差异和 padding 混入会影响估计；变长序列也能使用 BN，但须明确统计轴和有效位置处理。LN 有助于稳定激活与优化，训练是否稳定还依赖残差、Pre/PostNorm、初始化和学习率，不能只由 LN 推出梯度永不爆炸或消失。\n\n以NCHW图像张量为例，BN对每个channel跨N/H/W统计，IN对每个样本每个channel跨H/W统计，GN对每个样本在一个channel组内跨组channel/H/W统计；GN不依赖batch大小。Transformer常见LN是每个token在hidden轴统计，而不是把整个序列当一条归一化轴。所谓“选择哪种Norm”先指定张量布局和normalized_shape，不能只背名称。",
+        "body": "Transformer 常用 LayerNorm，因为它为每个 token 单独调节特征尺度，不依赖同批次还有哪些样本，训练和逐 token 推理也能使用同一套统计方式。输入 B×T×D 时，常见 LN(D) 只在最后的 D 个特征上计算均值和方差；每个 token 都有自己的统计量，同一层的缩放 γ 和偏移 β 则沿位置共享。\n\n公式先减均值，再除以方差加 ε 的平方根，最后做可学习仿射变换。ε 防止分母为零，也影响小方差时的尺度；通常使用分母 D 的总体方差，而不是 D−1。例如一个 token 的全部特征同时加相同常数，中心化后这一平移会消失。若 normalized_shape 改成 (T,D)，统计范围会覆盖整个序列，已不是同一操作；不同层通常也分别学习参数。\n\nBatchNorm 常按通道聚合同批样本的统计，训练用批统计、常规推理用运行统计。小 batch、变长文本与 padding 会使这种估计更复杂，自回归解码也很难保持训练时的条件。它并非绝对不能用于序列，而是要明确统计轴和有效位置。图像里的 IN 对每个样本每通道统计空间位置，GN 对每个样本的通道组统计，均不等于 token 级 LN。归一化有助于优化，但仍要与残差、初始化、学习率和放置位置一起判断稳定性。",
         "formula": "\\begin{aligned}\\mu_{bt}&=\\frac1D\\sum_{d=1}^D x_{btd}\\\\\\sigma^2_{bt}&=\\frac1D\\sum_{d=1}^D(x_{btd}-\\mu_{bt})^2\\\\\\mathrm{LN}(x)_{btd}&=\\gamma_d\\frac{x_{btd}-\\mu_{bt}}{\\sqrt{\\sigma^2_{bt}+\\epsilon}}+\\beta_d\\end{aligned}",
         "pitfalls": [
-          "对 `[B,T,D]` 在 T 轴归一化，或把每 token 均值误写成跨 batch 均值。",
-          "省略 $\\epsilon/\\gamma/\\beta$、混用 D 与 $D-1$，或宣称 BN 一定不能处理任何变长输入。"
+          "常见 LN(D) 沿 hidden 轴统计，不能误用时间轴或跨 batch 均值。",
+          "要保留 ε、γ、β 并使用对应方差定义；BN 并非绝对不能处理变长输入。"
         ],
         "followups": [
-          "`LN(D)` 与 `LN((T,D))` 的输出相同吗，为什么？",
-          "RMSNorm 去掉了哪些计算，是否仍把每个 token 的均值归零？"
+          "LN(D) 与 LN((T,D)) 的统计范围和输出为什么不同？",
+          "RMSNorm 省掉哪些计算，是否还会把均值变为零？"
         ]
       },
       "reference_ids": [
@@ -1562,15 +1562,15 @@
         "数值稳定"
       ],
       "answer": {
-        "body": "RMSNorm 按输入的均方根缩放，省去 LayerNorm 的减均值步骤，通常在根号内加入 $\\epsilon$，再乘可学习的逐通道权重 $\\gamma$。LN 使用中心化方差，RMSNorm 使用未经中心化的二阶矩。\n\n两者都有对整体尺度的归一化作用，但平移性质不同：输入统一加常数时，LN 的归一化部分基本不变，RMSNorm 通常会变化。RMSNorm 的计算较简单，归约常用更高精度以减少溢出和舍入误差；实际速度与质量仍取决于模型、dtype 和融合内核，不能直接套用论文中的收益比例。\n\npRMSNorm使用部分特征估计均方根以降低归一化开销，核心仍不做均值中心化；是否采用取决于采样误差、kernel和模型验证，不能把标准RMSNorm的公式直接标作pRMSNorm。",
+        "body": "RMSNorm 用一个 token 特征的均方根调节尺度，LayerNorm 则先减均值、再用中心化方差调节尺度。均方根就是先把 D 个分量平方、求平均，再开平方；公式中的 γ 是每个通道可训练的缩放，ε 防止分母过小。RMSNorm 常省去中心化和偏移，因此计算更简单。\n\n比如输入是 [1,1]，LayerNorm 减均值后会得到零向量，而 RMSNorm 仍保留原来的同向分量。两者都能控制整体尺度，但把所有特征同时加一个常数时，LN 的中心化部分基本不变，RMSNorm 通常会变。因此不能说 RMSNorm 会把均值归零，也不能说均值在任何模型里都没有作用。忽略 ε 时，RMSNorm 与 L2 归一化还差一个 √D 的尺度因子。\n\n归约平方和时常使用 FP32，避免低精度溢出与累计舍入误差，再转回计算类型；最终速度取决于融合内核和硬件，质量也需要模型验证。pRMSNorm 只用部分特征估计均方根，能减少统计计算，但引入采样误差，与使用全部特征的标准公式有区别。选择哪一种应同时看训练稳定性、效果和真实延迟，不能把某篇论文中的比例直接套到所有模型上。",
         "formula": "\\mathrm{RMSNorm}(x)=\\frac{\\gamma\\odot x}{\\sqrt{D^{-1}\\sum_{i=1}^D x_i^2+\\epsilon}}",
         "pitfalls": [
-          "把 RMSNorm 说成标准化到零均值。",
-          "说去均值在任何模型中都完全无用。"
+          "RMSNorm 调节均方根，不保证输出零均值。",
+          "省去减均值是架构取舍，不能推出中心化在任何模型里都无用。"
         ],
         "followups": [
-          "为什么 RMSNorm 常在 FP32 中计算归约？",
-          "RMSNorm 与 L2 normalization 有何尺度差别？"
+          "低精度输入的平方和为什么常放到 FP32 计算？",
+          "RMSNorm 与 L2 单位范数归一化相差什么尺度？"
         ]
       },
       "reference_ids": [
@@ -1606,15 +1606,15 @@
         "梯度"
       ],
       "answer": {
-        "body": "Pre-Norm 的结构是 $y=x+F(\\mathrm{Norm}(x))$，Post-Norm 是 $y=\\mathrm{Norm}(x+F(x))$。Pre-Norm 的残差主路径保留恒等连接，给梯度提供直接通道，深层训练通常更稳定，模型末端一般还会添加最终归一化。\n\nPost-Norm 的初始化分析显示部分层梯度可能较大，可解释其对 warmup 的敏感性，但该结论依赖分析条件。实际是否需要 warmup，还受深度、初始化与优化器影响；比较两者应匹配训练预算并分别调参，不能只用同一学习率下的 loss 判定优劣。\n\nDeepNorm在Post-LN风格中引入与深度相关的残差放大及初始化缩放，例如LN(αx+F(x))，并配套特定网络深度/架构的参数初始化规则。它不是把Pre-Norm挪回Post-Norm即可获得相同稳定性；α/β依赖encoder/decoder设置，公式需按论文配方核对。",
+        "body": "Pre-Norm 在子层计算之前归一化，Post-Norm 在残差相加之后归一化；主要区别是梯度的直接残差通道是否经过这一层归一化。Pre-Norm 写成 x+F(Norm(x))，输入 x 可以沿加法支路直接传到输出；Post-Norm 写成 Norm(x+F(x))，两条支路相加后都要经过 Norm。\n\n可以把残差理解为保留旧表示、只学习修正。Pre-Norm 即使修正分支暂时没学好，仍有比较直接的信息和梯度通道，因此深层训练通常容易稳定；末端常再加 final norm，控制累积后的输出尺度。Post-Norm 的一些初始化分析显示局部梯度可能偏大，因此更依赖合适的 warmup 和初始化，但结论有其假设，不能说任何 Pre-Norm 都不需要 warmup，或稳定就一定有更好的最终效果。\n\nDeepNorm 是配套的稳定化方案，在 Post-LN 风格中使用与深度相关的残差系数及初始化缩放，例如 Norm(αx+F(x))；α 等参数要按编码器、解码器配置计算，不能仅把 Norm 挪位置就声称复现了它。实际比较要匹配预算并分别调学习率，检查激活、梯度和残差尺度，才能区分结构优势与训练设置不合适造成的差异。",
         "formula": "\\begin{aligned}y_{\\rm pre}&=x+F(\\mathrm{Norm}(x))\\\\y_{\\rm post}&=\\mathrm{Norm}(x+F(x))\\end{aligned}",
         "pitfalls": [
-          "说 Pre-Norm 必然不需要 warmup。",
-          "把更稳定训练直接等同于所有任务更好的最终效果。"
+          "Pre-Norm 通常更易稳定，但不保证任何设置都不需要 warmup。",
+          "训练稳定性不等于所有任务的最终效果必然更好。"
         ],
         "followups": [
-          "为什么很多 Pre-Norm 模型还有 final norm？",
-          "残差随深度增长如何控制？"
+          "Pre-Norm 各层已有归一化，为什么末端还常加 final norm？",
+          "残差表示随层数增长时，怎样控制它的尺度？"
         ]
       },
       "reference_ids": [
@@ -1644,16 +1644,16 @@
         "PositionIDs"
       ],
       "answer": {
-        "body": "RoPE 按位置旋转 $Q/K$ 的成对分量，使点积显式出现相对位置差，并保持向量范数；通常不旋转 $V$。旋转子空间为偶数维 $d_r$，第 $j$ 对频率 $\\theta_j=\\mathrm{base}^{-2j/d_r}$，位置 $m$ 使用二维旋转 $R(m\\theta_j)$。不同频率覆盖不同距离尺度，部分模型只旋转 head 的部分维度。\n\n令 $q'_m=R_mq_m$、$k'_n=R_nk_n$，由 $R_m^\\top R_n=R_{n-m}$ 可得 $(q'_m)^\\top k'_n=q_m^\\top R_{n-m}k_n$。这是位置依赖呈相对差，内容向量仍受上下文影响。单对分量 $(a,b)$ 变为 $(a\\cos\\phi-b\\sin\\phi,a\\sin\\phi+b\\cos\\phi)$；相邻维配对与前半/后半配对可通过置换关联，已有 checkpoint 却不能未经权重转换便替换配对约定。\n\nTransformers v4.57.1 的 `LlamaAttention` 先旋转当前 Q/K，再写入缓存，因此历史已旋转 K 不应再次旋转。新 token 须使用正确逻辑位置的 cos/sin，分块 decode、左 padding 与 packed 样本都要核对 `position_ids`。`cache_position` 管缓存槽位，RoPE 的 `position_ids` 管相位，两者接口含义不同。滑动窗口移除旧缓存不代表逻辑时间归零；若改变频率或位置缩放策略，必须核验历史 K 的一致性，并重算或使用明确支持该变化的缓存实现。\n\nRoPE作用于attention的Q/K，保留单向量范数却改变相位与跨位置内积，因此不能把“范数不变”解释成对注意力语义完全无影响。可以在固定的二维通道对上旋转、其余通道保持恒等映射；分块矩阵仍正交，旋转部分提供相对位置，未旋转部分保留内容内积。但哪些频率参与、旋转比例与配对规则应在训练和推理间一致，不能临时删除低频而断言无损。低频相位在短距离变化较小，在长距离仍可能重要，需用位置敏感任务和不同上下文长度消融验证。",
+        "body": "RoPE 把位置变成查询 Q 和键 K 的旋转角度，使它们的点积能表达相对距离；它通常不把位置向量加到输入，也不旋转 V。做法是在偶数维的旋转子空间里把通道两两配对，每对用不同频率 θ，位置 m 对应角度 mθ。二维向量 [a,b] 旋转后变成 [a cosφ−b sinφ, a sinφ+b cosφ]，长度保持不变。\n\n关键是查询在 m 处旋转、键在 n 处旋转，点积中的两次旋转可以合成 n−m 的相对旋转。公式中的 R_m 是所有通道对旋转组成的块矩阵，d_r 是旋转维数，base 决定频率范围。例如两个词整体往后移动相同位置，相对旋转不变；但内容向量本身仍受上下文影响，不能据此声称整个模型完全平移不变，或距离越大每个点积都单调衰减。\n\n使用 KV cache 时，要先按当前逻辑位置旋转新 Q/K，再把已经旋转的 K 写入缓存，历史 K 不应再旋转一次。新 token 的位置不能每步重置为零；缓存槽位与 RoPE 相位位置也不是同一个概念。左 padding、分块输入和滑动窗口都要核对真实逻辑位置，删掉旧缓存不自动让时间归零。\n\n部分模型只旋转一部分维度，剩余部分做恒等变换，整体仍保持范数，但旋转比例、频率和配对规则必须与训练一致。相邻配对和前后半配对在数学上可通过置换关联，已有权重却不能直接换约定。改变 base、位置缩放或旋转子空间可能使旧缓存不一致，需要重算或明确支持的实现；可靠长上下文还需要训练与任务评价。",
         "formula": "\\begin{aligned}\\theta_j&=\\mathrm{base}^{-2j/d_r}\\\\R(\\phi)&=\\begin{pmatrix}\\cos\\phi&-\\sin\\phi\\\\\\sin\\phi&\\cos\\phi\\end{pmatrix}\\\\q'_m&=R_mq_m,\\quad k'_n=R_nk_n\\\\(q'_m)^\\top k'_n&=q_m^\\top R_{n-m}k_n\\end{aligned}",
         "pitfalls": [
-          "直接把位置向量加到 embedding 来描述 RoPE，或对缓存 K 重复应用旋转。",
-          "把 RoPE 的相对点积性质当成任意距离单调衰减、任意长度可靠外推的保证。"
+          "RoPE 旋转 Q/K，不是把位置向量加到 embedding；缓存 K 也不能重复旋转。",
+          "相对位置点积不保证所有距离单调衰减或任意长度可靠外推。"
         ],
         "followups": [
-          "用整段 prefill 与逐 token cache decode 比较 logits 时，哪些位置和数值条件必须一致？",
-          "RoPE 的 base、旋转维度、缩放方案改变后，现有 KV cache 能否复用？",
-          "只旋转部分维度为何仍保持范数，推理时改变旋转子空间有什么风险？"
+          "比较 prefill 和逐 token 解码 logits 时，权重、位置与数值条件要怎样保持一致？",
+          "改变 base、旋转维度或位置缩放后，历史缓存还能直接复用吗？",
+          "只旋转部分通道为什么仍保持范数，推理时临时改变这部分有什么风险？"
         ]
       },
       "reference_ids": [
@@ -1694,15 +1694,15 @@
         "PositionInterpolation"
       ],
       "answer": {
-        "body": "增大 `max_position_embeddings` 只放宽输入长度配置，不能保证模型处理训练范围外的位置和长距离依赖。若从 $L$ 扩到 $L'$，线性位置插值用 $m'=mL/L'$ 将位置压回训练区间，通常需继续训练。\n\n压缩位置也会降低局部位置分辨率，倍率越大越要检查短距离性能。位置方案调整与长样本训练解决的问题不同；评测应覆盖多种长度和证据位置，并同时报告短文本表现、长检索正确率、KV 占用与 TTFT。",
+        "body": "只把 max_position_embeddings 改大，通常只是让程序允许更长输入，并没有教会模型理解新的位置范围和更长的依赖。可学习位置表甚至可能没有对应行；RoPE 虽然能计算新位置，超出训练范围的相位和注意力模式也可能失效。能运行到某长度，与在该长度可靠找证据、做推理，是不同要求。\n\n位置插值的一种方法是把新位置 m 映射成 mL/L′，L 是训练长度、L′ 是目标长度。例如从 4096 扩到 8192，原来的位置 6000 会用相当于 3000 的位置相位，把范围压回模型见过的区间。这通常要配合长样本继续训练；压缩也把邻近位置拉得更近，降低局部位置分辨率，倍率越大越需要检查短文本和局部关系是否退化。其他频率缩放方法也需要按具体方案验证。\n\n我会同时检查位置实现、训练数据、注意力内核和缓存容量，再用多种长度、多种证据位置评测。不能只测一个“针藏在长文里”的例子，还应测多证据整合、跨段推理及开头、中间、结尾的差异，并报告短文本效果、首 token 延迟和 KV 显存。位置设计改善长度适配，长文本训练改善使用长信息的能力，两者不能相互替代。",
         "formula": "m'=m\\frac{L}{L'}",
         "pitfalls": [
-          "把 RoPE 的数学可计算性当作可靠外推保证。",
-          "只测一个 needle case 就声称长上下文全面有效。"
+          "RoPE 能计算训练外位置，不证明模型能正确使用对应长文本。",
+          "单个长文检索样例不足以证明检索与推理能力全面有效。"
         ],
         "followups": [
-          "位置插值会怎样影响近邻 token？",
-          "如何排除模型只依赖文档开头或结尾？"
+          "位置插值压缩位置后，会怎样影响相邻 token 的区分？",
+          "怎样测试模型是否只偏向文档开头或结尾的信息？"
         ]
       },
       "reference_ids": [
@@ -1729,15 +1729,15 @@
         "参数量"
       ],
       "answer": {
-        "body": "FFN 对每个 token 独立做通道变换：原始 Transformer 用升维线性层、ReLU 和降维线性层。按行向量约定，$\\mathrm{FFN}(x)=\\mathrm{ReLU}(xW_1+b_1)W_2+b_2$，`x:[D]`、`W_1:[D,m]`、`W_2:[m,D]`；对 `X:[B,T,D]` 沿最后一轴执行，输出形状不变。原始 base 模型取 $D=512,m=2048$。\n\nPosition-wise 表示同一层各 token 使用相同参数，不直接混合不同 token；不同层通常各有参数。跨 token 信息由 attention 等模块汇聚，FFN 增加各位置的非线性组合与容量。若去掉非线性，两层仿射可合并为 $x(W_1W_2)+(b_1W_2+b_2)$，单纯增加中间宽度没有同样的表达收益。\n\n现代 SwiGLU 常写为 $(\\mathrm{SiLU}(xW_g)\\odot xW_u)W_d$，包含 gate/up/down 三个矩阵，bias 由模型决定；它增加逐元素门控，并非只替换激活名称。忽略 bias，原 FFN 参数约为 $2Dm$，SwiGLU 约为 $3Dm$；若匹配原来 $m=4D$ 的 $8D^2$ 预算，SwiGLU 中间宽度约取 $8D/3$，再按硬件对齐。宽度、激活与融合内核都影响容量、激活显存和吞吐。",
+        "body": "FFN 为每个 token 做非线性的特征组合，注意力负责从其他位置取信息，FFN 则进一步加工已经取到的表示。原始结构先从 D 维升到 m 维，经过 ReLU，再降回 D 维；同一层所有位置用相同参数，不同层通常各有自己的参数。输入 B×T×D，输出仍是 B×T×D，不直接混合 T 轴。\n\n例如注意力把人物、动作和时间的信息汇到某个 token，FFN 可以组合这些特征，形成更有用的表达。公式中的 W₁ 是 D×m、W₂ 是 m×D，bias 配合各自输出维度。非线性很重要：如果去掉激活，两层仿射就能合成一层，单纯升维再降维没有同样的表达能力；无 bias 时等效矩阵 W₁W₂ 的秩也受中间维度限制。\n\nSwiGLU 用两个升维分支，其中一个经过 SiLU 作为门，再逐元素乘另一个分支，最后降维。W_g、W_u、W_d 因此是三张矩阵，而原 FFN 只有两张；忽略 bias，参数分别约为 3Dm 和 2Dm。若原 FFN 取 m=4D、预算为 8D²，要匹配参数量，SwiGLU 的 m 约取 8D/3，再做硬件对齐。门控、宽度和融合实现一起影响容量、显存与速度，不能只比较激活函数名字。",
         "formula": "\\begin{aligned}\\mathrm{FFN}(x)&=\\mathrm{ReLU}(xW_1+b_1)W_2+b_2\\\\\\mathrm{SwiGLU}(x)&=(\\mathrm{SiLU}(xW_g)\\odot xW_u)W_d\\\\N_{\\rm FFN}&\\approx2Dm,\\quad N_{\\rm SwiGLU}\\approx3Dm\\end{aligned}",
         "pitfalls": [
-          "漏写第二次线性变换或 bias，并将原论文激活写成所有现代 LLM 都使用的配置。",
-          "说 position-wise 参数不共享，或把 FFN 的同位置变换误认为能直接读取别的位置。"
+          "原始 FFN 有两次线性变换和非线性；现代模型不必采用相同激活或 bias。",
+          "同一层各位置共享 FFN 参数，但它不能直接从其他位置取信息。"
         ],
         "followups": [
-          "若无 bias 和非线性，两层 FFN 的等效矩阵秩受什么限制？",
-          "为什么同参数预算下 SwiGLU 的中间宽度常小于 $4D$？"
+          "无 bias、无非线性时，两层 FFN 的等效矩阵秩受什么限制？",
+          "匹配参数量时，为什么 SwiGLU 中间宽度通常小于 4D？"
         ]
       },
       "reference_ids": [
@@ -1769,15 +1769,15 @@
         "Attention"
       ],
       "answer": {
-        "body": "设序列长度为 $T$、隐藏维度为 $d$，一层 Transformer 的主要计算是 $O(Td^2+T^2d)$，同时包含线性投影/FFN 与注意力的两两交互。QKV/O 投影约需 $4Td^2$ 次乘加，FFN 按中间维度另算；$QK^\\top$ 与 $AV$ 合计约 $2T^2d$ 次乘加。按 FLOPs 统计时，一次乘加通常算 2 FLOPs。\n\n朴素多头注意力分数约保存 $BhT^2$ 个元素，实际峰值还包括其他激活和工作区。FlashAttention 可避免完整中间矩阵的显存存储，但精确稠密注意力的算术量仍为二次。短序列、大隐藏维度时线性层可能占主导，长序列时二次项更明显。",
+        "body": "估算一层 Transformer 的成本，要同时计算线性层和位置之间的注意力交互，通常写成 O(Td²+T²d)，T 是序列长度、d 是隐藏宽度。只报 O(T²) 会遗漏宽度和 FFN，在短序列、大模型里，线性层可能反而占主要成本。\n\n标准 Q/K/V/O 四次投影约有 4Td² 次乘加，FFN 要按中间宽度再算；QKᵀ 与权重乘 V 合计约有 2T²d 次乘加。若一次乘加按 2 FLOPs 统计，就还要乘 2，不能把乘加次数直接当 FLOPs。比如长度翻倍，投影成本约翻倍，注意力交互约变成四倍；隐藏宽度翻倍则会明显放大线性矩阵成本。\n\n朴素多头实现保存约 BhT² 个分数或权重，B 是 batch、h 是头数，峰值还包含其他激活和工作区。FlashAttention 分块计算、减少显存读写并避免完整保存这个矩阵，但精确稠密注意力的算术量仍然二次增长。解码有 KV cache 后，新查询只对历史 key 做匹配，单步注意力随历史长度线性增长，投影与 FFN 另算。真实速度还受带宽、并行度、内核启动与张量形状影响，FLOPs 更低并不保证更快。",
         "formula": "\\begin{aligned}C_{\\rm layer}&=O(Td^2+T^2d)\\\\M_{\\rm attention}&=O(BhT^2)\\end{aligned}",
         "pitfalls": [
-          "只报 $O(T^2)$ 而不说明 d、投影与 FFN。",
-          "把 FlashAttention 说成改变了精确注意力的二次算术复杂度。"
+          "只说 O(T²) 会遗漏宽度、线性投影和 FFN 成本。",
+          "FlashAttention 减少存储与读写，不改变精确稠密交互的二次算术量。"
         ],
         "followups": [
-          "使用 KV cache 后单步注意力复杂度如何变化？",
-          "为什么 FLOPs 更少的实现可能实际更慢？"
+          "KV cache 下只有一个新查询时，注意力计算如何随历史长度变化？",
+          "算术操作更少为什么可能在实际设备上更慢？"
         ]
       },
       "reference_ids": [
@@ -1813,15 +1813,15 @@
         "稳定训练"
       ],
       "answer": {
-        "body": "残差连接 $y=x+F(x)$ 让子层学习输入表示的修正，并为信号和梯度提供直接路径。两支形状须一致；若改用投影支路 $y=P(x)+F(x)$，直接支路的 Jacobian 为 $J_P$。残差相加不会像 concat 一样扩大特征维，$F(x)\\approx0$ 时可接近恒等传递。\n\n简单块的 Jacobian 为 $I+J_F$，反传为 $\\partial L/\\partial x=(I+J_F)^\\top\\partial L/\\partial y$。多层仍需连乘各块导数，若 $J_F\\approx-I$ 还会相互抵消，所以恒等项并不保证梯度永远稳定。\n\n原始 Transformer 的 PostNorm 是 $\\mathrm{LN}(x+\\mathrm{Dropout}(F(x)))$，完整导数还含 LN 和 dropout；attention、FFN 各有残差与归一化。常见 PreNorm 为 $x+\\mathrm{Dropout}(F(\\mathrm{LN}(x)))$，直接支路不经过该块 LN，通常有助于深层优化。随深度增加仍应检查残差尺度、激活方差、溢出和梯度范数，并结合初始化、学习率与最终 norm 判断稳定性。\n\n原始 encoder 每层有 2 条围绕子层的残差，分别对应 self-attention 与 FFN；原始 encoder-decoder 中的 decoder 每层有 3 条，分别对应 masked self-attention、cross-attention 与 FFN。GPT 类 decoder-only 通常不含 cross-attention，所以常见块为 2 条。说“Transformer 有几个残差”要先指定每层还是全网以及具体架构，不能把 decoder-only 和原始 decoder 混算。",
+        "body": "残差连接把输入直接加到子层输出，让子层学习“需要怎样修正旧表示”，也为梯度保留直接传播通道。基本形式是 y=x+F(x)，两边形状必须一致；若 F 暂时接近零，整块就接近恒等映射。它是相加，因此不会像拼接那样扩大特征维度。\n\n这个简单块的导数包含 I+J_F，I 来自直接支路，J_F 来自修正分支。相比只经过 F，梯度多了一条路，深层优化通常更容易。但很多层的导数仍会相乘，若修正导数恰好抵消恒等项，也可能衰减，所以不能说残差保证梯度恒为 1。改变维度时直接支路要用投影 P，它的导数是 J_P，也不再是严格恒等。\n\n原始 Transformer 把 dropout 后的子层输出与输入相加，再做 LayerNorm；完整导数还要包含 Norm。Pre-Norm 则先归一化修正分支的输入，直接支路不经过该块 Norm。原编码器每层围绕 self-attention、FFN 各有一条残差；原编码器—解码器中的解码层还多一条 cross-attention 残差，GPT 类解码器通常是两条。实际稳定性仍要结合深度、初始化、学习率、残差尺度和 final norm 检查，而不能只数残差条数。",
         "formula": "\\begin{aligned}y&=x+F(x),\\quad J_y=I+J_F\\\\y_{\\rm post}&=\\mathrm{LN}(x+\\mathrm{Dropout}(F(x)))\\\\y_{\\rm pre}&=x+\\mathrm{Dropout}(F(\\mathrm{LN}(x)))\\end{aligned}",
         "pitfalls": [
-          "声称残差能让任何深度和初始化的网络梯度恒为 1。",
-          "混淆 PostNorm/PreNorm，或把投影 shortcut 当成严格恒等支路。"
+          "残差提供直接路径，不保证所有深度与初始化下梯度恒定。",
+          "投影支路不是严格恒等，Pre-Norm 与 Post-Norm 的完整导数也不同。"
         ],
         "followups": [
-          "PostNorm 为什么不能直接套用 $J=I+J_F$ 作为完整块导数？",
-          "将残差支路乘以 $\\alpha$ 后，Jacobian 与激活尺度如何变化？"
+          "Post-Norm 的完整块导数为什么还要乘归一化的导数？",
+          "给残差分支乘系数 α，会怎样改变导数与激活尺度？"
         ]
       },
       "reference_ids": [
@@ -1860,15 +1860,15 @@
         "Distillation"
       ],
       "answer": {
-        "body": "离散分布满足 $H(p,q)=H(p)+D_{\\rm KL}(p\\|q)$，其中 $H(p)=-\\sum_i p_i\\log p_i$、$H(p,q)=-\\sum_i p_i\\log q_i$、$D_{\\rm KL}(p\\|q)=\\sum_i p_i\\log(p_i/q_i)$。展开对数即可证明。两者须定义在同一支持空间并归一化；$0\\log0$ 按极限为 0，若 $p_i>0,q_i=0$，交叉熵与 KL 为 $+\\infty$。\n\nKL 非负，$p=q$ 时取零，通常不对称，也不是距离度量。固定目标 $p$ 时，最小化 CE 与最小化该方向的 KL 等价；若目标也含待训练参数且未 detach，$H(p)$ 与 $p$ 的梯度不能忽略。蒸馏还须明确 teacher/student 的方向以及是否停止 teacher 梯度。\n\nOne-hot 监督样本的目标熵为零，单样本 CE 与 KL 都为 $-\\log q(y)$，但真实数据的条件熵不一定为零。软标签与标签平滑的目标熵通常大于零；固定归一化 $p$、$q=\\mathrm{softmax}(z)$ 时，对 logits 的梯度为 $q-p$，对概率 $q_i$ 本身为 $-p_i/q_i$。\n\n`CrossEntropyLoss` 通常接收原始 logits，内部做稳定的 log-softmax/NLL；`KLDivLoss` 通常接收 `input=log q,target=p`，接口顺序与数学记号不同，reduction 也须按分布单位解释。自然对数下，PPL 是有效 token 平均 NLL 的指数；不同长度 batch 要按有效 token 加权，比较时统一 tokenizer、数据与窗口。低 PPL 不保证指令遵循、事实性或偏好更好。",
+        "body": "交叉熵衡量模型给真实目标分布分配概率的好坏，KL 散度衡量两个分布的失配，困惑度则把语言模型的平均交叉熵转成更直观的数值。设 p 是目标、q 是预测，交叉熵 H(p,q) 可以拆成目标本身的熵 H(p) 加 KL(p∥q)。例如目标本来就有多种合理答案，即使模型完美匹配，交叉熵也不一定为零。\n\n当 p 固定时，目标熵不随模型变化，因此最小化交叉熵与最小化这个方向的 KL 有相同梯度；如果 p 也参与训练，或教师输出没有停止梯度，就不能忽略它的变化。KL 非负但通常不对称，也不是距离度量。单样本 one-hot 目标的熵为零，两者都等于正确类别概率的负对数；这不意味着真实数据的条件熵为零。对归一化软标签，logits 梯度仍为 q−p，必须区分 logits 的梯度与概率自身的梯度。\n\n公式中的有效 token 数用于计算平均负对数似然，自然对数下取指数得到 PPL。例如平均损失为 ln 4，PPL 就是 4，可粗略理解为平均有四个等可能选择的困难度。不同 batch 长度要按有效 token 加权，比较模型还必须统一 tokenizer、数据与窗口。CrossEntropyLoss 通常输入 logits；KLDivLoss 通常输入 log q、目标 p，顺序与数学记号不同。若目标在某位置为正而预测概率为零，交叉熵和 KL 都会无穷；实现应用稳定的对数计算。低 PPL 也不能替代事实性和指令遵循评价。",
         "formula": "\\begin{aligned}H(p,q)&=H(p)+D_{\\rm KL}(p\\|q)\\\\\\nabla_\\theta H(p,q_\\theta)&=\\nabla_\\theta D_{\\rm KL}(p\\|q_\\theta)\\quad(p\\ \\text{fixed})\\\\\\mathrm{PPL}&=\\exp\\!\\left(-\\frac{1}{N_{\\rm valid}}\\sum_{t\\in\\mathcal T_{\\rm valid}}\\log p_\\theta(x_t\\mid x_{<t})\\right)\\end{aligned}",
         "pitfalls": [
-          "无条件声称 CE 与 KL 完全相同，遗漏目标熵及 fixed-p 前提。",
-          "把 `KLDivLoss` 的输入顺序/mean 归一化当成数学 KL 的默认定义。"
+          "交叉熵与 KL 相差目标熵，梯度等价需要目标分布固定。",
+          "KLDivLoss 的接口顺序与归约不能机械当作数学 KL 的默认定义。"
         ],
         "followups": [
-          "如何从 softmax 推导对 logits 的梯度 $q-p$？",
-          "可训练的软目标或双向 KL 会怎样改变优化目标？"
+          "怎样从 softmax 导数推导交叉熵的 logits 梯度 q−p？",
+          "目标分布也可训练或使用双向 KL 时，优化目标如何改变？"
         ]
       },
       "reference_ids": [
@@ -1909,15 +1909,15 @@
         "参数量"
       ],
       "answer": {
-        "body": "语言模型将 `H:[B,T,D]` 经 `W_vocab:[D,V]` 与 `b:[V]` 映射为 `logits:[B,T,V]`，再沿词表轴做 softmax，得到下一 token 概率。Logits 本身未归一化，交叉熵实现通常直接接收它。\n\n输入 embedding 表 $E\\in\\mathbb R^{V\\times D}$ 与输出 head 维度相容时，可令 $W_{\\rm vocab}=E^\\top$。这样省去一份约 $VD$ 的权重，输入表示与输出分类器接收共同梯度；输出 bias 仍可保留，词表分类计算量也不会随之消失。若两边词表或 hidden 维度不同，需额外映射。原始 Transformer 共享两个 embedding 层与 pre-softmax 线性变换，并在 embedding 使用时乘 $\\sqrt D$。\n\n权重 tying 不意味着标准 Transformer 的各层、各头自动共享参数：相同结构通常分别学习，fused QKV 也只是计算安排。ALBERT 的跨层共享是专门的设计，可共享 attention、FFN 或全部，默认全部共享。验证应检查参数别名、`state_dict`、词表与输出维度；共享也不等于冻结，不能保证所有任务都改善。",
+        "body": "LM head 把每个位置的隐藏表示映射成词表中所有 token 的分数，再用 softmax 得到下一 token 概率。若 H 是 B×T×D，输出矩阵为 D×V，logits 就是 B×T×V；V 是词表大小，softmax 必须沿 V 轴计算。logits 本身没有归一化，训练交叉熵通常直接接收它。\n\n输入 embedding 表 E 是 V×D，维度与词表相容时，可以令输出矩阵等于 Eᵀ，这叫权重共享或 tying。原本两张矩阵变成一张，约省 VD 个参数，输入查表与输出分类的梯度共同更新它；bias 仍可单独存在，词表打分计算也不会消失。例如一个词既作为上下文输入，又作为预测目标，会从两个角色获得训练信号。两边词表或维度不同时则需要额外映射。\n\n共享可能节省参数并改善统计利用，也可能限制两种角色的独立表达，要看任务。它不等于冻结，也不等于所有层和头都共享；ALBERT 的跨层共享是另外的专门设计，虽然省参数，多层计算仍要执行。实现可检查参数是否真正指向同一对象、state_dict 与词表尺寸。padding 行即使输入端不更新，也可能从输出分类端得到梯度，因此不能只凭输入 embedding 的 padding 设置断言这一行永远不变。",
         "formula": "\\begin{aligned}Z&=HW_{\\rm vocab}+b\\\\p_v&=\\frac{\\exp z_v}{\\sum_u\\exp z_u}\\\\W_{\\rm vocab}&=E^\\top,\\quad \\Delta N\\approx VD\\end{aligned}",
         "pitfalls": [
-          "把同一层内跨位置使用 FFN、embedding/head tying 与跨层或跨头共享混为一谈。",
-          "对 logits 先 softmax 后再交给期望 logits 的 `CrossEntropyLoss`，或沿 hidden 轴做词表归一化。"
+          "跨位置参数共享、输入输出 tying 和跨层共享是不同设计。",
+          "CrossEntropyLoss 通常接收 logits；重复 softmax 或沿 hidden 轴归一都不正确。"
         ],
         "followups": [
-          "共享 embedding/head 时，padding token 对应的输出行是否一定永远没有梯度？",
-          "ALBERT 共享参数为何省参数却仍要执行多层计算？"
+          "输入 embedding 的 padding 行不更新时，输出共享分类器还可能给它梯度吗？",
+          "ALBERT 共享参数省存储，为什么仍需要多层计算？"
         ]
       },
       "reference_ids": [
@@ -1954,14 +1954,14 @@
         "负载均衡"
       ],
       "answer": {
-        "body": "MoE 通常把部分 FFN 替换为专家集合，由 router 为每个 token 选择 top-k 专家并加权输出，以较少的激活计算提供较大的总参数容量。Dense 则通常每个 token 使用全部层参数。\n\n总参数、激活参数与真实成本要分别统计：激活参数包含共享模块和被选专家，不能简单用总参数乘 $k/E$。路由不均衡会形成热点、容量溢出或 token 丢弃，常需辅助损失等机制。专家并行还有 all-to-all 通信，小 batch、跨节点或低利用率场景可能抵消算术收益，甚至增加时延。",
+        "body": "MoE 用很多专家扩展模型总容量，但每个 token 只调用少数专家，因此总参数量和每步实际计算要分开比较。常见做法是把 FFN 换成专家集合，由 router，也就是路由网络，给专家打分，选 top-k 后把它们的输出加权汇总；注意力与其他共享部分通常仍是稠密计算。\n\n如果共享部分参数为 P_shared，每个专家为 P_exp，共 E 个专家，总参数约为 P_shared+E P_exp，单 token 激活约为 P_shared+k P_exp，路由与其他开销另外计算。比如 8 个专家每次选 2 个，不代表整个模型计算恰好是同总参数稠密模型的四分之一，因为注意力、共享层、通信与数据搬运都没有按同样比例减少。总参数仍要存储，训练的梯度和优化器状态也不会凭空消失。\n\n收益还取决于路由能否均衡使用专家。容量限制可能让过载专家丢弃或重分配 token，辅助损失与路由正则帮助稳定分配；分布式专家通常需要 all-to-all 通信，专家 batch 太小又影响矩阵效率。Switch 常用 top-1，Mixtral 使用 top-2 等配方，各模型还有共享专家、归一化权重和容量策略差异。比较 Dense 与 MoE，应统一训练数据、预算和硬件，分别报告总参数、激活参数、FLOPs、显存及延迟，不能把激活参数直接当作实际速度。",
         "pitfalls": [
-          "MoE 总参数大就必然推理更慢，或激活参数少就必然更快。",
-          "忽略共享模块、路由与通信成本。"
+          "总参数更大不必然更慢，激活参数更少也不必然更快。",
+          "共享模块、路由、数据分发和通信成本都要纳入比较。"
         ],
         "followups": [
-          "负载均衡会不会损害专家专门化？",
-          "如何区分模型 FLOPs 与实际 GPU 成本？"
+          "均衡专家负载与让专家形成有用特化，为什么可能发生冲突？",
+          "理论 FLOPs 与真实 GPU 时间和成本，应怎样分别报告？"
         ]
       },
       "reference_ids": [
@@ -2004,15 +2004,15 @@
         "多模态"
       ],
       "answer": {
-        "body": "Self-attention 的 $Q/K/V$ 来自同一序列；cross-attention 的 $Q$ 来自需要更新的目标表示，$K/V$ 来自另一组条件或 memory。设 $X\\in\\mathbb R^{L_q\\times d_x}$、$C\\in\\mathbb R^{L_k\\times d_c}$，取 $Q=XW_Q$、$K=CW_K$、$V=CW_V$。两边原始维度与长度可不同，只需投影后的 Q/K 维度都为 $d_k$；单头输出为 $L_q\\times d_v$，多头经 $W_O$ 回到目标 hidden 维。\n\nEncoder-Decoder 用 decoder 状态查询完整已知源 memory，同时 decoder 自身保持因果 self-attention，因此 cross-attention 无需三角 mask 也能保持自回归性。视觉/音频条件生成可让语言状态查询模态特征，也可让学习的 latent query 汇聚图像；查询方向决定更新哪一组表示。K/V 对应同一 memory 集合，来源不同本身不保证语义对齐。\n\n注意力乘法约需 $O(L_qL_kd)$，投影另计，分数矩阵是 $L_q\\times L_k$。Query 数决定输出 token 数，K/V 数决定条件粒度；压缩条件能省成本，也可能丢细节。固定 memory 的各层 K/V 投影可缓存，变化的 Q 仍需计算。应屏蔽条件 padding 与不可用内容，流式任务不能读取尚未到达的信息；权重大小也不保证事实正确或因果解释。\n\n加性attention可写s(q,k)=vᵀtanh(W_qq+W_kk+b)，点积attention则用qᵀk或带双线性投影的qᵀWk。前者在匹配网络里引入非线性，后者更容易批量组织成高效GEMM；两者都需归一化并聚合value，没有脱离维度、kernel和任务的恒定性能排名。传统RNN seq2seq的attention也是cross-attention，用decoder状态查询encoder各时刻状态，避免只依赖单一固定向量。",
+        "body": "self-attention 在同一组表示内部交换信息，cross-attention 让一组表示查询另一组条件信息。前者的 Q/K/V 来自同一序列；后者的 Q 来自需要更新的目标序列 X，K/V 来自条件或记忆 C。Q 决定“谁在提问”，K 决定“怎样匹配”，V 提供取回的内容，因此查询方向决定更新哪一组表示。\n\n若 X 有 L_q 个位置、C 有 L_k 个位置，两边原始宽度可以不同，投影后的 Q/K 宽度只需同为 d_k，单头输出就是 L_q×d_v。比如 20 个语言 token 查询 100 个图像特征，分数矩阵是 20×100，输出仍有 20 个语言位置。编码器—解码器生成中，目标 self-attention 保持因果，cross-attention 可以读取完整已知源文本，因此不必再套目标的三角掩码；源 padding 和流式尚未到达的信息仍要屏蔽。\n\n匹配与汇总约为 O(L_qL_kd)，投影另算。固定条件的各层 K/V 可以缓存，变化的查询仍要计算；压缩条件能降低成本，也会失去细节。加性注意力通过小网络计算匹配，点积注意力容易组织成高效矩阵乘法，二者都归一化后汇总 V。来源不同本身并不保证跨模态对齐，权重更大也不能证明内容正确；这些仍取决于表示、训练和后续计算。",
         "formula": "\\mathrm{CrossAttn}(X,C)=\\mathrm{softmax}\\!\\left(\\frac{(XW_Q)(CW_K)^\\top}{\\sqrt{d_k}}+M\\right)CW_V",
         "pitfalls": [
-          "要求 cross-attention 两边输入长度或原始 embedding 维度完全相同。",
-          "认为所有 cross-attention 都必须采用 decoder self-attention 的三角 mask。"
+          "两组输入可以不同长度和原始宽度，只需投影后查询与键维度匹配。",
+          "交叉注意力是否屏蔽取决于条件可用性，不必套用目标三角掩码。"
         ],
         "followups": [
-          "固定 encoder memory 的 K/V cache 与 decoder 历史 KV cache 有何区别？",
-          "可学习 query 压缩视觉 token 时，信息瓶颈主要出现在哪里？"
+          "固定源条件 K/V 与不断增长的目标历史缓存，复用方式有何不同？",
+          "用少量可学习查询压缩图像特征，信息瓶颈出现在哪里？"
         ]
       },
       "reference_ids": [
@@ -2057,15 +2057,15 @@
         "信息论"
       ],
       "answer": {
-        "body": "离散熵是自信息的期望：事件自信息为 $I(x)=-\\log p(x)$，熵为 $H(X)=\\mathbb E[I(X)]$。用 $\\log_2$ 时单位是 bit，自然对数时是 nat，零概率项按 $0\\log0=0$ 的极限处理。固定 $V$ 类时，$0\\le H\\le\\log V$，确定分布取零，均匀分布达到上界；二元熵 $-a\\log a-(1-a)\\log(1-a)$ 在 $a=1/2$ 最大。熵由完整分布决定，不能只凭最大 token 概率比较。\n\n条件熵为 $H(X\\mid Y)=\\sum_y p(y)H(p(X\\mid y))$，满足链式法则 $H(X,Y)=H(Y)+H(X\\mid Y)$。条件信息在平均意义上降低不确定性，但某个特定上下文的条件分布不一定比无条件分布熵更低；序列熵可按此链式展开。\n\n真实数据熵 $H(p)$、模型输出熵 $H(q_\\theta)$ 与训练交叉熵 $H(p,q_\\theta)$ 要区分。模型可能对错误答案非常自信，交叉熵还含分布失配的 KL，所以降低输出熵不保证拟合正确。日志应明确过滤前后、mask、token 分布与上下文平均范围。连续变量的微分熵可以为负并随尺度变化，不能照搬离散熵的界。",
+        "body": "熵衡量的是一个概率分布有多难预测，分布越分散，平均不确定性越高。某事件的信息量是 −log p：确定会发生的事没有惊讶，罕见事件发生时信息量大。把所有事件的信息量按概率求平均，就是离散熵。用以 2 为底的对数，单位是 bit；用自然对数，单位是 nat。\n\n例如公平硬币的两面各有一半概率，熵为 1 bit；若某一面概率为 1，熵为 0。固定有 V 个类别时，离散熵在 0 到 log V 之间，均匀分布达到最大值，零概率项按极限视为零。不能只看最大类别概率就判断整个分布的熵，还要看剩余概率如何分配。条件熵是在知道 Y 后，对各种 Y 情况的剩余不确定性取平均，公式里的链式法则把联合不确定性拆成先知道 Y、再知道 X 的两部分。平均上条件信息不会增加不确定性，但某个具体条件下的熵可能更大。\n\n大模型日志里的输出熵描述模型自身有多犹豫，训练交叉熵描述它对真实目标预测得怎样，两者不能混用。模型可以自信地答错，因此低输出熵并不等于准确；温度和候选过滤也会改变熵，比较时要说明计算前后的分布与平均范围。连续变量的微分熵还会随单位和尺度变化，甚至可以为负，不能直接套用离散熵的上下界。",
         "formula": "\\begin{aligned}H(p)&=-\\sum_i p_i\\log p_i\\\\H(X\\mid Y)&=\\sum_y p(y)H(p(X\\mid Y=y))\\\\H(X,Y)&=H(Y)+H(X\\mid Y)\\end{aligned}",
         "pitfalls": [
-          "低熵就是准确，高熵就是幻觉，或把数据熵与模型预测熵混同。",
-          "把平均条件熵下降说成所有特定条件都降低不确定性。"
+          "模型低熵只表示自信，不能推出准确；真实数据熵也不同于预测熵。",
+          "条件熵下降是平均结论，不能保证每个具体条件都降低不确定性。"
         ],
         "followups": [
-          "高置信度错误输出为何可以有低熵？",
-          "为什么连续均匀分布的微分熵会随区间长度变成负值？"
+          "一个自信但错误的预测，为什么可以有很低的输出熵？",
+          "连续均匀分布区间缩小时，为什么微分熵可能变成负值？"
         ]
       },
       "reference_ids": [
@@ -2092,15 +2092,15 @@
         "线性代数"
       ],
       "answer": {
-        "body": "矩阵的秩是行空间或列空间的维数，可由消元主元数或非零奇异值数求得。对 $A\\in\\mathbb R^{m\\times n}$，有 $\\mathrm{rank}(A)+\\dim\\ker A=n$。LoRA 的低秩分解满足 $\\mathrm{rank}(BA)\\le\\min(\\mathrm{rank}A,\\mathrm{rank}B)\\le r$，不要求底座 $W_0$ 低秩。\n\n方阵特征值可以为复数，满足 $Av=\\lambda v,v\\ne0$，手算可先解 $\\det(\\lambda I-A)=0$，再解特征向量。例 $A=\\begin{pmatrix}2&1\\\\0&3\\end{pmatrix}$ 的特征值为 2、3，对应向量可取 $(1,0)^\\top$、$(1,1)^\\top$，秩为 2。一般矩形矩阵没有这种标准特征值定义；$A^\\top A$ 的谱用于求奇异值，不能称为矩形 $A$ 自身的特征值。\n\n大矩阵通常不显式展开特征多项式：数值库可经 Hessenberg 化和 QR 等过程求 Schur 分解，复 Schur 对角给特征值，实 Schur 的 $2\\times2$ 块需另解。对称/Hermitian 矩阵可选专用求解器。\n\n若 $A=P\\Lambda P^{-1}$ 可对角化，秩等于按重数计的非零特征值个数；一般方阵不能这样数。例如 $\\begin{pmatrix}0&1\\\\0&0\\end{pmatrix}$ 的特征值全零，秩却为 1，且不可对角化。任意方阵仍满足行列式非零、全部特征值非零与满秩的等价关系。\n\n将奇异值和 $A^\\top A$ 的特征值分别按降序排列，令 $p=\\min(m,n)$。SVD 写为 $A=U\\Sigma V^\\top$，非零奇异值的平方构成 $A^\\top A$ 的非零谱，其余位置补零；实对称矩阵的奇异值为 $|\\lambda_i|$。浮点数值秩按 $\\sigma_i>\\max(\\mathrm{atol},\\mathrm{rtol}\\,\\sigma_{\\max})$ 判断，阈值取决于 dtype、规模与噪声，近零不能等同于精确零。\n\n截断SVD保留最大r个奇异值，得到秩至多r的近似A_r=U_rΣ_rV_rᵀ；在谱范数或Frobenius范数下它是最佳秩r近似，误差分别由第r+1个奇异值或尾部奇异值平方和确定。它压缩已经存在的矩阵，而LoRA训练一个低秩增量，二者目标不同；对权重做低秩分解的最优矩阵误差也不保证下游任务损失最小。",
+        "body": "矩阵的秩表示它包含多少个独立方向，特征值表示方阵在某些方向上怎样缩放，奇异值则适用于任何矩形矩阵，描述它沿主要输入方向的伸缩强度。秩可以通过消元后主元数计算，也等于精确非零奇异值的个数；对 m×n 矩阵，秩加上零空间维数等于 n。\n\n特征值满足 Av=λv，v 不能是零向量。手算小方阵可以先解 det(λI−A)=0，再求对应方向；例如上三角矩阵 [[2,1],[0,3]] 的特征值是 2 和 3，秩为 2。一般矩形矩阵没有这种标准特征值定义。一般方阵也不能靠数非零特征值直接得到秩：[[0,1],[0,0]] 的特征值全为零，秩却是 1。只有可对角化等合适条件下，按重数数非零特征值才成立；满秩、行列式非零、所有特征值非零对任意方阵仍等价。\n\n奇异值分解写作 A=UΣVᵀ，U、V 给出正交方向，Σ 给出非负的奇异值。按降序对应时，AᵀA 的特征值是奇异值的平方，其余维度补零；对实对称方阵，奇异值等于特征值绝对值。大矩阵一般由数值库求解，特征值可用 QR、Schur 等过程，对称矩阵宜用专用算法；直接构造 AᵀA 会放大条件数问题。浮点秩需要结合最大奇异值与容差判断，接近零不等于精确零。\n\n截断 SVD 保留最大的 r 个奇异值，在谱范数和 Frobenius 范数下给出最佳秩 r 近似，谱范数误差是第 r+1 个奇异值，Frobenius 误差是尾部奇异值平方和的平方根。LoRA 则训练 BA 形式的低秩增量，其秩至多 r，不要求原权重低秩，也不保证学出的实际秩恰好是 r。矩阵近似误差最优，与下游任务损失最小仍是两个问题。",
         "formula": "\\begin{aligned}\\det(\\lambda I-A)&=0,\\quad(A-\\lambda I)v=0,\\quad v\\ne0\\\\\\mathrm{rank}(A)&=\\#\\{i:\\sigma_i(A)>0\\}\\\\\\lambda_i(A^\\top A)&=\\sigma_i(A)^2,\\quad1\\le i\\le p=\\min(m,n)\\\\\\lambda_i(A^\\top A)&=0,\\quad p<i\\le n\\\\A=P\\Lambda P^{-1}&\\implies\\mathrm{rank}(A)=\\#\\{i:\\lambda_i\\ne0\\}\\\\\\mathrm{rank}(BA)&\\le r\\end{aligned}",
         "pitfalls": [
-          "所有矩阵的秩都等于非零特征值个数，或给非方阵直接定义标准特征值。",
-          "把奇异值与一般特征值逐项等同，或把训练配置 r 当作已学更新的实际秩。"
+          "一般矩阵的秩不能靠非零特征值个数直接得到，非方阵也没有这种标准特征值定义。",
+          "奇异值不等于一般特征值；LoRA 的配置 r 只是增量秩的上界。"
         ],
         "followups": [
-          "为什么 $A^\\top A$ 理论上可求奇异值，但数值计算可能放大条件数问题？",
-          "低秩近似、数值秩与 LoRA 的秩上界分别回答什么问题？"
+          "直接构造 AᵀA 求奇异值，为什么可能放大条件数和数值误差？",
+          "低秩近似、数值秩与 LoRA 的秩上界，分别描述什么？"
         ]
       },
       "reference_ids": [
@@ -2131,15 +2131,15 @@
         "ALiBi"
       ],
       "answer": {
-        "body": "没有位置线索且可见性同步置换的全连接 self-attention 满足 $\\mathrm{Attn}(PX)=P\\mathrm{Attn}(X)$：输入置换会同步置换 Q/K/V 和 score 行列，模型难以充分辨别顺序。因果 mask 能提供部分顺序信息，但实际位置方案与训练分布仍要考虑。\n\n绝对位置可用可学习查表，也可用正弦/余弦编码并加到 embedding。原始公式对位置 $m$、频率对 $j$ 使用 $\\sin(m/10000^{2j/D})$ 和 $\\cos(m/10000^{2j/D})$，不同频率提供不同尺度，固定位置差可通过同频率的二维旋转联系。能计算新位置不等于可靠长度外推。\n\n相对位置可直接改变注意力分数，例如 T5 的可学习距离桶偏置；多个距离共享一个桶参数，范围仍会限制表达。RoPE 对 Q/K 做位置旋转，让点积依赖位置差，通常不旋转 V；ALiBi 在因果分数中加 $-m_h(i-j)$，原方案各头斜率固定。这些方案作用部位不同，不能未经训练转换就替换底座。\n\n比较时明确插入位置、训练长度、位置编号、旋转维度和频率、距离桶、mask 及缓存。扩展上下文还须评估长样本训练、插值/缩放、内核显存与长文任务表现，单纯提高配置上限不保证检索或推理效果。",
+        "body": "位置编码让 Transformer 区分“有哪些词”之外的“词按什么顺序出现”。如果全连接注意力没有任何位置线索，并同步置换可见关系，交换输入顺序只会同步交换输出，难以区分“人咬狗”和“狗咬人”。公式里的 P 是置换矩阵，这叫置换等变；因果掩码能提供部分顺序线索，但并不自动替代所有位置设计。\n\n绝对位置可以是每个位置一行的可学习向量，也可以是多频率正弦、余弦向量，再加到 token 表示。公式中的 m 是位置、j 是频率对、D 是维度；低频变化慢，高频变化快，可以覆盖不同距离尺度。同频率下固定位置偏移能通过二维旋转关联，所以绝对编码也能帮助表达相对关系。\n\n相对编码直接描述两个位置的距离，例如 T5 按距离桶给注意力分数加可学习偏置。RoPE 旋转 Q/K，让点积显式出现相对位置差；ALiBi 给因果注意力分数加 −m_h(i−j)，m_h 是每个头的固定斜率，越远通常受到越大负偏置。它们作用在不同环节，不能给已有 checkpoint 随便替换而期待等价。选择和扩展时，要一起核对训练长度、位置编号、频率或距离桶、mask 与缓存；能算出更远位置不保证长文质量，也不保证无限外推。",
         "formula": "\\begin{aligned}\\mathrm{Attn}(PX)&=P\\mathrm{Attn}(X)\\\\\\mathrm{PE}(m,2j)&=\\sin(m/10000^{2j/D})\\\\\\mathrm{PE}(m,2j+1)&=\\cos(m/10000^{2j/D})\\\\\\mathrm{bias}_h(i,j)&=-m_h(i-j),\\quad j\\le i\\end{aligned}",
         "pitfalls": [
-          "绝对编码一定不能表达相对关系，或相对编码天然无限长度无退化。",
-          "将 ALiBi 写成加到 token embedding 的可训练位置向量，或把 RoPE 写成同样的加法。"
+          "绝对表示也能帮助表达相对关系，相对方案也不保证无限长度无退化。",
+          "ALiBi 改变分数，RoPE 旋转 Q/K，二者都不是同一种输入位置加法。"
         ],
         "followups": [
-          "置换等变性与置换不变性分别是什么意思？",
-          "为什么无参数的正弦编码仍可能在超出训练长度时失败？"
+          "输入换顺序后输出同步换顺序，和输出完全不变有什么区别？",
+          "正弦编码没有长度表上限，为什么训练外长文本仍可能失败？"
         ]
       },
       "reference_ids": [
@@ -2170,11 +2170,11 @@
         "Loss"
       ],
       "answer": {
-        "body": "自回归语言模型按概率链式法则分解 $p_\\theta(x_{1:T})=\\prod_{t=1}^T p_\\theta(x_t\\mid x_{<t})$，第一项以 BOS 或空历史为条件；完整可变长序列通常还需 EOS 或约定结束机制。这不表示 token 相互独立，有 prompt 时可同样写条件响应的分解。训练最大化对数似然，以有效目标平均 next-token 交叉熵为损失。\n\nTeacher forcing 使用真实历史，已知整条序列后可一次前向计算各位置 logits，再用 causal mask 排除未来；位置间仍有依赖，只是矩阵运算可以并行。比如 `input_ids=[a,b,c]`，a/b 位置分别预测 b/c。常见模型在 loss 内部完成 shift，collator 不应重复移动标签；没有额外目标时最后 c 的 logits 不计损，有 EOS 时可监督结束。\n\nPadding、无效跨样本边界及配方不监督的 prompt 目标通过 loss mask 忽略，并按有效目标数归一化；prompt 标签不计损不等于 prompt 在 attention 中不可见。生成通常先 prefill 再逐步 decode，下一输入由已生成 token 决定，无法预先知道完整历史。KV cache 复用旧 K/V，投机解码可批量验证候选改善吞吐，但仍保持自回归条件关系；真实历史与生成历史的差异也可能造成错误累积。",
+        "body": "自回归预训练就是让模型看着前面的文字猜下一个 token，猜得越准，训练损失越小。Token 是分词器切出的文字单位，不一定对应一个汉字或单词。公式中的 $x_t$ 是第 $t$ 个 token，$x_{<t}$ 是它之前的内容，$\\theta$ 是模型参数；整段文本的概率等于每一步条件概率的乘积，这表达的是前后依赖，并不是每个 token 相互独立。\n\n训练时我们已经知道整段真实文本，所以可以把各位置一起送进模型，用因果注意力遮住未来，再一次算出所有位置的预测。这个做法叫 teacher forcing，也就是始终用真实历史作为条件。例如输入“我、爱、学习”，第一位置预测“爱”，第二位置预测“学习”。假如正确 token 的概率是 0.8，该位置损失就是 $-\\log 0.8$，约 0.223；概率只有 0.1，损失就约 2.303。把所有有效目标的损失相加，再除以有效目标数，就是常用的 next-token loss。\n\n实现里最容易错的是标签对齐和计损范围。模型若已在内部把预测与后一个标签对齐，数据处理就不能再移动一次。填充位置和不应跨越的样本边界要忽略；是否监督开头、结束符，也要按配方明确。有提示词时，可以不计算提示词本身的损失，但回答仍需要读到它。训练能并行计算，是因为真实历史已知；生成时历史由刚生成的 token 决定，通常仍要逐步解码，缓存历史键和值只是在减少重复计算。",
         "formula": "\\begin{aligned}p_\\theta(x_{1:T})&=\\prod_{t=1}^T p_\\theta(x_t\\mid x_{<t})\\\\\\mathcal L&=-\\frac1{N_{\\rm valid}}\\sum_{t\\in\\mathcal T_{\\rm valid}}\\log p_\\theta(x_t\\mid x_{<t})\\end{aligned}",
         "pitfalls": [
-          "在 collator 和模型内部各 shift 一次，或者忘记监督 EOS/有效 token 的具体约定。",
-          "把并行 teacher forcing 等同于生成所有 token 相互独立，或把 prompt loss mask 当成 attention mask。"
+          "输入与标签只对齐移动一次，重复 shift 会让预测目标错一位。",
+          "提示词不计损不等于不可读取，训练并行也不等于生成 token 相互独立。"
         ],
         "followups": [
           "有 prompt-response 边界时，哪个位置的 logit 监督首个 response token？",
@@ -2221,14 +2221,14 @@
         "Unigram"
       ],
       "answer": {
-        "body": "BPE 从较小单元出发，逐步合并高频相邻对，学习 merge 规则并按规则编码；子词表示能减少未知词问题。Unigram 为候选切分建立概率模型，逐步删减候选词表，用动态规划找高概率切分，也可采样切分。\n\nSentencePiece 是支持 BPE、Unigram 等模型的训练工具，不是与它们并列的单一算法。它可直接从原始文本训练，处理空白与归一化，减少对语言特定预分词的依赖。字符、byte 和 Unicode 归一化设定都会影响可逆性、序列长度及代码字符串表现。\n\nWordPiece 常按词表做最长前缀匹配，再对后续子词使用 continuation 标记；它通常保存最终词表，不按BPE的merge rank回放合并。训练目标/打分与实现并不唯一，Hugging Face课程的词对频率比是教学近似，不能当作Google未公开训练器的唯一公式。Byte-level BPE以字节为基本覆盖单元，可减轻未知字符问题，但normalization、预分词和special tokens仍影响精确可逆性。选择tokenizer要比较语言覆盖、序列长度、代码/空白保持与成本，不能先跑jieba替换原tokenizer而期待checkpoint仍兼容。",
+        "body": "BPE、WordPiece 和 Unigram 是把文本切成可复用子词单元的方法，SentencePiece 则是能训练 BPE、Unigram 等模型的工具。子词介于整词和单字符之间，让常见片段得到紧凑表示，也使未见过的词能由较小单元组成。例如一个少见英文词可以拆成常见词根与后缀，而不必整个变成未知词。\n\nBPE 从小单元开始，反复合并出现频繁的相邻对，编码时根据学到的合并优先级处理文本。WordPiece 编码常根据最终词表做最长前缀匹配，后续片段可带 continuation 标记；它不等于按 BPE 的合并顺序重放。WordPiece 的训练实现并不完全统一，教学中用的频率比打分不能直接当作某个未公开训练器的唯一公式。Unigram 给候选片段分配概率，逐步删减词表，编码时寻找总概率高的切分，还能采样不同切分以增加训练变化。\n\nSentencePiece 可直接从原始文本学习，统一处理空白与归一化，减少对语言专用预分词的依赖。Byte-level BPE 从字节覆盖输入，通常能表示未见字符，但归一化、预分词与特殊 token 仍可能影响精确还原。选 tokenizer 要比较语言覆盖、文本长度、代码与空白保留以及成本；使用已有 checkpoint 时必须保持兼容，不能把中文先用 jieba 切好就认为原模型仍会读到相同的 token。",
         "pitfalls": [
-          "把 SentencePiece 当作独立于 BPE、Unigram 的分词算法。",
-          "认为 token 总是一个汉字或一个英文单词。"
+          "SentencePiece 是支持多种模型的工具，不能与 BPE、Unigram 当作同层级算法并列。",
+          "token 不一定等于一个汉字或一个英文词。"
         ],
         "followups": [
-          "byte-level tokenizer 为什么通常能覆盖未知字符？",
-          "分词可逆性与文本归一化有什么冲突？"
+          "字节级 tokenizer 为什么能表示未见过的字符？",
+          "文本归一化为什么可能让编码后无法逐字还原原输入？"
         ]
       },
       "reference_ids": [
@@ -2265,14 +2265,14 @@
         "多语言"
       ],
       "answer": {
-        "body": "更大的词表可能降低同一文本的 token 数，改善部分语言的压缩率，但也增大 embedding、LM head 和 logits 计算。若输入/输出不共享权重，两套矩阵约有 $2Vd$ 参数，共享后约为 $Vd$，bias 另算；稀有或新增 token 出现太少时也难以学到稳定表示。\n\n选词表应同时评估覆盖、压缩率、训练充分度和显存，在多语言、代码、数字与罕见字符上统计 tokens/byte 或 tokens/字符。继续训练时改变 tokenizer 还会改变序列分布，必须检查旧 token ID、初始化与新增行的训练，不能只看总 token 数减少。",
+        "body": "词表更大并不一定更好，它是在序列长度、模型规模和每个 token 的学习充分度之间取舍。大词表能把更多常见片段作为一个 token，同一段文本通常会更短，注意力和生成步数可能减少；但输入向量表、输出预测矩阵以及每一步词表打分都会变大。\n\n如果词表有 V 个 token、隐藏维度是 d，输入 embedding 大约有 Vd 个参数；输出 LM head 若另用一张矩阵，还要再增加约 Vd，共享权重时可以省掉这份重复，bias 另算。比如增加很多罕见专有名词，虽然某些文本变短，这些新行却可能只有很少训练样本，表示并不可靠。对多语言或代码任务，应分别统计每字符或每字节的 token 数，并同时测效果、显存和延迟。\n\n给已有模型扩词表还涉及兼容问题：旧 token 的 ID 不能乱移，新增输入与输出行需要合理初始化并得到训练，改变切分后也会改变训练序列分布。使用参数高效微调时，要确认新增 embedding 与输出行确实可更新，否则新增 token 只是没有学好的随机参数。只有当某领域的切分明显低效、数据足够且综合收益值得时，扩词表才是合理选择；token 数变少本身不证明模型理解更好。",
         "pitfalls": [
-          "把 tokenizer 扩词表当作无需训练的免费优化。",
-          "直接把更少 token 等同于更好的语义理解。"
+          "扩词表需要训练新增行和检查兼容性，并不是免费优化。",
+          "文本 token 变少，不直接证明语义理解变好。"
         ],
         "followups": [
-          "什么时候值得为中文新增 token？",
-          "如何避免新增 token 的 embedding 未被 PEFT 更新？"
+          "怎样判断中文切分效率已经差到值得扩词表？",
+          "参数高效微调时，怎样确保新增 embedding 和输出行能够更新？"
         ]
       },
       "reference_ids": [
@@ -2300,10 +2300,10 @@
         "Loss"
       ],
       "answer": {
-        "body": "Scaling Law 是模型损失随参数、训练数据与计算规模变化的经验规律，常以 held-out loss 为因变量，以参数量 $N$、训练 token 数 $D$ 和 FLOPs $C$ 为资源变量。它能帮助小实验外推和算力分配，但系数依赖实验范围、数据、架构与优化，并不保证全部下游指标或新能力服从同一曲线。\n\n应在若干规模和训练长度上拟合，再保留额外规模验证预测，不能只报告拟合优度。数据质量、重复曝光、多语言配比和优化未收敛都可能改变曲线。预算还应包含推理成本，训练计算最优不一定是模型生命周期成本最优。\n\n面试问“除了数据和参数还能scaling什么”时，可讨论训练计算/优化步数，以及推理时的思考token、候选采样、搜索、检索和工具预算。但增加推理预算不是自动获得与预训练相同的scaling law：必须固定任务、数据和模型，比较正确率/成功率与延迟、token和总费用的曲线，控制裁判与选择器能力，区分pass@k上限与实际可选出答案的pass@1。冗长错误推理、相关候选或不可靠验证器会造成收益递减；所述是可检验方向，不是保证提升的公式。",
+        "body": "Scaling Law 是用实验规律估计“多投入一些模型参数、数据或计算量，损失能下降多少”，主要用来分配训练预算。它通常拟合的是没参与训练的文本上的预测损失，而不是直接承诺某个下游任务的准确率。参数量 $N$ 表示模型大小，$D$ 表示训练 token 数，$C$ 表示计算量；在一定实验范围内，损失对这些资源常呈近似幂律变化。\n\n实际使用时，会训练几种规模的模型和几种训练长度，拟合资源与损失的关系，再用没有参与拟合的规模验证外推。例如预算固定时，比较“模型扩大两倍、数据减半”与“模型保持较小、多读一些数据”，找出验证损失更低的配置。只看曲线贴合得好还不够：数据质量、重复次数、架构和学习率调度一变，拟合系数也可能变化。\n\n下游能力还受提示词、任务指标和后训练影响。同样下降的语言建模损失，可能对翻译帮助很大，对某个严格判分的推理任务帮助很小，所以能力需要单独评测。还可以研究推理时增加思考 token、候选采样、搜索或工具调用的收益，但这要重新测质量和延迟曲线。一次生成十个候选，其中有一个正确，只说明候选集合的上限提高；实际系统能否选中它还取决于验证器。最终预算也应包括长期推理成本，训练最省算力的模型未必是部署最划算的模型。",
         "pitfalls": [
-          "把经验幂律解释成任何规模都成立的理论定理。",
-          "把训练 loss 曲线直接换成准确率或安全性曲线。"
+          "把有限实验范围内的经验曲线当成任意规模都成立的定理。",
+          "把语言建模损失的下降直接当作准确率或安全性提升。"
         ],
         "followups": [
           "为什么小模型拟合可能无法预测大模型行为？",
@@ -2344,7 +2344,7 @@
         "预算"
       ],
       "answer": {
-        "body": "Chinchilla 在其训练设置和预算范围内发现，计算最优的参数量与训练 token 数应近似同步增长；常说的每参数约 20 个 token 是该拟合下的量级参考，数据质量、目标与推理预算变化后需重新估计。\n\nDense Transformer 训练常以 $C\\approx6ND$ 粗估 FLOPs，长上下文注意力等计算应另加。在固定预算下扫描参数量并相应调整数据量，再比较训练末端的验证损失；更大的模型若数据不足，并不总优于较小且训练充分的模型。若上线调用量很大，训练小模型更久可能更划算，因此不能只优化一次训练成本。",
+        "body": "Chinchilla 的核心结论是：训练预算一定时，不能只追求更大的模型，还要给它足够的数据；在论文的实验范围里，参数量和训练 token 数应大致同步增长。常说的“每个参数训练约 20 个 token”，是这个实验拟合出的量级参考，不是超过或低于它就一定好坏的硬规则。\n\n公式 $C\\approx6ND$ 是稠密 Transformer 训练计算量的粗略估算，$N$ 是参数量，$D$ 是见过的 token 数，$C$ 是浮点运算次数。比如同一预算下把参数量翻倍，按这个近似就只能训练原来一半的 token；更大模型若没训练充分，可能输给更小模型。寻找最优点的方法，是固定总计算量，扫描不同模型大小，并为每种大小安排相应的数据量和完整学习率调度，再比较最终验证损失。\n\n这个结论依赖数据质量、架构和实验预算。长上下文中的注意力计算要额外考虑，稀疏专家模型也不能直接拿总参数代入稠密公式。若模型上线后会被调用很多次，较小模型训练更久，虽然一次训练偏离“计算最优”点，却可能靠更便宜的推理降低总成本。因此我会把 20 倍当作起始估计，再结合独立数据量、任务质量和服务成本做选择。",
         "formula": "C\\approx6ND",
         "pitfalls": [
           "把 20 tokens/parameter 当成达到能力上限的通用阈值。",
@@ -2373,10 +2373,10 @@
         "清洗"
       ],
       "answer": {
-        "body": "预训练清洗先确定目标语料分布，再完成解析、语言识别、质量过滤、去重、评测污染与敏感信息处理，并保留数据血缘和抽样审计。HTML 正文提取应去除导航、乱码和模板，再做语言与文档级检查。\n\n规则和模型打分可以互补，对高低评分及不同语言、领域都应抽检。去重后重新统计唯一 token、来源配比与重复曝光，记录规则版本；用保留率、领域覆盖、小模型实验和固定验证集衡量改动。过强过滤可能删除少数语言或专业内容，不能仅为降低训练 loss 调整清洗策略。\n\n数据pipeline吞吐高只说明处理快，不证明标签可信。应把规则/模型/人工责任分开，保留样本来源、处理版本与去重/过滤决策；对模型伪标注按语言、领域、难度及置信度分层盲审，报告错误率和覆盖率。多模态还检查图文配对、时间戳与坐标变换、OCR/公式失真及不可见信息幻觉，并在划分数据集之前按实体或近重复簇隔离，防止衍生样本跨训练测试集。用固定留出集比较过滤前后收益，不能让同一个Teacher既生成标签又作为唯一验收者。",
+        "body": "预训练语料清洗的目的，是让模型读到可靠、丰富、符合目标场景的文字，而不是单纯把数据变少或让处理速度变快。通常先提取正文、识别语言，再过滤明显垃圾、去重、排除评测泄漏和敏感信息，最后检查各类数据还剩多少。网页里的导航、广告和乱码需要清理，但代码、数学公式和少数语言不能直接套普通文章的规则。\n\n我会把简单规则和模型评分结合使用，并按来源、语言、领域和分数分层抽查。例如某个过滤器删掉了八成数学文本，不能看到总体平均分提高就接受，要确认它是否把公式符号误判为乱码。去重后也要重新计算唯一 token 和采样权重，避免“同一篇文章的十个镜像站”实际占了十份训练预算。每一步保留样本来源、规则版本和删留理由，出现异常时才能追查。\n\n验收不能只看清洗后的训练损失。应固定留出集，用小模型对比过滤前后的领域覆盖、任务效果和记忆风险。若还用模型生成标签，要用独立规则、执行器或人工检查，不能让同一个教师既出答案又作为唯一裁判。多模态数据还要核验图文是否匹配、坐标和时间戳是否正确，并检查 OCR、公式提取和视觉描述是否忠于原始可见内容，避免生成标签凭空补出图中没有的信息。划分训练测试集时，尽量先按实体和近重复簇隔离，防止同一内容的改写或派生样本进入两边。清洗越严格越可能牺牲长尾覆盖，所以需要同时看可靠性和多样性。",
         "pitfalls": [
-          "高 perplexity 文本全是低质量，低 perplexity 文本全是高质量。",
-          "使用黑箱过滤器却无法追踪被删除的领域。"
+          "高困惑度可能来自专业或稀有内容，不能一律当垃圾。",
+          "只看总保留率，不检查少数语言和专业领域被误删的比例。"
         ],
         "followups": [
           "如何量化清洗造成的分布偏移？",
@@ -2410,10 +2410,10 @@
         "数据"
       ],
       "answer": {
-        "body": "精确去重使用规范化文档或片段哈希找完全重复，成本较低，但难以发现只改标题或局部段落的副本。近似去重可用 shingles、MinHash 等生成相似候选，再做更细比较，需同时评估误报和漏报。\n\n公共模板可在段落或子串层面去重，保留高质量代表并记录映射。去重顺序影响后续采样权重，先按质量挑代表能避免随机留下差版本。去重有助于减少重复曝光、记忆和评测重叠，但不能保证完全消除泄漏；阈值过严也会损失有价值的重复结构。",
+        "body": "精确去重找的是完全相同的内容，近似去重找的是改了一点但基本相同的副本，目的都是避免模型把重复材料当作大量独立信息。精确去重可以对规范化后的文档算哈希：去掉无关空白等差异后，哈希相同就形成重复候选。它便宜，但文章换了标题、插了一段广告，就可能查不出来。\n\n近似去重通常先把文本拆成连续的词或字符片段，这些片段叫 shingles，再用 MinHash 等方法快速估计集合重合度，筛出候选后进一步比较。例如一篇文章有一百个片段，镜像版只有十个片段不同，就很可能被归入同一簇。大规模语料不宜所有文档两两比较，可以通过分桶和近邻候选降低成本。对于网页公共导航、免责声明，还可以在段落或长子串层面去重。\n\n找到重复簇后，最好根据正文完整度和来源质量选代表，而不是随机留下一个残缺副本，并保存删留映射。阈值要通过人工抽样评估误删和漏删：相同模板下的不同事实问答，虽然表达相近，却不应全部删除。去重能减少重复曝光、逐字记忆和训练测试重叠，但不能消灭翻译改写或语义泄漏。去重之后训练损失有时反而升高，因为容易记住的副本少了；这不直接说明数据质量变差，还要看独立验证和真实任务。",
         "pitfalls": [
-          "同一文章的网址不同就视为独立数据。",
-          "把语义相似的不同事实问答全部删掉。"
+          "网址不同不代表内容独立，镜像和转载仍可能重复。",
+          "语义相近但事实不同的样本不应被一律删掉。"
         ],
         "followups": [
           "如何在大规模语料上控制近似去重成本？",
@@ -2445,7 +2445,7 @@
         "Leakage"
       ],
       "answer": {
-        "body": "Benchmark contamination 指训练集包含测试题、答案或高度相似信息，使评测分数无法可靠表示泛化。应建立题干与答案的可追踪清单，通过文档、片段和 n-gram 重叠检索发现候选，并人工复核翻译、改写、镜像站与题解，不能只删除完全相同字符串或原网址。\n\n训练/测试切分尽量按来源、实体、时间或任务组隔离，再用受控新题验证。报告可检测污染比例与清洁子集分数；未检出只能说明检测方法没有发现，不能证明完全无污染。",
+        "body": "评测污染是指模型训练时见过测试题、答案或高度相似的题解，导致高分可能来自记忆，不能可靠代表对新问题的泛化。检测时要查题干，也要查答案和解析；仅删除测试集原网址或完全相同的一行文字，通常不够。\n\n具体可以建立测试内容清单，用文档哈希、连续片段重叠和近似检索找候选，再人工检查镜像网页、翻译和改写。例如数学测试题换了人名但沿用了数值和解题过程，字面匹配可能漏掉；另一方面，教材里介绍同一个公式，并不一定意味着泄漏了这道具体测试题。检测标准应区分一般领域知识与完整试题暴露，并记录误报边界。\n\n减少污染要尽早做数据隔离，可以按来源、时间、实体或任务组切分，并在训练前排除已知评测内容。评测时同时报告可检测的污染比例、清洁子集成绩，以及新编受控题上的表现。对于无法审计训练数据的闭源模型，可以补充最新题、私有题和可验证的任务，但这些也只能增加证据。没搜到重叠不能证明完全没污染，高分本身也不能证明一定泄漏；最终结论要和检测方法的覆盖范围一起解释。",
         "pitfalls": [
           "把预训练见过某领域事实与见过完整测试题一概混称同一污染。",
           "根据高分反推模型必然泄漏。"
@@ -2474,7 +2474,7 @@
         "多语言"
       ],
       "answer": {
-        "body": "预训练配比应围绕目标能力和质量设计，而非按原始文件数量采样。先统一有效 token、唯一 token 与曝光轮次的统计，再通过小代理模型、领域验证 loss 和下游任务实验调整权重，并检验结论能否迁移到大模型。\n\n提高某类数据比例会挤占其他能力的预算，过采样稀缺高质量数据也要监控重复与记忆。DoReMi 用代理模型优化域权重，说明配比可以学习，但迁移仍有条件。各主要领域应保留独立验证集，同时检查总体效果和弱势语言表现。",
+        "body": "预训练数据配比，就是决定模型把多少训练预算花在网页、代码、多语言等不同内容上，目标是服务需要的能力，而不是按文件数量平均分。首先统一统计口径：一份长代码文件和一句短文本不能各算一个同等样本，应该同时记录有效 token、独特 token 和重复曝光次数。\n\n我会先设一个覆盖主要领域的配比，再用较小的代理模型做实验，分别看各领域验证损失和下游任务。例如代码比例提高后，代码补全可能变好，但中文对话或其他语言可能因预算被挤占而退化；这需要联合观察。DoReMi 一类方法会让代理模型学习不同领域的权重，之后用这些权重训练目标模型，但代理模型的结论仍要验证能否迁移。\n\n配比实验最好固定总训练 token 或计算量，保持其他设置一致，并让主要领域各有独立验证集。高损失领域不一定应该加更多权重：它可能确实没学好，也可能充满噪声或本来就更难预测。稀缺的高质量领域数据可以适度重复采样，但要检查记忆和收益递减。配比回答“学什么、学多少”，课程学习还回答“按什么顺序学”，两者可以结合，但都不存在脱离数据和目标的通用最优比例。",
         "pitfalls": [
           "高 loss 的领域永远应该加权更多，忽略噪声或任务难度。",
           "把论文给出的配比直接用在不同数据和目标上。"
@@ -2505,11 +2505,11 @@
         "BoundaryLabels"
       ],
       "answer": {
-        "body": "Packing 把多个短样本装入一条训练行，减少 padding。先应用 chat template、分词并标记回答监督区间，再连同 `input_ids`、`labels`、样本编号和边界一起装箱。BFD 等策略可减少空位；截断或拆分会改变保留内容，应统计丢弃的回答 token，而不只报告吞吐。\n\n独立 SFT 样本的可见性必须同时满足同一样本与因果条件 $j\\le i$，并排除 padding。可以用块对角 causal mask，或给支持变长 attention 的后端显式段边界。EOS 和把 `position_ids` 归零都不会自动隔离通用 attention。\n\n普通全行 label shift 会让前一段末 logits 预测下一段首 token。独立样本目标应把后一段首 label 设为 `ignore_index`，或逐段 shift 并在段尾补 ignore；BOS/EOS 是否监督要按段定义，不能粗暴删除全部 EOS loss。Prompt labels 忽略而首 answer label 保留，末 prompt logits 才能预测首回答；合法 prompt 仍需作为上下文。\n\n连续语料 concatenate-then-split 可有意允许跨文档上下文，这与独立 SFT 目标不同。可对比未 packing 的逐段有效 NLL 与梯度，并扰动另一段检查当前段 logits 是否改变；比较时要控制内核、dropout 和浮点次序，再评估显存与吞吐收益。\n\n式中 $s_t$ 是样本编号，$v_j$ 标记有效 key，$m_t$ 选择监督目标，$\\mathcal H_t$ 是同一样本的有效历史。",
+        "body": "Packing 是把多个短训练样本装进一条长序列，减少填充位置，让计算更多地花在真实内容上。比如最大长度是 2048，而多数对话只有两三百 token，逐条补齐会浪费很多计算；把短对话合理装箱通常能提高吞吐。但独立对话既不能读到彼此内容，也不能跨边界产生预测目标。\n\n处理时先为每条对话应用聊天模板、分词并标好回答标签，再一起打包输入、标签、样本编号和边界。公式里 $s_i$ 是位置 $i$ 所属的样本，$v_j$ 表示位置 $j$ 是否有效。位置 $i$ 能读取 $j$，必须同时满足同一样本、$j\\le i$ 的因果条件，以及不是填充。可以用块对角因果 mask，或把段边界交给支持变长注意力的后端。结束符和重置位置编号都不会自动建立这种隔离。\n\n还要处理标签移动：普通整行 shift 会让第一段末尾的预测去监督第二段开头，这是不合法的跨样本目标。可以把后一段的首标签忽略，或逐段完成 shift；真实的结束符是否计损则单独定义。回答的首 token 仍应由本段提示词最后一个位置预测。公式里的 $m_t$ 选择需要监督的 token，$\\mathcal H_t$ 是同一样本的历史，损失按有效目标平均。\n\n验证时可以把另一个打包样本替换掉，检查当前样本的 logits 是否不变，再比较未打包与打包的有效损失和梯度。长对话若被拆开，还要明确是否继承历史上下文，并统计丢弃的回答内容。连续原始文本有时有意允许跨文档上下文，那是另一种目标，不能和独立 SFT 的隔离要求混用。",
         "formula": "\\begin{aligned}\\mathrm{allowed}(i,j)&=\\mathbf1[s_i=s_j]\\,\\mathbf1[j\\le i]\\,\\mathbf1[v_j=1]\\\\\\mathcal L&=-\\frac{\\sum_t m_t\\log p_\\theta(x_t\\mid x_{\\mathcal H_t})}{\\sum_t m_t}\\\\\\mathcal H_t&=\\{j:j<t,\\ s_j=s_t,\\ v_j=1\\}\\end{aligned}",
         "pitfalls": [
-          "EOS、loss mask 或重置 `position_ids` 任一项就能阻断跨样本 attention。",
-          "隔离 attention 后仍保留跨边界 shifted label，或在不同实现中重复 shift。"
+          "EOS、回答 loss mask 或位置编号归零，都不能单独隔离注意力。",
+          "注意力隔离后仍要排除跨段的预测标签，也不能重复 shift。"
         ],
         "followups": [
           "如何处理长对话拆分时需要继承的历史 prompt？",
@@ -2549,7 +2549,7 @@
         "SFT"
       ],
       "answer": {
-        "body": "继续预训练通常用领域原始文本延续语言建模目标，以适应术语、知识与语言分布；SFT 使用指令、对话或结构化输入输出，学习任务行为与格式。领域无标注数据充足且分布差异大时可考虑 DAPT，任务输出明确时可先尝试 SFT，也可以串联两者。\n\n领域适应不保证指令能力，应分别记录领域 loss、任务正确率与通用回归，检查能力退化。CPT 可以使用 PEFT，SFT 也可更新全部参数，训练目标与参数更新方法是两个独立选择。",
+        "body": "继续预训练是让模型继续阅读领域文本，适应领域语言和知识；SFT 是用明确的输入输出例子，教模型按任务要求回答。两者都可能采用下一个 token 的交叉熵，区别主要在数据组织和希望学到的行为，而不是一个必须全参数、另一个必须 LoRA。\n\n例如做法律助手，继续预训练可以使用法规和判决正文，让模型熟悉术语、表达和关联；SFT 则给“用户问题—符合要求的解释”或结构化抽取例子，教会答案格式、引用方式和适当边界。领域原始数据多、与通用文本差异大时，可考虑先做领域继续预训练，再做指令 SFT；若任务主要是固定格式输出，也可以先用 SFT 验证是否已经足够。\n\n两者都要分别检查领域收益和通用能力回归。领域损失下降不代表模型就会遵循指令，SFT 也不是只换说话风格，它可能改变或学习内容知识。知识更新很频繁、需要实时依据或权限控制时，检索增强生成往往更便于维护，但它也需要可靠的检索和证据使用能力。选择训练目标和选择参数更新方式是两件事：继续预训练也能用参数高效方法，SFT 也能更新全部权重。",
         "pitfalls": [
           "把继续预训练简单定义为全参数微调，SFT 简单定义为 LoRA。",
           "认为任何新增知识都必须继续预训练。"
@@ -2593,7 +2593,7 @@
         "优化"
       ],
       "answer": {
-        "body": "Adam 中的 L2 项作为 loss 梯度进入自适应一阶、二阶矩和预条件缩放；AdamW 的 weight decay 则直接作用于参数，与梯度更新解耦。因此二者通常不等价，不能因都使用 `weight_decay` 字段就当作同一算法。普通 SGD 在适当系数下的等价关系也不能直接迁移到 Adam。\n\n训练时应明确参数组、衰减规则与学习率；bias 和 norm 是否衰减由配方决定。学习率影响每步衰减量，比较配置还需匹配训练步数与调度。",
+        "body": "AdamW 把权重衰减从损失梯度里拆出来，直接让参数略微缩小；Adam 加 L2 正则则把参数大小的惩罚先加入梯度，两者在自适应优化里通常不等价。区别来自 Adam 会根据历史梯度的一阶、二阶统计，对不同参数的更新进行不同缩放。\n\n假设损失加上 $\\lambda\\lVert\\theta\\rVert^2/2$，梯度就多了 $\\lambda\\theta$。在普通 Adam 里，这一项和任务梯度一起进入动量及二阶矩，衰减效果也跟着每个参数的历史缩放变化。AdamW 让动量和二阶矩只跟踪任务梯度，另按更新前参数施加衰减：新参数等于 $(1-\\eta\\lambda)$ 倍旧参数，再减去 Adam 的任务更新；$\\eta$ 是学习率，$\\lambda$ 是衰减系数。比如暂时忽略任务梯度，参数是 10、学习率 0.001、衰减系数 0.1，这一步直接衰减约 0.001。\n\n因此，两个优化器即使都提供叫 weight_decay 的参数，也要看它实现的是哪种规则。普通 SGD 在合适系数约定下的等价关系，不能直接搬到 Adam。比较配置时还要匹配学习率调度和更新次数，因为长期累计衰减会不同。哪些参数组要衰减，例如偏置、归一化或 LoRA 参数，要按训练配方验证，不能认为所有模型都必须使用同一套排除规则。",
         "pitfalls": [
           "说 AdamW 只是 Adam 的别名。",
           "无依据断言所有 embedding、norm 必须采用同一种衰减配置。"
@@ -2621,7 +2621,7 @@
         "AMP"
       ],
       "answer": {
-        "body": "FP16 和 BF16 都是 16 bit：FP16 使用 1 位符号、5 位指数、10 位尾数，BF16 为 1、8、7。BF16 指数范围接近 FP32，FP16 尾数精度更细，却更容易发生梯度下溢和激活溢出。\n\n混合精度让合适的算子使用低精度，敏感归约保持高精度；`autocast` 按算子选 dtype，并非把所有张量转成 half。FP16 常用 loss scaling 缓解梯度下溢，BF16 较少需要，但仍可能有数值问题。速度取决于硬件与内核，应持续检查 NaN、Inf 和梯度。",
+        "body": "FP16 和 BF16 都用 16 位存一个数，前者把更多位数用于细分数值，后者把更多位数用于表示数值范围；混合精度就是让适合的计算用低精度，同时让敏感部分保留较高精度，以节省显存并提高速度。FP16 的符号、指数、尾数分别占 1、5、10 位，BF16 分别占 1、8、7 位。\n\n可以把指数理解成数字的数量级，尾数理解成该数量级内的刻度。BF16 的指数范围接近 FP32，较大或较小的值更不容易溢出、下溢；FP16 在相近量级下刻度更细，但最大有限值约为 65504，大激活可能超出范围。FP16 训练常把损失先放大，使很小的梯度落入可表示范围，反向后再缩回，这叫 loss scaling。BF16 通常不需要这一步，但舍入误差和非有限数仍可能出现。\n\n自动混合精度会按算子选择计算类型，并不是简单把整个模型和所有张量都转成 half。归一化、softmax、损失归约或优化器状态可能使用 FP32，具体取决于框架和内核。若使用缩放梯度，梯度裁剪应在恢复原始尺度之后进行。Loss scaling 能缓解梯度下溢，却不能修复前向已经产生的溢出。最终速度和稳定性要在目标硬件上检查，包括 NaN、Inf、梯度范数和任务效果，不能只按位数判断谁更准确或更快。",
         "pitfalls": [
           "BF16 精度在所有数值范围都高于 FP16。",
           "loss scaling 能修复前向激活溢出。"
@@ -2649,15 +2649,15 @@
         "GradientClipping"
       ],
       "answer": {
-        "body": "Warmup 缓慢增加训练初期的学习率，给优化器状态和激活尺度建立提供缓冲；需要多长取决于模型尺度、初始化、优化器与数据。原 Transformer 的 Noam 策略先线性增长，再按步数平方根倒数衰减：更新步 $s\\ge1$、模型维度 $D$、warmup 步 $w$ 时，$\\eta(s)=cD^{-1/2}\\min(s^{-1/2},sw^{-3/2})$。交点 $s=w$ 的峰值为 $c/\\sqrt{Dw}$；原实验 $w=4000$，现代配方也可用 cosine 或 linear，不能把历史设置当作通用规则。\n\nGlobal norm clipping 将全部参数梯度的总范数 $G=\\sqrt{\\sum_p\\|g_p\\|_2^2}$ 限制在 $C>0$，对所有梯度统一乘 $\\min(1,C/G)$；$G=0$ 时保持零。这样保留方向，与逐元素 clamp 或各张量独立裁剪不同。\n\n应在完整梯度累积之后、AMP unscale 之后裁剪，再做 `optimizer.step`；scheduler 按真实参数更新计步。分布式分片要检查全局范数聚合，非有限梯度须先检测和处理，裁剪不能修复 NaN/Inf。它限制当前梯度，却不保证 Adam 更新范数或后续 loss，动量、二阶矩和衰减仍会影响结果。持续触发时应记录裁剪前范数、比例、loss 与 AMP 跳步，再排查数据、学习率和数值。",
+        "body": "Warmup、学习率衰减和梯度裁剪分别是在训练开头、训练后期和异常大梯度出现时控制更新幅度，三者解决的问题不同。Warmup 从较小学习率逐步升高，让优化器统计和模型内部尺度有时间建立；衰减则在后期减小更新，帮助细化已有解；裁剪限制当前梯度过大造成的冲击。\n\n原 Transformer 的 Noam 调度先线性升高，再按更新步数的平方根倒数下降。公式里的 $s\\ge1$ 是真正的参数更新步，$D$ 是模型维度，$w$ 是 warmup 步数，$c$ 是整体系数。交点 $s=w$ 时学习率达到 $c/\\sqrt{Dw}$；若其他量不变，warmup 步数扩大四倍，峰值会减半。原实验使用 4000 步只是历史配方，现代训练也常用线性或余弦衰减，warmup 长短要结合规模和初始化选择。\n\n全局范数裁剪把所有参数的梯度看成一个大向量。$g_p$ 是参数 $p$ 的梯度，$G$ 是整体二范数，$C$ 是阈值；若 $G=10$、$C=1$，就把所有梯度统一乘 0.1，保持方向。它不同于逐元素截断，也不同于每个张量分别裁剪。应先完成梯度累积、恢复混合精度的缩放，再裁剪并更新；调度器按实际更新计步，分片训练还要正确汇总全局范数。\n\n裁剪无法修复 NaN 或 Inf，也不保证 Adam 的实际参数更新范数小于学习率乘阈值，因为动量、二阶矩和衰减还会参与更新。如果长期大量触发裁剪，应检查原始梯度范数、数据、学习率和数值精度，不能只把阈值调小掩盖问题。",
         "formula": "\\begin{aligned}\\eta(s)&=cD^{-1/2}\\min(s^{-1/2},sw^{-3/2}),\\quad s\\ge1\\\\G&=\\sqrt{\\sum_p\\|g_p\\|_2^2}\\\\g'_p&=\\begin{cases}g_p\\min(1,C/G),&G>0\\\\0,&G=0\\end{cases}\\end{aligned}",
         "pitfalls": [
-          "按每个参数各自 clip，却宣称等价于 global norm；在 AMP unscale 前套用原阈值。",
-          "把原始 Noam 配方写成所有 Transformer/LLM 固定规则，或使用 `step=0` 导致负幂未定义。"
+          "在混合精度解除缩放前按原阈值裁剪，或把逐张量裁剪称为全局范数裁剪。",
+          "Noam 的历史 warmup 步数不是通用配置，步数从零代入负幂也不合法。"
         ],
         "followups": [
-          "若 warmup 步数翻 4 倍且其他因子不变，Noam 峰值怎样变化？",
-          "为何梯度范数已被裁到 C，Adam 的参数更新范数仍可能大于 $\\eta C$？"
+          "其他参数不变，Noam 的 warmup 步数扩大四倍，峰值学习率怎样变化？",
+          "为什么裁剪了梯度范数，Adam 的实际参数更新仍不一定小于学习率乘阈值？"
         ]
       },
       "reference_ids": [
@@ -2686,7 +2686,7 @@
         "长文本"
       ],
       "answer": {
-        "body": "PPL 是有效 token 平均负对数似然的指数，测量文本预测分布，不直接等同于对话质量。公平比较要统一语料、tokenizer、上下文窗口与计损范围；不同 tokenizer 的 token-level PPL 不直接可比，可辅以 bits-per-byte 等统一口径。\n\n固定窗口模型评估长文时，互不重叠切块会使块开头缺少历史，通常抬高 PPL。滑动窗口能补足上下文，但重叠部分应只作条件，避免目标重复计数，并考虑模型内部 label shift 后的有效数量。还需结合领域 loss、指令遵循、事实性与任务正确率判断能力。",
+        "body": "困惑度 PPL 是“模型平均有多难猜中真实下一个 token”的一种指标，越低说明在指定文本上的预测越好，但不直接等于对话或推理质量。它把有效 token 的平均负对数概率取指数。公式里的 NLL 是负对数似然，$N_{\\rm valid}$ 是参与计分的目标数；若平均 NLL 是 1，PPL 就是 $e$，约 2.72。\n\n公平比较必须使用相同语料、分词器、上下文长度和计分范围。不同分词器可能把同一句话切成完全不同数量的 token，token 级 PPL 就不能直接排名，可以另用每字节的比特数等统一单位。多个 batch 的结果也应先按有效 token 汇总 NLL，再取指数，而不是把各 batch 的 PPL 等权平均。提示词、填充和回答是否计分要保持一致。\n\n长文超过模型窗口时，互不重叠切块会让每块开头丢失历史，通常使 PPL 偏高。滑动窗口能为新目标补足上下文，但重叠部分应只提供条件，不重复计分；还要处理内部 label shift 后实际有效的目标数。滑动步长变小所得分数可能改善，是因为提供了更多上下文，不能误认为模型参数变强了。评估时最好把 PPL 与事实性、指令遵循和任务正确率一起看。",
         "formula": "\\mathrm{PPL}=\\exp\\!\\left(\\frac{\\sum_{t\\in\\mathcal T_{\\rm valid}}\\mathrm{NLL}_t}{N_{\\rm valid}}\\right)",
         "pitfalls": [
           "先算各 batch PPL 再等权平均。",
@@ -2724,11 +2724,11 @@
         "有效Token"
       ],
       "answer": {
-        "body": "预训练与常规 SFT 都可使用 next-token 交叉熵，主要差异是数据分布与监督范围。序列 $x_0,\\ldots,x_{T-1}$ 的 logits 第 $t$ 行基于 $x_{\\le t}$，预测 $x_{t+1}$；可对齐 `logits[:,:-1]` 和 `labels[:,1:]`，或用尾部补 ignore 的等价实现，shift 只能由一处负责。\n\n例如输入 `[P0,P1,A0,A1,EOS]`，未 shift 的标签为 `[-100,-100,A0,A1,EOS]`。末 prompt 的 P1 logits 监督首回答 A0，A0 监督 A1，A1 监督 EOS；P0 到 P1 的目标忽略，末 EOS logits 没有下一标签。若额外屏蔽 P1 logits，就会丢掉首回答监督。\n\n预训练通常监督有效文本，排除 padding、无后续目标和配方指定边界；SFT 可以只监督回答、所有 assistant 回合、最后回合或全序列，由训练配方决定，也能学习知识和内容。Loss mask 决定目标贡献，attention mask 决定可读上下文；回答梯度仍可经 prompt 表示回传到共享参数。两种训练都需 causal 约束与正确 packing 隔离。\n\n常规损失按有效 token 平均；若改为每样本等权或加入辅助项，目标也随之改变。比较效果时应核对模板、监督范围、数据和任务指标，不能直接用不同 mask 下的 loss 排名。",
+        "body": "预训练和常规监督微调 SFT 都可以用下一个 token 的交叉熵，主要区别是模型读什么数据、哪些位置需要算损失。预训练通常学习有效文本的各个位置，SFT 用指令和答案教任务行为，常只监督回答，也可以监督所有助手回合或全序列，这要按训练目标确定。\n\n标签移动是为了让当前位置预测下一个位置。公式中 $z_t$ 是第 $t$ 个位置的 logits，也就是各候选 token 的未归一化分数，$m_{t+1}$ 表示下一个目标是否参与损失。例如输入是 `[P0,P1,A0,A1,EOS]`，P 表示提示词，A 表示答案，EOS 是结束符。标签仍与输入同位置存放为 `[-100,-100,A0,A1,EOS]`；内部 shift 后，P1 的输出预测 A0，A0 预测 A1，A1 预测 EOS。这里 -100 是忽略标签的常用约定，末 EOS 没有后续目标。\n\n所以不能因为 P1 属于提示词，就把它预测首个答案的那一项也删掉。数据处理和模型内部只能有一处负责 shift，否则会错位两次。损失 mask 决定哪些目标计分，注意力 mask 决定能读哪些历史，两者用途不同：提示词标签不计损，模型仍要读取它，回答梯度也可以通过其表示传播。有效损失通常按参与监督的 token 总数平均；不同监督范围下的训练 loss 不能直接比较高低，任务效果还要单独验证。",
         "formula": "\\begin{aligned}z_t&\\longrightarrow x_{t+1}\\\\\\mathcal L&=-\\frac{\\sum_{t=0}^{T-2}m_{t+1}\\log\\mathrm{softmax}(z_t)_{x_{t+1}}}{\\sum_{t=0}^{T-2}m_{t+1}}\\end{aligned}",
         "pitfalls": [
-          "把 SFT 写成另一种分类 loss，或断言 SFT 永远只能计回答 loss。",
-          "按预测 logits 所在位置屏蔽 prompt，错误丢掉 prompt→首 answer 的有效预测。"
+          "常规 SFT 可以沿用交叉熵，监督范围也不一定永远只含最后一轮回答。",
+          "屏蔽提示目标时，不能删掉末提示位置对首回答的预测。"
         ],
         "followups": [
           "多轮对话只监督最后一轮时，前几轮回答是否仍提供上下文？",
@@ -2774,11 +2774,11 @@
         "Padding"
       ],
       "answer": {
-        "body": "只监督回答时，在最终 token 序列中把 prompt、padding 和其他不监督位置的 labels 设为 `ignore_index`，例如 `-100`，回答标签保留真实 ID。应先应用模型 chat template 再标注，多轮可选择所有 assistant 回合或最后回合，并明确正文、角色结束及 EOS 的监督范围，避免混用字符和 token 边界。\n\n若首 answer 在 $j$，保留 `labels[j]=input_ids[j]`，prompt 的 `labels[:j]=-100`；shift 后 `logits[j-1]` 预测首回答。因此只忽略 prompt 目标，不删除末 prompt 的 logits，模型内部 shift 时 collator 仍保持标签与输入同位置。合法 prompt 的 attention mask 继续有效，回答 loss 的梯度也能经过它的上下文路径。\n\nPadding 与真实 EOS 即使共用 ID，也必须按位置区分，不能按 EOS ID 全部忽略；EOS 可以是有效停止监督。独立 packing 段首目标不能由上一段末 logits 预测，还需块状可见性或后端段边界。最后用小序列逐项检查 logits 索引、目标、mask、有效数量和 loss。",
+        "body": "只对回答计算 SFT 损失，就是保留回答 token 的真实标签，把提示词和填充位置的标签设成忽略值，同时让模型仍然能读到提示词。通常用 -100 作为交叉熵的 ignore_index；它表示这个目标不计分，并不是把对应输入删掉。\n\n应先按模型的聊天模板渲染并分词，再确定每轮助手回答的 token 区间。假设首个回答 token 在位置 $j$，那么 `labels[j]` 必须保留，而前面的提示词标签可以忽略。经过正常 shift，是位置 $j-1$ 的输出预测这个首回答。公式中的 $m_{t+1}$ 就是目标是否监督的标记，分母是有效目标数。多轮对话可以监督全部助手回合，也可以只监督最后一轮，但前几轮通常仍提供上下文。\n\n细节上，要明确角色结束符和 EOS 是否作为停止目标。若填充符恰好与 EOS 共用 token ID，要按位置区分，不能把全部 EOS 标签都忽略，否则模型可能学不好停止。打包独立样本时还要屏蔽跨段目标，并隔离注意力。最后最好手工检查一条很短的样本，逐项打印输入、标签、预测位置和有效数；一个没有任何有效回答目标的样本应被过滤或明确处理，不能悄悄参与平均。",
         "formula": "\\mathcal L=-\\frac{\\sum_{t=0}^{T-2}m_{t+1}\\log p_\\theta(x_{t+1}\\mid x_{\\le t})}{\\sum_{t=0}^{T-2}m_{t+1}}",
         "pitfalls": [
-          "把 prompt 的 `attention_mask` 设为 0，或把末 prompt logit 的首回答监督删掉。",
-          "collator 和模型内部各 shift 一次，或把 `pad=EOS` 当作所有 EOS 均为 padding。"
+          "把提示词的注意力置零，会使答案失去需要的条件。",
+          "重复 shift，或因 pad 与 EOS 共用 ID 而忽略所有真实结束符。"
         ],
         "followups": [
           "如何验证多轮 assistant-only mask 与 chat template 的 generation 区间？",
@@ -2820,7 +2820,7 @@
         "Tokenizer"
       ],
       "answer": {
-        "body": "Chat template 将角色与消息转成模型训练过的 token 序列，错配可能导致续写用户、角色混乱或无法停止。Tokenizer、`chat_template` 和特殊 token 配置应与模型、适配器一起版本化，训练和部署保持一致。\n\n训练通常不额外添加新 assistant 回复的起始提示，生成时按模板需要添加 generation prompt；先渲染文本再编码时检查 `add_special_tokens`，避免重复 BOS/EOS。用短对话核对 token ID、角色边界、loss mask 与停止行为，再覆盖多轮对话。",
+        "body": "Chat template 是把“谁说了什么”变成模型熟悉的 token 格式，模板错配相当于换了对话协议，模型可能分不清角色、接着写用户的话，或不知道该什么时候停。模板里的角色标记、开始结束符和空白形式，都是模型训练分布的一部分。\n\n例如某个模型用专门的助手起始标记表示“接下来该回答”，部署时如果漏掉它，模型可能只继续上一段文本；如果重复添加结束符，也可能过早结束。训练样本通常已经包含答案，不应额外追加一个用于新回答的 generation prompt；推理时是否追加，要按该模板的约定处理。若先渲染字符串再分词，还要检查分词器是否又自动添加 BOS 或 EOS，避免重复特殊 token。\n\n排查时不能只看字符串是否漂亮，应核对真实 token ID、角色边界、回答 loss mask 和停止行为。先验证单轮，再覆盖多轮、工具消息和空回答。分词器、模板、特殊 token 配置应与底座和适配器一起保存、版本化，训练和部署保持一致。把所有模型都统一成某种常见对话格式可能方便工程，但除非经过对应训练或验证，不能假设原模型会自然理解新协议。",
         "pitfalls": [
           "只检查字符串外观，忽略底层 token ID。",
           "把所有模型都换成同一套 ChatML 而无需训练。"
@@ -2849,10 +2849,10 @@
         "选型"
       ],
       "answer": {
-        "body": "全参数微调更新自由度大，但梯度和优化器状态开销更高；PEFT 冻结大部分底座，训练少量增量，适合资源受限或多任务切换。选型要结合任务差异、数据量、显存与部署，PEFT 不保证总能达到全参数效果。\n\nLoRA 给线性层加低秩更新，合适时可合并回权重；Adapter 加任务独立模块，但可能增加算子和时延；Prefix-Tuning 学习连续前缀，通常提供额外 attention 键值条件。冻结底座仍需前向和用于反传的激活，参数减少比例不能直接当作显存减少比例。",
+        "body": "选择全参数微调还是参数高效微调，要看任务需要改动多大、数据够不够，以及训练和部署能承担什么成本。全参数微调允许所有权重改变，适应能力更充分，但权重梯度和优化器状态很大；LoRA、Adapter 和 Prefix-Tuning 冻结大部分底座，只训练少量额外参数，更适合资源受限或需要保存多个任务版本的场景。\n\nLoRA 在线性层旁边加低秩更新，浮点部署时通常可以合并回原权重；Adapter 在网络中插入小模块，常用降维、非线性、升维的结构，任务切换方便，但会增加算子；Prefix-Tuning 学习连续前缀，常把额外的键和值加入注意力，为生成提供任务条件，也会占用注意力和缓存预算。比如多个业务共用一个底座，分别保存小适配器，存储可能比保存多个完整模型划算。\n\n我会先用相同数据做小规模基线，比较目标任务、通用回归、峰值显存和真实服务延迟。领域差异很大、数据充分时，全参数值得尝试；数据少时，更多自由度也可能更容易过拟合。冻结底座并不意味着跳过它的计算：梯度为了到达前面的可训练模块，仍可能经过冻结层并需要保存或重算激活。因此可训练参数减少 99%，不能推导训练显存也减少 99%，也不能保证参数高效方法总能达到全参数的效果。",
         "pitfalls": [
-          "训练参数减少 99% 就声称训练显存减少 99%。",
-          "仅看单次训练成本，忽略多适配器服务和合并成本。"
+          "可训练参数减少比例不等于训练显存减少比例。",
+          "只看训练文件大小，忽略多适配器服务、额外算子和合并成本。"
         ],
         "followups": [
           "领域迁移很大时为什么全参数值得尝试？",
@@ -2893,12 +2893,12 @@
         "公式"
       ],
       "answer": {
-        "body": "LoRA 冻结 $W_0\\in\\mathbb R^{d_{\\rm out}\\times d_{\\rm in}}$，学习 $\\Delta W=(\\alpha/r)BA$，其中 $A\\in\\mathbb R^{r\\times d_{\\rm in}}$、$B\\in\\mathbb R^{d_{\\rm out}\\times r}$。更新秩至多为 $r$，可训练参数为 $r(d_{\\rm in}+d_{\\rm out})$，不要求底座或整个模型低秩。\n\n前向为 $W_0x+(\\alpha/r)BAx$，梯度能经过冻结底座传播到需要训练的模块。标准浮点部署可合并增量，免去额外小投影；需要多适配器切换时则未必合并。LoRA 主要节省权重梯度与优化器状态，长序列激活仍可能主导显存。\n\n合并要求底座与 adapter 的 checkpoint、目标层、缩放和 dtype 对齐，并在 eval 模式关闭 adapter dropout。浮点权重 $W_{\\mathrm{merged}}=W_0+sBA$ 免去额外低秩分支，通常减少内核调用；但不会把大模型权重变成“小 adapter 大小”。低精度舍入使结果未必逐 bit 相同，应比对 logits 与任务结果。保留未合并 adapter 有利于共享底座、多租户切换和回滚；merge_and_unload 后应保留独立原件。量化底座的合并受量化后端支持限制，不能把浮点增量直接加到整数码，必要时反量化合并并重新校准量化。\n\n若给定一个 $3\\times3$ 权重矩阵，不能只凭形状判断实际秩：$W_0$ 可为0到3秩，需看其独立行列或奇异值。LoRA约束的是增量，$\\mathrm{rank}(BA)\\le\\min(r,3)$；即便设置r=1，$W_0+BA$ 仍可能为满秩3。默认零B初始化时增量秩为0，训练后也只保证秩上界，不保证恰好等于r。",
+        "body": "LoRA 是把需要学习的大矩阵更新拆成两个小矩阵相乘，用较少参数控制模型变化。它冻结原权重 $W_0$，学习 $\\Delta W=(\\alpha/r)BA$；这里输入维度是 $d_{\\rm in}$，输出维度是 $d_{\\rm out}$，$A$ 把输入压到 $r$ 维，$B$ 再升到输出维度，$\\alpha/r$ 控制分支尺度。\n\n一个投影的可训练参数是 $r(d_{\\rm in}+d_{\\rm out})$。例如原矩阵是 $4096\\times4096$，约 1678 万参数，rank 取 8 时两个小矩阵一共 65536 参数。多个目标层要逐层累加，额外训练的偏置或输出头也要另算。低秩约束作用于增量，不作用于整个底座：$BA$ 的秩至多为 $r$，但 $W_0+BA$ 仍可能满秩。一个 $3\\times3$ 矩阵究竟几秩，要看数值和独立行列，不能只凭形状判断；零 B 初始化时增量的初始秩是零。\n\n前向仍计算 $W_0x$ 和低秩分支，冻结只是不给 $W_0$ 算权重更新，梯度仍能通过它的输入路径到达其他适配器。LoRA 主要节省可训练权重的梯度和优化器状态，长序列激活可能仍是瓶颈。浮点模型可以把增量合并到权重，减少额外分支的推理开销，但底座大小不会因此变成适配器大小。\n\n合并前要确认底座版本、目标层、缩放和 dtype 一致，并关闭 dropout。低精度舍入可能使合并前后结果不是逐位相同，应检查 logits 和任务效果。量化权重不能直接加浮点增量到整数编码，可能需要反量化、合并后再量化。多任务共享底座时，保留独立适配器更方便切换和回滚，是否合并取决于服务方式。",
         "formula": "\\begin{aligned}\\Delta W&=\\frac{\\alpha}{r}BA\\\\N_{\\rm train}&=r(d_{\\rm in}+d_{\\rm out})\\\\\\mathrm{rank}(\\Delta W)&\\le r\\end{aligned}",
         "pitfalls": [
-          "把 LoRA 说成对原模型权重做截断 SVD。",
-          "漏掉不同目标模块的数量，误报总训练参数量。",
-          "“LoRA 无额外推理延迟”依赖合并或有效融合实现；未合并分支并非天然零开销。"
+          "LoRA 约束增量的秩，不是把底座做截断奇异值分解。",
+          "算总参数时漏掉目标模块数量、额外偏置或输出头。",
+          "只有合并或相应融合实现，才可减少额外分支开销；未合并不天然零延迟。"
         ],
         "followups": [
           "如何估算同时对 Q/K/V/O 与 FFN 加 LoRA 的参数量？",
@@ -2960,11 +2960,11 @@
         "rsLoRA"
       ],
       "answer": {
-        "body": "原始 LoRA 使用随机高斯 $A$、零 $B$，使初始 $\\Delta W=sBA=0$。PEFT 普通 Linear 默认采用 Kaiming-uniform A、零 B，Gaussian 选项也使用零 B；Embedding 等模块可能有不同约定，其他初始化则应按方法确认。\n\n令 $G=\\partial L/\\partial\\Delta W$，有 $\\partial L/\\partial A=sB^\\top G$、$\\partial L/\\partial B=sGA^\\top$。初始 B 为零时，纯低秩分支的 A 梯度为零，B 通常先更新，随后 A 获得梯度；A/B 同时为零则纯 BA 路径无法启动，零 A 加随机 B 是可启动但轨迹不同的方案。PiSSA、EVA、LoftQ 等使用权重、激活或量化信息，要核对是否改动底座及是否保持初始函数；`init_lora_weights=False` 通常随机初始化 A/B，不再是 no-op。\n\n$r$ 控制秩上界与参数量，标准 $s=\\alpha/r$ 控制分支尺度，rsLoRA 使用 $\\alpha/\\sqrt r$。固定 alpha 改 rank 同时改变容量和缩放，alpha 也不等于学习率。普通 Linear 的 dropout 施加在低秩分支输入，训练时正则、eval 时关闭，底座分支保留。应联合消融 rank、alpha、dropout、目标模块与学习率，没有通用最佳 rank 或 alpha:rank 比例。\n\nPEFT普通Linear的默认调用是 `kaiming_uniform_(A, a=sqrt(5))`，配合默认fan-in约定，其均匀边界为 $1/\\sqrt{d_{\\rm in}}$。它借用了Kaiming函数来实现与 `nn.Linear` 一致的初始化，并不等于给ReLU网络使用方差 $2/d_{\\rm in}$ 的He配方；初始化函数名称、传入gain/负斜率参数和实际方差应一起核对。",
+        "body": "LoRA 的常见初始化让低秩分支一开始输出零，这样刚插入适配器时模型行为保持原样，再从训练中逐渐学会更新。最初的 LoRA 方案采用随机高斯 A、零 B；PEFT 普通 Linear 的默认实现采用 Kaiming 均匀 A、零 B，不能把论文和所有库模块的初始化说成完全相同。\n\n从 $\\Delta W=sBA$ 看梯度，$s$ 是缩放，$G$ 是损失对增量矩阵的梯度，则 A 的梯度为 $sB^\\top G$，B 的梯度为 $sGA^\\top$。初始化 B 为零时，来自这条低秩路径的 A 梯度起初为零，B 通常先更新，然后 A 才获得梯度。若 A 和 B 同时为零，两边梯度都为零，单靠这个乘积路径就无法启动。反过来零 A、随机 B 可以启动，但训练轨迹不同。\n\nRank $r$ 控制参数量和增量秩上界，alpha 控制分支缩放，普通 LoRA 使用 $s=\\alpha/r$，rsLoRA 使用 $\\alpha/\\sqrt r$。Alpha 不是优化器学习率；固定 alpha 增大 rank，会同时改变容量和尺度。普通线性 LoRA 的 dropout 施加在分支输入上，训练时正则，推理时关闭，底座分支仍保留。\n\n默认初始化中的 `kaiming_uniform_(A, a=sqrt(5))` 会得到约 $1/\\sqrt{d_{\\rm in}}$ 的均匀边界，是沿用普通 Linear 的约定，并不等于面向 ReLU 的方差 $2/d_{\\rm in}$ 配方。其他权重或激活驱动的初始化可能改变底座或初始函数，Embedding 也可能采用不同约定。实践要核对具体模块和版本，并检查初始输出及首步梯度，不能仅凭方法名称推断。",
         "formula": "\\begin{aligned}\\Delta W&=sBA,\\quad\\mathrm{rank}(\\Delta W)\\le r\\\\s_{\\rm standard}&=\\frac{\\alpha}{r},\\quad s_{\\rm rsLoRA}=\\frac{\\alpha}{\\sqrt r}\\\\G&=\\frac{\\partial L}{\\partial\\Delta W}\\\\\\frac{\\partial L}{\\partial A}&=sB^\\top G,\\quad\\frac{\\partial L}{\\partial B}=sGA^\\top\\end{aligned}",
         "pitfalls": [
-          "把原论文高斯初始化、PEFT Linear 默认和所有新初始化变体说成完全相同。",
-          "双零 A/B、默认 no-op 与训练阶段梯度为零混为一谈，或把 $\\alpha$ 当作优化器学习率。"
+          "最初 LoRA 与 PEFT 默认、不同模块及新初始化变体，不能混作一个配方。",
+          "双零初始化与单零初始化不同，alpha 也不是优化器学习率。"
         ],
         "followups": [
           "如何检查添加 adapter 前后初始输出一致，以及第一步 A/B 的梯度？",
@@ -3023,11 +3023,11 @@
         "rsLoRA"
       ],
       "answer": {
-        "body": "LoRA 调参需要一起考虑更新容量、分支尺度、正则与适配位置。Rank 的参数预算线性增长，更新秩仅满足 $\\mathrm{rank}(\\Delta W)\\le r$，实际容量收益可能饱和或过拟合；比较时控制数据、有效 token、目标模块和学习率，并看验证指标、参数量与吞吐。\n\n标准缩放为 $s=\\alpha/r$，`use_rslora=True` 为 $\\alpha/\\sqrt r$。固定 alpha 增大 rank 会减小标准分支尺度，固定 alpha/r 也不能保证优化轨迹相同，因此可在同一缩放家族内分别消融容量与尺度。普通 Linear 分支是 $sBA\\mathrm{Dropout}(x)$，它不删除底座权重，eval 时关闭；小数据可检查正则收益，过大 dropout 也会欠拟合，且它与全模型 attention/hidden dropout 配置不同。\n\n`target_modules` 决定更新位置，可比较 attention 投影、MLP 或 `all-linear`，并核对输出层排除、embedding/LM head 保存及额外 trainable bias。常见 Q/V 实验不意味着 LoRA 只支持 Q/V。记录 PEFT 版本、初始化、缩放变体、优化器和成本；库默认不是数据相关实验中的最优值。\n\nLoRA主要减少可训练权重、梯度、优化器状态及相关通信，不会跳过底座的前向计算；为把梯度传到更早的可训练分支，通常还要计算冻结层的输入梯度并保存或重算必要激活。相比全参可能减少权重梯度计算，但新增低秩矩阵乘法、算子调度、量化解码和小batch利用率也影响耗时，因此不能按可训练参数比例推算加速倍数。应在同卡型、精度、有效batch、序列/帧数及checkpoint配置下实测有效tokens/s、step延迟和峰值显存，区分训练吞吐与合并权重后的推理延迟。",
+        "body": "LoRA 调参是在有限预算内决定“改哪些层、给多少容量、改动多强、加多少正则”，几个参数需要一起看。Rank 是增量的秩上界，target_modules 决定适配位置，alpha 决定缩放，dropout 用于训练正则；没有适合所有任务的固定 rank 或 alpha 比例。\n\n可以先确定目标层，再扫描少量容量。例如只适配注意力的查询和值投影，和同时适配注意力及前馈层，是两种容量分布。固定参数预算时，扩大模块覆盖与提高每层 rank 可以做对照。公式中的 $h$ 是层输出，$x$ 是输入，底座分支为 $W_0x$，低秩分支为 $sBA\\mathrm{Dropout}(x)$。普通缩放 $s=\\alpha/r$ 与 rsLoRA 的 $\\alpha/\\sqrt r$ 不同；固定 alpha 改 rank 后，结果不能只归因于容量。即使固定 alpha/r，两个 rank 的优化轨迹也不必相同。\n\n小数据可以试验 dropout 是否缓解过拟合，但过大也会欠拟合，推理时应关闭。还要核对输出头、embedding 和偏置是否额外训练，打印实际可训练参数，而不是只相信模块名称。比较时固定数据、有效 token、学习率、初始化和缩放家族，同时看任务效果、显存和吞吐。\n\nLoRA 不会省掉底座前向，为把梯度传到更早的分支，也通常仍要计算冻结层的输入梯度。额外的小矩阵乘法、内核调度、量化解码和小 batch 利用率都影响速度，所以训练参数少几十倍，不代表训练快几十倍。应实测相同硬件和长度下的有效 token/s、更新耗时与峰值显存，并区分训练速度和合并后的推理延迟。",
         "formula": "\\begin{aligned}h&=W_0x+sBA\\mathrm{Dropout}(x)\\\\N_{\\rm train}&\\approx r(d_{\\rm in}+d_{\\rm out})\\\\s_{\\rm standard}&=\\alpha/r,\\quad s_{\\rm rsLoRA}=\\alpha/\\sqrt r\\end{aligned}",
         "pitfalls": [
-          "给所有模型套 $r=8$、$\\alpha=2r$ 等万能值，或声称 dropout 在推理时继续增强多样性。",
-          "改变 rank/模块/缩放后仍把消融结果归因于单个因素。"
+          "没有适用所有任务的 rank、alpha 比例或 dropout，推理时普通 dropout 应关闭。",
+          "一次改变 rank、模块和缩放后，不能把结果只归因于 rank。"
         ],
         "followups": [
           "扩展 `target_modules` 和增大 r，怎样在相同训练参数预算下比较？",
@@ -3087,11 +3087,11 @@
         "StorageVsCompute"
       ],
       "answer": {
-        "body": "LoRA 本身不要求量化，通常在 FP16/BF16 底座上训练低秩分支；QLoRA 将冻结底座以 4-bit 形式存储，计算时按块反量化到较高精度，再与可训练 adapter 组合。梯度通过底座计算传到 adapter，但不更新量化底座；权重存储位宽与 GEMM 的 compute dtype 必须区分。\n\nNF4 为近似正态权重设计非均匀码本和块 scale，是有损量化，不等同于线性 INT4。Double Quantization 压缩第一层量化的 scale 等常数，不是再次量化同一权重以提高精度；加载 4-bit 权重也不自动意味着复现完整 QLoRA 配方。\n\nPaged optimizer 借助分页或统一内存管理优化器状态峰值，缓解瞬时显存压力，也可能产生 CPU/GPU 迁移开销；它不压缩激活。长序列的 attention 激活、反量化工作区、adapter 梯度和状态、batch 与 checkpoint 策略仍可决定是否 OOM。\n\nQLoRA 主要改善底座存储和训练可行性，速度与精度要按硬件、内核、权重分布和任务实测。合并部署可先反量化底座、加 $sBA$ 再量化，但会引入新误差，不能直接把浮点增量加到整数码；应比较未合并、合并与重新量化的输出。\n\n例如 NF4 存储配 BF16 compute 是“4-bit 冻结权重 + 较高精度算子”，并非全部运算采用 4 bit；BF16 指数范围较宽，FP16 要注意溢出与 loss scaling，选择取决于 GPU 和内核支持。LoRA 底座仍约占 $2P$ bytes；QLoRA 的理想权重码约 $P/2$ bytes，另外有 scale、未量化层和反量化工作区。两者的 adapter 参数量 $P_a$ 相同：若按低精度参数/梯度、FP32 master 和两个 Adam 状态估算，可训练状态约 $16P_a$ bytes，但实际 dtype 与优化器应逐项核对。冻结底座不会删除为训练 adapter 所需的中间激活，所以不能仅凭 $P/2$ 判断训练显存。",
+        "body": "QLoRA 是在 LoRA 的基础上，把冻结底座压成 4 位存储，再用较高精度计算来训练低秩适配器，主要目的是让大模型微调更容易装进显存。普通 LoRA 不要求量化，底座可以是 BF16 或 FP16；QLoRA 仍然训练 LoRA 分支，而不是直接更新全部 4 位权重。\n\n公式中的 $Q(W_0)$ 是量化编码，Dequantize 表示按块恢复到计算所需的精度，再与 $sBAx$ 相加。NF4 使用适合近似正态权重的非均匀码本，属于有损量化，与均匀 INT4 不同。双重量化进一步压缩第一层量化所需的 scale 等常数，不是把同一个权重再量化一次以提高精度。分页优化器利用统一内存等机制缓解优化器状态的显存峰值，可能发生 CPU 与 GPU 迁移，它不负责压缩激活。\n\n举例来说，底座有 $P$ 个参数，16 位权重理想存储约 $2P$ 字节，4 位编码约 $P/2$ 字节，但还要加 scale、未量化层和工作区。适配器参数量 $P_a$ 在两种方法中可以相同；若其训练状态采用低精度参数和梯度、FP32 主权重及两个 Adam 状态，粗估约为 $16P_a$ 字节，实际应按实现逐项核对。长上下文下激活很大，冻结底座并不会删除适配器反传需要的这些内容。\n\n所以“4 位存储加 BF16 计算”不等于所有运算都是 4 位，也不意味着必然更快或与浮点 LoRA 完全等精度。公平比较要统一数据、模块和训练设置，并测质量和吞吐。量化底座合并适配器时，需确认后端支持，必要时反量化合并并重新量化，再检查新增误差，不能把浮点增量直接加到整数码上。",
         "formula": "h=\\mathrm{Dequantize}(Q(W_0))x+sBAx",
         "pitfalls": [
-          "QLoRA 训练全部 INT4 权重，或把 4-bit 权重容量当作训练总显存。",
-          "LoRA 与 QLoRA 是互斥算法，或 QLoRA 在所有任务都与浮点 LoRA 等精度且更快。"
+          "4 位底座存储不等于全部算子是 4 位，也不等于训练所有量化权重。",
+          "QLoRA 结合 LoRA 与量化，速度和精度均需实测，4 位权重账单不是总显存。"
         ],
         "followups": [
           "LoRA/QLoRA 的公平比较要统一哪些模块、数据、初始化及评测条件？",
@@ -3138,7 +3138,7 @@
         "PrefixTuning"
       ],
       "answer": {
-        "body": "Adapter 在网络中增加可训练模块，常由降维、非线性、升维和残差组成，参数量由瓶颈维度决定。Prompt-Tuning 学习输入层软提示，虚拟 token 不必对应可读词，也不等同于手写文本 prompt。Prefix-Tuning 给 attention 增加连续前缀，可经重参数化产生多层 K/V，具体实现依架构而异。\n\n这些方法都可冻结底座，但插入位置、容量与开销不同：软前缀占序列或 KV 预算，Adapter 的额外算子可能影响时延与内核融合。",
+        "body": "Adapter、Prompt-Tuning 和 Prefix-Tuning 都是用少量参数适配任务，但它们把可训练部分放在不同位置。Adapter 改模型内部的隐藏表示，Prompt-Tuning 在输入端加入可学习的软提示，Prefix-Tuning 则向注意力提供可学习的前缀条件，常体现为多层额外的键和值。\n\nAdapter 常把隐藏维度先压到较小的瓶颈，经过非线性再升回来，并与原表示相加。例如隐藏维度 4096、瓶颈 64，就用两个较小投影学习任务变化。Prompt-Tuning 学习一串向量，像是在输入前增加虚拟 token，但这些向量不一定能解码成可读词。Prefix-Tuning 的前缀可直接或通过重参数化网络产生各层 K/V，因此不能把所有连续提示都当成只调整输入 embedding。\n\n它们通常能冻结底座，但仍要经过底座计算并反传到可训练部分。软提示会占用输入或缓存预算，前缀增加注意力读取范围，Adapter 则增加算子，可能影响融合和时延。选型要在相近参数和训练预算下比较任务质量，并看真实部署开销；仅比较保存文件大小不够。手写离散提示不训练参数，与这些需要优化可学习向量的方法也要区分。",
         "pitfalls": [
           "把所有 soft prompt 方法都叫输入 embedding 调参。",
           "说 Prefix-Tuning 完全没有服务时开销。"
@@ -3177,7 +3177,7 @@
         "LIMA"
       ],
       "answer": {
-        "body": "SFT 数据是否有效取决于答案正确性、任务覆盖与真实请求分布，增加数量不一定改善效果。可先用高质量种子构建任务、难度、语言、格式和拒答边界矩阵，再按实际分布补齐，清理重复和冲突；少样本论文结果不能推广为所有场景都只需少量数据。\n\n可验证任务用规则或执行器核验，开放回答用明确标准和抽审。按来源、模板或任务组切分，避免近重复跨训练与验证；在固定 token 预算下比较质量和配比，同时记录通用回归及边缘案例。",
+        "body": "SFT 数据不是越多越好，关键是正确答案覆盖了需要的任务和真实用户分布，重复或错误样本再多也可能降低效果。高质量指令集要同时考虑内容正确、指令清楚、输出格式一致和任务多样，而不是只追求样本总数。\n\n我会先列出任务、语言、难度、格式和拒答边界，再用优质种子补齐覆盖。例如一个抽取系统不仅要有“信息齐全”的例子，也需要缺字段、无结果、歧义输入和格式错误的例子。代码可以执行测试，数学可以核验答案，开放问答则用明确标准并抽审。对相同问题的冲突答案，先确定是否只是合理的多解，还是事实或格式标准冲突，再决定保留和标注方式。\n\n切分数据时按来源、模板或任务组隔离，防止近重复让验证分数虚高；实验最好固定训练 token 预算，对比质量和配比，而不只比较条数。少量优质数据有效，说明底座已有能力时高质量示范很重要，不代表所有任务都只需要少量样本。如果底座缺少领域能力或任务复杂，仍可能需要更广的数据覆盖。最后要测真实请求和通用回归，区分底座能力不足、数据没覆盖和训练格式实现错误。",
         "pitfalls": [
           "LIMA 使用少量优质数据，就断言规模不重要。",
           "单纯把相同模板扩写数万条当成丰富覆盖。"
@@ -3237,7 +3237,7 @@
         "数据验证"
       ],
       "answer": {
-        "body": "模型合成 SFT 数据能降低标注成本，也会把教师的错误、风格偏差和有限覆盖传给学生。应先确定能力缺口，再生成多样候选、验证正确性与去重，保留真实或人工数据对照；模型自评高分不能当作事实正确的证据。\n\nSelf-Instruct 以种子任务生成指令和回答后过滤无效、相似样本。代码、数学和结构化任务优先用执行器、测试或确定性规则，多提示、来源与难度组合还需统计模板和语义重复。用独立真实验证集比较真实/合成配比，并追踪教师的系统性错误。",
+        "body": "模型合成 SFT 数据能降低标注成本，但教师给出的答案仍可能错误、风格单一或覆盖不足，必须把“生成”与“验证”分开。首先确定学生缺什么，再生成不同类型和难度的候选，过滤错误、重复和不符合任务的样本，而不是让教师随意扩写大量相似问答。\n\n例如做代码任务，可以让模型生成题目和解答，再用执行器检查语法、测试用例和边界条件；做开放问答则需要依据核对或人工抽审。Self-Instruct 的思路是从种子任务扩展指令和回答，再去掉无效和相似内容。使用多种提示、来源和难度能增加覆盖，但仍要统计模板重复和语义重复，因为换几个人名不等于增加独立知识。\n\n教师自评高分不能当作独立正确性证据。可以保留真实数据对照，在独立真实验证集上比较不同真实与合成配比，并分析教师反复犯的系统性错误。题目太难，学生可能学到大量不可靠解释；太容易，又只模仿表达。蒸馏也可能传递教师的措辞和拒答偏差，而不是真实能力，因此验收要看任务正确率、泛化和多样性，不只看合成数据上的训练损失。",
         "pitfalls": [
           "只用同一个模型生成并自评分，认为已独立验证。",
           "把生成条数当作有效独立样本数。"
@@ -3265,7 +3265,7 @@
         "回归"
       ],
       "answer": {
-        "body": "灾难性遗忘表现为新任务改善、旧能力明显退化。用固定通用与领域评测分别检查新旧任务、指令格式和边界行为，先排除模板错配等实现问题，再考虑混入代表性旧样本、降低学习率和更新范围、早停或正则约束。\n\nReplay 的配比会影响领域收益，参数重要性正则等持续学习方法也需按任务和成本验证。PEFT 可以减少部分风险，但冻结底座不保证带适配器的输出不退化。保留底座和适配器版本可回滚，仍应完成上线前回归。",
+        "body": "灾难性遗忘是模型学好新任务时，把原来能做的事情明显做差了，需要用新旧能力同时评估。比如领域问答改善，但通用写作、工具调用或其他语言显著退化，才有证据讨论遗忘；先要排除聊天模板、生成参数或部署加载错配造成的假象。\n\n我会在微调前保存一套固定通用和领域评测，训练中同时看新任务收益和旧任务变化。确认遗忘后，可以混入代表性的旧数据做回放，降低学习率和更新范围，或根据联合验证早停。也可用参数重要性正则等持续学习方法，让重要参数不容易偏离，但这些方法的适用性和成本需要具体实验。\n\n例如领域训练中加入少量通用示范，可能保护对话格式，却也占用领域学习预算，比例并非越大越好。LoRA 冻结原权重，方便移除适配器或回滚，但加上适配器后的函数已经改变，仍然可能出现旧能力退化。实际部署要保存底座、适配器及配置版本，并按目标任务和通用能力完成回归；仅凭新验证集 loss 下降就早停，无法判断有没有遗忘。",
         "pitfalls": [
           "LoRA 不修改底座，因此部署输出永远不可能遗忘。",
           "只用新的 validation set 做早停。"
@@ -3310,7 +3310,7 @@
         "DDP"
       ],
       "answer": {
-        "body": "梯度累积汇总多个 micro-batch 后再更新，减少单次激活显存；有效 batch 约为 micro-batch、累积次数和数据并行数的乘积，最后不足的窗口要单独处理。正确归一化时可近似大 batch，dropout 与浮点累加顺序等仍会造成差异。\n\n对 token 平均目标，应累加窗口内有效 token 的 NLL，再除以整个窗口的有效 token 总数，不能等权平均长度不同的 micro-batch 的 token 平均 loss。DDP 的梯度平均和框架自动缩放会影响系数，不能重复除世界大小。Optimizer 和 scheduler 按真实更新推进，累积中可用 `no_sync` 减少通信。",
+        "body": "梯度累积把多个小 batch 的梯度先加起来，最后才更新一次参数，目的是用较少的单次激活显存实现较大的有效 batch。公式中的 $B_{\\rm micro}$ 是每卡每次处理的样本数，$K_{\\rm accum}$ 是累积次数，$N_{\\rm DP}$ 是数据并行卡数，三者相乘给出常见的有效 batch 估计，最后不足一个累积窗口时需要单独处理。\n\n能否等价于一次大 batch，关键是目标归一化和更新时机。对于语言模型的 token 平均损失，应把整个累积窗口的有效 token 损失相加，再除以总有效 token 数。例如两个小 batch 分别有 100 和 900 个有效 token，把各自平均 loss 再各占一半，会让前者的单个 token 权重变成后者九倍。公式里的 $\\mathcal T_k$ 是第 $k$ 个小 batch 的有效目标集合。\n\n累积期间参数保持不变，优化器和学习率调度只在真正更新时推进，并在更新后清零梯度。数据并行可能已自动平均梯度，训练框架也可能自动除累积次数，需避免重复缩放；中间 micro-step 可使用 no_sync 减少通信。Dropout 的随机结果、浮点累加顺序，以及按 batch 统计的层会让数值或语义出现差别，所以一般说在相应条件下接近或等价。最直接的验证是在小样本上比较两种方式得到的梯度，而不是只看有效 batch 公式。",
         "formula": "\\begin{aligned}B_{\\rm effective}&=B_{\\rm micro}K_{\\rm accum}N_{\\rm DP}\\\\\\mathcal L_{\\rm window}&=\\frac{\\sum_{k=1}^{K_{\\rm accum}}\\sum_{t\\in\\mathcal T_k}\\mathrm{NLL}_{k,t}}{\\sum_{k=1}^{K_{\\rm accum}}|\\mathcal T_k|}\\end{aligned}",
         "pitfalls": [
           "每个 batch loss 除累积次数，就认为变长序列始终等价。",
@@ -3339,10 +3339,10 @@
         "反向传播"
       ],
       "answer": {
-        "body": "Gradient checkpointing 只保留若干边界激活，在反向需要时重算内部前向片段，以额外计算换激活显存。节省程度取决于切分粒度，它不减少参数或优化器状态，主要用于需要反向的训练；冻结底座的 LoRA 也需传播到适配器，长序列场景同样可能受益。\n\n重算要与原前向一致，随机 dropout、状态修改、分支和设备迁移都应遵守框架约束。应确认当前版本的 reentrant/non-reentrant 行为，并比较峰值显存与有效 token/s，不能默认所有函数的重算天然等价。",
+        "body": "激活检查点是训练时少保存一些中间结果，反向传播需要时再重算，以额外计算换显存。它和把模型存到磁盘的训练断点是两件事，也不减少权重和优化器状态。\n\n普通反向要用到很多前向激活，检查点只保留某些边界输入。例如一组连续 Transformer 层，中间激活暂不保存，反向来到这组层时，再用边界输入恢复所需结果。检查点划分越细或策略不同，显存和重算开销就不同；长序列的激活很大时收益通常更明显。LoRA 虽然冻结底座，仍要把梯度传到可训练分支，所以同样可能需要这些激活。\n\n重算必须与原前向保持一致。Dropout 的随机状态、函数里的状态修改、设备迁移和数据依赖分支，都可能影响正确性。PyTorch 的可重入与非可重入实现，对梯度条件和行为有差异，应按实际版本核对；尤其要确认冻结输入情况下适配器梯度没有丢失。开启后用任务 loss、梯度、峰值显存和有效 token/s 做检查，不能假设总能固定节省某个比例。无反向的普通推理通常用不到这种机制，它也不会直接减少生成时的历史 KV 缓存。",
         "pitfalls": [
-          "把 gradient checkpointing 当作保存 checkpoint 文件。",
-          "无反向的常规推理用它来节省 KV cache。"
+          "激活重算与保存训练断点文件不同。",
+          "普通无反向推理不能靠激活 checkpointing 减少 KV 缓存。"
         ],
         "followups": [
           "为什么 LoRA 的输入梯度配置会影响 checkpointing？",
@@ -3368,7 +3368,7 @@
         "SFT"
       ],
       "answer": {
-        "body": "SFT loss 降低只表示更贴合训练目标，不能证明事实性或真实任务改善。先抽查完整样本的最终 token、监督区间、截断和 EOS，排除模板、mask、样本失效或验证泄漏，再固定生成配置比较 train/validation loss 与任务指标。\n\n按长度、领域和格式分析失败案例，检查高重复、错误答案、教师风格偏差及训练/部署 prompt 差异。确认过拟合或分布错配后，再以单变量实验尝试降低学习率、早停、减 rank、正则或调整配比。",
+        "body": "SFT loss 下降只说明模型越来越会模仿训练目标，任务效果变差时，应先核对数据与实现，再判断是否过拟合。真实任务考的是答案正确、格式合规或业务成功，训练交叉熵并不直接优化这些全部要求。\n\n我会先抽查完整样本，确认聊天模板、回答标签、结束符和截断都正确。例如长样本如果只留下提示词、答案被截掉，loss 统计就可能没有业务意义；如果部署模板不同，也可能让训练正常的模型表现异常。接着固定生成设置，同时看训练损失、独立验证损失和任务指标，按领域、长度、格式及难度分析失败案例。\n\n如果训练损失持续降低、验证和真实任务变差，才进一步考虑过拟合、重复数据或错误教师答案。可以逐个实验减少训练轮数、降低学习率、缩小适配器容量、增加正则或调整数据配比。若两种损失都下降而业务指标下降，还要检查模型是否过度学习冗长风格、类别先验或与实际需求不符的目标。每次改动应有独立验证集和失败样例支持，不能看到效果差就继续加 epoch，也不能只凭训练 loss 接近零判断训练成功。",
         "pitfalls": [
           "一看到效果差就继续加 epoch。",
           "只观察总体 loss，不看大量被 mask 或截断的样本。"
@@ -3398,15 +3398,16 @@
         "加速"
       ],
       "answer": {
-        "body": "KV cache 保存已处理 token 在各层的 K/V，prefill 建立前缀缓存，decode 只计算新 token 并追加。历史 Q 的注意力结果已用于原位置，未来通常不再用它查询，因此无需保存。复用依赖因果性：新 token 不改变历史位置表示；双向 attention 一般不能原样套用。\n\n新 query 仍要读取历史 K/V，单步 attention 成本随上下文增长。缓存以显存换取重复计算减少，改变底座权重、LoRA、前缀或位置约定时须检查缓存是否仍有效。",
+        "body": "KV Cache 就是把历史 token 在每一层产生的键 K 和值 V 存下来，让模型生成下一个 token 时不用重新算整段历史。Q 是查询，K 用来判断历史位置与当前查询的相关程度，V 提供被加权汇总的信息。输入阶段先并行处理提示词，建立缓存；生成阶段只为新位置计算 Q、K、V，把新的 K、V 追加进去，再用当前 Q 查询全部可见历史。\n\n通常不存历史 Q，是因为历史位置的注意力输出已经算完了，后续位置只需要自己的 Q 去匹配历史 K。比如生成“北京的天气”时，算“天气”这个位置仍要读取“北京的”的 K、V，却不需要再计算这些旧位置的查询结果。\n\n这个复用成立的关键是因果注意力：新增内容不会改变旧位置的表示，双向注意力一般不满足这一点。它节省重复计算，但以额外显存为代价，也没有把每步注意力变成常数复杂度，历史越长，读取的 K、V 越多。更换模型权重、LoRA 适配器、前缀或位置编码设置后，都要检查旧缓存是否还有效。",
         "pitfalls": [
-          "KV cache 能把每个生成 token 的 attention 复杂度变成常数。",
-          "把节省重算等同于减少模型总显存。"
+          "KV 缓存减少历史重算，但新查询仍要读取历史键值，每步注意力不会变成常数成本。",
+          "缓存是以显存换计算，不能说用了缓存就降低总显存。"
         ],
         "followups": [
           "为什么训练时通常不以同样方式使用 KV cache？",
           "滑动窗口注意力能怎样限制缓存大小？"
-        ]
+        ],
+        "formula": ""
       },
       "reference_ids": [
         "CORE-S055",
@@ -3443,16 +3444,16 @@
         "GQA"
       ],
       "answer": {
-        "body": "推理显存应拆为权重、KV cache、激活/工作区和框架预留。全注意力 KV 约为 $2BLTH_{\\rm kv}d_hs$：$B$ 是并发序列数，$L$ 是层数，$T$ 是缓存长度，$H_{\\rm kv}$ 是 KV 头数，$d_h$ 是头维，$s$ 是每元素字节；应使用 KV 头数而非 query 头数。\n\n32 层、32 KV 头、头维 128、长度 4096、单序列 FP16 的 KV 为 2 GiB，改为 8 KV 头则为 0.5 GiB。70 亿参数 FP16 权重约 14 GB，即 13.0 GiB，仅指权重。请求长度不同时按 $\\sum_iT_i$ 累加，并检查并行布局是否均分或复制 KV；分页、量化 scale、对齐与碎片都可能增加实际占用，应与实测峰值比较。\n\n以十进制 14B 即 $14\\times10^9$ 个参数为例，纯 FP16/BF16 权重约 28 GB，即 26.1 GiB；纯 INT8 码约 14 GB，即 13.0 GiB，还未计 scale、未量化模块与运行时开销。这不能直接推出“14 GB 卡可完整运行 14B INT8”。长回答会逐步增加每个请求的 KV；分页复用、准入限制、较低 KV dtype 或有效窗口可控制容量，裁掉上下文则会改变可见信息，需要质量评测。prefill 和 decode 峰值还可能不同，应记录生成到接近最大长度时的显存，而非只测模型刚加载完。",
+        "body": "我会把推理显存分成权重、KV Cache、激活和算子工作区，再加框架预留，而不是只看模型文件大小。权重的第一步估算是参数量乘每参数字节数。70 亿参数用 FP16 或 BF16，纯权重约 14 GB，也就是 13.0 GiB；14B 模型约 28 GB，26.1 GiB。换成 INT8 时纯量化码约减半，但还有缩放系数、未量化模块和运行开销，不能据此说一张 14 GB 卡就能运行 14B 的完整服务。\n\nKV 的公式是两份缓存乘并发数、层数、长度、KV 头数、每头维度和元素字节数。式中 B 是并发序列数，L 是层数，T 是已缓存长度，H_kv 是键和值的头数，d_h 是每头维度，s 是字节数。32 层、32 个 KV 头、头维 128、4096 长度的单序列 FP16 缓存是 2 GiB；改成 8 个 KV 头则为 0.5 GiB，所以不能拿查询头数代替 KV 头数。\n\n长度不同的请求要按各自长度求和，视觉 token 也计入可见序列。多卡时还要确认缓存究竟被切分还是复制，分页尾块、量化元数据、对齐和碎片都会影响实占。最后我会实测长输入和接近最大输出长度的峰值，因为加载成功不代表服务能承受并发。缩短窗口、降低缓存精度或限制准入能控制容量，但必须同时检查质量，特别是上下文裁剪会直接改变模型能看到的信息。",
         "formula": "M_{\\rm KV}\\approx2BLTH_{\\rm kv}d_hs",
         "pitfalls": [
-          "把 GB 和 GiB 混为一谈。",
-          "用 MHA 的 query 头数计算 GQA 的 KV 大小。",
-          "纯 INT8 权重算例不是完整服务所需显存，也不是 INT8 训练的状态大小。"
+          "GB 与 GiB 的单位不同，估算与实测要统一口径。",
+          "GQA 缓存按键值头数计算，不能套用多头注意力的查询头数。",
+          "INT8 纯权重大小不等于服务总显存，更不等于训练所需状态大小。"
         ],
         "followups": [
-          "多模态视觉 token 怎样计入 KV 长度？",
-          "为什么 4-bit 权重文件大小不等于线上显存？"
+          "视觉 token 怎样计入缓存长度？",
+          "为什么四位权重文件大小不等于运行时显存？"
         ]
       },
       "reference_ids": [
@@ -3486,15 +3487,15 @@
         "TensorParallel"
       ],
       "answer": {
-        "body": "MHA 的各 query 头有独立 K/V，MQA 的全部 query 头共用一组 K/V，GQA 按组共享，保留 query 头数 $H_q$。对应 $H_{\\rm kv}=H_q$、$H_{\\rm kv}=1$ 和 $1<H_{\\rm kv}<H_q$，均匀分组通常要求 $H_q$ 能被 $H_{\\rm kv}$ 整除；query 头 $i$ 使用组 $g(i)$，并非先平均 query。\n\n典型形状为 `Q:[B,H_q,L_q,d_h]`、`K/V:[B,H_kv,L_k,d_h]`，每个 query 头单独匹配其组内 K/V，再拼接输出。逻辑上的重复映射可由内核直接实现，显式物理 repeat 可能抵消显存和带宽收益。\n\n$N$ 层、总缓存 token 数 $T_{\\rm total}$、每元素 $b$ 字节时，KV 约为 $2NT_{\\rm total}H_{\\rm kv}d_hb$。32 头改 8 头使理论 KV 降为 1/4，但 Q、输出投影与大部分 FFN 不随之下降。Decode 在小 Q、长 K 时常受 KV 读带宽限制；prefill 仍要处理各 query 头，速度还依赖 batch、内核、上下文与硬件。TP 超过 KV 头数时可能复制 KV，不能理想地继续均分。\n\n已有 MHA 转换 GQA 可按组聚合 K/V 权重后再 uptraining，直接平均上线不能保证质量恢复。GQA 是容量与效率的折中，MQA 也可能有任务精度代价，应同时用任务评测、长上下文测试和服务压测验证。",
+        "body": "这三种结构的区别，是多少个查询头共享一套键和值。多头注意力 MHA 中，每个 Q 头各有自己的 K、V；多查询注意力 MQA 中，所有 Q 头共用一套 K、V；分组查询注意力 GQA 则把 Q 头分组，每组共享一套。Q 头仍各自计算相关性，并不是先把 Q 平均掉。均匀分组通常要求查询头数能被 KV 头数整除。\n\n张量可写成 Q:[B,H_q,L_q,d_h] 和 K/V:[B,H_kv,L_k,d_h]，B 是批大小，H_q、H_kv 是两类头数，L_q、L_k 是查询和历史长度，d_h 是头维度。第 i 个 Q 头与它所属组 g(i) 的 K 做相似度，再汇总该组 V，最后拼接各头输出。公式中的 N 是层数，T_total 是所有请求的缓存 token 总数，b 是每元素字节数。把 32 个 KV 头降到 8 个，理论 KV 容量降为四分之一；查询、输出投影和大部分前馈网络并不会一起降为四分之一。\n\n共享 K、V 尤其能减少生成阶段的显存读取，但实际提速还取决于批大小、上下文和内核。实现最好直接映射共享头，显式复制 K、V 可能抵消收益；张量并行卡数超过 KV 头数时，也可能需要复制缓存，不能继续理想均分。已有 MHA 模型可按组聚合 K、V 权重再补充训练，直接平均上线没有质量保证。选 GQA 或 MQA 时，我会一起验证任务质量、长上下文表现和真实服务延迟。",
         "formula": "\\begin{aligned}M_{\\rm KV}&\\approx2NT_{\\rm total}H_{\\rm kv}d_hb\\\\O_i&=\\mathrm{softmax}\\!\\left(Q_iK_{g(i)}^\\top/\\sqrt{d_h}\\right)V_{g(i)}\\\\H_q\\bmod H_{\\rm kv}&=0\\end{aligned}",
         "pitfalls": [
-          "将 GQA 写成减少全部 attention heads，或认为逻辑共享等于张量实现完全不复制。",
-          "用 KV 头比例直接预测端到端 latency、训练 FLOPs 或质量变化。"
+          "GQA 共享键值头，并非把全部注意力头都减少；实现也可能发生物理复制。",
+          "KV 头数减少的比例，不能直接预测整体延迟、训练计算量或质量变化。"
         ],
         "followups": [
-          "GQA 的 query-to-KV 分组在多 GPU 分片时如何保持一致？",
-          "同样的 KV 缓存预算下，增加并发和增加上下文长度怎样权衡？"
+          "多 GPU 分片时，怎样保持查询头与键值组的对应关系？",
+          "同样的 KV 预算下，怎样取舍更高并发和更长上下文？"
         ]
       },
       "reference_ids": [
@@ -3541,15 +3542,16 @@
         "Roofline"
       ],
       "answer": {
-        "body": "Prefill 一次处理输入前缀并建立 KV cache，token 并行度较高，线性层能形成较大的 GEMM，稠密 attention 有长度二次项。Decode 通常每请求每步只处理一个新 token，反复读取权重和历史 KV，新 query 的 attention 计算约为 $O(Td)$。\n\n前者常更偏计算，后者在小 batch 下常更偏带宽，但长上下文、batch 与硬件会改变瓶颈。扩大 batch 能摊薄权重读取、提高利用率，也增加排队、显存和请求间竞争。先用 profiler 区分权重/KV 带宽、算子启动和计算瓶颈，再选择量化、batching 或融合。",
+        "body": "Prefill 是模型读取完整提示词、建立历史 KV 缓存的阶段，decode 是利用缓存逐步生成后续 token 的阶段。Prefill 中不同输入位置可以并行计算，线性层通常形成较大的矩阵乘法；稠密注意力还包含输入长度的二次项。Decode 常常每个请求每轮只增加一个位置，这个新查询仍要读取越来越长的历史 K、V，注意力计算量大致随历史长度 T 和特征维度 d 线性增长。\n\n例如一次输入几千字、只回答一个词，时间主要可能花在 prefill；输入很短、回答很长，则会反复经历 decode。小批量 decode 往往没多少算术工作，却要搬运大量权重和缓存，所以容易受显存带宽限制；prefill 往往更能利用算力。这是常见趋势，不是所有硬件和负载都如此。\n\n我会先用性能分析器看时间花在矩阵计算、权重读取、KV 读取还是内核启动上，再决定量化、算子融合和调度方案。扩大 batch 能让多个请求分摊权重读取，但也会提高显存占用和排队时间。分块 prefill 可以减少长输入对正在生成请求的干扰，效果要用固定输入输出长度分布、首 token 延迟和每 token 延迟验证，不能只比较总 tokens/s。",
         "pitfalls": [
-          "prefill 永远算力瓶颈、decode 永远带宽瓶颈。",
-          "只看总 tokens/s 而不看输入输出长度。"
+          "Prefill 常偏计算、decode 常偏带宽，但瓶颈会随负载与硬件改变。",
+          "比较 token 吞吐时，必须说明输入和输出长度分布。"
         ],
         "followups": [
-          "chunked prefill 为什么有助于控制 decode 干扰？",
-          "如何用 roofline 判断量化是否可能加速？"
-        ]
+          "把长提示分块处理，为什么能减少对正在生成请求的干扰？",
+          "怎样用算力与带宽上限的对比，判断量化是否可能加速？"
+        ],
+        "formula": ""
       },
       "reference_ids": [
         "CORE-S055",
@@ -3572,15 +3574,16 @@
         "OnlineSoftmax"
       ],
       "answer": {
-        "body": "FlashAttention 分块加载 Q/K/V，在片上 SRAM 计算局部分数，维护每行最大值与归一化累计量，以在线 softmax 累积输出，避免将完整 $T\\times T$ 分数矩阵写回 HBM。它优化 IO 与中间存储，仍计算精确稠密注意力，算术复杂度为二次。\n\n分块改变浮点求和次序，可产生小误差，并不保证逐 bit 相同，也不同于近似稀疏 attention。训练反向可重算部分分数和统计，以局部计算换更少保存与 IO。收益受长度、dtype、硬件、mask 和内核支持影响，短序列或不兼容场景不保证加速。",
+        "body": "FlashAttention 是一种更节省显存读写的精确注意力算法。普通实现往往把完整的注意力分数矩阵写到显存，再读出来做 softmax 和加权求和。序列越长，这个 T×T 的中间矩阵越大。FlashAttention 把 Q、K、V 分块搬进片上存储，算完一个块就累积输出，避免完整分数矩阵反复进出显存。\n\n分块后仍需要对一整行分数做归一化，所以它会维护当前最大值、指数和与输出累计值。读到新块、行最大值改变时，要重新缩放旧的累计量，再合并新块；这样不保存所有分数，也能得到同一个数学上的 softmax。训练反向还可以重算部分中间量，以多一点计算换更少存储和读写。\n\n它没有把稠密注意力的二次算术复杂度改成线性，也不是只看部分位置的近似稀疏注意力。浮点计算顺序改变后允许有小数值差异，不能保证逐位一致。收益取决于长度、数据精度、掩码、硬件和内核支持，短序列未必更快。KV Cache 则是复用历史键值、减少重复前向，两者解决不同开销，可以共同使用。",
         "pitfalls": [
-          "说它把稠密注意力 FLOPs 从 $O(T^2)$ 降到 $O(T)$。",
-          "把 FlashAttention 与 KV cache 视为同一技术。"
+          "FlashAttention 减少中间存储和读写，稠密注意力的算术量仍是二次增长。",
+          "FlashAttention 与 KV 缓存分别优化计算读写和历史重算，不能混为同一技术。"
         ],
         "followups": [
           "在线 softmax 合并两个块时为什么需要重缩放？",
           "FlashAttention-2 进一步优化了什么？"
-        ]
+        ],
+        "formula": ""
       },
       "reference_ids": [
         "CORE-S057",
@@ -3615,15 +3618,16 @@
         "碎片"
       ],
       "answer": {
-        "body": "PagedAttention 将 KV 分成块，通过逻辑块到不连续物理块的映射按需分配，减少最大窗口预留浪费和碎片。块表指导内核访问，块尺寸影响尾部浪费、映射开销与效率；共享前缀或分支可以用引用计数管理，并在修改时避免覆盖其他请求。\n\nFlashAttention 优化注意力计算的 IO 和中间矩阵，PagedAttention 优化 KV 管理，两者可配合。分页不减少同样 K/V 的理论元素数，高并发仍可能耗尽容量，需要准入、抢占等调度策略。",
+        "body": "PagedAttention 主要解决生成服务中 KV 缓存怎么分配和共享的问题。每个请求的最终输出长度未知，如果预先给它留一大段连续显存，容易浪费并产生碎片。分页方法把缓存分成固定大小的块，用块表把逻辑顺序映射到不连续的物理显存，随着生成按需增加块，注意力内核根据块表读到正确的历史 K、V。\n\n例如两个请求共享同一段提示词，可以共享对应缓存块；它们之后生成不同内容时，再各自分配新块。引用计数用来判断共享块是否还在使用，需要修改共有块时可以采用写时复制，避免一条分支覆盖另一条分支的数据。块越大，最后未填满的空间可能越多；块越小，映射和管理成本也可能提高。\n\nFlashAttention 解决的是注意力计算过程中的中间矩阵和读写，PagedAttention 解决的是缓存管理，所以可以配合。分页不会减少同样一组 K、V 所含的元素数，也不能让单请求无限增长。高并发仍要设置容量、准入和抢占策略。性能判断应结合实际长度分布与尾延迟，不能把论文中的特定吞吐倍数当成所有部署的保证。",
         "pitfalls": [
-          "分页可以让单序列无限增长且不占显存。",
-          "以论文倍数直接承诺任意服务吞吐提升。"
+          "分页改善分配浪费，但缓存仍占显存，单请求不能无限增长。",
+          "论文中的特定吞吐倍数不能直接承诺到其他服务负载。"
         ],
         "followups": [
-          "块尺寸如何影响尾部浪费？",
-          "共享块在分支生成时为什么可能需要 copy-on-write？"
-        ]
+          "块大小怎样影响末块未填满的浪费？",
+          "分支生成修改共享块时，为什么可能需要写时复制？"
+        ],
+        "formula": ""
       },
       "reference_ids": [
         "CORE-S058",
@@ -3644,15 +3648,16 @@
         "吞吐"
       ],
       "answer": {
-        "body": "普通 dynamic batching 常在开始处理请求前拼批，continuous batching 则在生成迭代间移除已完成请求、加入新请求，使空出的 batch 位置能立即利用，适合到达时间与生成长度不同的负载。\n\n调度还要处理长 prefill 对 decode 的干扰、KV 容量和长请求公平性，可用单轮预算或分块 prefill 控制计算量。评估时固定请求率、输入/输出长度分布和 SLO，扫描负载比较吞吐与尾延迟，不能只看最大 batch 的吞吐。",
+        "body": "连续批处理的核心，是在每一轮生成结束后重新组织正在运行的请求。普通动态批处理通常先把到达时间接近的请求拼成一个批次，再处理；生成长度不同的话，短请求结束后空出的计算位置可能要等整批结束。Continuous batching 可以每轮移除已完成请求、加入新请求，让空位更快复用。\n\n比如一批里有人只要几十个 token，有人要几千个，连续批处理能在短回答结束后接入新用户。但新请求先要读提示词，长 prefill 可能拖慢旧请求的下一轮 decode，因此还需要单轮 token 预算、分块 prefill 和公平性策略。最大请求数与每轮 token 数是两种约束，前者管序列数量，后者管当轮工作量。\n\n它不是始终拼最大的批次。批越大可能吞吐越高，也可能让排队、每 token 间隔和 KV 占用恶化。我会固定请求到达率、输入输出长度分布和延迟目标，逐步加负载，比较满足目标的有效吞吐、失败率与 P95/P99 延迟。长请求是否被饿死、短请求是否被长输入拖住，都需要单独观察。",
         "pitfalls": [
-          "把 continuous batching 简单解释为所有请求永远组成最大 batch。",
-          "只报告峰值 throughput，不报告排队时间。"
+          "连续批处理每轮重新安排请求，并非永远运行最大的批次。",
+          "峰值吞吐要和排队、尾延迟一起看。"
         ],
         "followups": [
-          "短请求如何避免被长请求拖累？",
-          "batch size 上限和每轮 token budget 含义有何不同？"
-        ]
+          "怎样避免短请求被长输入或长回答拖慢？",
+          "批大小上限与每轮 token 预算分别约束什么？"
+        ],
+        "formula": ""
       },
       "reference_ids": [
         "CORE-S059",
@@ -3673,15 +3678,16 @@
         "TopP"
       ],
       "answer": {
-        "body": "Temperature 用 $p_i\\propto\\exp(z_i/\\tau)$ 调整分布尖锐程度，$\\tau>0$ 时较小值通常更集中，$\\tau=0$ 应按框架的贪心等特殊规则处理。Top-k 保留固定数量候选，top-p 保留累计概率达到阈值的最小候选集合，其大小随分布变化。\n\n过滤后须重新归一化，多参数联用的执行顺序依实现而定。这些设置控制多样性，不保证事实正确；创作和可验证问答可用不同配置。固定种子有助于复现，但并行数值与运行环境仍可能使贪心或采样结果不能跨环境逐 token 一致。",
+        "body": "这三个参数都在调整下一 token 的候选分布。Temperature 把模型分数 z_i 除以温度 τ 后再做 softmax：τ 大于零时，温度越低通常越集中，越高越分散。零温度不能直接代入除法，而是由框架按贪心等特殊规则处理。Top-k 留下概率最高的固定 k 个候选，top-p 则按概率排序，取累计概率达到阈值的最小候选集合。\n\n例如模型对一个问题很确定，top-p 可能只留下几个词；遇到开放续写、概率分散时，同样的 p 会留下更多词。它不是“只保留单个概率大于 p 的词”。过滤候选后要重新归一化，多种设置一起使用时，先调温度还是先过滤会改变最终结果，需按实际实现理解。\n\n我会让可验证问答更偏稳定，创意生成适当保留多样性，再用任务样本调参。降低温度只能减少随机性，模型最确信的答案也可能是错的，因此不能保证没有幻觉。固定随机种子有助复现，但硬件、并行方式和数值差异仍可能改变结果，不能承诺跨环境逐 token 相同。",
         "pitfalls": [
-          "`temperature=0` 就绝对不会出现幻觉。",
-          "把 top-p 当作独立地保留概率大于 p 的 token。"
+          "零温度通常对应确定性解码，不保证答案真实或没有幻觉。",
+          "Top-p 看排序后的累计概率，不是保留单个概率大于 p 的 token。"
         ],
         "followups": [
-          "为什么 beam search 在开放生成中可能重复？",
-          "top-p 与 temperature 的顺序为什么重要？"
-        ]
+          "束搜索在开放生成中为什么可能复读？",
+          "先调温度和先做 top-p 过滤，为什么结果可能不同？"
+        ],
+        "formula": ""
       },
       "reference_ids": [
         "CORE-S060",
@@ -3702,15 +3708,15 @@
         "QAT"
       ],
       "answer": {
-        "body": "PTQ 在训练后量化，QAT 在训练中模拟或考虑量化误差。W4A16 表示权重约 4 bit、激活约 16 bit，不表示全部算子都使用 INT4。仿射量化常取 $q=\\mathrm{clip}(\\mathrm{round}(x/s)+z)$，反量化为 $\\hat x=s(q-z)$，其中 $s$ 为 scale，$z$ 为 zero-point。\n\nPer-tensor、per-channel、per-group 分别是量化参数的共享粒度；组越小通常误差更低，也增加元数据和实现成本。总存储还含 scale、zero-point、未量化层与对齐，不能只按参数量乘位宽估算。校准要覆盖部署输入、长度和领域，速度也要结合硬件及内核实测。\n\nINT8/INT4不必比FP16/BF16快：小batch decode若权重带宽是瓶颈，低bit可减少读取；较大batch或prefill若更受GEMM计算约束，反量化、scale和布局转换可能抵消收益。CPU与GPU的kernel支持、SIMD/Tensor Core、shape及线程配置不同，不能给一个脱离硬件的固定速度倍数。基于相同输入/输出长度、batch和质量约束测端到端延迟与吞吐，才能比较量化收益。",
+        "body": "量化是用更少位数近似表示权重或激活，以减少存储和搬运。PTQ 是训练完成后，用校准数据选择量化参数；QAT 是训练时把量化误差纳入过程，让模型适应低精度。W4A16 表示权重约 4 位、激活约 16 位，并不意味着所有算子都直接用 INT4 运算，实际可能需要反量化或保留部分高精度模块。\n\n仿射量化把数值 x 除以尺度 s、舍入并加零点 z，再裁到整数范围；反量化用 s(q−z) 近似还原。Per-tensor 整个张量共享参数，per-channel 每个通道一组，per-group 每小组一组。更细粒度通常有利于控制误差，但会增加尺度、零点等元数据，也对内核提出要求。校准集要覆盖部署领域、输入长度和容易出现极值的场景。\n\n例如小批量生成主要在读权重时，4 位权重可能明显减少带宽压力；大批量或 prefill 更受矩阵计算限制时，反量化和布局转换反而可能抵消收益。CPU 和 GPU 的指令及内核支持也不同。最后应在相同质量、长度和负载条件下测端到端延迟与吞吐。权重量化和 KV 缓存量化是两件事，模型文件变小也不等于服务总显存按同一比例下降。",
         "formula": "\\begin{aligned}q&=\\mathrm{clip}(\\mathrm{round}(x/s)+z)\\\\\\hat x&=s(q-z)\\end{aligned}",
         "pitfalls": [
-          "低 bit 一定比 FP16 更快。",
-          "把权重量化与 KV cache 量化混成同一项。"
+          "低位宽不一定更快，反量化和内核支持都可能影响收益。",
+          "权重量化与 KV 缓存量化是两项独立选择。"
         ],
         "followups": [
-          "outlier 为什么会增大量化误差？",
-          "怎样选择校准集并评估任务精度损失？"
+          "少数极大值为什么会增大量化误差？",
+          "怎样选择校准集，并验证任务精度损失？"
         ]
       },
       "reference_ids": [
@@ -3741,15 +3747,16 @@
         "Calibration"
       ],
       "answer": {
-        "body": "GPTQ 用校准输入 $X$ 形成近似二阶信息，逐步量化权重，并补偿尚未量化权重的误差，目标是减少原层 $WX$ 与量化层 $\\hat WX$ 的输出差异。输入二阶统计反映权重误差对输出的敏感性，比独立 round-to-nearest 更有信息。\n\n工程上按列或块处理和更新以控制成本，通常属于低 bit 权重 PTQ。它仍是有损压缩，效果依赖校准覆盖、分组和阻尼；领域、长上下文或多模态校准错配须通过端到端回归检查。\n\n和 AWQ 比较，GPTQ 用输入二阶统计近似层输出误差，逐步量化并补偿剩余权重；AWQ 用激活统计选择通道缩放，再搜索有利于低 bit 表示的尺度。两者都属于依赖校准数据的权重 PTQ，不能仅凭缩写判断谁更准或更快；公平比较要固定位宽、group size、校准数据、部署内核和真实任务，量化误差与推理速度分别测量。",
+        "body": "GPTQ 是一种训练后权重量化方法，它关心的是量化后这一层的输出变了多少，而不只是每个权重舍入误差多大。给线性层一批代表性输入 X，原输出是 WX，量化后是 ŴX；即使两处权重误差相同，如果对应输入通道很活跃，对输出的影响也可能很不同。\n\n它利用输入的二阶统计近似这种敏感性，逐列或逐块量化权重，并把已经引入的误差补偿到尚未量化的权重上。这样可以在控制离线计算成本的同时，比独立四舍五入更有针对性。二阶矩阵数值不稳定时需要阻尼，分组大小和处理顺序也会影响结果。这不是重新对整个底座做完整梯度训练。\n\n与 AWQ 相比，GPTQ 主要通过层输出误差和二阶信息来安排补偿，AWQ 主要利用激活统计选择通道缩放。两者都依赖校准，也都是有损压缩。公平比较要固定位宽、组大小、校准数据和部署内核，分别检查任务质量与速度；尤其要回归长上下文、领域和多模态输入，不能把某个模型的近乎无损结果推广到全部场景。",
         "pitfalls": [
-          "GPTQ 会更新底座进行完整反向训练。",
-          "把论文中某模型的近乎无损结果推广到所有位宽和场景。"
+          "GPTQ 是训练后量化，不是对整个底座重新做完整反向训练。",
+          "某个模型的近乎无损结果，不能推广到所有位宽和输入领域。"
         ],
         "followups": [
-          "校准 Hessian 病态时为什么可能需要 damping？",
-          "GPTQ 与普通舍入怎样公平比较？"
-        ]
+          "输入二阶矩阵数值不稳定时，为什么要加阻尼？",
+          "怎样在相同位宽、数据和部署条件下，与普通舍入比较？"
+        ],
+        "formula": ""
       },
       "reference_ids": [
         "CORE-S061",
@@ -3776,15 +3783,16 @@
         "WeightOnly"
       ],
       "answer": {
-        "body": "AWQ 利用激活统计识别重要权重通道，通过放大对应权重、对激活逆缩放，在未量化时保持线性结果等价，降低低 bit 量化误差。敏感性要结合激活幅度，单看权重绝对值不足以判断。\n\nScale 由离线校准搜索，正式方案不需完整梯度训练。论文讨论少量显著权重的重要性，但正式 AWQ 避免硬件不友好的混合精度，因此不能简化为把 1% 权重保留 FP16。部署仍需有效的 weight-only 内核，并实测任务精度、长度与硬件速度。",
+        "body": "AWQ 是激活感知的权重量化。它的出发点是：哪些权重值得重点保护，不能只看权重本身大小，还要看它连接的输入通道在真实数据中有多活跃。某个通道的激活较大，同样的权重量化误差就可能造成更大的输出偏差，所以用代表性输入统计寻找敏感通道。\n\n它对选定通道的权重放大，同时把对应激活逆向缩小。浮点情况下两边相抵，线性层结果不变；但量化是离散舍入，这种重新分配动态范围可以减少关键通道的误差。尺度在离线校准中搜索，正式方法不需要完整梯度训练。论文中少量显著权重的讨论用于解释这个思路，不能说最终 AWQ 就是把 1% 权重一直留成 FP16；其方案考虑了统一低精度部署的硬件效率。\n\n例如同是四位权重，有的层平均误差不大，但活跃通道被破坏后答案质量明显下降，AWQ 就针对这种敏感性。实际效果还受校准覆盖、分组和内核影响。我会验证业务准确率、长输入和异常输入，再测部署速度；既不能保证所有任务无损，也不能仅凭使用 AWQ 就承诺比 GPTQ 更快。",
         "pitfalls": [
-          "把 AWQ 的启发性实验混成最终采用的混合精度方案。",
-          "AWQ 只看权重统计，不看激活。"
+          "AWQ 对少量重要权重的分析，不等于最终把它们全部留成 FP16。",
+          "AWQ 需要激活统计，不能只根据权重大小判断重要性。"
         ],
         "followups": [
           "为什么通道缩放能改变量化误差却不改变未量化输出？",
           "AWQ 与 GPTQ 的校准目标有何差别？"
-        ]
+        ],
+        "formula": ""
       },
       "reference_ids": [
         "CORE-S062"
@@ -3804,15 +3812,15 @@
         "Outlier"
       ],
       "answer": {
-        "body": "SmoothQuant 针对激活少数大值通道造成的量化困难，用离线等价通道缩放压低激活、相应放大权重，让两者更适合 W8A8。线性层可写为 $XW=(XS^{-1})(SW)$，$S$ 是按输入通道定义的可逆正对角矩阵。\n\n缩放前浮点函数等价，量化后仍有误差；平滑系数需平衡两边动态范围，压低一方也可能增大另一方的误差。缩放可吸收到相关参数，减少额外运行操作，实际效果取决于激活量化粒度、代表性校准长度和 INT8 硬件支持。",
+        "body": "SmoothQuant 主要解决权重和激活都量化为 8 位时，激活中的极大值难以表示的问题。若某个输入通道偶尔远大于其他通道，共用一个量化尺度就会让普通值的分辨率变差。它用离线通道缩放，把一部分数值范围从激活搬到更容易处理的权重上，而不是直接忽略这些极大值。\n\n在线性层 XW 中，X 是输入，W 是权重，S 是按输入通道定义的正对角缩放矩阵。把输入改成 XS⁻¹，权重改成 SW，乘积仍然等于 XW。可以理解为某列激活缩小几倍，对应权重行扩大几倍，浮点输出保持一致。尺度尽量吸收到相邻参数中，避免运行时增加很多额外操作。\n\n但浮点等价不等于量化后没有误差，激活压小了，权重范围也被放大，需要平滑系数平衡两边。尺度和激活量化粒度要用代表性领域、长度进行校准，线上出现新的极值时仍可能退化。它主要面向 W8A8，而不是通常说的 W4A16；最终还要看硬件是否有合适的 INT8 内核，同时验证质量和实际延迟。",
         "formula": "XW=(XS^{-1})(SW)",
         "pitfalls": [
-          "浮点等价变换就意味着量化后零误差。",
-          "把 SmoothQuant 一概称为 W4A16 权重量化。"
+          "缩放前的浮点结果等价，不表示量化后没有误差。",
+          "SmoothQuant 主要面向权重和激活都为八位的方案，不能一概称为 W4A16。"
         ],
         "followups": [
-          "为什么逐输入通道激活 scale 不一定适合常规 INT8 GEMM？",
-          "部署输入出现新 outlier 时怎么办？"
+          "每个输入通道单独缩放激活，为什么不一定适合常规 INT8 矩阵乘法？",
+          "部署输入出现校准集没有的新极大值，应怎样处理？"
         ]
       },
       "reference_ids": [
@@ -3833,11 +3841,11 @@
         "加速"
       ],
       "answer": {
-        "body": "投机解码用便宜的 draft 模型提出多个 token，由 target 并行验证并执行接受/修正采样。对草稿分布 $q$ 提出的候选 $x$，以 $\\min(1,p(x)/q(x))$ 接受；首次拒绝后从归一化的 $\\max(p-q,0)$ 修正分布采样，不能直接从 $p$ 重采仍套用相同分布证明。全部接受时通常还能从 target 下一位置分布采额外 token。\n\n标准算法保持目标模型分布，不要求每次随机运行文本完全相同。Tokenizer、采样变换与约束需协调；速度由接受率、draft 成本及验证开销决定，草稿越长不一定越快，低接受率或大 batch 可能收益不足。",
+        "body": "投机解码用一个便宜的草稿模型先猜多个 token，再让目标模型一次并行验证这些位置，从而减少昂贵模型的串行轮数。它可以保持目标模型的采样分布，关键不是“猜对就用”，而是接受和纠正的概率规则。设同一前缀下目标分布为 p，草稿分布为 q，对从 q 采出的候选 x，以 min(1,p(x)/q(x)) 的概率接受。\n\n首次拒绝后，后面的草稿全部丢弃，并从归一化的 max(p−q,0) 中采一个纠正 token；如果全部接受，通常还能从目标的下一位置分布多采一个。这样把草稿过多分配的概率纠正回来。拒绝时直接重新从 p 采样，再沿用同一证明是不成立的。这里的 p、q 必须是考虑温度、过滤和约束后的实际采样分布。\n\n例如草稿与目标在普通句式上很接近，一次验证可能接受多个词；领域术语差异大时，接受率会下降。收益由草稿成本、接受率、验证开销和批大小共同决定，草稿越长不一定越快。还要协调 tokenizer、缓存和约束状态。分布一致不表示两次随机运行、甚至同一随机种子下的文本必然逐 token 一致；贪心版本也要按对应规则单独理解。",
         "formula": "\\begin{aligned}a(x)&=\\min\\!\\left(1,\\frac{p(x)}{q(x)}\\right)\\\\p_{\\rm correction}(x)&=\\frac{\\max(p(x)-q(x),0)}{\\sum_y\\max(p(y)-q(y),0)}\\end{aligned}",
         "pitfalls": [
-          "投机解码靠牺牲目标模型精度换速度。",
-          "分布一致就宣称固定种子下文本逐 token 必然一致。"
+          "标准投机采样用接受与修正规则保持目标分布，不是直接牺牲精度换速度。",
+          "分布一致不保证同一随机种子下文本逐 token 一致。"
         ],
         "followups": [
           "怎样根据接受率选择草稿长度？",
@@ -3868,15 +3876,16 @@
         "多模态"
       ],
       "answer": {
-        "body": "普通 KV cache 复用同一请求的历史，prefix caching 则在请求间复用完全相同前缀的 KV，主要节省重复 prefill。缓存键需包含父块上下文和当前 token，以及模型、LoRA、相关预处理等信息，防止同样局部文本在不同历史下误共享；语义相似不等于精确 KV 相同。\n\n权重或适配器变化须失效或隔离缓存，多模态占位 token 相同但图像不同，还需模态内容哈希。缓存占用会与活跃请求竞争，需要淘汰；多租户共享应考虑隔离和时间侧信道。",
+        "body": "普通 KV Cache 是同一个请求生成时复用自己的历史；前缀缓存是多个请求共享完全相同前缀的 KV，主要省掉重复读取提示词的计算。例如客服请求都先带同一段系统说明，第二个请求命中这段前缀后，可以从新问题处继续 prefill，而不是把公共说明再算一遍。\n\n判断能否共享，必须基于 token 和它之前的完整上下文。相同句子放在不同历史后，表示可能不同，所以缓存键要串联父块信息，并考虑模型权重、LoRA 适配器和相关预处理。多模态中，占位 token 相同但图片不同也不能共享，应把图片等内容纳入识别。语义接近的改写只能帮助其他缓存策略，不能据此复用精确 KV。\n\n缓存块会占显存并与活跃请求竞争，需要淘汰和容量策略，换权重或适配器要失效或隔离。多租户还要考虑权限与响应时间侧信道。把稳定公共内容放在前面通常更容易命中，但并不加速新生成 token 的全部 decode。测收益时应说明冷热缓存和前缀命中率，避免把缓存状态差异误当成框架性能差距。",
         "pitfalls": [
-          "只用当前文本片段哈希，不考虑前缀上下文。",
-          "prefix cache 会加速输出 token 的全部 decode 计算。"
+          "缓存键要包含前缀上下文，不能只对当前局部文本取哈希。",
+          "前缀复用主要省 prefill，不能加速全部后续生成计算。"
         ],
         "followups": [
-          "相同 system prompt 放在最前面为什么更利于命中？",
+          "公共系统提示放在最前面，为什么更容易命中？",
           "多适配器和多租户怎样隔离缓存？"
-        ]
+        ],
+        "formula": ""
       },
       "reference_ids": [
         "CORE-S065",
@@ -3897,15 +3906,16 @@
         "SLO"
       ],
       "answer": {
-        "body": "TTFT 是从请求发出到首 token 的时间，包含排队与 prefill；ITL 是相邻输出 token 的间隔，吞吐是单位时间产出。体验还受客户端流式传输影响，不能只测 prefill 内核时间。\n\n评估时固定负载与输入/输出长度分布，记录 P50/P95/P99、失败率、请求率、并发和 token 数，区分服务端与客户端口径。扩大 batch 可提升利用率，也可能增加排队和 ITL，需联合权衡 chunked prefill、缓存与调度。逐步增加到达率找饱和点，并比较延迟 SLO 内的有效吞吐 goodput，而不只报告离线最大 tokens/s。",
+        "body": "我会先把三个指标分清：TTFT 是用户发出请求到收到首个 token 的时间，包含排队、prefill 和传输；ITL 是相邻输出 token 的间隔；吞吐是单位时间处理的请求或 token 数。首 token 很快不代表整段答案快，后台内核很快也不代表用户实际收到得快。\n\n优化时先固定请求率、输入输出长度分布、缓存状态和质量配置，再测客户端与服务端各自的 P50、P95、P99、失败率和资源占用。长输入拖慢首 token，可以考虑前缀复用和分块 prefill；输出间隔过大，就看 batch、权重和 KV 带宽、内核启动及请求间竞争。扩大 batch 往往提高利用率，但也可能增加排队和每轮生成的耗时。\n\n我会逐步提高到达率，画出延迟与有效吞吐的变化，找出饱和点，再选择满足服务延迟目标的配置。这个有效吞吐也叫 goodput，即符合目标的产出；离线最大 tokens/s 不能代替它。输入 token 和输出 token 的吞吐要分开报告，低并发与高并发也未必用同一参数。每次改调度或缓存后，都要回放同一负载，确认没有把平均值改善换成更差的长尾体验。",
         "pitfalls": [
-          "首 token 很快就断言整体响应快。",
-          "把输入吞吐与输出吞吐混用或省略长度分布。"
+          "首 token 快不代表整段回答快，还要看后续输出间隔。",
+          "输入与输出吞吐不能混用，比较时要说明长度分布。"
         ],
         "followups": [
-          "低并发与高并发应采用同一调度参数吗？",
-          "缓存命中率变化怎样影响 benchmark 公平性？"
-        ]
+          "低并发与高并发适合使用相同调度参数吗？",
+          "前缀命中率不同，会怎样影响压测比较的公平性？"
+        ],
+        "formula": ""
       },
       "reference_ids": [
         "CORE-S066",
@@ -3933,15 +3943,15 @@
         "Post-LN"
       ],
       "answer": {
-        "body": "Dropout 在训练时随机置零激活，inverted dropout 把保留值除以保留概率：$m_i\\sim\\mathrm{Bernoulli}(1-p)$、$y_i=m_ix_i/(1-p)$，其中 $0\\le p<1$，故 $\\mathbb E[y_i\\mid x_i]=x_i$。它引入随机扰动，减少对共同激活模式的依赖，不会永久删除参数；单个层的期望保持也不意味着经过非线性和归一化的整个网络期望完全不变。\n\n原始 Transformer 在各子层输出上使用 dropout，再与输入相加并做 PostNorm，即 $\\mathrm{LN}(x+\\mathrm{Dropout}(\\mathrm{Sublayer}(x)))$；编码器和解码器的 embedding 与位置编码之和也使用 dropout，base 模型概率为 0.1。现代模型的概率与插入位置要按配置确认。\n\n`nn.Dropout` 在 eval 模式是恒等映射，但 SDPA 的 `dropout_p` 由调用者显式控制，评估时须传 0。原论文 residual dropout 的描述也不能直接推定所有现代实现的 attention probability dropout 或 FFN 内部 dropout。",
+        "body": "Dropout 在训练时随机屏蔽部分激活，迫使模型减少对固定特征组合的依赖，起到正则化作用。它临时改变计算，不会永久删除对应参数。常用 inverted dropout：以 p 的概率置零，保留值除以 1−p，使每个分量在随机屏蔽下的期望仍等于原输入。\n\n例如 p=0.2 时，每个激活有八成机会保留，保留后乘 1.25；推理时就直接使用完整激活，不再重复放大。公式中的 m 是取 0 或 1 的随机变量，x 是原激活。p 越大，条件方差 px²/(1−p) 越大，扰动越强；期望保持只是一层的结论，经过非线性和归一化后，整个网络输出期望并不一定完全保持。\n\n原始 Transformer 在子层输出做 dropout 后再残差相加、PostNorm，也在 embedding 与位置编码之和上做 dropout，base 概率为 0.1。现代模型的实际位置和概率应看实现，不能把框架默认 0.5 当成标准。nn.Dropout 在 eval 模式变成恒等映射，但直接调用 PyTorch SDPA 时，dropout_p 由调用者控制，评估必须显式传 0。排查随机推理时，既要检查 model.eval()，也要检查这些函数级参数。",
         "formula": "\\begin{aligned}m_i&\\sim\\mathrm{Bernoulli}(1-p),\\quad0\\le p<1\\\\y_i&=\\frac{m_ix_i}{1-p}\\\\\\mathbb E[y_i\\mid x_i]&=x_i,\\quad\\mathrm{Var}(y_i\\mid x_i)=\\frac{px_i^2}{1-p}\\\\z&=\\mathrm{LN}(x+\\mathrm{Dropout}(\\mathrm{Sublayer}(x)))\\\\h_0&=\\mathrm{Dropout}(\\sqrt{d_{\\rm model}}\\,\\mathrm{Embedding}+\\mathrm{PE})\\end{aligned}",
         "pitfalls": [
-          "把 p 当作保留概率，或在训练和推理阶段重复做 $1/(1-p)$ 缩放。",
-          "把现代实现的所有 Dropout 位置都归因于原始论文，或把 `nn.Dropout` 默认 0.5 说成 Transformer 标准值。"
+          "p 是丢弃概率；使用训练时反向缩放后，推理不要再重复缩放。",
+          "dropout 的位置和概率要看模型，不能把默认值或现代实现全归为原论文配置。"
         ],
         "followups": [
-          "推导 inverted dropout 的条件方差，并解释为何 p 越大扰动越强。",
-          "如果只调用 `model.eval()`，为什么直接调用 SDPA 时仍可能出现随机输出？"
+          "如何推导 dropout 方差，为什么 p 越大扰动越强？",
+          "model.eval() 后直接调用 SDPA，为什么仍需显式设置 dropout_p=0？"
         ]
       },
       "reference_ids": [
@@ -3969,15 +3979,15 @@
         "张量形状"
       ],
       "answer": {
-        "body": "标准点积注意力权重是输入经 Q/K 投影、点积和 softmax 动态计算的激活，不是独立可训练的注意力表。对 $X\\in\\mathbb R^{n\\times d_{\\rm model}}$，$Q=XW_Q$、$K=XW_K$、$V=XW_V$，$A=\\mathrm{softmax}_{\\rm row}(QK^\\top/\\sqrt{d_k}+M)$，$O=AV$；同一组参数在不同输入上产生不同 $A$。\n\n任务损失经汇聚、softmax 与点积反传。令 $G=\\partial L/\\partial A$，则 $D_{ij}=\\partial L/\\partial S_{ij}=A_{ij}(G_{ij}-\\sum_kA_{ik}G_{ik})$，随后 $\\partial L/\\partial Q=DK/\\sqrt{d_k}$、$\\partial L/\\partial K=D^\\top Q/\\sqrt{d_k}$，更新投影和上游表征。模型还可能学习位置偏置等参数，但训练目标未必直接监督注意力图；固定 mask 下，被屏蔽位置的分数梯度为零。\n\n高权重只说明该层该头的相对加权关系，$V$ 的方向与幅值、其他头、输出投影、残差和后续层都会改变最终影响。热力图可以描述局部计算，因果解释仍需消融、扰动和基线诊断，并注意扰动造成的分布变化。关于注意力解释性的研究存在不同诊断结论，其实验局限于具体模型与任务，不能概括为所有模型的注意力永远不能解释。\n\nAttention的token混合矩阵随当前输入Q/K动态变化；全连接层的W在一次前向中固定，通常不随样本即时生成。Transformer的FFN虽非线性，却在每个位置独立使用共享参数，不能独自完成跨token汇聚。若Q=K，打分矩阵为Gram矩阵，在不对称mask之前具有对称性，但softmax归一化和mask可使权重不对称，也不必退化成单位阵；不同Q/K投影允许更灵活的有向匹配。",
+        "body": "注意力权重是模型根据当前输入动态算出的结果，训练真正更新的是 Q/K/V 投影等参数，并不是为每对 token 存一张独立的可训练权重表。输入 X 先得到 Q、K、V，Q 与 K 的点积经过行内 softmax 得到 A，再用 A 汇总 V。同一套参数遇到不同句子，就会产生不同注意力图。\n\n训练损失从输出汇总传到 A，再通过 softmax 和点积传回 Q/K 及上游表示。公式中的 G 是损失对 A 的梯度，D 是对归一化前分数的梯度；某一候选得分的变化会重新分配整行概率，因此它的梯度也依赖同一行其他候选。固定掩码禁止的位置没有分数梯度。若 Q=K，未掩码的分数矩阵会对称，但每行归一化和不对称掩码仍可能让权重不对称，也不必变成单位矩阵。\n\n高权重只说明该层该头分给某个 V 的份额大，最终影响还取决于 V 的方向和幅度、其他头、输出投影、残差与后续层。比如某位置权重很大但 V 接近零，实际贡献仍可能很小。热力图适合描述局部计算，若要解释最终决策，应配合消融、扰动和基线，并留意扰动改变数据分布的问题。不能简单断言权重等于因果重要性，也不能把某个模型的实验推广成所有注意力永远无法解释。",
         "formula": "\\begin{aligned}A&=\\mathrm{softmax}_{\\rm row}(QK^\\top/\\sqrt{d_k}+M),\\quad O=AV\\\\G&=\\frac{\\partial L}{\\partial A}\\\\D_{ij}&=A_{ij}\\left(G_{ij}-\\sum_kA_{ik}G_{ik}\\right)\\\\\\frac{\\partial L}{\\partial Q}&=\\frac{DK}{\\sqrt{d_k}},\\quad\\frac{\\partial L}{\\partial K}=\\frac{D^\\top Q}{\\sqrt{d_k}}\\\\\\frac{\\partial L}{\\partial W_Q}&=\\frac{X^\\top DK}{\\sqrt{d_k}}\\end{aligned}",
         "pitfalls": [
-          "说 softmax 中每个注意力权重都是独立学习参数，忽略 Q/K 与输入。",
-          "把注意力热力图当作最终预测的充分因果解释，或把特定 RNN 实验结论泛化到所有 LLM。"
+          "注意力权重是输入与投影动态计算的激活，不是独立参数表。",
+          "热力图不足以证明最终因果作用，特定实验结论也不能推广到全部模型。"
         ],
         "followups": [
-          "softmax 的行内归一化为什么会让一个位置的梯度依赖其他位置？",
-          "两个注意力图差异很大但输出相近，能推出哪些结论，不能推出哪些结论？"
+          "行内 softmax 归一化，为什么让某分数的梯度依赖其他候选？",
+          "两张注意力图很不同但输出接近，说明了什么，又不能说明什么？"
         ]
       },
       "reference_ids": [
@@ -4006,15 +4016,15 @@
         "因果Mask"
       ],
       "answer": {
-        "body": "全局 self-attention 让允许交互的远距离位置在一层内直接交换信息，最长位置通信路径为 $O(1)$；RNN 对相隔 $\\Theta(n)$ 步的位置通常需经过 $\\Theta(n)$ 次递归传递。短路径有利于信息和梯度传播，但是否学好依赖仍取决于数据、参数、位置编码、优化与任务。\n\n这里的 $O(1)$ 指计算图路径，不是运行时间。序列长 $n$、宽度 $d$ 时，稠密 $QK^\\top$ 和 $AV$ 计算为 $O(n^2d)$，显式多头权重存储为 $O(hn^2)$；若 $d_{\\rm ff}=\\Theta(d)$，投影与 FFN 使单层总计算为 $O(n^2d+nd^2)$。训练时同层 query 可并行计算，但自回归生成下一 token 仍依赖已生成历史。\n\n直接路径也受 mask 限制：因果注意力只能读取历史，局部窗口需跨层传播，固定窗口尺度 $r$ 时远距路径通常随 $n/r$ 增长。有效上下文还受模型窗口与位置方案限制，短路径不保证长上下文准确率。",
+        "body": "Transformer 的全局注意力让相距很远的两个可见位置在一层内直接通信，因此信息和梯度不必像 RNN 那样经过中间每一步。这是它适合长距离依赖的重要原因。这里说的 O(1) 是位置之间的计算图路径长度，不是整个模型的运行时间。\n\n比如句首出现人物名字，句尾需要判断代词指谁，全局注意力可以直接读取句首；RNN 对相隔 n 步的信息通常要传过约 n 次状态更新。不过“可以直接读到”不代表“已经学会正确使用”，还取决于训练数据、参数、位置表示和优化。长文中多个相似实体竞争时，仍可能选错。\n\n公式中 n 是长度、d 是宽度、h 是头数。稠密注意力仍有 O(n²d) 的交互计算，显式分数存储为 O(hn²)，投影与 FFN 还加入 O(nd²)。训练同层位置可并行，生成下一 token 仍依赖之前输出。因果 mask 只允许读历史，局部窗口模型则要经过多层逐段传递；固定窗口尺度 r 时，远距离路径约随 n/r 增长。因此短路径不能当作常数时间，也不能代替长上下文的实际任务验证。",
         "formula": "\\begin{aligned}\\ell_{\\rm global}&=O(1),\\quad \\ell_{\\rm RNN}=O(n)\\\\C_{\\rm attention}&=O(n^2d),\\quad M_{\\rm attention}=O(hn^2)\\\\C_{\\rm layer}&=O(n^2d+nd^2)\\quad(d_{\\rm ff}=\\Theta(d))\\\\\\ell_{\\rm local}&=O(n/r)\\end{aligned}",
         "pitfalls": [
-          "把常数通信路径说成常数时间或线性计算复杂度。",
-          "以全局注意力的结论描述局部窗口模型，或声称短路径自动解决所有长依赖问题。"
+          "常数通信路径不等于常数运行时间，稠密注意力仍有二次交互。",
+          "局部窗口的远距路径不同，短路径也不保证学会所有长依赖。"
         ],
         "followups": [
-          "局部窗口半径 r 固定时，距离 n 的位置需要多少层才能建立通信？",
-          "训练时的同层并行与自回归解码的逐 token 依赖有什么区别？"
+          "固定窗口尺度 r，相距 n 的位置约需要多少层建立通信？",
+          "同层位置并行训练，与生成时逐 token 依赖有什么区别？"
         ]
       },
       "reference_ids": [
@@ -4049,15 +4059,15 @@
         "Mask"
       ],
       "answer": {
-        "body": "原始 Transformer 没有名为 Negative Attention 的标准组件。标准 softmax 在每行至少有一个允许位置时，有限未屏蔽 logits 的权重为正，被 $-\\infty$ mask 的位置为零，行和为 1。因此低权重、负 logit 与负输出是不同概念。\n\nLogit 是归一化前的分数，可以为负，如 $\\mathrm{softmax}([-2,-1])\\approx[0.269,0.731]$；整行加同一常数不改变分布，绝对正负不决定关注程度。即使权重全非负，$O_i=\\sum_jA_{ij}V_j$ 的分量仍可为负，如 $0.5(-3)+0.5(1)=-1$，投影和残差也会产生负分量。\n\n减小权重仅减少相对于其他 value 的份额，是否抑制最终答案还取决于 value、投影与目标；加负 bias 也不会直接生成负 softmax 权重。若指某篇论文的 signed attention、差分构造或同名方法，应先核对公式、系数范围与归一化定义，不能因原始 Transformer 未定义该组件就否认其他研究的命名。",
+        "body": "“Negative Attention”不是原始 Transformer 的标准组件，遇到这个说法要先确定它指某篇论文的方法，还是把低权重、负分数和负输出混在了一起。标准 softmax 注意力在至少有一个可见位置时，有限未屏蔽分数产生正权重，屏蔽位置权重为零，每行权重和为 1，并不会直接产生负概率。\n\n负 logit 只是归一化前的分数为负。例如 [−2,−1] 的 softmax 约为 [0.269,0.731]，两个权重都为正；整行加同一个常数也不改变分布，所以分数绝对正负没有直接意义。减去最大值能提高数值稳定性，正是利用了这个性质。权重小表示相对分配得少，不自动意味着抑制了最终某个答案。\n\n负输出则完全可能，因为 V 的分量可以为负。例如两个值是 −3 和 1，权重各为 0.5，汇总就是 −1；输出投影和残差还会进一步改变结果。若某方法真的允许负聚合系数，例如带符号或差分构造，就要重新核对其公式、系数范围和归一化性质，而不能继续把它全当作概率分布。回答这类题的重点是先把三个计算阶段讲清楚，再针对具体方法讨论。",
         "formula": "\\begin{aligned}A_{ij}&=\\begin{cases}\\displaystyle\\frac{\\exp S_{ij}}{\\sum_{k\\in\\mathcal J_i}\\exp S_{ik}}>0,&j\\in\\mathcal J_i\\\\0,&j\\notin\\mathcal J_i\\end{cases}\\\\\\sum_jA_{ij}&=1,\\quad\\mathrm{softmax}(s+c\\mathbf1)=\\mathrm{softmax}(s)\\\\O_i&=\\sum_jA_{ij}V_j,\\quad0.5(-3)+0.5(1)=-1\\end{aligned}",
         "pitfalls": [
-          "把负 logit、接近零的非负权重与负 value/输出混为一谈。",
-          "为了纠正术语而断言全世界没有任何使用 Negative Attention 名称的论文或方法。"
+          "负 logit、很小的正权重和负输出属于不同计算阶段。",
+          "原始 Transformer 没定义某名称，不代表没有其他论文使用它。"
         ],
         "followups": [
-          "为什么把所有 logit 同时减去最大值不会改变注意力分布？",
-          "如果一种方法允许聚合系数为负，它还满足 softmax 概率权重的哪些性质？"
+          "所有分数减去最大值，为什么不会改变注意力权重？",
+          "聚合系数允许为负后，哪些 softmax 概率性质不再成立？"
         ]
       },
       "reference_ids": [
